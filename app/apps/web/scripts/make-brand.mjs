@@ -38,6 +38,9 @@ const out = join(here, '..', '..', '..', '..', 'docs', 'brand')
 const GLYPH =
   'M172 118h104c62 0 104 40 104 100s-42 100-104 100h-40v76h-64V118zm64 60v80h36c26 0 42-15 42-40s-16-40-42-40h-36z'
 const BLUE = '#1d4ed8'
+// Derselbe Grund wie in der Vorschaukarte — der Bot bekommt ihn, damit er sich
+// vom Dach unterscheidet, ohne die Palette zu verlassen.
+const DUNKEL = '#0d1113'
 const BOX = { x0: 172, y0: 118, x1: 380, y1: 394 }
 const CENTER = { x: (BOX.x0 + BOX.x1) / 2, y: (BOX.y0 + BOX.y1) / 2 }
 
@@ -74,7 +77,80 @@ const SOCIAL = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" w
   <text x="418" y="416" font-family="Helvetica Neue, Arial, sans-serif" font-size="29" fill="#74aae4">Berlin · Hamburg · amtliche Daten · offener Quelltext</text>
 </svg>`
 
+/**
+ * Bilder für Telegram: der Bot und die drei Gruppen.
+ *
+ * Telegram verlangt ein **Quadrat**, empfohlen 512×512 (Minimum 300×300),
+ * PNG oder JPEG. Der Haken ist die doppelte Darstellung: In Chatlisten und
+ * neben jeder Nachricht wird **rund** beschnitten, in der Profilansicht bleibt
+ * das Quadrat. Beides muss stimmen — also Fläche randlos bis in die Ecken,
+ * Motiv aber innerhalb des einbeschriebenen Kreises.
+ *
+ * Deshalb steht das P hier auf 0.78 statt 1: Bei voller Größe schneidet der
+ * Kreis die Serifenkanten an, und das sieht nicht nach Zuschnitt aus, sondern
+ * nach einem schlecht gezeichneten Buchstaben.
+ *
+ * Die Unterscheidung der vier ist bewusst grob, weil die Bilder meistens
+ * 24 Pixel groß sind:
+ *
+ * - **Dach** (`@knoellchenfrei`): die Marke selbst, blaue Fläche, weißes P.
+ * - **Bot** (`@knoellchenfrei_bot`): dieselbe Marke auf dem dunklen Grund der
+ *   Vorschaukarte. Ein Helligkeitswechsel ist auf 24 Pixeln das Einzige, was
+ *   verlässlich trägt; ein zusätzliches Zeichen wäre dort ein Fleck. **Nicht**
+ *   weiß, obwohl das der naheliegende Gegenpol wäre: In einer hellen Chatliste
+ *   hätte ein weißes Bild keinen Rand, und das P schwebte ohne Fläche.
+ * - **Berlin / Hamburg**: dieselbe Marke plus ein Kürzel unten rechts. Klein
+ *   verschmilzt es zu einem Punkt und stört nicht; groß beantwortet es die
+ *   Frage, in welcher Gruppe man ist. Ausgeschriebene Städtenamen wären bei
+ *   dieser Größe unlesbar — ein Wort, das niemand entziffert, ist Dekoration.
+ */
+const KREIS_SICHER = 0.78
+
+/**
+ * Kürzel in einem Kreis unten rechts.
+ *
+ * Drei Maße, die alle drei aus einem ersten Versuch stammen, der falsch war:
+ * Der Kreis saß auf dem Schaft des P, und die zwei Buchstaben liefen rechts
+ * aus ihm heraus. Jetzt sitzt er weiter außen, trägt einen Ring in der
+ * Flächenfarbe als Abstandhalter zum P, und die Schrift ist so klein, dass
+ * zwei Zeichen samt Innenabstand hineinpassen.
+ *
+ * Weiter nach außen geht nicht: Telegram beschneidet rund, und der äußerste
+ * Punkt des Kreises muss innerhalb des einbeschriebenen Kreises bleiben.
+ */
+function marke(text) {
+  return `<g>
+    <circle cx="374" cy="374" r="90" fill="${BLUE}"/>
+    <circle cx="374" cy="374" r="78" fill="#fff"/>
+    <text x="374" y="376" text-anchor="middle" dominant-baseline="central"
+          font-family="Archivo, Helvetica Neue, Arial, sans-serif"
+          font-size="62" font-weight="700" letter-spacing="-2" fill="${BLUE}">${text}</text>
+  </g>`
+}
+
+const tgFlaeche = (inhalt, hintergrund = BLUE) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="${hintergrund}"/>
+  ${inhalt}
+</svg>`
+
+/** Wie `glyph`, nur in einer wählbaren Farbe. */
+function glyphFarbe(scale, farbe) {
+  const dx = 256 - scale * CENTER.x
+  const dy = 256 - scale * CENTER.y
+  return `<g transform="translate(${round(dx)} ${round(dy)}) scale(${scale})"><path d="${GLYPH}" fill="${farbe}"/></g>`
+}
+
+const TG_DACH    = tgFlaeche(glyphFarbe(KREIS_SICHER, '#fff'))
+const TG_BOT     = tgFlaeche(glyphFarbe(KREIS_SICHER, '#fff'), DUNKEL)
+const TG_BERLIN  = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('BE')}`)
+const TG_HAMBURG = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('HH')}`)
+
 const JOBS = [
+  { file: 'telegram-dach-512.png', width: 512, height: 512, svg: TG_DACH },
+  { file: 'telegram-bot-512.png', width: 512, height: 512, svg: TG_BOT },
+  { file: 'telegram-berlin-512.png', width: 512, height: 512, svg: TG_BERLIN },
+  { file: 'telegram-hamburg-512.png', width: 512, height: 512, svg: TG_HAMBURG },
   { file: 'org-avatar-512.png', width: 512, height: 512, svg: AVATAR },
   { file: 'social-preview-1280x640.png', width: 1280, height: 640, svg: SOCIAL },
 ]
@@ -87,6 +163,10 @@ try {
   await mkdir(out, { recursive: true })
   await writeFile(join(out, 'org-avatar.svg'), `${AVATAR}\n`)
   await writeFile(join(out, 'social-preview.svg'), `${SOCIAL}\n`)
+  await writeFile(join(out, 'telegram-dach.svg'), `${TG_DACH}\n`)
+  await writeFile(join(out, 'telegram-bot.svg'), `${TG_BOT}\n`)
+  await writeFile(join(out, 'telegram-berlin.svg'), `${TG_BERLIN}\n`)
+  await writeFile(join(out, 'telegram-hamburg.svg'), `${TG_HAMBURG}\n`)
   for (const job of JOBS) {
     const page = await browser.newPage({
       viewport: { width: job.width, height: job.height },

@@ -503,7 +503,15 @@ schritt_telegram() {
   hinweis "Namen sichern, solange sie frei sind — und nicht als leere Hülle:"
   hinweis "Telegram holt Namen ungenutzter Kanäle zurück. Anlegen, benennen,"
   hinweis "ein paar Leute hineinholen, Beitritt auf Genehmigung stellen."
-  hinweis "  @knoellchenfrei  @knoellchenfrei_BE  @knoellchenfrei_HH  @knoellchenfrei_bot"
+  hinweis ""
+  hinweis "Die Bilder liegen fertig, 512 × 512, kreissicher zugeschnitten:"
+  hinweis "  @knoellchenfrei      docs/brand/telegram-dach-512.png"
+  hinweis "  @knoellchenfrei_bot  docs/brand/telegram-bot-512.png"
+  hinweis "  @knoellchenfrei_BE   docs/brand/telegram-berlin-512.png"
+  hinweis "  @knoellchenfrei_HH   docs/brand/telegram-hamburg-512.png"
+  hinweis "Setzen: Bot über @BotFather → /setuserpic; Gruppen über"
+  hinweis "Bearbeiten → Bild. Beides nur in der App — die Bot-API kennt für"
+  hinweis "das eigene Profilbild keinen Endpunkt."
 }
 
 # Die Adresse des Workers steht nicht in `wrangler whoami` — dort steht das
