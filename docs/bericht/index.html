@@ -751,6 +751,82 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 
 <section>
+  <h2>Dritter Nachtrag</h2>
+  <div class="col">
+    <h3>Die Nacht: Auftritt, Abhängigkeiten, und ein selbstgemachter Fehler</h3>
+    <p>Nach Hamburg blieb das, was kein Code ist: Der Umzug war getan, aber die
+    Organisation sah aus wie ein leeres Regal. Dazu kam eine Aufgabe, die nach
+    Routine aussah und keine war — Abhängigkeiten automatisch aktuell zu
+    halten.</p>
+    <p><strong>Auftritt.</strong> Organisationsbild und Vorschaubild entstehen
+    aus einem Skript, nicht aus einem Grafikprogramm — <code>make-brand.mjs</code>,
+    damit sie sich reproduzieren lassen. Das Motiv bleibt das <strong>P</strong>:
+    das internationale Parkzeichen sagt in einem Zeichen, worum es geht, ein
+    „K“ für den Namen sagt nichts, und es läge bereits als Symbol auf den
+    Homescreens der Testnutzer. Randlos statt abgerundet, weil GitHub selbst
+    rundet und ein zweites Mal gerundete Ecken im Dunkelmodus wie ein
+    Darstellungsfehler aussehen. Der Text der Profilseite liegt versioniert im
+    Repository, nicht nur in dem <code>.github</code>-Repository, in das
+    niemand hineinsieht.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Der Fehler war meiner</span>
+    <p>Dependabot bekam einen <code>cooldown</code>: eine Woche Wartezeit gegen
+    den häufigsten Angriff auf die npm-Lieferkette — eine übernommene
+    Paketpflegerschaft, deren bösartige Version binnen ein bis zwei Tagen
+    zurückgezogen wird. Sauber begründet, und trotzdem falsch: Dependabot
+    übersetzt ihn in pnpms <code>minimumReleaseAge</code> und legt ihn über den
+    <em>ganzen</em> Auflösungslauf. pnpm prüft das Alter erst nach dem Auflösen
+    und fällt nicht auf eine ältere passende Version zurück, sondern bricht ab.
+    Ein einziges zu junges Paket im Baum — <code>@playwright/test</code>,
+    41 Stunden alt und im Lockfile längst festgeschrieben — ließ
+    <strong>alle sechs</strong> npm-Updates ausfallen.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Lauf</th><th>Konfiguration</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr><td class="k">erster</td><td><code>cooldown</code>, 7 Tage</td><td>sechs npm-Updates rot, beide Actions-Läufe grün</td></tr>
+        <tr><td class="k">zweiter</td><td>Cooldown entfernt</td><td class="n">wieder rot</td></tr>
+        <tr><td class="k">dritter</td><td>Cooldown zurück, <code>minimumReleaseAgeExclude: ['*']</code></td><td class="n">grün, sechs PRs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p><strong>Der zweite Lauf ist der interessante.</strong> Den Cooldown
+    herauszunehmen half nicht, und im Protokoll stand, warum: Dependabot reicht
+    auch ohne Konfiguration seine eingebaute Drei-Tage-Vorgabe als
+    <code>--config.minimumReleaseAge=4320</code> durch. Die Einstellung ist
+    nicht abwählbar, nur überschreibbar. Eine naheliegende Abhilfe, die keine
+    war — und der Grund, warum die erste Reparatur nichts reparierte.</p>
+    <p>Die Ausnahmeliste in <code>pnpm-workspace.yaml</code> steht deshalb auf
+    <code>'*'</code>, und das ist <strong>nachgemessen</strong>, nicht geraten:
+    In einem Wegwerf-Worktree mit einem künstlichen 90-Tage-Fenster scheiterte
+    der Lauf ohne Ausnahme an <code>typescript</code>; mit
+    <code>typescript</code> als einziger Ausnahme an
+    <code>@typescript/typescript-linux-ppc64</code>, einer transitiven
+    Abhängigkeit, die niemand von Hand pflegt; mit dem Stern lief er durch.
+    Eine Namensliste ist hier Sisyphosarbeit. Gekostet hat es nichts:
+    <em>Welche</em> Version vorgeschlagen wird, entscheidet Dependabot
+    serverseitig — pnpm schreibt danach nur noch das Lockfile.</p>
+    <p><strong>Und dann sagen die elf PRs etwas über den Code.</strong> Fünf
+    Actions-Bumps und drei npm-Updates sind grün. Drei sind rot, jedes mit
+    einer echten Ursache: <strong>Vite 8</strong> baut mit rolldown, und unser
+    eigenes Plugin liest im <code>closeBundle</code> eine
+    <code>dist/index.html</code>, die es dann nicht mehr gibt.
+    <strong><code>@vitejs/plugin-react</code> 6</strong> verlangt Vite 8 und
+    kann einzeln gar nicht grün werden — die beiden gehören zusammen, und
+    Dependabot kann das nicht wissen. <strong>MapLibre 6</strong> hat den
+    Default-Export aufgegeben. Das ist kein Ärger mit dem Werkzeug, das ist die
+    Arbeit, die es sichtbar macht.</p>
+  </div>
+</section>
+
+
+<section>
   <h2>Offen</h2>
   <div class="col">
     <h3>Was noch aussteht</h3>
@@ -769,6 +845,10 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
         <tr><td class="k">Telegram-Token, Webhook anmelden</td><td><span class="chip user">du</span></td><td>Telegram-Meldungen</td></tr>
         <tr><td class="k">R2-Eimer, Archiv hochladen, CORS und Range-Requests</td><td><span class="chip user">du</span></td><td>eigene Kacheln</td></tr>
         <tr><td class="k">CI-Geheimnisse im neuen Repository hinterlegen</td><td><span class="chip user">du</span></td><td>Deploy-Workflows</td></tr>
+        <tr><td class="k">Dependabot-Warnungen und Sicherheitsupdates einschalten</td><td><span class="chip user">du</span></td><td>zwei Schalter, nicht konfigurierbar</td></tr>
+        <tr><td class="k">GitHub Pages einschalten — oder <code>pages.yml</code> löschen</td><td><span class="chip user">du</span></td><td>ein roter Haken</td></tr>
+        <tr><td class="k">Organisationsbild, Vorschaubild, Beschreibung, Themen</td><td><span class="chip user">du</span></td><td>Auftritt</td></tr>
+        <tr><td class="k">Vier Telegram-Namen sichern, bevor sie vergeben sind</td><td><span class="chip user">du</span></td><td>Marke</td></tr>
         <tr><td class="k">Impressum und Datenschutz ausformulieren</td><td><span class="chip agent">ich</span></td><td>wartet auf Verein und Dienstleister</td></tr>
         <tr><td class="k">München als dritte Stadt prüfen</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
         <tr><td class="k">Produktname entberlinern (Titel, Manifest, Überschrift)</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
@@ -849,8 +929,8 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 <footer>
   <p>Stand 6. September 2026. Der Hauptteil beschreibt die Nacht und den Tag bis
-  12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>; die beiden
-  Nachträge den Nachmittag und den Abend danach. Alles liegt jetzt in
+  12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>; die drei
+  Nachträge den Nachmittag, den Abend und die Nacht danach. Alles liegt jetzt in
   <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
   beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
   Repository geblieben. Die Prüfläufe stammen aus dem Abschlusslauf gegen den

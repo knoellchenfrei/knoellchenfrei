@@ -336,3 +336,21 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
       `tile.openstreetmap.org` entstanden ist. Befehl steht im Kopf von
       `apps/web/scripts/make-screenshots.mjs`.
 - [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.
+- [ ] **Drei Dependabot-PRs, die Code brauchen.** Sie sind rot, und zwar zu
+      Recht — jeder hat eine echte Ursache, keine ist ein Flackern:
+      - **Vite 8** (PR #6): Vite 8 baut mit rolldown, und unser eigenes Plugin
+        `stamp-service-worker` liest im `closeBundle` die fertige
+        `dist/index.html`. Die gibt es zu dem Zeitpunkt nicht mehr —
+        `ENOENT … dist/index.html`. Der Haken gehört an einen späteren Hook
+        oder an das Bundle statt an die Datei.
+      - **`@vitejs/plugin-react` 6** (PR #10): verlangt Vite 8
+        (`ERR_PACKAGE_PATH_NOT_EXPORTED: './internal'`). Gehört **mit** PR #6
+        zusammen; einzeln kann keiner der beiden grün werden. Dependabot kann
+        das nicht wissen, weil es keine Gruppe für Hauptversionen gibt.
+      - **MapLibre GL 6** (PR #9): kein Default-Export mehr
+        (`TS1192` in `App.tsx` und `main.tsx`), dazu verlorene Ereignistypen
+        (`TS7006`). Import auf `* as maplibregl` umstellen und die Handler
+        typisieren.
+      Die fünf Actions-Bumps und `typescript` 7, `@types/node` 26 und
+      `@cloudflare/workers-types` 5 sind grün und können zusammengeführt
+      werden.
