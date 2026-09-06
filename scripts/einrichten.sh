@@ -561,14 +561,44 @@ bot_profil_setzen() {
   hinweis "  Beschreibungsbild BotFather → Edit Bot → Edit Description Picture"
   hinweis "  (steht über dem Text auf dem leeren Chat; docs/brand/social-preview-1280x640.png"
   hinweis "   taugt dafür, oder das Dach-Bild)"
+  # Die beiden Schalter kann die Bot-API nicht setzen — nur der BotFather.
+  # Aber `getMe` *meldet* sie, und damit laesst sich pruefen statt glauben.
+  #
+  # Die Benennung ist verwirrend, und zwar andersherum als man denkt:
+  # `/setprivacy` **Enable** heisst "Privatsphaere an" und ergibt
+  # `can_read_all_group_messages: false`.
+  local zustand
+  zustand="$(curl -sS --max-time 20 "https://api.telegram.org/bot$token/getMe" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+r = d.get(\"result\") or {}
+print(f\"{r.get('username','?')}|{r.get('can_join_groups')}|{r.get('can_read_all_group_messages')}\")" 2>/dev/null)"
+  local name="${zustand%%|*}" rest="${zustand#*|}"
+  local joins="${rest%%|*}" liest="${rest##*|}"
+
   hinweis ""
-  hinweis "Und zwei Schalter, die zur Bauart gehören:"
-  hinweis "  /setjoingroups  → **Disable**. Der Bot ist auf Einzelchats gebaut;"
-  hinweis "     Gruppen mitzulesen ist Stufe 2 und braucht erst einen"
-  hinweis "     Missbrauchsfilter. Ein Bot, den man in Gruppen ziehen kann, der"
-  hinweis "     dort aber schweigt, erzeugt nur Rückfragen."
-  hinweis "  /setprivacy     → **Enable** (Vorgabe). Falls Gruppen je dazukommen,"
-  hinweis "     sieht er dann nur, was an ihn gerichtet ist."
+  hinweis "Zwei Schalter, die zur Bauart gehoeren — nur ueber @BotFather:"
+  if [ "$joins" = "False" ]; then
+    ok "  /setjoingroups steht auf Disable"
+  else
+    fehlt "  /setjoingroups → **Disable** (steht auf Enable)"
+    hinweis "     @BotFather → /setjoingroups → @$name → Disable."
+    hinweis "     Der Bot ist auf Einzelchats gebaut; Gruppen mitzulesen ist"
+    hinweis "     Stufe 2 und braucht erst einen Missbrauchsfilter. Ein Bot, den"
+    hinweis "     man in Gruppen ziehen kann, der dort aber schweigt, erzeugt"
+    hinweis "     nur Rueckfragen."
+    offen_merken
+  fi
+  if [ "$liest" = "False" ]; then
+    ok "  /setprivacy steht auf Enable — er sieht nur, was an ihn gerichtet ist"
+  else
+    fehlt "  /setprivacy → **Enable** (er liest zurzeit alles in Gruppen mit)"
+    hinweis "     @BotFather → /setprivacy → @$name → Enable."
+    hinweis "     Enable heisst Privatsphaere AN — die Benennung ist andersherum,"
+    hinweis "     als man vermutet."
+    offen_merken
+  fi
 }
 
 # JSON-Zeichenkette aus beliebigem Text — Umbrueche und Anfuehrungszeichen
