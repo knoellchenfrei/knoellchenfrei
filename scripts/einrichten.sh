@@ -854,15 +854,28 @@ schritt_github() {
   elif [ "$NUR_PRUEFEN" = ja ]; then
     fehlt "Beschreibung fehlt"; offen_merken
   else
-    # Wiki und Projects sind leer und bleiben es. Ein leerer Bereich sieht
-    # verlassener aus als keiner.
-    if gh api -X PATCH "repos/$REPO_SLUG" \
-         -f description="$REPO_BESCHREIBUNG" \
-         -F has_wiki=false -F has_projects=false >/dev/null 2>&1; then
-      ok "Beschreibung gesetzt, Wiki und Projects aus"
+    if gh api -X PATCH "repos/$REPO_SLUG" -f description="$REPO_BESCHREIBUNG" >/dev/null 2>&1; then
+      ok "Beschreibung gesetzt"
     else
       schlimm "ließ sich nicht setzen"; offen_merken
     fi
+  fi
+
+  # Eigener Zweig, nicht angehängt an die Beschreibung: Beim ersten Entwurf
+  # hingen diese beiden am `else` darüber — stand die Beschreibung schon, wurden
+  # sie nie geprüft. Genau so blieben Wiki und Projects an, während das Skript
+  # meldete, alles sei in Ordnung.
+  if printf '%s' "$json" | grep -q '"has_wiki":true' || printf '%s' "$json" | grep -q '"has_projects":true'; then
+    fehlt "Wiki oder Projects sind an — beide leer, und ein leerer Bereich sieht verlassener aus als keiner"
+    if [ "$NUR_PRUEFEN" = ja ]; then
+      offen_merken
+    elif gh api -X PATCH "repos/$REPO_SLUG" -F has_wiki=false -F has_projects=false >/dev/null 2>&1; then
+      ok "Wiki und Projects abgeschaltet"
+    else
+      schlimm "ließen sich nicht abschalten"; offen_merken
+    fi
+  else
+    ok "Wiki und Projects sind aus"
   fi
 
   local anzahl

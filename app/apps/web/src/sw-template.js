@@ -21,7 +21,12 @@ const CACHE = 'knoellchenfrei-__BUILD_ID__'
  */
 const SHELL = [
   './',
-  './index.html',
+  // Bewusst **ohne** './index.html'. Cloudflare Pages beantwortet den Pfad mit
+  // einem 308 auf './' — und eine Weiterleitung im Vorrat ist toedlich, weil
+  // `cache.addAll` atomar ist: Eine einzige 3xx-Antwort laesst den ganzen Aufruf
+  // scheitern. Lokal faellt das nicht auf, `vite preview` liefert dort 200;
+  // gemessen wurde es erst an der ausgelieferten Adresse. './' ist ohnehin
+  // dasselbe Dokument.
   './manifest.webmanifest',
   './icon.svg',
   // Die abgelegte App startet aus dem Cache; ohne das Symbol zeigt der
@@ -51,8 +56,30 @@ function isCacheable(url) {
   )
 }
 
+/**
+ * Vorrat anlegen — **einzeln**, nicht mit `cache.addAll`.
+ *
+ * `addAll` ist atomar: Eine 404 oder eine Weiterleitung, und nichts wird
+ * abgelegt. Zweimal hat genau das hier zugeschlagen, beide Male unsichtbar,
+ * weil der Fehler verschluckt wurde — einmal durch Pfade, die nach der zweiten
+ * Stadt nicht mehr stimmten, einmal durch den 308, mit dem Cloudflare Pages
+ * auf `/index.html` antwortet. Die App lud jedes Mal weiter und war nur nicht
+ * mehr offlinefaehig.
+ *
+ * Einzeln heisst: Ein kaputter Eintrag kostet diesen einen Eintrag. Was
+ * scheitert, steht in der Konsole des Workers, statt still zu verschwinden.
+ */
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL).catch(() => undefined)))
+  event.waitUntil(
+    caches.open(CACHE).then((cache) =>
+      Promise.allSettled(SHELL.map((pfad) => cache.add(pfad))).then((ergebnisse) => {
+        const gescheitert = SHELL.filter((_, i) => ergebnisse[i].status === 'rejected')
+        if (gescheitert.length > 0) {
+          console.warn('[sw] nicht vorgehalten:', gescheitert.join(', '))
+        }
+      })
+    )
+  )
 })
 
 /**

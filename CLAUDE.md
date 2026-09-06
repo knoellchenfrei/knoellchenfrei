@@ -23,7 +23,7 @@ pnpm --filter @knoellchenfrei/core test                # 190 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 105 End-to-End-Tests
+cd apps/web && npx playwright test                  # 107 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -38,7 +38,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=190 E2E_COUNT=105 npx tsx src/build-badges.ts
+TEST_COUNT=190 E2E_COUNT=107 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -204,6 +204,16 @@ wiederholt.
   `20260828` abwärts nicht. Das Skript sucht das neueste jetzt selbst und
   prüft ein angegebenes Datum, bevor `pmtiles` minutenlang läuft. Aufrufen
   also **ohne** Datum.
+- **`cache.addAll` ist atomar — deshalb wird einzeln abgelegt.** Eine 404 oder
+  eine **Weiterleitung** unter den Vorratspfaden, und *nichts* wird
+  vorgehalten. Zweimal ist genau das passiert, beide Male unsichtbar: erst
+  durch Pfade, die nach der zweiten Stadt nicht mehr stimmten, dann durch den
+  **308**, mit dem Cloudflare Pages auf `/index.html` antwortet. Der lokale
+  `vite preview` liefert dort 200 — die E2E-Suite kann das also gar nicht
+  sehen, sie misst gegen den Preview-Server. Gefunden wurde es an der
+  ausgelieferten Adresse. Seitdem: `cache.add` je Eintrag mit
+  `Promise.allSettled`, ein Fehler kostet einen Eintrag statt aller, und was
+  scheitert, steht in der Konsole.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes
