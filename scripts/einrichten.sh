@@ -175,7 +175,53 @@ TOML="$APP/apps/api/wrangler.toml"
 # Verweis auf @knoellchenfrei/core — der Build bricht dann mit
 # `Could not resolve` ab, was nach einem kaputten Import aussieht und ein
 # fehlender Symlink ist.
-wr() { (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler "$@"); }
+# Zwei Zugangsdaten, zwei Zwecke — und sie duerfen sich nicht vermischen.
+#
+# Am 6. September hat genau das eine Stunde gekostet: Das Skript riet dazu,
+# CLOUDFLARE_API_TOKEN zu exportieren (die Zonen-API kennt wrangler nicht), und
+# dieser Export uebersteuerte die wrangler-Anmeldung. Das Token hatte Zone- und
+# R2-Rechte, aber keine fuer Workers — also scheiterte jeder Worker-Aufruf
+# still, und das Skript meldete "Pages-Projekt fehlt" und "CLIENT_SALT fehlt"
+# fuer Dinge, die beide existierten. Im Nicht-Pruefmodus haette es angefangen,
+# sie neu anzulegen.
+#
+# Deshalb: `wr` laeuft grundsaetzlich OHNE das DNS-Token. Nur wenn nachweislich
+# dasselbe Token auch Workers darf (WRANGLER_NUTZT_TOKEN=ja, unten gemessen),
+# wird es durchgereicht.
+WRANGLER_NUTZT_TOKEN=nein
+
+wr() {
+  if [ "$WRANGLER_NUTZT_TOKEN" = ja ]; then
+    (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler "$@")
+  else
+    (cd "$APP/apps/api" && env -u CLOUDFLARE_API_TOKEN \
+       pnpm --filter @knoellchenfrei/api exec wrangler "$@")
+  fi
+}
+
+# Das DNS-Token kommt aus der Umgebung oder aus einer Datei — Letzteres, damit
+# es nicht in der Shell-History und nicht im Sitzungsprotokoll landet.
+CF_TOKEN_DATEI="${CF_TOKEN_DATEI:-$HOME/.knoellchenfrei-cf-token}"
+dns_token() {
+  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then printf '%s' "$CLOUDFLARE_API_TOKEN"; return; fi
+  [ -r "$CF_TOKEN_DATEI" ] || return 1
+  tr -d '\n\r "'"'"'' < "$CF_TOKEN_DATEI"
+}
+
+# Ausfuehren und im Fehlerfall die Meldung ZEIGEN. `>/dev/null 2>&1` ueberall
+# war der zweite Konstruktionsfehler: Jede Diagnose dieses Tages kam daraus,
+# die echte Fehlermeldung zu lesen — ein Skript, das sie wegwirft, kann nur
+# "ging nicht" sagen.
+tun() {
+  # tun "<Beschreibung>" <befehl…>
+  local was="$1"; shift
+  local ausgabe status
+  ausgabe="$("$@" 2>&1)"; status=$?
+  if [ "$status" -eq 0 ]; then ok "$was"; return 0; fi
+  schlimm "$was — ging nicht:"
+  printf '%s\n' "$ausgabe" | grep -v '^$' | tail -6 | sed 's/^/      /'
+  return 1
+}
 
 NUR_PRUEFEN=nein
 HAT_GH=nein
@@ -249,6 +295,19 @@ schritt_werkzeuge() {
 
   # Cloudflare: entweder ein Token in der Umgebung oder eine angemeldete
   # Sitzung. Beides ist recht; nichts davon ist es nicht.
+  # Reihenfolge zaehlt: erst pruefen, ob das DNS-Token auch Workers darf,
+  # dann erst `cf_angemeldet` — sonst misst man mit dem falschen Zugang.
+  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+    if (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler secret list >/dev/null 2>&1); then
+      WRANGLER_NUTZT_TOKEN=ja
+      ok "Das Token darf auch Workers — wrangler benutzt es"
+    else
+      ok "Token nur fuer Zonen/R2 — wrangler benutzt deine Anmeldung"
+      hinweis "Beides nebeneinander ist Absicht: Ein Token mit Zone-Rechten hat"
+      hinweis "meist keine fuer Workers, und andersherum genauso."
+    fi
+  fi
+
   if cf_angemeldet; then
     HAT_CF=ja
     if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
@@ -502,14 +561,44 @@ bot_profil_setzen() {
   hinweis "  Beschreibungsbild BotFather → Edit Bot → Edit Description Picture"
   hinweis "  (steht über dem Text auf dem leeren Chat; docs/brand/social-preview-1280x640.png"
   hinweis "   taugt dafür, oder das Dach-Bild)"
+  # Die beiden Schalter kann die Bot-API nicht setzen — nur der BotFather.
+  # Aber `getMe` *meldet* sie, und damit laesst sich pruefen statt glauben.
+  #
+  # Die Benennung ist verwirrend, und zwar andersherum als man denkt:
+  # `/setprivacy` **Enable** heisst "Privatsphaere an" und ergibt
+  # `can_read_all_group_messages: false`.
+  local zustand
+  zustand="$(curl -sS --max-time 20 "https://api.telegram.org/bot$token/getMe" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+r = d.get(\"result\") or {}
+print(f\"{r.get('username','?')}|{r.get('can_join_groups')}|{r.get('can_read_all_group_messages')}\")" 2>/dev/null)"
+  local name="${zustand%%|*}" rest="${zustand#*|}"
+  local joins="${rest%%|*}" liest="${rest##*|}"
+
   hinweis ""
-  hinweis "Und zwei Schalter, die zur Bauart gehören:"
-  hinweis "  /setjoingroups  → **Disable**. Der Bot ist auf Einzelchats gebaut;"
-  hinweis "     Gruppen mitzulesen ist Stufe 2 und braucht erst einen"
-  hinweis "     Missbrauchsfilter. Ein Bot, den man in Gruppen ziehen kann, der"
-  hinweis "     dort aber schweigt, erzeugt nur Rückfragen."
-  hinweis "  /setprivacy     → **Enable** (Vorgabe). Falls Gruppen je dazukommen,"
-  hinweis "     sieht er dann nur, was an ihn gerichtet ist."
+  hinweis "Zwei Schalter, die zur Bauart gehoeren — nur ueber @BotFather:"
+  if [ "$joins" = "False" ]; then
+    ok "  /setjoingroups steht auf Disable"
+  else
+    fehlt "  /setjoingroups → **Disable** (steht auf Enable)"
+    hinweis "     @BotFather → /setjoingroups → @$name → Disable."
+    hinweis "     Der Bot ist auf Einzelchats gebaut; Gruppen mitzulesen ist"
+    hinweis "     Stufe 2 und braucht erst einen Missbrauchsfilter. Ein Bot, den"
+    hinweis "     man in Gruppen ziehen kann, der dort aber schweigt, erzeugt"
+    hinweis "     nur Rueckfragen."
+    offen_merken
+  fi
+  if [ "$liest" = "False" ]; then
+    ok "  /setprivacy steht auf Enable — er sieht nur, was an ihn gerichtet ist"
+  else
+    fehlt "  /setprivacy → **Enable** (er liest zurzeit alles in Gruppen mit)"
+    hinweis "     @BotFather → /setprivacy → @$name → Enable."
+    hinweis "     Enable heisst Privatsphaere AN — die Benennung ist andersherum,"
+    hinweis "     als man vermutet."
+    offen_merken
+  fi
 }
 
 # JSON-Zeichenkette aus beliebigem Text — Umbrueche und Anfuehrungszeichen
@@ -546,13 +635,19 @@ schritt_telegram() {
   [ "$hat_token" = ja ]  && ok "TELEGRAM_TOKEN liegt im Worker"  || fehlt "TELEGRAM_TOKEN fehlt"
   [ "$hat_secret" = ja ] && ok "TELEGRAM_SECRET liegt im Worker" || fehlt "TELEGRAM_SECRET fehlt"
 
+  # Vorhanden ist nicht dasselbe wie gueltig. Wer den Bot bei BotFather neu
+  # anlegt, hat danach zwei Geheimnisse im Worker, die beide auf einen Bot
+  # zeigen, den es nicht mehr gibt — und der erste Entwurf meldete genau dann
+  # "liegt im Worker" und sprang raus. Ein Einrichtungsskript, das nur anlegen
+  # und nie erneuern kann, laesst einen kaputten Zustand als heil durchgehen.
   if [ "$hat_token" = ja ] && [ "$hat_secret" = ja ]; then
-    hinweis "Ob der Webhook hängt, kann nur prüfen, wer den Token hat — das"
-    hinweis "Skript kennt ihn nicht (es hat ihn gesetzt, nicht gespeichert)."
-    hinweis "Selbst nachsehen: curl \"https://api.telegram.org/bot<TOKEN>/getWebhookInfo\""
-    return 0
+    hinweis "Ob sie zum richtigen Bot gehoeren, weiss nur, wer den Token hat —"
+    hinweis "das Skript hat ihn gesetzt, nicht gespeichert."
+    if [ "$NUR_PRUEFEN" = ja ]; then return 0; fi
+    ja_nein "Neu setzen? (noetig nach /newbot oder /revoke bei BotFather)" || return 0
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    offen_merken; return 0
   fi
-  if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; return 0; fi
 
   hinweis "In Telegram @BotFather anschreiben, /newbot, Namen vergeben."
   adresse "https://t.me/BotFather"
@@ -563,9 +658,26 @@ schritt_telegram() {
   # Das zweite Geheimnis weist Telegram gegenüber dem Worker aus. Die
   # Webhook-Adresse ist sonst nur durch Unkenntnis geschützt, und "niemand
   # kennt sie" ist keine Zugangskontrolle.
+  # Erst fragen, wem der Token gehoert — dann setzen. `getMe` kostet nichts und
+  # haette am 6. September sofort gezeigt, dass der Bot @knoellchen_bot heisst
+  # und nicht @knoellchenfrei_bot, wie ueberall in der Doku stand.
+  local wer
+  wer="$(curl -sS --max-time 20 "https://api.telegram.org/bot$token/getMe" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+r = d.get('result') or {}
+print(('@' + r['username']) if d.get('ok') and r.get('username') else '')" 2>/dev/null)"
+  if [ -z "$wer" ]; then
+    schlimm "Telegram kennt diesen Token nicht — nichts gesetzt."
+    offen_merken
+    return 0
+  fi
+  ok "Der Token gehoert zu $wer"
+
   local geheim; geheim="$(openssl rand -hex 24)"
-  printf '%s' "$token"  | wr secret put TELEGRAM_TOKEN  >/dev/null 2>&1 && ok "TELEGRAM_TOKEN gesetzt"
-  printf '%s' "$geheim" | wr secret put TELEGRAM_SECRET >/dev/null 2>&1 && ok "TELEGRAM_SECRET erzeugt und gesetzt"
+  printf '%s' "$token"  | wr secret put TELEGRAM_TOKEN  >/dev/null 2>&1 && ok "TELEGRAM_TOKEN gesetzt"  || { schlimm "TELEGRAM_TOKEN ging nicht"; offen_merken; }
+  printf '%s' "$geheim" | wr secret put TELEGRAM_SECRET >/dev/null 2>&1 && ok "TELEGRAM_SECRET erzeugt und gesetzt" || { schlimm "TELEGRAM_SECRET ging nicht"; offen_merken; }
 
   local basis
   basis="$(worker_adresse)"
@@ -589,6 +701,20 @@ schritt_telegram() {
     schlimm "Webhook abgelehnt: $antwort"
     offen_merken
   fi
+
+  # Gegenprobe beim Absender statt beim Empfaenger. `getWebhookInfo` nennt auch
+  # den letzten Zustellfehler — das ist die eine Stelle, an der man sieht, dass
+  # Telegram es versucht und der Worker es abweist.
+  curl -sS --max-time 20 "https://api.telegram.org/bot$token/getWebhookInfo" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+r = d.get('result') or {}
+print('      eingetragen: ' + (r.get('url') or '(keine)'))
+if r.get('last_error_message'):
+    print('      letzter Fehler: ' + str(r['last_error_message']))
+print('      wartende Nachrichten: ' + str(r.get('pending_update_count', '?')))
+" 2>/dev/null
 
   # Solange der Token noch in der Hand ist: Profil gleich mitsetzen. Danach ist
   # er weg — das Skript speichert ihn nicht.
@@ -667,17 +793,31 @@ schritt_kacheln() {
     ok "$TILES_DOMAIN zeigt auf den Eimer"
   else
     local zid=''
-    [ -n "${CLOUDFLARE_API_TOKEN:-}" ] && zid="$(zonen_id "$HAUPTDOMAIN")"
+    # Nach dem *Token* fragen, nicht nach der Umgebungsvariable: Es darf auch
+    # aus der Datei kommen. Der erste Entwurf prüfte nur die Variable und
+    # meldete deshalb "die Zone fehlt", während Schritt 5 sie fand.
+    dns_token >/dev/null 2>&1 && zid="$(zonen_id "$HAUPTDOMAIN")"
     if [ -z "$zid" ]; then
       fehlt "$TILES_DOMAIN noch nicht verbunden — die Zone $HAUPTDOMAIN fehlt (Schritt 5)"
       offen_merken
     elif [ "$NUR_PRUEFEN" = ja ]; then
       fehlt "$TILES_DOMAIN noch nicht verbunden"; offen_merken
     else
-      if wr r2 bucket domain add "$R2_EIMER" --domain "$TILES_DOMAIN" --zone-id "$zid" --min-tls 1.2 --force >/dev/null 2>&1; then
-        ok "$TILES_DOMAIN mit dem Eimer verbunden"
+      # `pending` heißt: Cloudflare hat die Delegierung noch nicht bestätigt.
+      # R2 antwortet dann mit `The specified zone id is not valid` — was nach
+      # einer falschen Kennung aussieht und Warten bedeutet. Das gehört
+      # unterschieden, sonst sucht jemand eine Stunde nach der richtigen ID.
+      local zstatus; zstatus="$(zonen_status "$HAUPTDOMAIN")"
+      if [ "$zstatus" != active ]; then
+        fehlt "$TILES_DOMAIN wartet — die Zone $HAUPTDOMAIN steht auf '$zstatus'"
+        hinweis "R2 verlangt eine aktive Zone. Aktiv wird sie, sobald die Registry"
+        hinweis "die neuen Nameserver meldet; im Dashboard beschleunigt das"
+        hinweis "*Check nameservers*."
+        offen_merken
       else
-        schlimm "ließ sich nicht verbinden"; offen_merken
+        tun "$TILES_DOMAIN mit dem Eimer verbunden" \
+          wr r2 bucket domain add "$R2_EIMER" --domain "$TILES_DOMAIN" \
+             --zone-id "$zid" --min-tls 1.2 --force || offen_merken
       fi
     fi
   fi
@@ -722,29 +862,129 @@ schritt_kacheln() {
 cf_api() {
   # cf_api <METHODE> <pfad> [daten]
   local methode="$1" pfad="$2" daten="${3:-}"
+  local t; t="$(dns_token)" || return 1
   if [ -n "$daten" ]; then
-    curl -sS -X "$methode" -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN:-}" \
+    curl -sS -X "$methode" -H "Authorization: Bearer $t" \
       -H 'Content-Type: application/json' -d "$daten" \
       "https://api.cloudflare.com/client/v4$pfad"
   else
-    curl -sS -X "$methode" -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN:-}" \
+    curl -sS -X "$methode" -H "Authorization: Bearer $t" \
       "https://api.cloudflare.com/client/v4$pfad"
   fi
 }
 
+# Cloudflare liefert Umlautdomains als `knölchenfrei.de` zurueck, waehrend
+# Registrare und Werkzeuge die Punycode-Form `xn--knlchenfrei-sfb.de` verlangen.
+# Der erste Entwurf verglich stur die Zeichenketten und meldete zwei
+# existierende Zonen als fehlend. Verglichen wird jetzt in einer Form.
+# Fehlermeldungen der Cloudflare-API lesbar machen.
+#
+# Vorher stand hier ein `grep -o '"message":"[^"]*"'`. Das traf nicht, weil die
+# API mit einem Leerzeichen nach dem Doppelpunkt antwortet — und so meldete das
+# Skript "ließ sich nicht anlegen:" mit einer *leeren* Begründung. Ausgerechnet
+# an der Stelle, die dafür da ist, die echte Meldung zu zeigen. JSON gehört von
+# einem JSON-Leser gelesen, nicht von einem Muster.
+# Hat die API-Antwort geklappt?
+#
+# Vorher stand hier dreimal `grep -q '"success":true'`. Das trifft nicht: Die
+# Cloudflare-API antwortet mit einem Leerzeichen nach dem Doppelpunkt. Die Folge
+# war die schlimmste Sorte Fehlmeldung — das Skript legte vier Weiterleitungen
+# an und meldete viermal "liess sich nicht anlegen". Wer das glaubt, sucht den
+# Fehler an einer Stelle, an der keiner ist.
+cf_geklappt() {
+  printf '%s' "$1" | python3 -c "
+import sys, json
+try: sys.exit(0 if json.load(sys.stdin).get('success') else 1)
+except Exception: sys.exit(1)
+" 2>/dev/null
+}
+
+cf_fehler() {
+  printf '%s' "$1" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print('      (keine lesbare Antwort)'); raise SystemExit
+for e in d.get('errors') or []:
+    print('      ' + str(e.get('message')))
+    for k in e.get('error_chain') or []:
+        print('        ' + str(k.get('message')))
+if not (d.get('errors')):
+    print('      (die API meldete keinen Fehler — dann lag es am Aufruf)')
+" 2>/dev/null
+}
+
 zonen_id() {
-  cf_api GET "/zones?name=$1" \
-    | tr '{' '\n' | grep -m1 "\"name\":\"$1\"" | grep -oE '"id":"[0-9a-f]{32}"' | head -1 | cut -d'"' -f4
+  local gesucht="$1"
+  cf_api GET "/zones?per_page=50" | python3 -c "
+import sys, json
+gesucht = sys.argv[1]
+def ascii_form(name):
+    try:
+        return name.encode('idna').decode('ascii')
+    except Exception:
+        return name.lower()
+ziel = ascii_form(gesucht)
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    raise SystemExit
+for z in (d.get('result') or []):
+    if ascii_form(z['name']) == ziel:
+        print(z['id']); break
+" "$gesucht" 2>/dev/null
+}
+
+# Zonenstatus — `pending` heisst: Cloudflare hat die Delegierung noch nicht
+# bestaetigt. Manches (eine eigene Domain am R2-Eimer) geht dann noch nicht,
+# und die Fehlermeldung dafuer lautet `The specified zone id is not valid` —
+# was nach einer falschen Kennung aussieht und Warten bedeutet.
+zonen_status() {
+  cf_api GET "/zones?per_page=50" | python3 -c "
+import sys, json
+gesucht = sys.argv[1]
+def ascii_form(name):
+    try:
+        return name.encode('idna').decode('ascii')
+    except Exception:
+        return name.lower()
+ziel = ascii_form(gesucht)
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    raise SystemExit
+for z in (d.get('result') or []):
+    if ascii_form(z['name']) == ziel:
+        print(z['status']); break
+" "$gesucht" 2>/dev/null
 }
 
 schritt_dns() {
   ueberschrift "5. Domains und DNS"
 
-  if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
-    fehlt "nicht möglich — Zonen verwaltet nur die REST-API, dafür braucht es"
-    hinweis "CLOUDFLARE_API_TOKEN in der Umgebung (eine wrangler-Anmeldung reicht nicht)."
-    hinweis "  export CLOUDFLARE_API_TOKEN=…"
-    hinweis "Das Token braucht dafür zusätzlich *Zone:Edit* und *DNS:Edit*."
+  if ! dns_token >/dev/null 2>&1; then
+    fehlt "nicht möglich — Zonen verwaltet nur die REST-API, und die braucht ein Token"
+    hinweis "(eine wrangler-Anmeldung reicht dafür nicht — sie kennt keine Zonen)."
+    hinweis "Entweder in die Umgebung:  export CLOUDFLARE_API_TOKEN=…"
+    hinweis "oder in eine Datei, dann steht es nicht in der Shell-History:"
+    hinweis "  pbpaste | tr -d '\\n\\r ' > $CF_TOKEN_DATEI && chmod 600 $CF_TOKEN_DATEI"
+    hinweis "Rechte: Zone:Read, DNS:Edit — und für die Weiterleitungen zusätzlich"
+    hinweis "Zone:Dynamic Redirect:Edit sowie Account:Account Rulesets:Edit."
+    offen_merken
+    return 0
+  fi
+
+  # Erst pruefen, ob das Token ueberhaupt angenommen wird. Sonst meldet jeder
+  # folgende Schritt "fehlt als Zone" — und das waere erfunden, nicht gemessen.
+  if ! cf_geklappt "$(cf_api GET "/user/tokens/verify")"; then
+    schlimm "Cloudflare nimmt das Token nicht an:"
+    cf_api GET "/user/tokens/verify" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+for e in d.get('errors', []): print('      ' + str(e.get('message')))
+" 2>/dev/null
     offen_merken
     return 0
   fi
@@ -771,12 +1011,12 @@ schritt_dns() {
     # https://knöllchenfrei.de läuft in eine Warnung statt in ein Redirect.
     local antwort
     antwort="$(cf_api POST '/zones' "{\"name\":\"$d\",\"account\":{\"id\":\"$konto\"},\"type\":\"full\"}")"
-    if printf '%s' "$antwort" | grep -q '"success":true'; then
+    if cf_geklappt "$antwort"; then
       ok "$d als Zone angelegt"
       neue="$neue $d"
     else
       schlimm "$d ließ sich nicht anlegen:"
-      printf '%s\n' "$antwort" | grep -o '"message":"[^"]*"' | cut -d'"' -f4 | sed 's/^/      /'
+      cf_fehler "$antwort"
       offen_merken
     fi
   done
@@ -799,27 +1039,150 @@ schritt_dns() {
   # Als Cloudflare *Redirect Rules*, nicht beim Registrar: Dessen
   # Weiterleitungen arbeiten oft mit Frames oder brechen auf der Apex-Domain
   # bei HTTPS.
+  #
+  # Geschrieben wird auf den **Phasen-Einstieg** (`PUT .../phases/…/entrypoint`),
+  # nicht mit `POST /rulesets`. Cloudflare erlaubt je Zone und Phase genau eine
+  # Regelmenge; ein zweites `POST` scheitert mit
+  #   'zone' is not a valid value for kind because exceeded maximum number of
+  #   zone rulesets for phase http_request_dynamic_redirect
+  # — was nach einem Fehler im Aufruf aussieht und "gibt es schon" heisst. `PUT`
+  # ist idempotent und damit das, was ein Skript braucht, das man zweimal
+  # laufen laesst.
   for d in $DOMAINS; do
     [ "$d" = "$HAUPTDOMAIN" ] && continue
     local id; id="$(zonen_id "$d")"
     [ -z "$id" ] && continue
-    local regeln
-    regeln="$(cf_api GET "/zones/$id/rulesets" || true)"
-    if printf '%s' "$regeln" | grep -q 'http_request_dynamic_redirect'; then
-      ok "$d hat eine Weiterleitung"
+
+    local vorhanden
+    vorhanden="$(cf_api GET "/zones/$id/rulesets" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+print(sum(1 for r in (d.get('result') or []) if r.get('phase') == 'http_request_dynamic_redirect'))
+" 2>/dev/null)"
+    if [ "${vorhanden:-0}" -gt 0 ]; then
+      ok "$d leitet auf $HAUPTDOMAIN weiter"
       continue
     fi
     fehlt "$d ohne Weiterleitung"
     if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+
+    # JSON von einem JSON-Schreiber bauen lassen. Der erste Entwurf setzte es
+    # aus Shell-Anfuehrungszeichen zusammen, mit vier Ebenen Maskierung um das
+    # `concat("https://…", …)` herum — unlesbar und beim ersten Umbau kaputt.
     local daten
-    daten="$(printf '%s' "{\"name\":\"Weiterleitung auf $HAUPTDOMAIN\",\"kind\":\"zone\",\"phase\":\"http_request_dynamic_redirect\",\"rules\":[{\"action\":\"redirect\",\"expression\":\"true\",\"description\":\"301 auf $HAUPTDOMAIN, Pfad erhalten\",\"action_parameters\":{\"from_value\":{\"status_code\":301,\"target_url\":{\"expression\":\"concat(\\\"https://$HAUPTDOMAIN\\\", http.request.uri.path)\"},\"preserve_query_string\":true}}}]}")"
+    daten="$(python3 -c "
+import json, sys
+ziel = sys.argv[1]
+print(json.dumps({
+  'rules': [{
+    'action': 'redirect',
+    'expression': 'true',
+    'description': f'301 auf {ziel}, Pfad erhalten',
+    'action_parameters': {'from_value': {
+      'status_code': 301,
+      'target_url': {'expression': f'concat(\"https://{ziel}\", http.request.uri.path)'},
+      'preserve_query_string': True,
+    }},
+  }]
+}))" "$HAUPTDOMAIN")"
+
     local antwort
-    antwort="$(cf_api POST "/zones/$id/rulesets" "$daten")"
-    if printf '%s' "$antwort" | grep -q '"success":true'; then
+    antwort="$(cf_api PUT "/zones/$id/rulesets/phases/http_request_dynamic_redirect/entrypoint" "$daten")"
+    if cf_geklappt "$antwort"; then
       ok "$d leitet jetzt mit 301 auf $HAUPTDOMAIN"
     else
       schlimm "$d: Weiterleitung ließ sich nicht anlegen:"
-      printf '%s\n' "$antwort" | grep -o '"message":"[^"]*"' | cut -d'"' -f4 | sed 's/^/      /'
+      cf_fehler "$antwort"
+      offen_merken
+    fi
+  done
+
+  # --- Altlasten aus dem alten DNS ---------------------------------------
+  #
+  # Beim Anlegen einer Zone uebernimmt Cloudflare die vorhandenen Eintraege des
+  # bisherigen Nameservers. Am 6. September kamen so drei A-Eintraege auf die
+  # Parkseite des Registrars mit — @, www und ein **Wildcard**. Waere die Zone
+  # aktiv geworden, haette die Hauptdomain die Parkseite ausgeliefert statt der
+  # App, und der Wildcard haette obendrein jede Subdomain abgefangen, auch
+  # `tiles.` und `api.`. Aufgefallen ist es nur, weil Cloudflare eine ganz
+  # andere Warnung anzeigte.
+  #
+  # Geloescht wird ausschliesslich, was auf eine bekannte Parkadresse zeigt —
+  # nichts anderes. Ein Skript, das fremde DNS-Eintraege nach Gutduenken
+  # aufraeumt, ist gefaehrlicher als der Zustand, den es behebt.
+  for d in $DOMAINS; do
+    local id; id="$(zonen_id "$d")"
+    [ -z "$id" ] && continue
+    local treffer
+    treffer="$(cf_api GET "/zones/$id/dns_records?per_page=100" | python3 -c "
+import sys, json
+parkadressen = {'185.181.104.242'}
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+for x in (d.get('result') or []):
+    if x.get('content') in parkadressen:
+        print(x['id'], x['type'], x['name'])
+" 2>/dev/null)"
+    [ -z "$treffer" ] && continue
+    fehlt "$d traegt Eintraege der Registrar-Parkseite"
+    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+    printf '%s\n' "$treffer" | while read -r rid typ name; do
+      if cf_geklappt "$(cf_api DELETE "/zones/$id/dns_records/$rid")"; then
+        ok "  $typ $name entfernt"
+      else
+        schlimm "  $typ $name liess sich nicht entfernen"
+      fi
+    done
+  done
+
+  # --- DNS-Eintraege der Weiterleitungsdomains ---------------------------
+  #
+  # Eine Redirect Rule feuert nur, wenn die Anfrage Cloudflare ueberhaupt
+  # erreicht — und dafuer braucht die Zone einen **proxied** Eintrag. Ohne den
+  # antwortet sie mit NXDOMAIN, und die Weiterleitung laeuft ins Leere. Am
+  # 6. September standen die vier Regeln fertig da und haetten nie gegriffen;
+  # aufgefallen ist es an Cloudflares eigener Warnung "Visitors cannot reach…".
+  #
+  # 192.0.2.1 stammt aus dem Dokumentationsbereich (RFC 5737) und wird nie
+  # kontaktiert: Cloudflare beantwortet die Anfrage selbst. Das ist der Weg,
+  # den Cloudflares Doku fuer reine Weiterleitungsdomains nennt.
+  #
+  # Dazu drei Eintraege gegen Spoofing. Diese Domains empfangen nie Mail — dann
+  # gehoert das auch gesagt, sonst kann jeder in ihrem Namen schreiben:
+  # Null-MX nach RFC 7505, SPF mit hartem `-all`, DMARC auf `reject`.
+  # **Nur fuer die Weiterleitungsdomains**: knoellchenfrei.de soll spaeter eine
+  # Vereinsadresse tragen, und ein Null-MX dort wuerde sie blockieren.
+  for d in $DOMAINS; do
+    [ "$d" = "$HAUPTDOMAIN" ] && continue
+    local id; id="$(zonen_id "$d")"
+    [ -z "$id" ] && continue
+    local anzahl
+    anzahl="$(cf_api GET "/zones/$id/dns_records?per_page=50" | python3 -c "
+import sys, json
+try: print(len((json.load(sys.stdin).get('result') or [])))
+except Exception: print(0)
+" 2>/dev/null)"
+    if [ "${anzahl:-0}" -gt 0 ]; then
+      ok "$d hat DNS-Einträge ($anzahl)"
+      continue
+    fi
+    fehlt "$d ohne DNS-Eintrag — die Weiterleitung würde ins Leere laufen"
+    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+    local fehler=0
+    for satz in \
+      "{\"type\":\"A\",\"name\":\"$d\",\"content\":\"192.0.2.1\",\"ttl\":1,\"proxied\":true}" \
+      "{\"type\":\"A\",\"name\":\"www.$d\",\"content\":\"192.0.2.1\",\"ttl\":1,\"proxied\":true}" \
+      "{\"type\":\"MX\",\"name\":\"$d\",\"content\":\".\",\"priority\":0,\"ttl\":1}" \
+      "{\"type\":\"TXT\",\"name\":\"$d\",\"content\":\"v=spf1 -all\",\"ttl\":1}" \
+      "{\"type\":\"TXT\",\"name\":\"_dmarc.$d\",\"content\":\"v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s\",\"ttl\":1}"
+    do
+      cf_geklappt "$(cf_api POST "/zones/$id/dns_records" "$satz")" || fehler=$((fehler + 1))
+    done
+    if [ "$fehler" -eq 0 ]; then
+      ok "$d: A für @ und www (proxied), dazu Null-MX, SPF und DMARC"
+    else
+      schlimm "$d: $fehler von 5 Einträgen ließen sich nicht setzen"
       offen_merken
     fi
   done
@@ -854,15 +1217,28 @@ schritt_github() {
   elif [ "$NUR_PRUEFEN" = ja ]; then
     fehlt "Beschreibung fehlt"; offen_merken
   else
-    # Wiki und Projects sind leer und bleiben es. Ein leerer Bereich sieht
-    # verlassener aus als keiner.
-    if gh api -X PATCH "repos/$REPO_SLUG" \
-         -f description="$REPO_BESCHREIBUNG" \
-         -F has_wiki=false -F has_projects=false >/dev/null 2>&1; then
-      ok "Beschreibung gesetzt, Wiki und Projects aus"
+    if gh api -X PATCH "repos/$REPO_SLUG" -f description="$REPO_BESCHREIBUNG" >/dev/null 2>&1; then
+      ok "Beschreibung gesetzt"
     else
       schlimm "ließ sich nicht setzen"; offen_merken
     fi
+  fi
+
+  # Eigener Zweig, nicht angehängt an die Beschreibung: Beim ersten Entwurf
+  # hingen diese beiden am `else` darüber — stand die Beschreibung schon, wurden
+  # sie nie geprüft. Genau so blieben Wiki und Projects an, während das Skript
+  # meldete, alles sei in Ordnung.
+  if printf '%s' "$json" | grep -q '"has_wiki":true' || printf '%s' "$json" | grep -q '"has_projects":true'; then
+    fehlt "Wiki oder Projects sind an — beide leer, und ein leerer Bereich sieht verlassener aus als keiner"
+    if [ "$NUR_PRUEFEN" = ja ]; then
+      offen_merken
+    elif gh api -X PATCH "repos/$REPO_SLUG" -F has_wiki=false -F has_projects=false >/dev/null 2>&1; then
+      ok "Wiki und Projects abgeschaltet"
+    else
+      schlimm "ließen sich nicht abschalten"; offen_merken
+    fi
+  else
+    ok "Wiki und Projects sind aus"
   fi
 
   local anzahl

@@ -109,6 +109,14 @@ jobs:
           # Zur Buildzeit, nicht zur Laufzeit: ohne diesen Wert läuft die App im
           # lokalen Modus und teilt nichts.
           VITE_API_BASE: ${{ steps.api.outputs.base }}
+          # Kein Secret, sondern eine Variable: Die Adresse des Kachelarchivs
+          # ist oeffentlich, sie steht in jedem Netzwerk-Request der App. Als
+          # `vars` steht sie im Lauf-Protokoll und laesst sich nachlesen; als
+          # Secret waere sie maskiert und man suchte im Dunkeln.
+          #
+          # Ohne den Wert bleibt es bei den Rasterkacheln von OpenStreetMap,
+          # und der Vektor-Teil liegt nicht einmal im Buendel.
+          VITE_TILES_URL: ${{ vars.VITE_TILES_URL }}
         run: pnpm --filter @knoellchenfrei/web build
 
       - name: Web-App ausrollen
@@ -134,7 +142,7 @@ jobs:
               echo
               echo "Unter *Settings → Secrets and variables → Actions* anlegen:"
               echo
-              echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
+              echo '- `CLOUDFLARE_API_TOKEN` — braucht genau zwei Rechte: *Workers Scripts:Edit* und *Cloudflare Pages:Edit*. Mehr nicht: Dieser Workflow rollt nur aus, angelegt wird lokal mit `scripts/einrichten.sh`.'
               echo '- `CLOUDFLARE_ACCOUNT_ID` — steht im Cloudflare-Dashboard rechts in der Seitenleiste'
               echo
               echo 'Beides setzt `./scripts/einrichten.sh ci` für dich, wenn `gh` angemeldet ist.'

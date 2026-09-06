@@ -61,6 +61,22 @@ test.describe('der Service Worker', () => {
     }
   })
 
+  // Der lokale Preview-Server liefert /index.html mit 200, Cloudflare Pages mit
+  // einem 308 auf /. Der Test oben kann das deshalb nicht sehen — er misst
+  // gegen den Preview-Server. Also wird die Ursache geprueft statt der Wirkung:
+  // Dieser eine Pfad gehoert nicht in den Vorrat, weil `cache.addAll` an einer
+  // Weiterleitung scheitert und `cache.add` sie einzeln verliert.
+  test('haelt kein ./index.html vor — Pages leitet den Pfad um', async ({ page }) => {
+    const source = await (await page.request.get('/sw.js')).text()
+    // Kommentare heraus, bevor gesucht wird. Der erste Anlauf dieses Tests
+    // schlug fehl, weil er den Pfad im *Kommentar* fand, der erklaert, warum er
+    // nicht im Vorrat steht — dieselbe Falle, die hier schon einmal einen
+    // Platzhalter in einem Kommentar getroffen hat.
+    const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+    expect(code).toContain("'./'")
+    expect(code).not.toMatch(/['"]\.\/index\.html['"]/)
+  })
+
   test('traegt eine ersetzte Build-Kennung, keinen Platzhalter', async ({ page }) => {
     const source = await (await page.request.get('/sw.js')).text()
     expect(source).not.toContain('__BUILD_ID__')
