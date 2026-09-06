@@ -810,6 +810,29 @@ cf_api() {
 # Registrare und Werkzeuge die Punycode-Form `xn--knlchenfrei-sfb.de` verlangen.
 # Der erste Entwurf verglich stur die Zeichenketten und meldete zwei
 # existierende Zonen als fehlend. Verglichen wird jetzt in einer Form.
+# Fehlermeldungen der Cloudflare-API lesbar machen.
+#
+# Vorher stand hier ein `grep -o '"message":"[^"]*"'`. Das traf nicht, weil die
+# API mit einem Leerzeichen nach dem Doppelpunkt antwortet — und so meldete das
+# Skript "ließ sich nicht anlegen:" mit einer *leeren* Begründung. Ausgerechnet
+# an der Stelle, die dafür da ist, die echte Meldung zu zeigen. JSON gehört von
+# einem JSON-Leser gelesen, nicht von einem Muster.
+cf_fehler() {
+  printf '%s' "$1" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print('      (keine lesbare Antwort)'); raise SystemExit
+for e in d.get('errors') or []:
+    print('      ' + str(e.get('message')))
+    for k in e.get('error_chain') or []:
+        print('        ' + str(k.get('message')))
+if not (d.get('errors')):
+    print('      (die API meldete keinen Fehler — dann lag es am Aufruf)')
+" 2>/dev/null
+}
+
 zonen_id() {
   local gesucht="$1"
   cf_api GET "/zones?per_page=50" | python3 -c "
@@ -864,7 +887,8 @@ schritt_dns() {
     hinweis "Entweder in die Umgebung:  export CLOUDFLARE_API_TOKEN=…"
     hinweis "oder in eine Datei, dann steht es nicht in der Shell-History:"
     hinweis "  pbpaste | tr -d '\\n\\r ' > $CF_TOKEN_DATEI && chmod 600 $CF_TOKEN_DATEI"
-    hinweis "Rechte: Zone:Read, DNS:Edit — und Zone:Config:Edit für die Weiterleitungen."
+    hinweis "Rechte: Zone:Read, DNS:Edit — und für die Weiterleitungen zusätzlich"
+    hinweis "Zone:Dynamic Redirect:Edit sowie Account:Account Rulesets:Edit."
     offen_merken
     return 0
   fi
@@ -910,7 +934,7 @@ for e in d.get('errors', []): print('      ' + str(e.get('message')))
       neue="$neue $d"
     else
       schlimm "$d ließ sich nicht anlegen:"
-      printf '%s\n' "$antwort" | grep -o '"message":"[^"]*"' | cut -d'"' -f4 | sed 's/^/      /'
+      cf_fehler "$antwort"
       offen_merken
     fi
   done
@@ -953,7 +977,7 @@ for e in d.get('errors', []): print('      ' + str(e.get('message')))
       ok "$d leitet jetzt mit 301 auf $HAUPTDOMAIN"
     else
       schlimm "$d: Weiterleitung ließ sich nicht anlegen:"
-      printf '%s\n' "$antwort" | grep -o '"message":"[^"]*"' | cut -d'"' -f4 | sed 's/^/      /'
+      cf_fehler "$antwort"
       offen_merken
     fi
   done
