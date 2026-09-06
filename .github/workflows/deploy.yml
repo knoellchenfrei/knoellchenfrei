@@ -109,6 +109,14 @@ jobs:
           # Zur Buildzeit, nicht zur Laufzeit: ohne diesen Wert läuft die App im
           # lokalen Modus und teilt nichts.
           VITE_API_BASE: ${{ steps.api.outputs.base }}
+          # Kein Secret, sondern eine Variable: Die Adresse des Kachelarchivs
+          # ist oeffentlich, sie steht in jedem Netzwerk-Request der App. Als
+          # `vars` steht sie im Lauf-Protokoll und laesst sich nachlesen; als
+          # Secret waere sie maskiert und man suchte im Dunkeln.
+          #
+          # Ohne den Wert bleibt es bei den Rasterkacheln von OpenStreetMap,
+          # und der Vektor-Teil liegt nicht einmal im Buendel.
+          VITE_TILES_URL: ${{ vars.VITE_TILES_URL }}
         run: pnpm --filter @knoellchenfrei/web build
 
       - name: Web-App ausrollen
