@@ -19,31 +19,16 @@
 # Wer nicht sofort zugreift, sieht sie nie.
 #
 # ---------------------------------------------------------------------------
-# WARUM BEIM npm-EINTRAG TROTZDEM KEIN `cooldown` STEHT
+# EIN FALLSTRICK, DER EINE SITZUNG GEKOSTET HAT
 #
-# Weil er dort nicht funktioniert, und zwar laut — der erste Lauf am
-# 6. September 2026 ist daran gescheitert:
-#
-#   pnpm update typescript@7.0.2 --lockfile-only --no-save -r \
-#       --config.minimumReleaseAge=10080
-#   ERR_PNPM_NO_MATURE_MATCHING_VERSION  Version 1.63.0 (released 41 hours ago)
-#   of @playwright/test does not meet the minimumReleaseAge constraint
-#
-# Dependabot übersetzt `cooldown` in pnpms `minimumReleaseAge` (10080 Minuten =
-# sieben Tage) und legt es über den **ganzen** Auflösungslauf. pnpms
-# Umsetzung prüft aber erst nach dem Auflösen und **fällt nicht auf eine
-# ältere passende Version zurück**, sondern bricht ab. Ein einziges Paket im
-# Baum, das jünger ist als das Fenster — hier `@playwright/test`, 41 Stunden
-# alt und im Lockfile längst festgeschrieben —, lässt damit jedes Update
-# scheitern. Bekannter, offener Konflikt: dependabot-core#13165.
-#
-# Der Eintrag für GitHub Actions behält seinen Cooldown: Dort gibt es kein
-# pnpm und damit auch das Problem nicht.
-#
-# Wiedervorlage: Sobald pnpm bei `minimumReleaseAge` auf eine ältere Version
-# zurückfällt statt abzubrechen, gehört der Block hier wieder hinein. Bis
-# dahin greift Dependabots eigene Drei-Tage-Voreinstellung, die serverseitig
-# wirkt und pnpm nicht behelligt.
+# Der Cooldown funktioniert mit pnpm nur, weil `app/pnpm-workspace.yaml` eine
+# Ausnahmeliste trägt. Dependabot übersetzt ihn in pnpms `minimumReleaseAge`
+# und legt ihn über den ganzen Auflösungslauf; pnpm prüft erst nach dem
+# Auflösen und bricht ab, statt zurückzufallen. Am 6. September sind daran
+# alle sechs Hauptversions-Updates gescheitert — und das Herausnehmen des
+# Cooldowns half **nicht**, weil auch die eingebaute Drei-Tage-Vorgabe
+# durchgereicht wird. Die Begründung im Einzelnen steht dort, wo die Abhilfe
+# steht: in `app/pnpm-workspace.yaml`.
 
 version: 2
 
@@ -69,7 +54,15 @@ updates:
     # der Regel zwei Sammel-PRs, der Rest sind einzelne Hauptversionssprünge —
     # und die sollen nicht gegenseitig den Platz wegnehmen.
     open-pull-requests-limit: 10
-    # Kein `cooldown` — Begründung im Kopf dieser Datei.
+    cooldown:
+      default-days: 7
+      # Patches sind selten der Weg für einen Angriff und meistens der Weg aus
+      # einem Fehler heraus. Drei Tage reichen.
+      semver-patch-days: 3
+      semver-minor-days: 7
+      # Hauptversionen liest ohnehin ein Mensch. Drei Wochen kosten nichts und
+      # ersparen es, einem gerade erschienenen Major hinterherzuräumen.
+      semver-major-days: 21
     groups:
       # Nur Minor und Patch werden gebündelt. Hauptversionen bleiben einzeln:
       # MapLibre, React, Vite und Playwright springen nicht folgenlos, und in

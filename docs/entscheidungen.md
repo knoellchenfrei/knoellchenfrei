@@ -217,23 +217,41 @@ den Lärm begrenzen, ohne die Sicherheit zu senken:
   Laufzeitabhängigkeiten zusammen. Hauptversionen bleiben einzeln: MapLibre,
   React, Vite und Playwright springen nicht folgenlos, und in einem Sammel-PR
   mit zwölf anderen Zeilen liest die niemand.
-- **Cooldown — geplant, am ersten Lauf gescheitert, und deshalb nur noch bei
-  GitHub Actions.** Die Absicht war eine Woche Wartezeit gegen die
-  npm-Lieferkette: Der häufigste Angriff ist eine übernommene
-  Paketpflegerschaft, deren bösartige Version binnen ein bis zwei Tagen
-  zurückgezogen wird. Und sie hätte nichts gekostet, denn laut GitHub-Doku ist
-  `cooldown` „only available for version updates, not security updates".
+- **Cooldown — am ersten Lauf gescheitert, dann repariert statt aufgegeben.**
+  Die Absicht war eine Woche Wartezeit gegen die npm-Lieferkette: Der häufigste
+  Angriff ist eine übernommene Paketpflegerschaft, deren bösartige Version
+  binnen ein bis zwei Tagen zurückgezogen wird. Und sie kostet nichts, denn
+  laut GitHub-Doku ist `cooldown` „only available for version updates, not
+  security updates".
 
-  **Nur funktioniert er mit pnpm nicht.** Dependabot übersetzt ihn in pnpms
-  `minimumReleaseAge` und legt es über den ganzen Auflösungslauf; pnpm prüft
-  erst nach dem Auflösen und bricht ab, statt auf eine ältere passende Version
-  zurückzufallen. Ein einziges zu junges Paket im Baum — beim ersten Lauf
-  `@playwright/test`, 41 Stunden alt und im Lockfile längst festgeschrieben —
-  lässt jedes Update scheitern. Offener Konflikt, `dependabot-core#13165`.
+  **Nur verträgt er sich mit pnpm nicht von allein.** Dependabot übersetzt ihn
+  in pnpms `minimumReleaseAge` und legt es über den ganzen Auflösungslauf; pnpm
+  prüft erst nach dem Auflösen und bricht ab, statt auf eine ältere passende
+  Version zurückzufallen. Ein einziges zu junges Paket im Baum — beim ersten
+  Lauf `@playwright/test`, 41 Stunden alt und im Lockfile längst
+  festgeschrieben — lässt jedes Update scheitern. Offene Konflikte,
+  `dependabot-core#13165` und `pnpm#11203`.
 
-  Also: kein Cooldown am npm-Eintrag, Dependabots serverseitige
-  Drei-Tage-Voreinstellung greift trotzdem. Bei GitHub Actions bleibt er, dort
-  gibt es kein pnpm. Wiedervorlage, sobald pnpm zurückfällt statt abzubrechen.
+  **Den Cooldown herauszunehmen half nicht.** Der zweite Lauf scheiterte
+  genauso, und im Protokoll stand, warum: Dependabot reicht auch ohne
+  Konfiguration seine eingebaute Drei-Tage-Vorgabe als
+  `--config.minimumReleaseAge=4320` durch. Die Einstellung ist also nicht
+  abwählbar, nur überschreibbar.
+
+  **Die Abhilfe steht in `app/pnpm-workspace.yaml`:**
+  `minimumReleaseAgeExclude: ['*']`. Lokal wirkungslos, weil wir
+  `minimumReleaseAge` selbst nie setzen; für Dependabot hebt sie die
+  Nebenwirkung auf den restlichen Baum auf. Der Schutz bleibt, denn welche
+  Version überhaupt vorgeschlagen wird, entscheidet Dependabot serverseitig —
+  pnpm schreibt danach nur noch das Lockfile.
+
+  Warum der Stern und keine Namensliste: nachgemessen, in einem
+  Wegwerf-Worktree mit einem künstlichen 90-Tage-Fenster. Ohne Ausnahme
+  scheiterte der Lauf an `typescript`; mit `typescript` als einziger Ausnahme
+  an `@typescript/typescript-linux-ppc64`, einer transitiven Abhängigkeit, die
+  niemand von Hand pflegt; mit dem Stern lief er durch. Wiedervorlage bei
+  pnpm 11: Das kennt `minimumReleaseAgeStrict: false` — genau den Rückfall,
+  der hier fehlt. 10.33 kennt ihn nicht.
 
 **Ein Eintrag für den ganzen pnpm-Workspace.** `directory: /app` ist die Wurzel
 mit `pnpm-workspace.yaml`; von dort erfasst Dependabot die vier Pakete darunter

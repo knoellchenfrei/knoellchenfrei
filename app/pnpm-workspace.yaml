@@ -1,3 +1,40 @@
 packages:
   - 'packages/*'
   - 'apps/*'
+
+# Hebt pnpms `minimumReleaseAge` auf — für alle Pakete.
+#
+# Wir setzen `minimumReleaseAge` selbst **nicht**. Ohne die Einstellung ist
+# diese Ausnahmeliste wirkungslos, für `pnpm install` hier und in der CI ändert
+# sich also nichts. Sie steht für einen einzigen Fall: **Dependabot**.
+#
+# Dependabot übersetzt seinen `cooldown` in `--config.minimumReleaseAge` und
+# legt ihn über den ganzen Auflösungslauf — auch dann, wenn in der
+# `dependabot.yml` gar kein Cooldown steht, denn seit Mitte 2026 gelten drei
+# Tage als Voreinstellung. pnpm prüft das Alter aber erst **nach** dem
+# Auflösen und fällt nicht auf eine ältere passende Version zurück, sondern
+# bricht ab. Ein einziges zu junges Paket im Baum lässt damit jedes Update
+# scheitern:
+#
+#   ERR_PNPM_NO_MATURE_MATCHING_VERSION  Version 1.63.0 (released 42 hours
+#   ago) of @playwright/test does not meet the minimumReleaseAge constraint
+#
+# So sind am 6. September alle sechs Hauptversions-Updates ausgefallen.
+# Bekannter offener Konflikt: `dependabot-core#13165`, `pnpm#11203`.
+#
+# Warum der Stern und nicht eine Liste: nachgemessen. Mit einem künstlichen
+# Fenster von 90 Tagen scheiterte der Lauf zuerst an `typescript`; nach dessen
+# Ausnahme scheiterte er an `@typescript/typescript-linux-ppc64` — einer
+# transitiven Abhängigkeit, die niemand von Hand pflegt. Eine Namensliste ist
+# hier Sisyphosarbeit, der Stern nicht.
+#
+# Was das **nicht** kostet: Dependabots eigene Wartezeit bleibt wirksam. Sie
+# entscheidet serverseitig, *welche* Version überhaupt vorgeschlagen wird;
+# pnpm schreibt danach nur noch das Lockfile. Aufgehoben wird also nur die
+# Nebenwirkung auf den restlichen Baum, nicht der Schutz.
+#
+# Wiedervorlage: pnpm 11 kennt `minimumReleaseAgeStrict: false` — genau den
+# Rückfall, der hier fehlt. pnpm 10.33 kennt ihn nicht (`pnpm config get`
+# liefert `undefined`). Mit dem Sprung auf 11 gehört diese Zeile geprüft.
+minimumReleaseAgeExclude:
+  - '*'

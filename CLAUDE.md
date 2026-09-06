@@ -123,15 +123,22 @@ wiederholt.
   Konfiguration in `.github/dependabot.yml`. Zwei Dinge daraus, die man leicht
   falsch annimmt: `cooldown` gilt **nur für Versionsupdates**, nie für
   Sicherheitsupdates. Und ohne gesetzten `cooldown` wartet Dependabot trotzdem
-  drei Tage — serverseitig, ohne pnpm zu behelligen.
-- **Kein `cooldown` am npm-Eintrag von Dependabot.** Er wird in pnpms
-  `minimumReleaseAge` übersetzt und über den ganzen Auflösungslauf gelegt;
-  pnpm prüft aber erst nach dem Auflösen und **fällt nicht auf eine ältere
-  passende Version zurück**, sondern bricht ab. Ein einziges Paket im Baum,
-  das jünger ist als das Fenster, lässt damit jedes Update scheitern — beim
-  ersten Lauf war es `@playwright/test`, 41 Stunden alt und im Lockfile längst
-  festgeschrieben. Offener Konflikt: `dependabot-core#13165`. Der Eintrag für
-  GitHub Actions behält seinen Cooldown, dort gibt es kein pnpm.
+  drei Tage — die Vorgabe ist nicht abwählbar, sie wird auch dann an pnpm
+  durchgereicht.
+- **Dependabots `cooldown` braucht mit pnpm eine Ausnahmeliste.** Er wird in
+  pnpms `minimumReleaseAge` übersetzt und über den ganzen Auflösungslauf
+  gelegt; pnpm prüft aber erst nach dem Auflösen und **fällt nicht auf eine
+  ältere passende Version zurück**, sondern bricht ab. Ein einziges Paket im
+  Baum, das jünger ist als das Fenster, lässt jedes Update scheitern — beim
+  ersten Lauf `@playwright/test`, 41 Stunden alt und im Lockfile längst
+  festgeschrieben. Den Cooldown *herauszunehmen* half nicht: Dependabot reicht
+  auch seine eingebaute Drei-Tage-Vorgabe durch. Die Abhilfe ist
+  `minimumReleaseAgeExclude: ['*']` in `app/pnpm-workspace.yaml` — wirkungslos
+  lokal, weil wir `minimumReleaseAge` selbst nie setzen. Warum der Stern und
+  keine Namensliste: nachgemessen, die Ausnahme für `typescript` verschob den
+  Abbruch nur auf eine transitive Abhängigkeit. Offene Konflikte:
+  `dependabot-core#13165`, `pnpm#11203`. Wiedervorlage bei pnpm 11, das
+  `minimumReleaseAgeStrict: false` kennt.
 - **In einem `on: push` nie `branches` und `branches-ignore` zusammen.**
   GitHub Actions lehnt das ab, und der Workflow läuft dann gar nicht — ohne
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
