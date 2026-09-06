@@ -208,6 +208,29 @@ $W deploy
 Bequemer ist der Workflow: *Actions → Cloudflare einrichten → Run workflow*
 macht dieselben vier Schritte und trägt die IDs selbst ein.
 
+#### Frische Datenbank oder bestehende — die Stadtspalte
+
+Seit der Worker beide Städte bedient, tragen `sightings` und `marks` eine
+Spalte `city`. Welcher der beiden Wege gilt, entscheidet allein, ob die
+Datenbank schon existiert:
+
+- **Frisch angelegt: nichts tun.** `schema.sql` führt die Spalte im
+  `CREATE TABLE`; wer die Datenbank gerade erst erzeugt hat, ist fertig.
+- **Bestehend: einmal die Migration einspielen.** `schema.sql` allein reicht
+  dafür nicht — `CREATE TABLE IF NOT EXISTS` ist auf einer vorhandenen Tabelle
+  ein No-op, und SQLite kennt kein `ADD COLUMN IF NOT EXISTS`. Die Spalte käme
+  also nie an, und der Worker liefe gegen eine Tabelle ohne sie
+  (`no such column: city` bei jeder Meldung):
+
+  ```bash
+  pnpm --filter @knoellchenfrei/api exec wrangler d1 execute knoellchenfrei \
+    --file=migrations/001-stadt.sql --remote
+  ```
+
+  Genau einmal: Ein zweiter Lauf bricht mit `duplicate column name: city` ab.
+  Solange die Datenbank leer ist, ist Löschen und Neuanlegen die gleichwertige
+  Alternative — dann genügt wieder `schema.sql`.
+
 Danach `ALLOWED_ORIGINS` in `wrangler.toml` auf die Domain der Web-App setzen.
 Ohne diesen Wert antwortet der Worker ohne CORS-Header — er scheitert
 absichtlich geschlossen statt mit einem Wildcard zu öffnen.
@@ -279,36 +302,49 @@ Ohne diese Variable läuft die App im lokalen Modus: Meldungen bleiben auf dem
 Gerät, und die Live-Zähler zeigen „nur dieses Gerät". Das ist kein Fehler,
 sondern die ehrliche Anzeige dessen, was ohne Backend zählbar ist.
 
-### Der Worker kennt nur **eine** Stadt — die App nicht mehr
+### Zwei Städte im Worker
 
-Das ist die offene Kante der Hamburg-Arbeit, und sie fällt genau dann auf, wenn
-der Worker scharf geht. `Env.CITY` wählt die Stadt, ohne Wert bleibt es Berlin;
-`withinCity` weist alles ab, was außerhalb liegt. Die App dagegen kann seit dem
-6. September zwischen Berlin und Hamburg umschalten. Zusammen heißt das:
+Bis zum 6. September 2026 war der Worker auf **eine** Stadt konfiguriert
+(`Env.CITY`, ohne Wert Berlin), während die App bereits zwischen Berlin und
+Hamburg umschaltete. Eine Hamburger Meldung bekam
+**`422 position outside Berlin`** — in der App sah das aus, als sei das Melden
+kaputt. Das ist behoben; `CITY` gibt es nicht mehr.
 
-- Eine Meldung aus Hamburg beantwortet der Berlin-Worker mit
-  **`422 position outside Berlin`**. In der App sieht das aus, als sei das
-  Melden kaputt.
-- Umgekehrt filtert `GET /sightings` **nicht** nach Stadt — die Antwort enthält
-  alles, was noch lebt. Auf der Karte fällt das nicht auf, weil 250 km
-  dazwischen liegen; die Live-Zähler zählen aber beide Städte zusammen.
-- Dasselbe gilt für `marks`: Das 250-Meter-Raster ist global, Berliner und
-  Hamburger Felder kollidieren also nicht — aber der Bericht mischt sie.
+Entschieden wurde die **Spalte**, nicht eine Datenbank je Stadt. FreiFahren
+fährt je Stadt eine eigene D1 (`api-worker-db-eu`, `…-hamburg-eu`,
+`…-leipzig`) *und* je einen Worker; für zwei Städte auf dem Free Tier ist das
+n-mal Betrieb ohne Gegenwert.
 
-`schema.sql` hat **keine Stadtspalte**. Zwei Wege, beide vertretbar:
-FreiFahren betreibt **eine D1 je Stadt** (`api-worker-db-eu`,
-`…-hamburg-eu`, `…-leipzig`) und damit auch je einen Worker. Der kleinere
-Eingriff wäre eine Spalte `city`, aus der Position abgeleitet, mit einem
-Filter beim Lesen. Bis das entschieden ist, gilt: **Der Worker ist eine
-Berlin-Instanz.** Steht als offener Punkt in [todo.md](todo.md).
+Wie es jetzt läuft:
+
+- **Schreiben:** Die Stadt kommt aus der Position (`cityAt` in
+  `core/city.ts`) — sie liegt in einer der `reportBounds` oder in keiner. In
+  keiner heißt `422 position outside Berlin, Hamburg`; die Meldung nennt alle
+  bekannten Städte, statt von der Ursache wegzuführen.
+- **Lesen:** `GET /sightings` und `GET /marks` nehmen `?city=<schlüssel>`.
+  Ein **fehlender** Parameter bleibt Berlin — der einzige erlaubte Rückfall,
+  weil das die Stadt ist, die heute ausgeliefert wird. Ein **unbekannter**
+  Schlüssel ist ein `400` mit den bekannten Schlüsseln im Text, kein stiller
+  Rückfall.
+- **Telegram:** Ein gesendeter Standort trägt keine Stadt im Kontext, also
+  wird sie aus dem Punkt abgeleitet; `parseTelegramUpdate` bekommt alle Städte
+  statt einer.
+- **`visits` bleibt ohne Stadt.** Ein Ping trägt keine Position — die Stadt
+  wäre nicht abgeleitet, sondern vom Client behauptet, und das prüft der
+  Worker nirgends sonst. Die Zahl beantwortet ohnehin „wie viele benutzen
+  knoellchenfrei gerade", nicht „wie viele in Berlin".
+
+Offen bleibt eins: Die Web-App schickt `?city=` noch **nicht** mit und liest
+damit Berlin, auch wenn Hamburg eingestellt ist. Steht in
+[todo.md](todo.md) unter Punkt 8.
 
 ### Was im Worker liegt
 
 | Tabelle | Inhalt | Aufbewahrung |
 | --- | --- | --- |
-| `sightings` | Position (~10 m), Zeit (5-Min-Raster), Zähler | 90 Minuten |
+| `sightings` | Position (~10 m), Stadt, Zeit (5-Min-Raster), Zähler | 90 Minuten |
 | `votes` | eine Stimme je Client und Meldung | solange die Meldung lebt |
-| `marks` | `{Tag, Stunde, 250-m-Feld}` für Heatmap und Report | 28 Tage |
+| `marks` | `{Tag, Stunde, Stadt, 250-m-Feld}` für Heatmap und Report | 28 Tage |
 | `visits` | eine Zeile je Gerät und Tag, Zeitstempel wird überschrieben | 2 Tage |
 
 `visits` beantwortet beide Live-Zahlen ohne Anwesenheitskanal: „gerade offen"

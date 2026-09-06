@@ -434,33 +434,69 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
       Das setzt voraus, dass die Zone schon bei Cloudflare liegt, und braucht
       die `CNAME`-Datei aus Punkt 3. Vorher lohnt es nicht.
 
-## 8. Der Worker kennt nur eine Stadt — **ich**
+## 8. Der Worker kennt zwei Städte — erledigt am 6. September 2026
 
-Beim Durchsehen von [hosting.md](hosting.md) aufgefallen, und es fällt erst
-auf, wenn der Worker scharf geht: Die App schaltet seit dem 6. September
-zwischen Berlin und Hamburg um, der Worker nicht. `Env.CITY` wählt **eine**
-Stadt (ohne Wert: Berlin), `withinCity` weist alles andere ab, und
-`schema.sql` hat keine Stadtspalte.
+Beim Durchsehen von [hosting.md](hosting.md) aufgefallen, und es wäre erst
+aufgefallen, wenn der Worker scharf geht: Die App schaltet seit dem
+6. September zwischen Berlin und Hamburg um, der Worker nicht. `Env.CITY`
+wählte **eine** Stadt (ohne Wert: Berlin), `withinCity` wies alles andere ab,
+`schema.sql` hatte keine Stadtspalte. Eine Hamburger Meldung bekam
+**`422 position outside Berlin`** — in der App sähe das aus, als sei das
+Melden kaputt.
 
-- Eine Hamburger Meldung bekommt **`422 position outside Berlin`**. In der App
-  sieht das aus, als sei das Melden kaputt — genau der stille Fehler, gegen den
-  `core/city.ts` angetreten ist, nur eine Ebene weiter außen.
-- `GET /sightings` filtert nicht nach Stadt. Auf der Karte fällt das nicht auf
-  (250 km dazwischen), in den Live-Zählern und im Kontroll-Bericht schon.
+**Geworden ist es eine Spalte `city`, keine Datenbank je Stadt.** FreiFahren
+fährt je Stadt eine eigene D1 *und* einen eigenen Worker; für zwei Städte auf
+dem Free Tier ist das n-mal Betrieb ohne Gegenwert.
 
-- [ ] **Entscheiden: eine D1 je Stadt oder eine Spalte `city`.** FreiFahren
-      fährt je Stadt eine eigene Datenbank *und* einen eigenen Worker — sauber
-      getrennt, aber n-mal Betrieb. Der kleinere Eingriff ist eine Spalte,
-      beim Schreiben aus der Position abgeleitet (welche `reportBounds`
-      enthalten sie — keine, dann 422), beim Lesen als Filter. Für zwei Städte
-      auf dem Free Tier spricht mehr für die Spalte.
-- [ ] Danach: `ALTER TABLE`-Zeile ins Schema, Filter in `/sightings`,
-      `/marks` und den Zählern, `CITY` aus `wrangler.toml` entfernen, und je
-      ein Test für die Grenze zwischen den Städten.
+- [x] **Stadt aus der Position, nicht aus der Konfiguration.** Neu in
+      `core/city.ts`: `cityAt(lon, lat)` gibt die erste Stadt zurück, deren
+      `reportBounds` den Punkt enthält — und `undefined`, wenn keine passt.
+      Kein Rückfall auf Berlin. Elf neue Unit-Tests, darunter ein Punkt
+      zwischen beiden Städten, je einer knapp innerhalb und außerhalb, und
+      einer, der festhält, dass sich keine zwei Boxen überlappen (sonst wäre
+      „die erste passende Stadt" eine Auslosung).
+- [x] **Schreiben:** `createSighting` und der Telegram-Pfad leiten die Stadt
+      aus der Position ab und schreiben sie in `sightings` **und** `marks`.
+      Passt keine, ist die Antwort `422 position outside Berlin, Hamburg` —
+      die Meldung nennt alle bekannten Städte statt einer.
+- [x] **Lesen:** `GET /sightings` und `GET /marks` nehmen `?city=<schlüssel>`.
+      Fehlender Parameter → Berlin (der einzige erlaubte Rückfall);
+      unbekannter Schlüssel → `400` mit den bekannten Schlüsseln im Text.
+- [x] **Telegram:** `parseTelegramUpdate` bekommt jetzt *alle* Städte statt
+      einer und trägt die gefundene im `report`-Intent. Ein Standort außerhalb
+      aller Städte wird abgelehnt und nennt beide.
+- [x] **`CITY` ist weg** — aus `Env` und aus dem Code. Der Worker ist nicht
+      mehr auf eine Stadt konfigurierbar. (In `wrangler.toml` stand es nie.)
+- [x] **`visits` bleibt ohne Stadt** — begründet, nicht vergessen: Ein Ping
+      trägt keine Position, die Stadt wäre vom Client behauptet statt
+      abgeleitet, und die Zahl beantwortet „wie viele benutzen
+      knoellchenfrei gerade", nicht „wie viele in Berlin". Die Begründung
+      steht bei `recordVisit` in `worker.ts` und in `schema.sql`.
 
-Solange das offen ist, gilt: **Der Worker ist eine Berlin-Instanz.** Das ist
-kein Drama, solange nichts öffentlich ist — aber es gehört vor den ersten
-geteilten Link erledigt, nicht danach.
+Was noch offen ist:
+
+- [ ] **Migration auf der bestehenden D1 einspielen** — **du** oder ich,
+      sobald der Einrichtungslauf durch ist. Die Datenbank vom 6. September,
+      18:57 Uhr trägt die Spalte noch nicht, und `schema.sql` bringt sie ihr
+      auch nicht bei: `CREATE TABLE IF NOT EXISTS` ist auf einer vorhandenen
+      Tabelle ein No-op, SQLite kennt kein `ADD COLUMN IF NOT EXISTS`.
+
+      ```bash
+      cd app
+      pnpm --filter @knoellchenfrei/api exec wrangler d1 execute knoellchenfrei \
+        --file=migrations/001-stadt.sql --remote
+      ```
+
+      Genau einmal — ein zweiter Lauf bricht mit `duplicate column name` ab.
+      Solange die Datenbank leer ist, tut es auch das Löschen und Neuanlegen;
+      heute wäre das folgenlos, weil noch keine Zeile drinsteht. Ohne das eine
+      oder das andere antwortet jede Meldung mit `no such column: city`.
+- [ ] **Die Web-App schickt `?city=` noch nicht mit.** Sie liest damit
+      Berlin, auch wenn Hamburg eingestellt ist — der Rückfall greift, wie er
+      soll, aber falsch für den Nutzer. Zwei Zeilen in
+      `apps/web/src/sighting-backend.ts` (`/sightings` und `/marks`), dazu
+      ein E2E-Lauf. Bewusst nicht im selben Zug erledigt: Am Web-Teil wurde
+      parallel gearbeitet.
 
 ## 9. Kleinkram — **ich**
 

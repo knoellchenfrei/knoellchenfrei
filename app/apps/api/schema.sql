@@ -7,6 +7,14 @@ CREATE TABLE IF NOT EXISTS sightings (
   id            TEXT PRIMARY KEY,
   lon           REAL NOT NULL,
   lat           REAL NOT NULL,
+  -- Stadtschlüssel aus `core/city.ts` (berlin | hamburg). Beim Schreiben aus
+  -- der Position abgeleitet, nie vom Client übernommen; eine Position, die in
+  -- keine Stadt fällt, wird mit 422 abgewiesen und legt keine Zeile an.
+  --
+  -- Ohne Vorgabewert, obwohl die Migration für bestehende Zeilen einen setzt:
+  -- Hier soll ein vergessenes Feld im Code auffallen, statt still zu Berlin zu
+  -- werden.
+  city          TEXT NOT NULL,
   reported_at   INTEGER NOT NULL,
   confirmations INTEGER NOT NULL DEFAULT 0,
   disputes      INTEGER NOT NULL DEFAULT 0,
@@ -15,8 +23,11 @@ CREATE TABLE IF NOT EXISTS sightings (
   client_hash   TEXT
 );
 
--- Reads are always "everything still alive", so the age index carries them.
+-- Reads are always "everything still alive", so the age index carries them —
+-- und seit dem Stadtfilter zusätzlich nach Stadt. Der reine Altersindex bleibt
+-- daneben stehen: Das stündliche Löschen fragt ohne Stadt.
 CREATE INDEX IF NOT EXISTS sightings_reported_at ON sightings (reported_at);
+CREATE INDEX IF NOT EXISTS sightings_city_time ON sightings (city, reported_at);
 
 CREATE TABLE IF NOT EXISTS votes (
   sighting_id TEXT NOT NULL,
@@ -38,16 +49,23 @@ CREATE TABLE IF NOT EXISTS marks (
   id   TEXT PRIMARY KEY,
   day  TEXT NOT NULL,   -- YYYY-MM-DD, Berlin wall time
   cell TEXT NOT NULL,   -- <x>_<y> in the fixed 250 m grid
+  city TEXT NOT NULL,   -- berlin | hamburg, aus der Position abgeleitet
   hour INTEGER          -- 0-23, Berlin wall time; NULL on rows written before
                         -- the time-of-day report existed
 );
 
--- Existing deployments: the column was added after the first release.
+-- Bestehende Installationen: `hour` kam nach dem ersten Release dazu, `city`
+-- mit der zweiten Stadt. Die Anweisungen dafür stehen ausführbar in
+-- migrations/001-stadt.sql — als Kommentar hier wären sie nie gelaufen:
+-- `CREATE TABLE IF NOT EXISTS` ist auf einer vorhandenen Tabelle ein No-op,
+-- und SQLite kennt kein `ADD COLUMN IF NOT EXISTS`.
 -- ALTER TABLE marks ADD COLUMN hour INTEGER;
 
 -- Reads are always "everything inside the window", which this index carries;
--- so is the nightly delete.
+-- so is the nightly delete. Der Lesepfad filtert zusätzlich nach Stadt, das
+-- nächtliche Löschen nicht — deshalb beide Indizes.
 CREATE INDEX IF NOT EXISTS marks_day ON marks (day);
+CREATE INDEX IF NOT EXISTS marks_city_day ON marks (city, day);
 
 
 -- Devices that opened the app, for the live figures.
@@ -59,6 +77,13 @@ CREATE INDEX IF NOT EXISTS marks_day ON marks (day);
 --
 -- The id is `<day>-<nonce>` with a nonce the client mints fresh every day, so
 -- two days of rows cannot be linked to the same device either.
+--
+-- **Keine Stadtspalte**, anders als `sightings` und `marks`. Ein Ping trägt
+-- keine Position, die Stadt wäre also nicht abgeleitet, sondern vom Client
+-- behauptet — und ein behaupteter Wert ist keiner, den dieser Dienst prüfen
+-- kann. Die Zahl beantwortet ohnehin „wie viele benutzen knoellchenfrei
+-- gerade", nicht „wie viele in Berlin". Begründung ausführlich bei
+-- `recordVisit` in worker.ts.
 CREATE TABLE IF NOT EXISTS visits (
   id      TEXT PRIMARY KEY,
   day     TEXT NOT NULL,      -- YYYY-MM-DD, Berlin wall time

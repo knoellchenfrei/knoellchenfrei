@@ -19,13 +19,14 @@
 
 import {
   BERLIN,
+  CITIES,
+  cityAt,
   cityByKey,
   isFeedbackKind,
   markFor,
   parseTelegramUpdate,
   tidyFeedback,
   windowStart,
-  withinCity,
   type City,
 } from '@knoellchenfrei/core'
 
@@ -60,29 +61,52 @@ export interface Env {
    * kennt sie" ist keine Zugangskontrolle.
    */
   TELEGRAM_SECRET?: string
-  /**
-   * Welche Stadt dieser Worker bedient, als Schlüssel aus `CITIES`.
-   *
-   * Ohne den Wert bleibt es Berlin — die Stadt, die heute läuft. Ein
-   * *falscher* Wert fällt nicht zurück, sondern lässt den Worker beim ersten
-   * Zugriff werfen: Ein stiller Rückfall auf Berlin würde in einer Hamburger
-   * Instanz jede Meldung mit 422 abweisen, und im Log stünde nur „position
-   * outside".
-   */
-  CITY?: string
 }
 
-/**
- * Die Stadt dieses Workers.
+/*
+ * Der Worker bedient **alle** Städte aus `CITIES`, nicht eine konfigurierte.
  *
- * Die eine Stelle, an der dieser Worker doch von `core` abhängt — neben dem
- * Heat-Raster. Der Grund ist derselbe: Es ist kein *Regel*wissen, das hier
- * bewusst zweimal steht, sondern eine Zahl, die auf beiden Seiten dieselbe
- * sein muss. Weicht die Box hier von der im Browser ab, nimmt die App eine
- * Meldung an, die der Server danach verwirft, und niemand erfährt, warum.
+ * Bis zum 6. September 2026 stand hier `CITY` in der Umgebung, ohne Wert
+ * Berlin. Die App schaltet seitdem zwischen Berlin und Hamburg um, der Worker
+ * nicht — eine Hamburger Meldung bekam `422 position outside Berlin`, und in
+ * der App sah das aus, als sei das Melden kaputt.
+ *
+ * Die Stadt steht jetzt beim Schreiben in der Position (`cityAt`) und beim
+ * Lesen in der Anfrage (`?city=`). Eine Zeile ohne Stadt entsteht nicht mehr.
+ *
+ * Warum eine Spalte und nicht eine Datenbank je Stadt: FreiFahren fährt je
+ * Stadt eine eigene D1 *und* einen eigenen Worker. Sauber getrennt, aber
+ * n-mal Betrieb — für zwei Städte auf dem Free Tier ist das Aufwand ohne
+ * Gegenwert.
  */
-function cityOf(env: Env): City {
-  return env.CITY === undefined || env.CITY === '' ? BERLIN : cityByKey(env.CITY)
+
+/**
+ * Die Stadt, in der eine Anfrage lesen will.
+ *
+ * Die Regel steht in CLAUDE.md und ist hier wörtlich umgesetzt: Ein
+ * **fehlender** Parameter fällt auf Berlin zurück — das ist die Stadt, die
+ * heute ausgeliefert wird, und ein Client, der die Stadt noch nicht mitschickt,
+ * bekommt weiter, was er bisher bekam. Ein **unbekannter** Schlüssel fällt
+ * nicht zurück, sondern wird abgewiesen: Wer `?city=hambrug` schickt und
+ * schweigend Berliner Meldungen bekommt, sucht den Fehler dort, wo er nicht
+ * ist. `cityByKey` wirft dafür bereits; die Meldung nennt die bekannten
+ * Schlüssel und wird deshalb weitergereicht statt verschluckt.
+ */
+type CityChoice = { city: City } | { error: string }
+
+function requestedCity(url: URL): CityChoice {
+  const key = url.searchParams.get('city')
+  if (key === null || key === '') return { city: BERLIN }
+  try {
+    return { city: cityByKey(key) }
+  } catch (error) {
+    return { error: (error as Error).message }
+  }
+}
+
+/** Alle bekannten Städte als Aufzählung — für Meldungen, die keine verschweigen. */
+function cityNames(separator: string): string {
+  return CITIES.map((city) => city.name).join(separator)
 }
 
 const WFS_BASE = 'https://gdi.berlin.de/services/wfs'
@@ -276,12 +300,24 @@ async function serveLayer(name: string, env: Env, cors: Record<string, string>):
   })
 }
 
-async function listSightings(env: Env, cors: Record<string, string>): Promise<Response> {
+/**
+ * Die lebenden Meldungen einer Stadt.
+ *
+ * Der Filter ist nicht Kosmetik, obwohl 250 km zwischen den Städten liegen und
+ * auf der Karte nichts auffiele: Die 500er-Grenze unten teilen sich sonst alle
+ * Städte, und die Zähler in der Oberfläche zählten Hamburger Meldungen für
+ * Berlin mit.
+ */
+async function listSightings(
+  env: Env,
+  city: City,
+  cors: Record<string, string>
+): Promise<Response> {
   const cutoff = Date.now() - SIGHTING_MAX_AGE_MS
   const { results } = await env.DB.prepare(
-    'SELECT id, lon, lat, reported_at, confirmations, disputes FROM sightings WHERE reported_at > ? ORDER BY reported_at DESC LIMIT 500'
+    'SELECT id, lon, lat, reported_at, confirmations, disputes FROM sightings WHERE reported_at > ? AND city = ? ORDER BY reported_at DESC LIMIT 500'
   )
-    .bind(cutoff)
+    .bind(cutoff, city.key)
     .all<{
       id: string
       lon: number
@@ -314,10 +350,16 @@ async function listSightings(env: Env, cors: Record<string, string>): Promise<Re
  * for `since=1970-01-01` must not be able to read further back than the app
  * promises to keep.
  */
-async function listMarks(env: Env, cors: Record<string, string>): Promise<Response> {
+async function listMarks(
+  env: Env,
+  city: City,
+  cors: Record<string, string>
+): Promise<Response> {
   const since = windowStart({ now: Date.now() })
-  const { results } = await env.DB.prepare('SELECT day, cell, hour FROM marks WHERE day >= ?')
-    .bind(since)
+  const { results } = await env.DB.prepare(
+    'SELECT day, cell, hour FROM marks WHERE day >= ? AND city = ?'
+  )
+    .bind(since, city.key)
     .all<{ day: string; cell: string; hour: number | null }>()
   return json({ since, marks: results ?? [] }, { status: 200 }, cors)
 }
@@ -343,6 +385,24 @@ function berlinDay(at: number): string {
  * The artifact runtime answers "how many are looking right now" from its own
  * presence channel; a static host has none, so the same question is answered
  * from the freshness of these rows. Nothing else about the device is stored.
+ *
+ * **Ohne Stadt, und zwar mit Absicht.** Sichtungen und Striche bekamen mit
+ * der zweiten Stadt eine Spalte, die Besuche nicht — aus zwei Gründen, von
+ * denen jeder für sich reicht:
+ *
+ * 1. Ein Ping trägt keine Position. Die Stadt wäre also nicht abgeleitet,
+ *    sondern **behauptet**: Der Client müsste sie mitschicken, und ein
+ *    behaupteter Wert ist keiner, den dieser Worker prüfen kann. Genau das
+ *    macht er sonst nirgends — jede andere Zeile hier entsteht aus etwas, das
+ *    er selbst festgestellt hat.
+ * 2. Die Zahl beantwortet „wie viele benutzen knoellchenfrei gerade", nicht
+ *    „wie viele in Berlin". Das ist eine Eigenschaft des Dienstes, keine der
+ *    Stadt — und im geschlossenen Test wären zwei geteilte Zahlen vor allem
+ *    zwei kleinere.
+ *
+ * Soll die Zahl eines Tages *je Stadt* gelten, ist der ehrliche Weg nicht eine
+ * Spalte aus einer Client-Angabe, sondern eine Stadt im Pfad des Pings, die
+ * genauso abgewiesen wird wie ein unbekanntes `?city=` beim Lesen.
  */
 async function recordVisit(
   request: Request,
@@ -466,14 +526,19 @@ async function createSighting(
 
   const lon = Number(payload.lon)
   const lat = Number(payload.lat)
-  // Die Box der Stadt. Eine Meldung ausserhalb ist ein Fehler oder ein
-  // Missbrauchsversuch; in beiden Faellen hat sie hier nichts zu suchen.
-  const city = cityOf(env)
-  if (!withinCity(city, lon, lat)) {
-    return json({ error: `position outside ${city.name}` }, { status: 422 }, cors)
+  // Die Stadt kommt aus der Position, nicht aus der Konfiguration: Eine
+  // Meldung sagt nicht, wo sie herkommt, sie liegt dort. Passt sie in keine
+  // Box, ist sie ein Fehler oder ein Missbrauchsversuch; in beiden Fällen hat
+  // sie hier nichts zu suchen.
+  const city = cityAt(lon, lat)
+  if (city === undefined) {
+    // Nennt alle bekannten Städte, nicht nur eine. Die alte Fassung antwortete
+    // `position outside Berlin`, auch wenn der Punkt sauber in Hamburg lag —
+    // die Meldung führte damit von der Ursache weg.
+    return json({ error: `position outside ${cityNames(', ')}` }, { status: 422 }, cors)
   }
 
-  const id = await storeSighting(env, lon, lat, hash)
+  const id = await storeSighting(env, lon, lat, hash, city)
   return json({ id }, { status: 201 }, cors)
 }
 
@@ -489,23 +554,35 @@ async function storeSighting(
   env: Env,
   lon: number,
   lat: number,
-  hash: string
+  hash: string,
+  city: City
 ): Promise<string> {
   const id = crypto.randomUUID()
   await env.DB.prepare(
-    'INSERT INTO sightings (id, lon, lat, reported_at, confirmations, disputes, client_hash) VALUES (?, ?, ?, ?, 0, 0, ?)'
+    'INSERT INTO sightings (id, lon, lat, city, reported_at, confirmations, disputes, client_hash) VALUES (?, ?, ?, ?, ?, 0, 0, ?)'
   )
     // Stored coarsened and time-bucketed: a report is also a location record of
     // whoever filed it, and this row is world-readable.
-    .bind(id, coarsen(lon), coarsen(lat), Math.floor(Date.now() / 300_000) * 300_000, hash)
+    // Die Stadt wird vom Aufrufer aus derselben Position abgeleitet, aus der
+    // er sie angenommen hat — sie hier ein zweites Mal zu bestimmen hiesse,
+    // eine Zeile schreiben zu können, die eine andere Stadt nennt als die
+    // Prüfung durchgelassen hat.
+    .bind(
+      id,
+      coarsen(lon),
+      coarsen(lat),
+      city.key,
+      Math.floor(Date.now() / 300_000) * 300_000,
+      hash
+    )
     .run()
 
   // The heatmap's tally is derived here rather than posted by the client: a
   // client that could write marks directly could paint a density it never
   // reported, and only this path is rate-limited.
   const mark = markFor([coarsen(lon), coarsen(lat)], Date.now())
-  await env.DB.prepare('INSERT INTO marks (id, day, cell, hour) VALUES (?, ?, ?, ?)')
-    .bind(crypto.randomUUID(), mark.day, mark.cell, mark.hour ?? null)
+  await env.DB.prepare('INSERT INTO marks (id, day, cell, city, hour) VALUES (?, ?, ?, ?, ?)')
+    .bind(crypto.randomUUID(), mark.day, mark.cell, city.key, mark.hour ?? null)
     .run()
 
   return id
@@ -646,8 +723,11 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
     return json({ ok: true }, {}, {})
   }
 
-  const city = cityOf(env)
-  const { intent, sender } = parseTelegramUpdate(update, city)
+  // Alle Städte, nicht eine konfigurierte: Ein gesendeter Standort bringt keine
+  // Stadt mit, sie steht nur im Punkt. Vorher bekam der Parser die eine Stadt
+  // des Workers — ein Hamburger Standort war damit „unknown", und der Bot
+  // antwortete, er verstehe das nicht.
+  const { intent, sender } = parseTelegramUpdate(update, CITIES)
   if (sender === null || intent.kind === 'ignore') return json({ ok: true }, {}, {})
 
   if (intent.kind === 'help') {
@@ -659,7 +739,7 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
     await telegramSend(
       env,
       sender.chatId,
-      `Damit kann ich nichts anfangen. Schick mir einen Standort in ${city.name}: ` +
+      `Damit kann ich nichts anfangen. Schick mir einen Standort in ${cityNames(' oder ')}: ` +
         'Büroklammer → Standort. /hilfe erklärt es ausführlicher.'
     )
     return json({ ok: true }, {}, {})
@@ -676,7 +756,9 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
     return json({ ok: true }, {}, {})
   }
 
-  await storeSighting(env, intent.lon, intent.lat, hash)
+  // Die Stadt steht schon im Intent: Der Parser hat den Punkt gegen die Boxen
+  // gehalten, um überhaupt zu entscheiden, dass es eine Meldung ist.
+  await storeSighting(env, intent.lon, intent.lat, hash, intent.city)
   await telegramSend(
     env,
     sender.chatId,
@@ -706,8 +788,19 @@ export default {
       return serveLayer(layerMatch[1] as string, env, cors)
     }
 
-    if (path === '/sightings' && request.method === 'GET') return listSightings(env, cors)
-    if (path === '/marks' && request.method === 'GET') return listMarks(env, cors)
+    // `?city=` entscheidet, welche Stadt gelesen wird. Fehlt der Parameter,
+    // bleibt es Berlin; ein unbekannter Schlüssel ist ein 400 und kein stiller
+    // Rückfall — siehe `requestedCity`.
+    if (path === '/sightings' && request.method === 'GET') {
+      const choice = requestedCity(url)
+      if ('error' in choice) return json({ error: choice.error }, { status: 400 }, cors)
+      return listSightings(env, choice.city, cors)
+    }
+    if (path === '/marks' && request.method === 'GET') {
+      const choice = requestedCity(url)
+      if ('error' in choice) return json({ error: choice.error }, { status: 400 }, cors)
+      return listMarks(env, choice.city, cors)
+    }
     if (path === '/visits' && request.method === 'POST') return recordVisit(request, env, cors)
     if (path === '/feedback' && request.method === 'POST') return createFeedback(request, env, cors)
     if (path === '/sightings' && request.method === 'POST') {

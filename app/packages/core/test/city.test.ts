@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   BERLIN,
   CITIES,
+  cityAt,
   cityByKey,
   HAMBURG,
   withinCity,
@@ -118,5 +119,75 @@ describe('Quellenangabe', () => {
       expect(city.attribution.licenceUrl).toMatch(/^https:\/\//)
       expect(city.attribution.source.length).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('cityAt', () => {
+  // Der Fehler, den diese Funktion behebt: Der Worker war auf **eine** Stadt
+  // konfiguriert und beantwortete genau diesen Punkt — den Hamburger
+  // Rathausmarkt — mit `422 position outside Berlin`.
+  it('resolves a Hamburg position to Hamburg instead of refusing it', () => {
+    expect(cityAt(9.9924, 53.5503)).toBe(HAMBURG)
+    expect(cityAt(13.3777, 52.5163)).toBe(BERLIN)
+  })
+
+  // Kein Rückfall auf Berlin: Zwischen den beiden Städten liegt keine, und
+  // genau das muss die Antwort sein. Eine Meldung von hier als Berliner Zeile
+  // zu speichern wäre falsch und nirgends zu sehen.
+  it('returns undefined between the two cities', () => {
+    // Lüneburger Heide, ungefähr auf halbem Weg.
+    expect(cityAt(10.4, 53.0)).toBeUndefined()
+    // München — eine echte Stadt, nur keine, die wir kennen.
+    expect(cityAt(11.5755, 48.1374)).toBeUndefined()
+  })
+
+  it('accepts a point just inside each city and refuses one just outside', () => {
+    for (const city of CITIES) {
+      const { minLon, minLat, maxLon, maxLat } = city.reportBounds
+      expect(cityAt(minLon + 0.001, minLat + 0.001)).toBe(city)
+      expect(cityAt(maxLon - 0.001, maxLat - 0.001)).toBe(city)
+      expect(cityAt(maxLon + 0.001, maxLat + 0.001)).toBeUndefined()
+      expect(cityAt(minLon - 0.001, minLat - 0.001)).toBeUndefined()
+    }
+  })
+
+  it('treats the edges as inside, like withinCity does', () => {
+    const { minLon, minLat } = HAMBURG.reportBounds
+    expect(cityAt(minLon, minLat)).toBe(HAMBURG)
+  })
+
+  it('refuses NaN and Infinity rather than picking whichever city compares first', () => {
+    expect(cityAt(Number.NaN, 52.5)).toBeUndefined()
+    expect(cityAt(13.4, Number.NaN)).toBeUndefined()
+    expect(cityAt(Infinity, Infinity)).toBeUndefined()
+  })
+
+  it('finds every city by its own centre', () => {
+    for (const city of CITIES) expect(cityAt(city.center[0], city.center[1])).toBe(city)
+  })
+
+  // "Die erste passende Stadt gewinnt" ist nur dann eine Antwort und keine
+  // Auslosung, wenn kein Punkt in zwei Boxen liegt. Der Test hält das für
+  // jedes künftige Paar fest, nicht nur für Berlin und Hamburg.
+  it('has no point that belongs to two cities', () => {
+    for (const a of CITIES) {
+      for (const b of CITIES) {
+        if (a === b) continue
+        const disjoint =
+          a.reportBounds.maxLon < b.reportBounds.minLon ||
+          b.reportBounds.maxLon < a.reportBounds.minLon ||
+          a.reportBounds.maxLat < b.reportBounds.minLat ||
+          b.reportBounds.maxLat < a.reportBounds.minLat
+        expect(disjoint).toBe(true)
+      }
+    }
+  })
+
+  // Eine Instanz darf die Auswahl einschränken; dann ist derselbe Punkt keine
+  // Meldung mehr, statt der falschen Stadt zugeschlagen zu werden.
+  it('honours a restricted list of cities', () => {
+    expect(cityAt(9.9924, 53.5503, [BERLIN])).toBeUndefined()
+    expect(cityAt(9.9924, 53.5503, [HAMBURG])).toBe(HAMBURG)
+    expect(cityAt(13.3777, 52.5163, [])).toBeUndefined()
   })
 })

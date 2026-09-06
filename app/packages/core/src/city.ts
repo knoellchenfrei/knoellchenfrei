@@ -167,3 +167,29 @@ export function withinCitySession(city: City, lon: number, lat: number): boolean
     lat <= city.sessionBounds.maxLat
   )
 }
+
+/**
+ * Die Stadt zu einer Position — oder keine.
+ *
+ * Der Gegenpol zu `cityByKey`: Dort kommt die Stadt aus der Konfiguration,
+ * hier aus dem Punkt selbst. Der Worker braucht genau das, seit die App zwei
+ * Städte kennt. Vorher war er auf **eine** Stadt konfiguriert (`Env.CITY`,
+ * ohne Wert Berlin), und eine Hamburger Meldung bekam
+ * `422 position outside Berlin` — in der App sah das aus, als sei das Melden
+ * kaputt, und im Log stand nichts, was nach einem Fehler aussah.
+ *
+ * Kein Rückfall auf Berlin: Liegt der Punkt in keiner Stadt, kommt `undefined`
+ * zurück, und der Aufrufer weist die Meldung ab. Ein Rückfall würde eine
+ * Münchner Meldung als Berliner Zeile in die Datenbank schreiben — falsch,
+ * und nirgends sichtbar.
+ *
+ * Die erste passende Stadt gewinnt. Das ist nur eindeutig, solange sich die
+ * Boxen nicht überlappen; ein Test in `city.test.ts` hält das fest, statt es
+ * zu hoffen.
+ *
+ * `cities` ist ein Parameter, damit eine Instanz die Auswahl einschränken kann
+ * — und damit der Test einen Punkt gegen genau eine Stadt halten kann.
+ */
+export function cityAt(lon: number, lat: number, cities: readonly City[] = CITIES): City | undefined {
+  return cities.find((city) => withinCity(city, lon, lat))
+}
