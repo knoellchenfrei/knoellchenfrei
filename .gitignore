@@ -17,3 +17,14 @@
 # pnpm zu installieren). Das Projekt selbst hat hier keine Abhängigkeiten.
 node_modules/
 package-lock.json
+
+# Dasselbe mit pnpm, und hier ist es gefährlicher als nur unordentlich: pnpm 10
+# legt seine Einstellungen in `pnpm-workspace.yaml` ab und **erzeugt die Datei,
+# wenn keine da ist**. Ein `pnpm install` im Wurzelverzeichnis macht das
+# Repository damit zu einem zweiten Workspace neben `app/` — mit einer Datei,
+# in der als Inhalt `allowBuilds: pnpm: set this to true or false` steht, also
+# einem Platzhalter. Ab da findet pnpm von hier aus den falschen Workspace.
+#
+# Der Workspace liegt unter `app/`. Von dort aus arbeiten, nicht von hier.
+pnpm-workspace.yaml
+pnpm-lock.yaml

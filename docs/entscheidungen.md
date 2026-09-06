@@ -388,6 +388,39 @@ Einzige, was ein Projekt ohne Geld weitergeben kann. Kein Code ist kopiert, es
 besteht also keine Lizenzpflicht — die Erwähnung ist eine Entscheidung, keine
 Auflage.
 
+## Startseite und Merch — beides erst mit dem Verein
+
+Angesehen am 6. September 2026, weil FreiFahren beides hat.
+
+**`freifahren.org` ist eine Seite für den Verein, nicht für die App.** Die App
+liegt getrennt auf `app.freifahren.org`. Die Startseite trägt: Mission, „in
+Zahlen", „in deiner Stadt" mit einem Formular *Stadt vormerken*, häufige
+Fragen, *Unterstützen* — und eine **Presse-Wand mit über fünfzehn Medien**,
+von Spiegel und Zeit über taz und rbb24 bis Golem.
+
+**Eine eigene Startseite: ja, aber nach der Vereinseintragung.** Was diese
+Seite trägt, ist genau das, was wir nicht haben — Verein, Spendenkonto,
+Presse, vorzeigbare Zahlen. Heute gebaut wäre sie eine Überschrift mit nichts
+dahinter und schöbe die App einen Klick weiter weg. Was *vorher* nötig ist,
+sind **Impressum und Datenschutz**, und die können Routen in der App sein.
+
+Ein Element lohnt früher als der Rest: **„Stadt vormerken".** Es ist der
+einzige Teil, der Information erzeugt, die wir sonst nicht haben — welche Stadt
+als dritte drankommt, sonst bleibt es unsere Vermutung. Es sammelt allerdings
+E-Mail-Adressen, und damit hängt es wieder am Verein.
+
+**Merch: nein.** Print-on-Demand (FreiFahren nutzt Spreadshirt) kostet kein
+Lager und kein Porto, aber es braucht einen **Verkäufer mit Impressum und
+Steuernummer**. Das wäre heute eine Privatanschrift — genau das, wogegen der
+Beta-Riegel existiert. Und die Presse-Wand ist bei FreiFahren die
+*Voraussetzung* für Merch, nicht die Folge: Wer nichts signalisieren kann,
+kauft kein T-Shirt. Bei einer Handvoll Testnutzer ist Merch keine Einnahme,
+sondern eine Verwaltungsaufgabe mit Finanzamt daran.
+
+**Wiedervorlage für beides:** wenn der Verein eingetragen ist *und* es
+Reichweite gibt, die man messen kann. Nicht vorher, und nicht weil das Vorbild
+es hat.
+
 ## Was bewusst nicht gebaut wurde
 
 - **Telegram-Gruppen mitlesen.** Deutlich mehr Meldungen, aber ungeprüfter
