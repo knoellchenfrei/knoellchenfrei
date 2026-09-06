@@ -309,7 +309,7 @@
         <tr><td class="k">Telegram</td><td>Bot am bestehenden Worker. Gruppen mitlesen ausdrücklich <em>nicht</em>.</td><td>Stufe 1 gebaut</td></tr>
         <tr><td class="k">Behindertenparkplätze</td><td>Bleiben — 923 von 1.499 Orten —, aber gedämpft statt in Signalfarbe</td><td>umgesetzt</td></tr>
         <tr><td class="k">Art der Sichtung</td><td>Wird nicht erfasst. Es soll kein Abschleppwagen meldbar sein.</td><td>entschieden</td></tr>
-        <tr><td class="k">Zweite Stadt</td><td>Stehende Anforderung: Berlin darf nicht fest verdrahtet werden</td><td>teilweise, Rest notiert</td></tr>
+        <tr><td class="k">Zweite Stadt</td><td>Hamburg, umschaltbar in den Einstellungen — eine Stadt zur Zeit, wie bei FreiFahren</td><td>läuft</td></tr>
       </tbody>
     </table>
   </div>
@@ -634,6 +634,105 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 
 <section>
+  <h2>Zweiter Nachtrag</h2>
+  <div class="col">
+    <h3>Der Abend: das Netz geht auf, Hamburg kommt dazu</h3>
+    <p>Der erste Nachtrag endete mit „geht aus dieser Umgebung nicht“ — die
+    Portale antworteten dem Egress-Proxy mit 403. Dann wurde er geöffnet. Was
+    vorher Recherche war, ist jetzt abgerufen, und der Unterschied war kein
+    akademischer: <strong>Vier der sieben Befunde zu Hamburg stehen in keinem
+    Metadatensatz.</strong> Sie zeigen sich erst, wenn man die Zeilen liest.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Widerspruch, und du hattest recht</span>
+    <p>Ich hatte in den Quelltext geschrieben, ein Stadtwechsel im Browser müsse
+    den halben Datenbestand nachladen, und daraus einen Build je Stadt
+    abgeleitet. Das war falsch: <code>loadData</code> holt die Dateien seit
+    jeher per <code>fetch</code>. Dein Einwand — „in FreiFahren gibt’s in den
+    Settings die Möglichkeit die Stadt zu wechseln, dann sollten erst Daten
+    nachgeladen werden“ — beschreibt genau, wie es jetzt ist. Nachgesehen im
+    ausgelieferten Bündel von <code>app.freifahren.org</code>: eine
+    Stadt-Tabelle, ein <code>citySwitcher</code>, ein Onboarding-Schritt
+    („zeigt Community-Meldungen für jeweils eine Stadt“), ein
+    Standort-Vorschlag, und eine eigene Datenbank je Stadt. Live sind dort
+    Berlin und Leipzig; Hamburg liegt als <code>listed: false</code> bereit.</p>
+  </div>
+
+  <div class="col">
+    <h3>Was der Hamburger Feed wirklich enthält</h3>
+    <p>146 Bewohnerparkgebiete, davon 145 aktiv — Hamburgs Gegenstück zu
+    Berlins 103 Zonen. Dazu 104 Stadtteile als Kartenkontext. Der Feed ist an
+    der Oberfläche <em>einfacher</em> als Berlins: zehn Schreibweisen der
+    Zeiten statt achtzehn, die Höchstparkdauer als Zahl statt als Prosa. Und
+    trotzdem enthält er vier Dinge, die Berlin nicht kennt, jedes davon ein
+    eigener Fallstrick.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Fund</th><th>Was passiert wäre</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Die Achsen sind vertauscht</td><td>Auf dieselbe Anfrage antwortet Berlin <code>[lon, lat]</code> und Hamburg <code>[lat, lon]</code> — Hamburg folgt der URN-Form, Berlin der GeoJSON-Konvention. Beides verteidigbar. Ungedreht liegen Hamburgs Gebiete bei 9° Nord, 53° Ost, im Golf von Guinea. Auf der Karte sieht das nicht nach einem Fehler aus, sondern nach einer leeren Stadt. Raten hilft nicht: In Hamburg sind beide Zahlen zweistellig und plausibel.</td></tr>
+        <tr><td class="k">Fenster laufen über Mitternacht</td><td>Fünf Gebiete lauten „täglich 9-2 Uhr“. Ein einzelnes Zeitfenster kann das nicht — Anfang nach Ende heißt in der Prüfung schlicht „nie“, also den ganzen Abend gebührenfrei. Wird jetzt in 9:00–24:00 und 0:00–2:00 des <em>Folgetags</em> zerlegt.</td></tr>
+        <tr><td class="k">„werktags“ schließt den Samstag ein</td><td>Montag bis <strong>Samstag</strong>, nach § 3 Abs. 2 BUrlG und ständiger Rechtsprechung des BGH. Andersherum gelesen meldete die App an <strong>31 Gebieten</strong> samstags „gebührenfrei“ — und das kostet ein Knöllchen.</td></tr>
+        <tr><td class="k">Es gibt Gebiete ohne Gebühr</td><td>Sieben stehen auf „Parkscheibe“, drei nennen gar nichts. Das ist <strong>kein Preis von null</strong>: Wer ohne Scheibe steht, zahlt trotzdem. Die App sagt jetzt „Keine Gebühr, aber Parkscheibe“ statt „0,00 €“.</td></tr>
+        <tr><td class="k">Platzhalter in der Höchstparkdauer</td><td>9999 und 0 heißen beide „unbegrenzt“. Ungeprüft übernommen stünde in der App „6 Tage 22 Stunden“ — eine Zahl, die aussieht, als hätte sie jemand gemeint.</td></tr>
+        <tr><td class="k">Geplante Gebiete stehen mit drin</td><td><code>geplant_aktiv</code> unterscheidet sie; welche Zahl was heißt, sagt der Feed nicht. Es gilt die vorsichtige Lesart: Ein Gebiet zu übersehen kostet einen fehlenden Hinweis, ein geplantes auszuliefern eine falsche Warnung.</td></tr>
+        <tr><td class="k">Das Ausgabeformat heißt anders</td><td><code>application/geo+json</code>, nicht <code>application/json</code>. Falsch angefragt kommt kein Fehler, sondern GML — gültiges XML, an dem der JSON-Leser scheitert, mit einer Meldung, die nach kaputten Daten aussieht statt nach einer falschen Anfrage.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Die Preise stimmen übrigens: Der Feed trägt 4,00 / 3,50 / 3,00 / 2,00 €
+    — die Sätze seit dem 1. Juli 2026. Veraltet ist nur die <em>Beschreibung</em>
+    des Dienstes, die von drei Zonen zu 3, 2 und 1 € spricht. Das korrigiert
+    den ersten Nachtrag: Nicht der Datensatz ist alt, nur sein Beipackzettel.
+    Ein Test hält die vier Sätze fest, damit die nächste Anhebung auffällt.</p>
+
+    <h3>Zwei Fallen der Werkstatt, beide still</h3>
+    <p><strong>Node ignoriert <code>HTTPS_PROXY</code>.</strong> Anders als
+    curl geht sein <code>fetch</code> direkt hinaus — und direkt antwortet
+    <code>geodienste.hamburg.de</code> mit <strong>403</strong>. Kein
+    Netzwerkfehler, keine TLS-Meldung, nur ein Verbot, das nach einer Sperre
+    der Behörde aussieht und keine ist. Zwanzig Minuten Fehlersuche in die
+    falsche Richtung.</p>
+    <p><strong><code>pnpm fetch</code> ist ein eingebautes pnpm-Kommando.</strong>
+    Es lief statt des Projektskripts, meldete Erfolg und holte nichts. Das
+    Skript heißt jetzt <code>fetch-data</code> — dieselbe Art Fehler wie die
+    <code>&amp;&amp;</code>-Kette aus der Nacht: Erfolg gemeldet, nichts getan.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>erster Nachtrag</th><th>jetzt</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Städte</td><td class="n">1</td><td class="n">2</td></tr>
+        <tr><td class="k">Zonen und Gebiete</td><td class="n">103</td><td class="n">248</td></tr>
+        <tr><td class="k">Unit-Tests</td><td class="n">151</td><td class="n">179</td></tr>
+        <tr><td class="k">End-to-End</td><td class="n">93</td><td class="n">101</td></tr>
+        <tr><td class="k">Coverage, Zeilen</td><td class="n">96,6 %</td><td class="n">96,1 %</td></tr>
+        <tr><td class="k">Artifact</td><td class="n">1,92 MB</td><td class="n">2,25 MB</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Die Coverage ist um einen halben Punkt gefallen, und das ist ehrlicher
+    als der Gegenteilbericht: Es kam mehr Code dazu, als die 28 neuen Tests
+    abdecken — vor allem Zweige für Fälle, die Hamburgs Feed heute nicht
+    enthält, aber morgen enthalten könnte.</p>
+    <p>Nicht mitgekommen ist Hamburgs <strong>öffentlicher Parkraum</strong>:
+    203.283 Polygone, je Stellplatz eines, ohne Tarif und mit leerem Zeitfeld.
+    Dieselbe Begründung, aus der Berlins 214.173 Abschnitte außerhalb des Rings
+    draußen bleiben — eine Ebene, die eine Frage beantwortet, die der
+    Zonen-Lookup schon beantwortet.</p>
+  </div>
+</section>
+
+
+<section>
   <h2>Offen</h2>
   <div class="col">
     <h3>Was noch aussteht</h3>
@@ -653,7 +752,7 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
         <tr><td class="k">R2-Eimer, Archiv hochladen, CORS und Range-Requests</td><td><span class="chip user">du</span></td><td>eigene Kacheln</td></tr>
         <tr><td class="k">CI-Geheimnisse im neuen Repository hinterlegen</td><td><span class="chip user">du</span></td><td>Deploy-Workflows</td></tr>
         <tr><td class="k">Impressum und Datenschutz ausformulieren</td><td><span class="chip agent">ich</span></td><td>wartet auf Verein und Dienstleister</td></tr>
-        <tr><td class="k">Zweite Stadt: Hamburger Feed abrufen und parsen</td><td><span class="chip agent">ich</span></td><td>Portale vom Egress-Proxy gesperrt</td></tr>
+        <tr><td class="k">München als dritte Stadt prüfen</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
         <tr><td class="k">Produktname entberlinern (Titel, Manifest, Überschrift)</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
         <tr><td class="k">Telegram Stufe 2: Gruppen mitlesen</td><td><span class="chip agent">ich</span></td><td>braucht einen Missbrauchsfilter</td></tr>
       </tbody>
@@ -713,12 +812,12 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 <footer>
   <p>Stand 6. September 2026. Der Hauptteil beschreibt die Nacht und den Tag bis
-  12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>; der Nachtrag den
-  Nachmittag danach. Seither liegt alles in
+  12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>; die beiden
+  Nachträge den Nachmittag und den Abend danach. Alles liegt jetzt in
   <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
   beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
-  Repository geblieben. Die Prüfläufe im Nachtrag stammen aus dem Abschlusslauf
-  gegen den neuen Stand: 151 Unit-Tests, 93 End-to-End, 96,6 % Coverage.</p>
+  Repository geblieben. Die Prüfläufe stammen aus dem Abschlusslauf gegen den
+  neuen Stand: 179 Unit-Tests, 101 End-to-End, 96,1 % Coverage.</p>
   <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
   <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
   die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die
