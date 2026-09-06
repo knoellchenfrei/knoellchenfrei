@@ -22,6 +22,11 @@ on:
 
 permissions:
   contents: write
+  # Damit dieser Workflow den Deploy anstossen kann. Noetig, weil ein Push mit
+  # dem GITHUB_TOKEN keine weiteren Workflows ausloest (GitHub verhindert so
+  # Endlosschleifen) - der ID-Commit unten also folgenlos bliebe. Ein Dispatch
+  # ueber die API ist davon nicht betroffen.
+  actions: write
 
 jobs:
   setup:
@@ -56,6 +61,32 @@ jobs:
       - name: Abhängigkeiten
         working-directory: app
         run: pnpm install --frozen-lockfile
+
+      # Am 6. September fehlte dem Token `Workers Scripts:Edit`. Aufgefallen ist
+      # das erst mitten im Deploy, als `Authentication error [code: 10000]` auf
+      # `/workers/services/…` kam — eine Meldung, die nach einem Fehler im Code
+      # aussieht und eine fehlende Häkchenreihe ist. Deshalb wird jetzt vorher
+      # gefragt: Die Rechte stehen im Token selbst, ein Aufruf genügt.
+      - name: Rechte des Tokens prüfen
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          antwort=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            https://api.cloudflare.com/client/v4/user/tokens/verify || true)
+          if ! echo "$antwort" | grep -q '"success":true'; then
+            echo "::error::Das Token wird von Cloudflare nicht angenommen. Antwort: $antwort"
+            exit 1
+          fi
+          echo "Token ist gültig."
+          # Die Rechte selbst stehen nicht in `verify`. Statt zu raten, nennen
+          # wir sie hier — sie fehlen erfahrungsgemäß, und dann liest das hier
+          # jemand, der gerade einen roten Lauf vor sich hat.
+          {
+            echo "Benötigt werden: Workers Scripts:Edit, Workers KV Storage:Edit,"
+            echo "D1:Edit, Cloudflare Pages:Edit (und Workers R2 Storage:Edit für"
+            echo "die Kartenkacheln). Fehlt eines, scheitert der Schritt, der es"
+            echo "braucht, mit 'Authentication error [code: 10000]'."
+          }
 
       # Die Ausgabe der beiden create-Befehle wird vollständig ins Log
       # geschrieben, bevor irgendetwas geparst wird. Wenn das Parsen scheitert,
@@ -184,6 +215,32 @@ jobs:
             exit 1
           fi
 
+      # Ohne Salz ist der Client-Hash in Minuten auf eine IP zurückrechenbar.
+      # Ein Salz ist ein Zufallswert, den **niemand** kennen muss — auch der
+      # Betreiber nicht. Es von Hand setzen zu lassen war ein Arbeitsschritt
+      # ohne Erkenntnisgewinn, an dem der Datenschutz hing.
+      #
+      # Der Wert wird per Pipe an wrangler übergeben und nirgends ausgegeben.
+      # Gesetzt wird er nur, wenn noch keiner da ist: Ein neuer würde die
+      # laufenden Rate-Limit-Fenster ungültig machen.
+      - name: Salz für die Client-Hashes setzen
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if npx wrangler secret list 2>/dev/null | grep -q CLIENT_SALT; then
+            echo "CLIENT_SALT steht schon — unberührt gelassen."
+            exit 0
+          fi
+          # `secret put` legt das Geheimnis am Worker an; existiert der noch
+          # nicht, ist das kein Fehler, sondern nur zu früh — der Deploy danach
+          # holt es nach.
+          if openssl rand -base64 32 | npx wrangler secret put CLIENT_SALT 2>&1 | grep -v '^[A-Za-z0-9+/=]\{40,\}$'; then
+            echo "CLIENT_SALT erzeugt und gesetzt."
+          else
+            echo "::warning::CLIENT_SALT liess sich noch nicht setzen (meist: der Worker existiert noch nicht). Nach dem ersten Deploy diesen Workflow einmal erneut starten."
+          fi
+
       - name: Änderung committen
         run: |
           if git diff --quiet -- wrangler.toml; then
@@ -213,11 +270,30 @@ jobs:
             echo "| KV-Namespace | \`$KV_ID\` |"
             echo "| D1-Datenbank | \`$D1_ID\` |"
             echo
-            echo "Jetzt fehlt nur noch **ein** Secret, danach rollt jeder Push aus:"
+            echo "Der Deploy ist angestossen — er rollt Worker und Web-App aus"
+            echo "und nimmt die Worker-Adresse aus seiner eigenen Ausgabe."
             echo
-            echo '- `VITE_API_BASE` — die Worker-Adresse, sichtbar in der Ausgabe des nächsten Deploy-Laufs'
-            echo
-            echo "Ohne diesen Wert läuft die App im lokalen Modus: Meldungen bleiben auf dem Gerät."
-            echo
-            echo 'Danach unter *Actions → Deploy → Run workflow* starten.'
+            echo "Nichts weiter zu tun. Ein Secret \`VITE_API_BASE\` ist nur"
+            echo "noetig, wenn der Worker spaeter hinter einer eigenen Domain"
+            echo "liegt — dann hat es Vorrang."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # Der Commit oben loest nichts aus: Mit dem GITHUB_TOKEN gepushte Commits
+      # starten keine Workflows. Am 6. September sah das aus wie ein haengender
+      # Deploy und war eine Regel. Ein Dispatch ueber die API ist davon nicht
+      # betroffen — deshalb hier, statt es dem Menschen aufzuhalsen.
+      - name: Deploy anstoßen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          code=$(curl -sS -o /tmp/dispatch.txt -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/deploy.yml/dispatches" \
+            -d '{"ref":"${{ github.ref_name }}"}')
+          if [ "$code" = "204" ]; then
+            echo "Deploy angestossen."
+          else
+            echo "::warning::Deploy liess sich nicht anstossen (HTTP $code). Von Hand unter Actions -> Deploy -> Run workflow."
+            cat /tmp/dispatch.txt
+          fi

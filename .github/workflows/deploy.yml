@@ -54,7 +54,22 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # Ohne diesen Halt liefe der Deploy gegen `REPLACE_WITH_KV_ID` und
+      # scheiterte mit einer Meldung über eine unbekannte Kennung — was nach
+      # einem Fehler im Konto aussieht und keiner ist. Der Hinweis nennt den
+      # Workflow, der fehlt.
+      - name: Ist Cloudflare eingerichtet?
+        if: steps.gate.outputs.ready == 'true'
+        working-directory: app/apps/api
+        run: |
+          if grep -q 'REPLACE_WITH_' wrangler.toml; then
+            echo "::error::wrangler.toml traegt noch Platzhalter. Erst *Actions -> Cloudflare einrichten -> Run workflow* starten; der Workflow legt KV, D1 und das Pages-Projekt an und traegt die Kennungen ein."
+            exit 1
+          fi
+          echo "KV und D1 sind eingetragen."
+
       - name: Worker ausrollen
+        id: worker
         if: steps.gate.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@v4
         with:
@@ -62,13 +77,38 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: app/apps/api
 
+      # Die Adresse des Workers steht nach dem Deploy fest — sie von Hand in ein
+      # Secret zu tippen war ein Arbeitsschritt ohne Erkenntnisgewinn und eine
+      # Fehlerquelle dazu. `deployment-url` liefert sie; das Secret bleibt als
+      # Vorrang bestehen, falls der Worker je hinter einer eigenen Domain liegt.
+      - name: Adresse des Workers bestimmen
+        id: api
+        if: steps.gate.outputs.ready == 'true'
+        env:
+          AUS_SECRET: ${{ secrets.VITE_API_BASE }}
+          AUS_DEPLOY: ${{ steps.worker.outputs.deployment-url }}
+        run: |
+          basis="$AUS_SECRET"
+          quelle="Secret VITE_API_BASE"
+          if [ -z "$basis" ]; then
+            basis="$AUS_DEPLOY"
+            quelle="Ausgabe des Worker-Deploys"
+          fi
+          if [ -z "$basis" ]; then
+            echo "::warning::Keine Worker-Adresse ermittelt — die App laeuft im lokalen Modus und teilt nichts."
+            quelle="nichts gefunden"
+          fi
+          echo "base=$basis" >> "$GITHUB_OUTPUT"
+          echo "quelle=$quelle" >> "$GITHUB_OUTPUT"
+          echo "VITE_API_BASE=$basis (aus: $quelle)"
+
       - name: Web-App bauen
         if: steps.gate.outputs.ready == 'true'
         working-directory: app
         env:
           # Zur Buildzeit, nicht zur Laufzeit: ohne diesen Wert läuft die App im
           # lokalen Modus und teilt nichts.
-          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+          VITE_API_BASE: ${{ steps.api.outputs.base }}
         run: pnpm --filter @knoellchenfrei/web build
 
       - name: Web-App ausrollen
@@ -82,16 +122,21 @@ jobs:
       - name: Zusammenfassung
         run: |
           if [ "${{ steps.gate.outputs.ready }}" = "true" ]; then
-            echo "Worker und Web-App ausgerollt." >> "$GITHUB_STEP_SUMMARY"
+            {
+              echo "### Ausgerollt"
+              echo
+              echo "- Worker: \`${{ steps.worker.outputs.deployment-url }}\`"
+              echo "- Web-App spricht: \`${{ steps.api.outputs.base }}\` (aus: ${{ steps.api.outputs.quelle }})"
+            } >> "$GITHUB_STEP_SUMMARY"
           else
             {
               echo "### Nicht ausgerollt — Zugangsdaten fehlen"
               echo
               echo "Unter *Settings → Secrets and variables → Actions* anlegen:"
               echo
-              echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
+              echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
               echo '- `CLOUDFLARE_ACCOUNT_ID` — steht im Cloudflare-Dashboard rechts in der Seitenleiste'
-              echo '- `VITE_API_BASE` — z. B. `https://knoellchenfrei-api.<konto>.workers.dev`'
+              echo '- `VITE_API_BASE` — **optional**. Ohne das Secret nimmt der Deploy die Adresse, die der Worker-Deploy selbst ausgibt. Nur nötig, wenn der Worker hinter einer eigenen Domain liegt.'
               echo
               echo 'Details: [docs/hosting.md](docs/hosting.md)'
             } >> "$GITHUB_STEP_SUMMARY"

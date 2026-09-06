@@ -51,8 +51,25 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
 2. Beides als Repository-Secrets hinterlegen: `Settings → Secrets and
    variables → Actions` → `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
    **Danach macht den Rest ein Workflow**, nicht du: `Actions → Cloudflare
-   einrichten → Run workflow` legt KV, D1 und Schema an und trägt die
-   Kennungen zurück ins Repository.
+   einrichten → Run workflow` prüft das Token, legt KV, D1, Schema,
+   Migrationen und das Pages-Projekt an, erzeugt das Salz für die
+   Client-Hashes, trägt die Kennungen zurück ins Repository **und stößt den
+   Deploy an**. Der nimmt die Worker-Adresse aus seiner eigenen Ausgabe — ein
+   Secret `VITE_API_BASE` braucht es nur, wenn der Worker später hinter einer
+   eigenen Domain liegt.
+
+   > **Am 6. September waren das noch sechs Schritte von Hand, und fünf davon
+   > waren mein Versäumnis, keine Grenze der Plattform.** Aufgeschrieben, damit
+   > die Begründungen nicht verloren gehen: Der Deploy lief nicht von selbst an,
+   > weil ein Push mit dem `GITHUB_TOKEN` keine Workflows auslöst — ein Dispatch
+   > über die API tut es, also tut es jetzt der Workflow. `VITE_API_BASE`
+   > abzutippen war unnötig, weil die Adresse im Deploy-Log steht. `CLIENT_SALT`
+   > von Hand zu setzen war es auch: Ein Salz ist ein Zufallswert, den *niemand*
+   > kennen muss. Das fehlende Token-Recht kam als
+   > `Authentication error [code: 10000]` mitten im Lauf statt als Prüfung
+   > davor. Und zwei rote Läufe gingen schlicht auf meine Kappe: das
+   > Pages-Projekt, das `pages deploy` nicht selbst anlegt, und Migrationen,
+   > die ich hinter das Schema gehängt hatte statt davor.
 3. **Dependabot-Warnungen** und **Sicherheitsupdates** einschalten
    (Punkt 7) — zwei Schalter, und genau die, die den dringenden Teil abdecken.
 4. **Auto-Renew** für die fünf Domains (Punkt 2). Der einzige Punkt auf dieser
