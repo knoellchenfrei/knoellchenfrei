@@ -10,6 +10,8 @@
  * Datenbankeintrag und eine Antwort.
  */
 
+import { withinCity, type City } from './city.js'
+
 /** Die Absicht hinter einer eingehenden Nachricht. */
 export type TelegramIntent =
   /** Erklärung anfordern — `/start`, `/hilfe`, `/help`. */
@@ -34,12 +36,6 @@ export interface TelegramMessage {
   sender: TelegramSender | null
 }
 
-/**
- * Berlin, großzügig umrandet. Dieselben Grenzen wie im Web-Pfad: Eine Meldung
- * außerhalb ist ein Fehler oder ein Missbrauchsversuch.
- */
-const BOUNDS = { west: 13.0, east: 13.8, south: 52.3, north: 52.7 }
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
@@ -52,12 +48,17 @@ function asId(value: unknown): number | null {
 /**
  * Zerlegt ein Telegram-Update.
  *
+ * `city` steckt die Grenze, innerhalb derer ein Standort als Meldung gilt.
+ * Als Parameter und nicht als Konstante: Der Parser ist die einzige Stelle,
+ * an der fremder Text auf eine Stadtgrenze trifft, und eine fest verdrahtete
+ * Grenze waere genau hier am teuersten.
+ *
  * Nichts daran wird geglaubt: Jedes Feld wird geprüft, bevor es benutzt wird.
  * Ein Update ohne `message` — bearbeitete Nachrichten, Kanalbeiträge,
  * Reaktionen — ist keins für uns; Telegram schickt davon reichlich, sobald der
  * Bot in einer Gruppe liegt.
  */
-export function parseTelegramUpdate(update: unknown): TelegramMessage {
+export function parseTelegramUpdate(update: unknown, city: City): TelegramMessage {
   if (!isRecord(update)) return { intent: { kind: 'ignore' }, sender: null }
 
   const message = update.message
@@ -79,7 +80,10 @@ export function parseTelegramUpdate(update: unknown): TelegramMessage {
     if (!Number.isFinite(lon) || !Number.isFinite(lat)) {
       return { intent: { kind: 'unknown' }, sender }
     }
-    if (lon < BOUNDS.west || lon > BOUNDS.east || lat < BOUNDS.south || lat > BOUNDS.north) {
+    // Dieselbe Box wie im Web-Pfad, und aus derselben Quelle. Sie stand hier
+    // vorher ein zweites Mal als Zahlenpaar; zwei Boxen, die auseinanderlaufen,
+    // heissen: Der Bot nimmt eine Meldung an, die die App abweist.
+    if (!withinCity(city, lon, lat)) {
       return { intent: { kind: 'unknown' }, sender }
     }
     return { intent: { kind: 'report', lon, lat }, sender }

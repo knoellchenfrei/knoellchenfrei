@@ -119,7 +119,7 @@ Standort-Vordialog.
 | Kontaktseite mit Ansprechpartnern | Setzt eine Organisation voraus, die es hier nicht gibt. Solange eine Person dahintersteht, ist das Impressum die ehrliche Form. |
 | Presse-Bereich | Braucht jemanden, der Presseanfragen beantwortet. |
 | Sprachumschaltung | Die Daten sind deutsch — Zonennamen, Bezirke, Freitext im Feed. Eine halbe Übersetzung ist schlechter als eine ganze deutsche App. |
-| Stadt-Umschaltung | Erst sinnvoll mit einer zweiten Stadt. Die Zonenlogik trägt das schon; Berlin-spezifisch sind nur Datenquelle und Feiertagskalender. |
+| Stadt-Umschaltung | Erst sinnvoll mit einer zweiten Stadt — und dann als Build je Stadt, nicht als Schalter: Die Zonendaten liegen im Bündel, ein Wechsel im Browser müsste den halben Datenbestand nachladen. |
 
 ## Zweite Stadt
 
@@ -132,13 +132,23 @@ fest verdrahten. Der Stand heute:
 | Fahrplan-Parser | nein, aber auf die Schreibweisen dieses Feeds trainiert |
 | Heatmap-Raster | nein — metrisch, fester Ursprung |
 | Ruhetags-Hinweis | nein — Wochentage und Stunden werden aus den geladenen Fahrplänen abgeleitet |
-| Feiertagskalender (`core/holidays`) | **ja** — enthält den 8. März |
-| Datenquelle (`ingest/sources`) | **ja** — WFS der GDI Berlin |
-| Kartenausschnitt und Grenzprüfung | **ja** |
+| Feiertagskalender (`core/holidays`) | nein mehr — Tabelle je Bundesland, BE und HH belegt |
+| Kartenausschnitt und Grenzprüfung | nein mehr — `core/city`, ein Datensatz je Stadt |
+| Datenquelle (`ingest/sources`) | nach Stadt gegliedert, aber nur Berlin ist abgerufen |
+| Zeitfenster-Parser auf Hamburgs Schreibweise | **offen** — Berlins „Mo-Sa 9-20 Uhr" ist eine Konvention dieses Feeds |
+| Produktname (`index.html`, Manifest, `h1`) | **ja** — steht dreimal als „ParkingZone Berlin" |
 
-Zu tun wären also der Feiertagskalender je Bundesland und eine zweite
-Datenquelle. FreiFahren löst das mit `packages/cities` und einer Datenbank je
-Stadt — derselbe Weg wäre hier der richtige.
+Was sich damit geändert hat: Berlin steckte an **sechs** Stellen als
+Zahlenpaar im Code — zwei im Browser-Speicher, eine im Kartenmittelpunkt, eine
+beim Merken des Parkplatzes, eine im Worker und eine im Telegram-Parser. Die
+Zahl war vorher mit „drei Stellen" angegeben; das war zu optimistisch gezählt.
+Jetzt steht sie einmal in `core/city.ts`, und Browser, Worker und Bot lesen
+dieselbe. Auseinanderlaufende Grenzen waren der teuerste Fehler dieser Art:
+Der Server hätte Meldungen verworfen, die die App gerade angenommen hat.
+
+Offen bleibt der Weg von FreiFahren — `packages/cities` und eine Datenbank je
+Stadt. Solange es zwei Städte sind, wäre eine zweite Datenbank Aufwand ohne
+Gegenwert; ab der dritten nicht mehr.
 
 ## Danach — und da kann ich wieder übernehmen
 
@@ -149,6 +159,8 @@ Stadt — derselbe Weg wäre hier der richtige.
   [hosting.md](hosting.md).
 - **Ladepunkt-Belegung** über den Worker, sobald die Lizenzfrage bei der SenMVKU
   geklärt ist.
-- **Mehrere Städte** — die Zonenlogik ist nicht Berlin-spezifisch, nur die
-  Datenquelle und der Feiertagskalender sind es. FreiFahren macht das mit einer
-  Datenbank je Stadt.
+- **Mehrere Städte** — die Zonenlogik war nie Berlin-spezifisch, die Grenzen
+  und der Feiertagskalender sind es seit `core/city.ts` auch nicht mehr. Was
+  bleibt, ist die Datenquelle: Hamburgs Zeiten stehen in einer anderen
+  Schreibweise als Berlins, und dafür braucht es einen Parser, den niemand
+  schreiben kann, ohne den Feed einmal gesehen zu haben.

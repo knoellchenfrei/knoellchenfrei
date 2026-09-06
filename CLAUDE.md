@@ -19,7 +19,7 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @parkingzone/core test                # 129 Unit-Tests
+pnpm --filter @parkingzone/core test                # 151 Unit-Tests
 pnpm --filter @parkingzone/core test:coverage       # Coverage-Bericht
 pnpm --filter @parkingzone/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -38,7 +38,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=129 E2E_COUNT=93 npx tsx src/build-badges.ts
+TEST_COUNT=151 E2E_COUNT=93 npx tsx src/build-badges.ts
 scripts/build-tiles.sh 20260730                     # PMTiles-Ausschnitt Berlin
 ```
 
@@ -51,6 +51,7 @@ Diese kosten sonst je eine halbe Stunde Fehlersuche:
 | **Playwright** | Der vorinstallierte Chromium passt nicht zur erwarteten Build-Nummer. Immer mit `PLAYWRIGHT_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome` aufrufen (die Nummer kann sich ändern, `ls /opt/pw-browsers`). Die Skripte oben lesen dieselbe Variable. |
 | **Kartenkacheln** | `tile.openstreetmap.org` ist vom Egress-Proxy gesperrt. Jede Aufnahme und jeder Testlauf zeigt die Karte deshalb **ohne Hintergrund**. Das ist keine Regression — die Zonen sind eigene Daten und zeichnen sich trotzdem. |
 | **Artifact** | Die Sicherheitsrichtlinie des Artifact-Sandkastens blockiert **jede** Bildanfrage an fremde Adressen. Im veröffentlichten Artifact gibt es prinzipiell keine Hintergrundkarte. Auch das ist kein Fehler. |
+| **E2E und die Karte** | `ready()` in `e2e/app.spec.ts` wartet auch darauf, dass `.loading` verschwindet. Ohne das klickten drei Tests auf eine Karte, an der noch keine Klick-Handler hingen: Mit gesperrtem Kachelserver kommt `styledata` nie, und `withMapReady` in `App.tsx` greift erst nach seinem 10-Sekunden-Rückfall. Auf einem kalten Lauf gingen sie durch, auf jedem weiteren fielen sie. |
 | **Weitere Sperren** | `download.geofabrik.de`, RDAP- und Whois-Dienste, `abfelbaum.dev`. `api.github.com` geht, ist aber auf die Repositories dieser Sitzung beschränkt. |
 | **add_repo** | Ein Repository unter einem *anderen* Eigentümer lässt sich nicht nachladen („cross-tier adds are not supported"). Dafür braucht es eine neue Sitzung mit diesem Repository als Quelle. |
 
@@ -82,6 +83,19 @@ wiederholt.
 - **Die Historie des alten Repositories nicht umschreiben.** In den Commits von
   2012 steht ein Passwort; der Weg ist ein neues Repository mit einem Commit,
   nicht ein `filter-repo` über bestehende Klone. `scripts/umzug.sh` macht das.
+- **Eine unbekannte Stadt fällt nicht auf Berlin zurück, sie wirft.**
+  `cityByKey`, `holidaysFor` und `citySources` brechen bei einem Schlüssel ab,
+  den sie nicht kennen. Ein stiller Rückfall wäre die schlechteste Antwort: Eine
+  Hamburg-Instanz mit einem Tippfehler in der Konfiguration würde Berliner
+  Grenzen anlegen und jede Hamburger Meldung mit „position outside" abweisen —
+  im Log stünde nichts, was nach einem Fehler aussieht. Der einzige erlaubte
+  Rückfall ist eine *fehlende* Angabe: Ohne `VITE_CITY` bzw. `CITY` bleibt es
+  Berlin, weil das die Stadt ist, die heute ausgeliefert wird.
+- **Stadtgrenzen stehen genau einmal, in `core/city.ts`.** Sie standen vorher
+  an sechs Stellen als Zahlenpaar — im Browser-Speicher zweimal, beim Merken des
+  Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,
+  nimmt die App eine Meldung an, die der Server danach verwirft, und niemand
+  erfährt, warum.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

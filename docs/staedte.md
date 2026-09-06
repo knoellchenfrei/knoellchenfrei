@@ -2,8 +2,12 @@
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.
-Berlin steckt an genau drei Stellen: in der Datenquelle, im Feiertagskalender
-und im Kartenausschnitt.
+
+Berlin steckte an drei Stellen, hieß es hier: Datenquelle, Feiertagskalender,
+Kartenausschnitt. Beim Nachzählen waren es sechs — die Grenzprüfung stand als
+Zahlenpaar im Browser-Speicher, beim Merken des Parkplatzes, im Worker und im
+Telegram-Parser, jeweils einzeln. Seit `core/city.ts` steht sie einmal; der
+Feiertagskalender hängt am Bundesland. Was bleibt, ist die Datenquelle.
 
 Die Frage ist deshalb nicht „läuft der Code anderswo", sondern **„gibt es
 anderswo die Daten".** Das ist diese Analyse.
@@ -81,7 +85,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | Stadt | Geometrie | Tarif | Zeiten | Lizenz | Stufe |
 | --- | --- | --- | --- | --- | --- |
 | **Berlin** | WFS, Zonen und Abschnitte | im selben Feed | im selben Feed | DL-DE/Zero-2.0 | **geprüft** |
-| **Hamburg** | „Bewohnerparkgebiete" und „Öffentlicher Parkraum" als WFS im Transparenzportal | offen | teilweise beschrieben | Portal ist auf offene Lizenzen ausgelegt | **belegt** |
+| **Hamburg** | zwei WFS, Adressen und Typnamen unten | im Datensatz „Öffentlicher Parkraum" | im selben Datensatz | DL-DE/**Namensnennung** 2.0 | **belegt** |
 | **München** | Datensatz „Parkraummanagementgebiete" als Polygone im Open-Data-Portal, dazu 76 Parklizenzgebiete im GeoPortal | offen | offen | Portal ist auf offene Lizenzen ausgelegt | **belegt** |
 | **Frankfurt / Rhein-Main** | Regionalverband stellt Karten und Geodaten als WFS bereit | offen | offen | als Open Data ausgewiesen | **Hinweis** |
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
@@ -112,6 +116,46 @@ einheitliches Schema. Die App müsste dann nur ehrlich sagen, was sie nicht
 weiß — „gebührenpflichtig, Betrag unbekannt" ist eine brauchbare Antwort, eine
 geratene wäre es nicht.
 
+## Hamburg im Einzelnen
+
+Nachgesehen am 6. September 2026, über Websuche — die Portale selbst sind aus
+dieser Umgebung gesperrt (`geodienste.hamburg.de` und
+`suche.transparenz.hamburg.de` beantworten den CONNECT des Egress-Proxys mit
+403). Die Stufe bleibt deshalb **belegt**, nicht *geprüft*: Kein Feld wurde
+selbst gesehen.
+
+| | |
+| --- | --- |
+| **Bewohnerparkgebiete** | `https://geodienste.hamburg.de/HH_WFS_bewohnerparkgebiete`, Typname `de.hh.up:bewohnerparkgebiete` |
+| **Öffentlicher Parkraum** | `https://geodienste.hamburg.de/HH_WFS_Parkraum`, Typname vermutlich `de.hh.up:parkraum` — nicht bestätigt |
+| Herausgeber | Landesbetrieb Verkehr (LBV) bzw. Landesbetrieb Geoinformation und Vermessung |
+| Formate | WFS (GML), WMS, CSV, dazu eine OGC-API-Features-Schnittstelle |
+| Lizenz | Datenlizenz Deutschland **Namensnennung** 2.0 |
+| Attribute laut Metadaten | Lage, Parkzeiten, Parkzone, Höchstparkdauer, Handyparkzone |
+
+Drei Dinge, die daran hängen:
+
+**1. Die Lizenz ist eine andere als in Berlin.** Berlin gibt unter DL-DE/**Zero**
+heraus — Nennung freiwillig. Hamburg verlangt sie. Das ist keine Formalie,
+sondern Lizenzbedingung: Eine Hamburg-Ansicht ohne Quellenangabe verletzt sie.
+`City.attribution.attributionRequired` trägt den Unterschied bis in die
+Oberfläche, damit ihn niemand übersieht.
+
+**2. Die Metadaten des Dienstes nennen veraltete Preise.** Ihre Beschreibung
+spricht von drei Zonen zu 3, 2 und 1 Euro je Stunde. Tatsächlich hat Hamburg
+seit dem **1. Juli 2026 vier Zonen**: 4,00 / 3,50 / 3,00 / 2,00 Euro je Stunde,
+angehoben um 50 Cent je Zone mit Verweis auf die Inflation. Genau der Fall, vor
+dem die Prüfliste unten warnt — nur dass hier nicht der Datensatz alt ist,
+sondern seine Beschreibung. Wer den Tarif aus dem Metadatentext liest statt aus
+dem Feature, liefert falsche Preise aus.
+
+**3. Vier Zonen statt drei sind kein Sonderfall für den Code.** `ParkingZone`
+kennt keine Zonenanzahl; Tarif und Zeitfenster stehen je Zone. Was fehlt, ist
+der Parser für Hamburgs *Schreibweise* der Zeiten — Berlins „Mo-Sa 9-20 Uhr"
+ist eine Konvention dieses Feeds, keine Norm. Den kann niemand schreiben, ohne
+den Feed einmal gesehen zu haben; er ist die eine Aufgabe, die diese Umgebung
+nicht erledigen kann.
+
 ## Was am Code dafür zu tun ist
 
 Der Stand heute, aus [oeffentlich-machen.md](oeffentlich-machen.md):
@@ -126,18 +170,33 @@ Der Stand heute, aus [oeffentlich-machen.md](oeffentlich-machen.md):
 | Datenquelle (`ingest/sources`) | **ja** |
 | Kartenausschnitt und Grenzprüfung | **ja** |
 
-Drei Aufgaben also:
+Drei Aufgaben waren das. Zwei sind erledigt:
 
-1. **Feiertage je Bundesland.** Der 8. März ist in Berlin Feiertag, in Hamburg
-   nicht; Fronleichnam umgekehrt. Das ist eine Tabelle, keine Architektur.
-2. **Stadt als Konfiguration** statt als Konstante: Datenquelle,
-   Kartenausschnitt, Grenzprüfung, Feiertagsland. FreiFahren löst das mit einem
-   Paket je Stadt und einer Datenbank je Stadt.
+1. ~~**Feiertage je Bundesland.**~~ Erledigt. `holidaysFor(land, jahr)` in
+   `core/holidays`; belegt sind BE (8. März, seit 2019) und HH
+   (Reformationstag, seit 2018). Ein Land ohne hinterlegte Tabelle **wirft**,
+   statt eine leere Menge zu liefern — sonst forderte die App an Karfreitag
+   zum Zahlen auf, und nichts daran sähe nach einem Fehler aus. Die zwölf
+   übrigen Länder fehlen bewusst: Sie gehören nur mit Beleg hinein, und die
+   amtlichen Seiten sind aus dieser Umgebung gesperrt.
+   Zwei Fallstricke stehen im Quelltext, weil sie sonst untergehen: Mariä
+   Himmelfahrt (BY) und Fronleichnam (SN, TH) gelten **gemeindeweise** — eine
+   Tabelle je Land kann sie gar nicht ausdrücken, für München gehören sie an
+   die Stadt. Und Buß- und Bettag ist beweglich, aber nicht österlich.
+2. ~~**Stadt als Konfiguration** statt als Konstante.~~ Erledigt.
+   `core/city.ts` trägt Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze,
+   Bundesland und Quellenangabe je Stadt; `ingest/sources` ist nach Stadt
+   gegliedert. Berlin stand vorher an **sechs** Stellen als Zahlenpaar im
+   Code, nicht an dreien wie hier behauptet — die sechste saß im
+   Telegram-Parser, und eine abweichende Grenze dort heißt: Der Bot nimmt an,
+   was die App verwirft.
 3. **Der Parser muss unbekannte Schreibweisen abweisen können**, ohne den Build
-   einer anderen Stadt mitzureißen.
+   einer anderen Stadt mitzureißen. Offen, und zeigt sich erst, wenn der erste
+   fremde Feed hereinkommt.
 
-Reihenfolge: erst 2, dann 1, dann die zweite Stadt. Punkt 3 zeigt sich von
-selbst, sobald der erste fremde Feed hereinkommt.
+Was danach noch offen ist: der Hamburger Feed selbst — Abruf, Parser, Zonendaten
+im Bündel — und der Produktname, der in `index.html`, im Manifest und in der
+`h1` weiter „ParkingZone Berlin" lautet.
 
 ## Prüfliste je Stadt
 
@@ -151,6 +210,20 @@ Prüfung:
 - [ ] Stehen die **Zeiten** darin, und in welcher Schreibweise?
 - [ ] Wie oft wird **aktualisiert**? Ein Datensatz von 2019 nennt falsche Preise.
 - [ ] Gibt es einen **Ansprechpartner** für Rückfragen zu Auffälligkeiten?
+
+Stand für Hamburg, nach dem Abschnitt oben:
+
+- [x] Geometrie — zwei WFS, benannt.
+- [x] Lizenz — DL-DE/Namensnennung 2.0, offen, aber mit Pflicht zur Nennung.
+- [x] Maschinell abrufbar — WFS, CSV, OGC API Features.
+- [x] Tarif — laut Metadaten im Datensatz „Öffentlicher Parkraum".
+- [x] Zeiten — ebenda, Schreibweise **unbekannt**. Das ist der offene Punkt.
+- [x] Aktualisierung — bei Änderung der Gebiete. Die *Beschreibung* des Dienstes
+      hinkt allerdings hinterher, siehe oben.
+- [ ] Ansprechpartner — nicht ermittelt.
+
+Damit fällt Hamburg an keiner Stelle durch. Was fehlt, ist der Blick in den
+Feed selbst, und der geht aus dieser Umgebung nicht.
 
 Zu jeder Stadt, die durchfällt, gehört ein Eintrag in
 [data-sources.md](data-sources.md) — Negativbefunde sind Arbeitsergebnisse und

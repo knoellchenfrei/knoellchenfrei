@@ -15,7 +15,9 @@
  * direction of a vote in the process.
  */
 
-import { expiredMarks, markFor, windowStart, type HeatMark } from '@parkingzone/core'
+import { expiredMarks, markFor, windowStart, withinCity, type HeatMark } from '@parkingzone/core'
+
+import { CITY } from './city.js'
 
 export interface Sighting {
   id: string
@@ -89,7 +91,7 @@ function sanitise(id: string, row: Partial<Sighting> | null | undefined, now: nu
   const lat = Number(row.lat)
   const lon = Number(row.lon)
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
-  if (lon < 13 || lon > 13.8 || lat < 52.3 || lat > 52.7) return null
+  if (!withinCity(CITY, lon, lat)) return null
 
   const reportedAt = Number(row.reportedAt)
   if (!Number.isFinite(reportedAt)) return null

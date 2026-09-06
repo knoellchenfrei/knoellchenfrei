@@ -41,6 +41,27 @@ kein laufender Kachelserver — so macht es FreiFahren.
 | `eladeinfrastruktur` | 25 Features | Enthält keine Ladesäulen-Standorte, nur Planungshilfen. Das Feld `ladesaeule` im Segment-Layer ist die bessere Quelle. |
 | OpenStreetMap Parkhäuser | unbestimmt | Die einzige Quelle für Tiefgaragen in Berlin, aber ODbL mit Share-alike: Ein Snapshot, der OSM-Daten mit den Berliner Segmenten verschmilzt, wäre eine abgeleitete Datenbank und müsste selbst unter ODbL stehen. Machbar als **getrennter** Layer, bisher nicht umgesetzt. |
 
+## Vorbereitet, noch nicht abgerufen — Hamburg
+
+Recherche vom 6. September 2026, über Websuche. `geodienste.hamburg.de` und
+`suche.transparenz.hamburg.de` beantworten den CONNECT des Egress-Proxys mit
+403; kein Feld wurde selbst gesehen. Die vollständige Prüfung steht in
+[staedte.md](staedte.md#hamburg-im-einzelnen), die Adressen und Typnamen in
+`app/packages/ingest/src/sources.ts`.
+
+Zwei Punkte gehören hierher, weil sie die Datenherkunft betreffen:
+
+- **Die Lizenz ist eine andere.** Hamburg gibt unter
+  [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0)
+  heraus, nicht unter Zero wie Berlin. Die Nennung der Quelle ist damit
+  Lizenzbedingung und keine Höflichkeit. `City.attribution.attributionRequired`
+  in `core/city.ts` trägt den Unterschied bis in die Oberfläche.
+- **Die Beschreibung des Dienstes nennt veraltete Preise** — drei Zonen zu 3, 2
+  und 1 Euro je Stunde. Seit dem 1. Juli 2026 gelten vier Zonen zu 4,00 / 3,50 /
+  3,00 / 2,00 Euro. Wer den Tarif aus dem Metadatentext liest statt aus dem
+  Feature, liefert falsche Preise aus. Das ist derselbe Fehler wie ein
+  Datensatz von 2019, nur eine Ebene höher.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

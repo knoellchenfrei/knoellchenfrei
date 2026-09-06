@@ -7,11 +7,20 @@ import { expect, test, type Page } from '@playwright/test'
  * depends on the parsed zones. Waiting on a fixed timeout made results depend on
  * machine speed — different tests failed on each run. The provenance footer is
  * rendered from the metadata file, so its presence means the data is in.
+ *
+ * Die Daten reichen aber nicht: Solange `.loading` steht, hängen auch die
+ * Klick-Handler der Karte noch nicht dran. Mit gesperrtem Kachelserver kommt
+ * `styledata` nie, und `withMapReady` in App.tsx greift erst nach seinem
+ * 10-Sekunden-Rückfall. Wer vorher auf die Karte klickt, klickt ins Leere —
+ * genau das haben drei Tests getan, sobald der Build warm genug war, dass die
+ * Herkunftsangabe in unter zehn Sekunden stand. Auf einem kalten Lauf gingen
+ * sie durch, auf jedem weiteren fielen sie: ein Wettlauf, kein Zufall.
  */
 async function ready(page: Page, options?: { keepPrompt?: boolean }): Promise<void> {
   await page.goto('/')
   await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
   await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+  await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
   await expect
     .poll(
       async () =>

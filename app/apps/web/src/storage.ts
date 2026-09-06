@@ -1,5 +1,6 @@
-import { expiredMarks, type HeatMark } from '@parkingzone/core'
+import { expiredMarks, withinCity, withinCitySession, type HeatMark } from '@parkingzone/core'
 
+import { CITY } from './city.js'
 import { sanitiseMark } from './sighting-backend.js'
 
 /**
@@ -60,8 +61,8 @@ export function loadSession(): ParkingSession | null {
   const lat = Number(value.lat)
   const startedAt = Number(value.startedAt)
   if (!Number.isFinite(lon) || !Number.isFinite(lat) || !Number.isFinite(startedAt)) return null
-  // Berlin, generously bounded. Anything else is not a parking spot in this app.
-  if (lon < 12.5 || lon > 14.5 || lat < 52 || lat > 53) return null
+  // Die Stadt, grosszuegig gefasst. Alles andere ist kein Parkplatz dieser App.
+  if (!withinCitySession(CITY, lon, lat)) return null
   // A start in the future, or before this rewrite existed, is corrupt. The
   // lower bound matters: startedAt=1 rendered as "496850 Std." on the timer.
   const PROJECT_EPOCH = Date.UTC(2026, 0, 1)
@@ -117,7 +118,7 @@ export function loadSightings(): StoredSighting[] {
     const lat = Number(row.lat)
     const reportedAt = Number(row.reportedAt)
     if (!Number.isFinite(lon) || !Number.isFinite(lat) || !Number.isFinite(reportedAt)) return []
-    if (lon < 13 || lon > 13.8 || lat < 52.3 || lat > 52.7) return []
+    if (!withinCity(CITY, lon, lat)) return []
     if (reportedAt > now + 60_000) return []
     const id = typeof row.id === 'string' ? row.id : ''
     if (!/^[\w-]{1,64}$/.test(id)) return []

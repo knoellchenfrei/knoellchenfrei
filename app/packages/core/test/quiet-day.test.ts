@@ -9,6 +9,7 @@ function zone(name: string, weekdays: readonly number[], from = 9 * 60, to = 20 
   return {
     id: name,
     name,
+    land: 'BE',
     fee: { kind: 'exact', centsPerHour: 300 },
     windows: [{ weekdays: weekdays as never, fromMinute: from, toMinute: to }],
   }

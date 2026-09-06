@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { chargeableAt, estimateCost, type ParkingZone } from '@parkingzone/core'
 
+import { CITY } from './city.js'
 import { MAX_STAY_MINUTES } from './format.js'
 import type { ZoneProperties } from './types.js'
 
@@ -10,6 +11,7 @@ export function toParkingZone(properties: ZoneProperties): ParkingZone {
   return {
     id: properties.zone,
     name: properties.zone,
+    land: CITY.land,
     fee: properties.fee,
     windows: properties.windows,
     ...(maxStay === undefined ? {} : { maxStayMinutes: maxStay }),

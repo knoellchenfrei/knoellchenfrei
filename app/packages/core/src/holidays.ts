@@ -1,18 +1,25 @@
 /**
- * Statutory holidays in Berlin.
+ * Statutory holidays, by Bundesland.
  *
  * Relevant because a weekday holiday is treated like a Sunday: no parking fee is
  * due. Getting this wrong makes the app tell people to pay on Good Friday.
  *
- * Berlin-specific: International Women's Day on 8 March has been a public
- * holiday here since 2019 and exists in no other Land except Mecklenburg-
- * Vorpommern. Reformationstag and Buß- und Bettag are not Berlin holidays.
+ * Was hier bewusst fehlt: die zwölf übrigen Bundesländer. Die Tabelle ist
+ * leicht zu erweitern — aber nur mit einem Beleg je Eintrag, und aus dieser
+ * Arbeitsumgebung sind fast alle amtlichen Seiten gesperrt. Ein unbekanntes
+ * Land wirft deshalb, statt eine leere Menge zu liefern: Eine Stadt ohne
+ * Feiertage würde an Karfreitag zum Zahlen auffordern und dabei nach nichts
+ * aussehen. Zwei Fallstricke für den, der die Tabelle erweitert, stehen bei
+ * `REGIONAL`.
  *
  * Easter Sunday and Whit Sunday are omitted deliberately — they always fall on a
  * Sunday, which the schedule already treats as free.
  */
 
 import { berlinDateKey, type BerlinWallClock } from './berlin-time.js'
+
+/** Amtliche Kürzel der Bundesländer, so weit belegt. */
+export type Land = 'BE' | 'HH'
 
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
@@ -44,27 +51,73 @@ function shiftFromEaster(year: number, offsetDays: number): string {
   return `${date.getUTCFullYear()}-${month}-${day}`
 }
 
-const cache = new Map<number, ReadonlySet<string>>()
+/**
+ * Die neun Feiertage, die in allen sechzehn Ländern gelten.
+ *
+ * Feste Daten als `MM-TT`, bewegliche als Abstand zum Ostersonntag.
+ */
+const NATIONWIDE_FIXED = ['01-01', '05-01', '10-03', '12-25', '12-26'] as const
+const NATIONWIDE_FROM_EASTER = [
+  -2, // Karfreitag
+  1, // Ostermontag
+  39, // Christi Himmelfahrt
+  50, // Pfingstmontag
+] as const
 
-/** Berlin holiday dates for a year, as `YYYY-MM-DD` keys. */
-export function berlinHolidays(year: number): ReadonlySet<string> {
-  const cached = cache.get(year)
+/**
+ * Was ein Land über die neun bundesweiten hinaus hat.
+ *
+ * Zwei Fallstricke, bevor jemand hier ein Land ergänzt:
+ *
+ * - **Manche Feiertage gelten nur in Teilen eines Landes.** Mariä Himmelfahrt
+ *   ist in Bayern gemeindeweise geregelt, Fronleichnam in Sachsen und
+ *   Thüringen ebenso. Eine Tabelle je Land kann das nicht ausdrücken; für
+ *   München gehört der Eintrag deshalb an die Stadt, nicht ans Land.
+ * - **Buß- und Bettag ist beweglich, aber nicht österlich.** Er ist der
+ *   Mittwoch vor dem 23. November und braucht eine eigene Regel, kein
+ *   festes Datum.
+ *
+ * Belege für die beiden Einträge unten:
+ *
+ * - **BE** — Der Internationale Frauentag am 8. März ist seit 2019 in Berlin
+ *   gesetzlicher Feiertag; außer Berlin führt ihn nur Mecklenburg-Vorpommern.
+ *   Reformationstag und Buß- und Bettag sind in Berlin keine Feiertage.
+ * - **HH** — Der Reformationstag am 31. Oktober ist seit 2018 gesetzlicher
+ *   Feiertag; damit hat Hamburg zehn. Der 8. März ist keiner, Fronleichnam
+ *   auch nicht. Nachgesehen am 6. September 2026.
+ */
+const REGIONAL: Record<Land, readonly string[]> = {
+  BE: ['03-08'], // Internationaler Frauentag
+  HH: ['10-31'], // Reformationstag
+}
+
+const cache = new Map<string, ReadonlySet<string>>()
+
+/** Feiertage eines Landes in einem Jahr, als `YYYY-MM-DD`-Schlüssel. */
+export function holidaysFor(land: Land, year: number): ReadonlySet<string> {
+  const cacheKey = `${land}:${year}`
+  const cached = cache.get(cacheKey)
   if (cached !== undefined) return cached
 
-  const fixed = ['01-01', '03-08', '05-01', '10-03', '12-25', '12-26']
-  const dates = new Set<string>(fixed.map((date) => `${year}-${date}`))
+  // Ausdrücklich als "kann fehlen" typisiert: Zur Übersetzungszeit deckt
+  // `Record<Land, …>` jeden Fall ab, zur Laufzeit kommt `land` aber aus
+  // Konfiguration und damit aus einer Datei, die niemand geprüft hat.
+  const regional: readonly string[] | undefined = REGIONAL[land]
+  if (regional === undefined) {
+    throw new Error(`Kein Feiertagskalender für "${land}" hinterlegt`)
+  }
 
-  dates.add(shiftFromEaster(year, -2)) // Karfreitag
-  dates.add(shiftFromEaster(year, 1)) // Ostermontag
-  dates.add(shiftFromEaster(year, 39)) // Christi Himmelfahrt
-  dates.add(shiftFromEaster(year, 50)) // Pfingstmontag
+  const dates = new Set<string>(
+    [...NATIONWIDE_FIXED, ...regional].map((date) => `${year}-${date}`),
+  )
+  for (const offset of NATIONWIDE_FROM_EASTER) dates.add(shiftFromEaster(year, offset))
 
-  cache.set(year, dates)
+  cache.set(cacheKey, dates)
   return dates
 }
 
-export function isBerlinHoliday(clock: BerlinWallClock): boolean {
-  return berlinHolidays(clock.year).has(berlinDateKey(clock))
+export function isHoliday(land: Land, clock: BerlinWallClock): boolean {
+  return holidaysFor(land, clock.year).has(berlinDateKey(clock))
 }
 
 /**

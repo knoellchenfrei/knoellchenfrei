@@ -18,11 +18,15 @@
  */
 
 import {
+  BERLIN,
+  cityByKey,
   isFeedbackKind,
   markFor,
   parseTelegramUpdate,
   tidyFeedback,
   windowStart,
+  withinCity,
+  type City,
 } from '@parkingzone/core'
 
 // The one place the worker does NOT re-implement a core rule. Everything else
@@ -56,6 +60,29 @@ export interface Env {
    * kennt sie" ist keine Zugangskontrolle.
    */
   TELEGRAM_SECRET?: string
+  /**
+   * Welche Stadt dieser Worker bedient, als Schlüssel aus `CITIES`.
+   *
+   * Ohne den Wert bleibt es Berlin — die Stadt, die heute läuft. Ein
+   * *falscher* Wert fällt nicht zurück, sondern lässt den Worker beim ersten
+   * Zugriff werfen: Ein stiller Rückfall auf Berlin würde in einer Hamburger
+   * Instanz jede Meldung mit 422 abweisen, und im Log stünde nur „position
+   * outside".
+   */
+  CITY?: string
+}
+
+/**
+ * Die Stadt dieses Workers.
+ *
+ * Die eine Stelle, an der dieser Worker doch von `core` abhängt — neben dem
+ * Heat-Raster. Der Grund ist derselbe: Es ist kein *Regel*wissen, das hier
+ * bewusst zweimal steht, sondern eine Zahl, die auf beiden Seiten dieselbe
+ * sein muss. Weicht die Box hier von der im Browser ab, nimmt die App eine
+ * Meldung an, die der Server danach verwirft, und niemand erfährt, warum.
+ */
+function cityOf(env: Env): City {
+  return env.CITY === undefined || env.CITY === '' ? BERLIN : cityByKey(env.CITY)
 }
 
 const WFS_BASE = 'https://gdi.berlin.de/services/wfs'
@@ -439,10 +466,11 @@ async function createSighting(
 
   const lon = Number(payload.lon)
   const lat = Number(payload.lat)
-  // Berlin's bounding box. A report outside it is a bug or an abuse attempt;
-  // either way it has no business in a Berlin parking app.
-  if (!(lon >= 13.0 && lon <= 13.8 && lat >= 52.3 && lat <= 52.7)) {
-    return json({ error: 'position outside Berlin' }, { status: 422 }, cors)
+  // Die Box der Stadt. Eine Meldung ausserhalb ist ein Fehler oder ein
+  // Missbrauchsversuch; in beiden Faellen hat sie hier nichts zu suchen.
+  const city = cityOf(env)
+  if (!withinCity(city, lon, lat)) {
+    return json({ error: `position outside ${city.name}` }, { status: 422 }, cors)
   }
 
   const id = await storeSighting(env, lon, lat, hash)
@@ -618,7 +646,8 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
     return json({ ok: true }, {}, {})
   }
 
-  const { intent, sender } = parseTelegramUpdate(update)
+  const city = cityOf(env)
+  const { intent, sender } = parseTelegramUpdate(update, city)
   if (sender === null || intent.kind === 'ignore') return json({ ok: true }, {}, {})
 
   if (intent.kind === 'help') {
@@ -630,7 +659,7 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
     await telegramSend(
       env,
       sender.chatId,
-      'Damit kann ich nichts anfangen. Schick mir einen Standort in Berlin: ' +
+      `Damit kann ich nichts anfangen. Schick mir einen Standort in ${city.name}: ` +
         'Büroklammer → Standort. /hilfe erklärt es ausführlicher.'
     )
     return json({ ok: true }, {}, {})

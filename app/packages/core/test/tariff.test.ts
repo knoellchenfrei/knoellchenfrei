@@ -15,6 +15,7 @@ function zoneFrom(id: string, zeiten: string, gebuehr: string): ParkingZone {
   return {
     id,
     name: id,
+    land: 'BE',
     fee: parseFee(gebuehr),
     windows: schedule.windows,
     unmodelledRules: schedule.unmodelledRules,

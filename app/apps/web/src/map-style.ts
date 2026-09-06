@@ -117,4 +117,3 @@ export function baseStyle(withTiles: boolean): StyleSpecification {
   }
 }
 
-export const BERLIN_CENTER: [number, number] = [13.404954, 52.520008]

@@ -8,13 +8,15 @@ import {
   isChargeable,
   quietDayNote,
   markFor,
+  withinCitySession,
   MIN_MARKS_FOR_PATTERN,
   type HeatMark,
   type Position,
   type Sighting,
 } from '@parkingzone/core'
 
-import { baseStyle, BERLIN_CENTER } from './map-style.js'
+import { CITY } from './city.js'
+import { baseStyle } from './map-style.js'
 import { tidyPoiDetail } from './format.js'
 import { isEmbedded, loadData } from './data-source.js'
 import { openFeedback } from './feedback.js'
@@ -275,8 +277,10 @@ export function App() {
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: baseStyle(!isEmbedded()),
-      center: BERLIN_CENTER,
-      zoom: 11.5,
+      // Kopie statt Verweis: `Position` ist readonly, MapLibres `LngLatLike`
+      // nicht — und die Konfiguration soll niemand von aussen verbiegen können.
+      center: [CITY.center[0], CITY.center[1]],
+      zoom: CITY.zoom,
       attributionControl: { compact: true },
       // The page is German; MapLibre's defaults ("Map", "Zoom in") were the
       // only English a screen reader user heard.
@@ -826,10 +830,12 @@ export function App() {
     const point =
       anchor ?? position ?? (mapRef.current?.getCenter().toArray() as [number, number] | undefined)
     if (point === undefined) return
-    // The app covers Berlin. Accepting a spot outside it stored a session the
-    // reader then discarded on the next load, so the car silently vanished.
-    if (point[0] < 12.5 || point[0] > 14.5 || point[1] < 52 || point[1] > 53) {
-      setError('Dieser Ort liegt außerhalb von Berlin — hier kann kein Parkplatz gemerkt werden.')
+    // Dieselbe Box, die der Leser in storage.ts benutzt. Vorher standen die
+    // Zahlen hier ein zweites Mal: Ein Ort, den diese Prüfung durchliess, den
+    // der Leser aber verwarf, speicherte eine Sitzung, die beim naechsten
+    // Laden verschwand — das Auto war weg, ohne Meldung.
+    if (!withinCitySession(CITY, point[0], point[1])) {
+      setError(`Dieser Ort liegt außerhalb von ${CITY.name} — hier kann kein Parkplatz gemerkt werden.`)
       return
     }
     const hit = zoneAt(zones, point)

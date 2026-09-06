@@ -14,6 +14,7 @@ import { parseFee } from '../src/parse-fee.js'
 const zone: ParkingZone = {
   id: '1',
   name: '1',
+  land: 'BE',
   fee: parseFee('4,00 Euro'),
   windows: parseSchedule('Mo-Sa 9-22 Uhr').windows,
 }
@@ -23,6 +24,7 @@ const spandau: ParkingZone = (() => {
   return {
     id: '10',
     name: '10',
+    land: 'BE',
     fee: parseFee('2,00 Euro'),
     windows: parsed.windows,
     unmodelledRules: parsed.unmodelledRules,

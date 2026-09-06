@@ -1,13 +1,15 @@
 /**
- * Chargeability and cost for a Berlin parking zone.
+ * Chargeability and cost for a parking zone.
  *
  * Zones are set by the individual Bezirk, so hours and rates differ between them
  * and even between neighbouring zones — nothing here may hardcode a city-wide
- * schedule. In the September 2026 feed rates run from 2.00 to 4.00 EUR per hour.
+ * schedule. In the September 2026 Berlin feed rates run from 2.00 to 4.00 EUR
+ * per hour; Hamburg charges 2.00 to 4.00 EUR over four zones since 1 July 2026.
+ * Both fit the same model, which is the point: nothing below knows the city.
  */
 
 import { berlinWallClock, type BerlinWallClock, type Weekday } from './berlin-time.js'
-import { isAdventSaturday, isBerlinHoliday } from './holidays.js'
+import { isAdventSaturday, isHoliday, type Land } from './holidays.js'
 import type { Fee } from './parse-fee.js'
 
 /** A chargeable window on a set of weekdays, in local minutes since midnight. */
@@ -22,6 +24,16 @@ export interface ParkingZone {
   id: string
   /** District-assigned label, e.g. "58". Unique across all 103 zones. */
   name: string
+  /**
+   * Bundesland der Stadt, in der die Zone liegt — entscheidet den
+   * Feiertagskalender.
+   *
+   * Pflichtfeld ohne Vorgabewert. Ein Vorgabewert waere hier immer "BE", und
+   * damit haette die erste Hamburger Zone am 8. Maerz stillschweigend
+   * Berliner Feiertage benutzt: gebuehrenfrei gemeldet an einem Tag, an dem
+   * Hamburg kassiert.
+   */
+  land: Land
   fee: Fee
   windows: readonly ChargeWindow[]
   /** Maximum stay in minutes, where the zone sets one. */
@@ -71,7 +83,7 @@ const MINUTES_PER_DAY = 1440
  * holidays — it is the honest reading, not a verified one.
  */
 function isFreeDay(zone: ParkingZone, clock: BerlinWallClock): boolean {
-  return (zone.freeOnHolidays ?? true) && isBerlinHoliday(clock)
+  return (zone.freeOnHolidays ?? true) && isHoliday(zone.land, clock)
 }
 
 function windowCovers(window: ChargeWindow, clock: BerlinWallClock): boolean {

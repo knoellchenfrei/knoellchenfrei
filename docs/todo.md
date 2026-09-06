@@ -208,12 +208,34 @@ danach München — das sind die einzigen beiden Städte, für die ein konkreter
 Datensatz belegt ist. Alles darunter ist bisher nur ein Portal, in dem noch
 niemand nachgesehen hat.
 
-- [ ] Stadt als Konfiguration statt als Konstante: Datenquelle,
-      Kartenausschnitt, Grenzprüfung, Feiertagsland.
-- [ ] Feiertagskalender je Bundesland — der 8. März ist in Berlin Feiertag, in
-      Hamburg nicht.
-- [ ] Prüfliste aus [staedte.md](staedte.md) für Hamburg abarbeiten. Aus dieser
-      Umgebung sind die Portale gesperrt; die Analyse ist Recherche, kein Abruf.
+- [x] **Stadt als Konfiguration statt als Konstante.** `core/city.ts` trägt
+      Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze, Bundesland und
+      Quellenangabe; `ingest/sources` ist nach Stadt gegliedert; Browser,
+      Worker und Telegram-Bot lesen dieselben Grenzen. Berlin stand dafür an
+      **sechs** Stellen als Zahlenpaar im Code — die Doku hatte drei behauptet.
+      Ein unbekannter Stadtschlüssel wirft, statt auf Berlin zurückzufallen.
+- [x] **Feiertagskalender je Bundesland.** `holidaysFor(land, jahr)`; belegt
+      sind BE (8. März) und HH (Reformationstag). Ein Land ohne Tabelle wirft.
+      Die zwölf übrigen fehlen bewusst — sie gehören nur mit Beleg hinein, und
+      die amtlichen Seiten sind aus dieser Umgebung gesperrt.
+- [x] **Prüfliste aus [staedte.md](staedte.md) für Hamburg abgearbeitet.**
+      Hamburg fällt an keiner Stelle durch: zwei WFS mit Adresse und Typname,
+      DL-DE/Namensnennung 2.0, Tarif und Zeiten laut Metadaten im Datensatz.
+      Zwei Funde, die dranhängen: Die Lizenz verlangt anders als in Berlin die
+      **Nennung der Quelle**, und die Dienst-Beschreibung nennt **veraltete
+      Preise** — drei Zonen zu 3/2/1 Euro, während seit dem 1. Juli 2026 vier
+      Zonen zu 4,00/3,50/3,00/2,00 Euro gelten.
+- [ ] **Hamburger Feed anschließen — geht aus dieser Umgebung nicht.**
+      `geodienste.hamburg.de` und `suche.transparenz.hamburg.de` beantworten
+      den CONNECT des Egress-Proxys mit 403. Nötig sind: ein Abruf, ein Parser
+      für Hamburgs Schreibweise der Zeiten (Berlins „Mo-Sa 9-20 Uhr" ist eine
+      Konvention dieses Feeds, keine Norm) und die Zonendaten im Bündel.
+      Die geschätzten `expectedFeatures` in `ingest/sources` korrigiert der
+      erste echte Abruf.
+- [ ] **Produktname entberlinern.** „ParkingZone Berlin" steht dreimal fest:
+      `apps/web/index.html`, `public/manifest.webmanifest` und die `h1` in
+      `App.tsx`. Ein Block, kein Streuschaden — und die Gelegenheit, ihn auf
+      `knoellchenfrei` umzustellen.
 
 ## 6. Telegram — **du** (Token), dann **ich**
 

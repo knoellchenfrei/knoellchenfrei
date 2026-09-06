@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 
 /**
@@ -17,6 +18,7 @@ describe('parseTelegramUpdate', () => {
   it('reads a location inside Berlin as a report', () => {
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } }),
+      BERLIN,
     )
     expect(parsed.intent).toEqual({ kind: 'report', lon: 13.4, lat: 52.52 })
     expect(parsed.sender).toEqual({ userId: 42, chatId: 42 })
@@ -26,6 +28,7 @@ describe('parseTelegramUpdate', () => {
     // Hamburg. Eine Meldung von dort ist ein Fehler oder ein Versuch.
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 9.99, latitude: 53.55 } }),
+      BERLIN,
     )
     expect(parsed.intent.kind).toBe('unknown')
     // Der Absender bleibt bekannt: Auch eine abgelehnte Nachricht bekommt eine
@@ -46,7 +49,7 @@ describe('parseTelegramUpdate', () => {
     ['/melden', 'unknown'],
     ['/starten', 'unknown'],
   ])('reads %j as %s', (text, kind) => {
-    expect(parseTelegramUpdate(update({ ...SENDER, text })).intent.kind).toBe(kind)
+    expect(parseTelegramUpdate(update({ ...SENDER, text }), BERLIN).intent.kind).toBe(kind)
   })
 
   it.each([
@@ -56,16 +59,16 @@ describe('parseTelegramUpdate', () => {
     ['Zahl', 7],
     ['Feld message ist eine Zeichenkette', { message: 'hallo' }],
   ])('ignores %s', (_name, raw) => {
-    expect(parseTelegramUpdate(raw).intent.kind).toBe('ignore')
+    expect(parseTelegramUpdate(raw, BERLIN).intent.kind).toBe('ignore')
   })
 
   it('ignores anything without a usable sender', () => {
     // Kanalbeiträge haben kein `from`. Ohne Absender lässt sich weder eine
     // Grenze durchsetzen noch antworten.
-    expect(parseTelegramUpdate(update({ chat: { id: 1 }, text: '/start' })).intent.kind).toBe(
+    expect(parseTelegramUpdate(update({ chat: { id: 1 }, text: '/start' }), BERLIN).intent.kind).toBe(
       'ignore',
     )
-    expect(parseTelegramUpdate(update({ from: { id: 1 }, text: '/start' })).intent.kind).toBe(
+    expect(parseTelegramUpdate(update({ from: { id: 1 }, text: '/start' }), BERLIN).intent.kind).toBe(
       'ignore',
     )
   })
@@ -74,11 +77,11 @@ describe('parseTelegramUpdate', () => {
     // Kommt so nicht von Telegram — aber der Webhook ist eine öffentliche
     // Adresse, und wer sie kennt, schickt, was er will.
     expect(
-      parseTelegramUpdate(update({ from: { id: 1e300 }, chat: { id: 1 }, text: '/start' })).intent
+      parseTelegramUpdate(update({ from: { id: 1e300 }, chat: { id: 1 }, text: '/start' }), BERLIN).intent
         .kind,
     ).toBe('ignore')
     expect(
-      parseTelegramUpdate(update({ from: { id: '42' }, chat: { id: 42 }, text: '/start' })).intent
+      parseTelegramUpdate(update({ from: { id: '42' }, chat: { id: 42 }, text: '/start' }), BERLIN).intent
         .kind,
     ).toBe('ignore')
   })
@@ -86,6 +89,7 @@ describe('parseTelegramUpdate', () => {
   it('treats a location with unusable numbers as unreadable, not as a report', () => {
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 'dreizehn', latitude: null } }),
+      BERLIN,
     )
     expect(parsed.intent.kind).toBe('unknown')
   })
@@ -96,7 +100,26 @@ describe('parseTelegramUpdate', () => {
     // weitergeleiteten Nachricht mehr zu glauben.
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, caption: '/start', forward_origin: { type: 'user' } }),
+      BERLIN,
     )
     expect(parsed.intent.kind).toBe('unknown')
+  })
+
+  // Der Sinn des Stadt-Parameters in einem Test: Derselbe Punkt ist je nach
+  // Stadt eine Meldung oder Unfug. Vorher stand die Berliner Box als Konstante
+  // in dieser Datei, und der Bot haette in Hamburg jede Meldung abgewiesen.
+  it('reads the same Hamburg location as a report once the city is Hamburg', () => {
+    const message = update({ ...SENDER, location: { longitude: 9.99, latitude: 53.55 } })
+    expect(parseTelegramUpdate(message, BERLIN).intent.kind).toBe('unknown')
+    expect(parseTelegramUpdate(message, HAMBURG).intent).toEqual({
+      kind: 'report',
+      lon: 9.99,
+      lat: 53.55,
+    })
+  })
+
+  it('refuses a Berlin location once the city is Hamburg', () => {
+    const message = update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } })
+    expect(parseTelegramUpdate(message, HAMBURG).intent.kind).toBe('unknown')
   })
 })
