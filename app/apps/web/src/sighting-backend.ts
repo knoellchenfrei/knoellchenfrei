@@ -229,8 +229,14 @@ function artifactBackend(db: Db): SightingBackend {
 function workerBackend(base: string): SightingBackend {
   const POLL_MS = 45_000
 
+  // `?city=` ist keine Höflichkeit: Der Worker hält seit der zweiten Stadt
+  // beide Städte in derselben Tabelle und fällt ohne den Parameter auf Berlin
+  // zurück. Ohne ihn läse ein Hamburg-Nutzer Berliner Meldungen — auf der Karte
+  // unsichtbar, weil 250 km dazwischen liegen, in den Zählern aber falsch.
   const load = async (): Promise<Sighting[]> => {
-    const response = await fetch(`${base}/sightings`, { signal: AbortSignal.timeout(10_000) })
+    const response = await fetch(`${base}/sightings?city=${encodeURIComponent(CITY.key)}`, {
+      signal: AbortSignal.timeout(10_000),
+    })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const body = (await response.json()) as { sightings?: Partial<Sighting>[] }
     const now = Date.now()
@@ -241,9 +247,10 @@ function workerBackend(base: string): SightingBackend {
 
   const loadMarks = async (): Promise<HeatMark[]> => {
     const since = windowStart({ now: Date.now() })
-    const response = await fetch(`${base}/marks?since=${since}`, {
-      signal: AbortSignal.timeout(10_000),
-    })
+    const response = await fetch(
+      `${base}/marks?since=${since}&city=${encodeURIComponent(CITY.key)}`,
+      { signal: AbortSignal.timeout(10_000) }
+    )
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const body = (await response.json()) as { marks?: unknown[] }
     return (Array.isArray(body.marks) ? body.marks : [])

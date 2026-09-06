@@ -179,7 +179,7 @@ Karfreitag zum Zahlen auf.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 179 Unit-Tests
+pnpm test                              # 190 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -210,7 +210,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 179, davon 24 Regressionstests für konkrete gefundene Fehler |
+| Unit-Tests | 190, davon 25 Regressionstests für konkrete gefundene Fehler |
 | End-to-End | 105 bestanden über Desktop und Handy, gegen den Produktions-Build (ein 106. läuft nur in der Handy-Variante) |
 | Coverage | 96,1 % Zeilen, 90,3 % Zweige, 98,4 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
