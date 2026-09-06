@@ -1098,6 +1098,44 @@ print(json.dumps({
     fi
   done
 
+  # --- Altlasten aus dem alten DNS ---------------------------------------
+  #
+  # Beim Anlegen einer Zone uebernimmt Cloudflare die vorhandenen Eintraege des
+  # bisherigen Nameservers. Am 6. September kamen so drei A-Eintraege auf die
+  # Parkseite des Registrars mit — @, www und ein **Wildcard**. Waere die Zone
+  # aktiv geworden, haette die Hauptdomain die Parkseite ausgeliefert statt der
+  # App, und der Wildcard haette obendrein jede Subdomain abgefangen, auch
+  # `tiles.` und `api.`. Aufgefallen ist es nur, weil Cloudflare eine ganz
+  # andere Warnung anzeigte.
+  #
+  # Geloescht wird ausschliesslich, was auf eine bekannte Parkadresse zeigt —
+  # nichts anderes. Ein Skript, das fremde DNS-Eintraege nach Gutduenken
+  # aufraeumt, ist gefaehrlicher als der Zustand, den es behebt.
+  for d in $DOMAINS; do
+    local id; id="$(zonen_id "$d")"
+    [ -z "$id" ] && continue
+    local treffer
+    treffer="$(cf_api GET "/zones/$id/dns_records?per_page=100" | python3 -c "
+import sys, json
+parkadressen = {'185.181.104.242'}
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+for x in (d.get('result') or []):
+    if x.get('content') in parkadressen:
+        print(x['id'], x['type'], x['name'])
+" 2>/dev/null)"
+    [ -z "$treffer" ] && continue
+    fehlt "$d traegt Eintraege der Registrar-Parkseite"
+    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+    printf '%s\n' "$treffer" | while read -r rid typ name; do
+      if cf_geklappt "$(cf_api DELETE "/zones/$id/dns_records/$rid")"; then
+        ok "  $typ $name entfernt"
+      else
+        schlimm "  $typ $name liess sich nicht entfernen"
+      fi
+    done
+  done
+
   # --- DNS-Eintraege der Weiterleitungsdomains ---------------------------
   #
   # Eine Redirect Rule feuert nur, wenn die Anfrage Cloudflare ueberhaupt
