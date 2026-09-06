@@ -822,6 +822,33 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
     Dependabot kann das nicht wissen. <strong>MapLibre 6</strong> hat den
     Default-Export aufgegeben. Das ist kein Ärger mit dem Werkzeug, das ist die
     Arbeit, die es sichtbar macht.</p>
+    <p>Alle drei sind inzwischen erledigt, und zwei Zahlen fielen dabei ab:
+    Das MapLibre-Bündel schrumpft von 1.053 auf <strong>960 kB</strong>, der
+    Build von 3,7 auf <strong>1,1 Sekunden</strong> — rolldown ist in Rust
+    geschrieben, und man merkt es. Vite 8 kostete zwei Anpassungen:
+    <code>closeBundle</code> läuft dort, bevor die Dateien geschrieben sind
+    (der Haken sitzt jetzt im <code>writeBundle</code> und liest die
+    <code>index.html</code> aus dem Bundle-Objekt, das sie ohnehin hält), und
+    <code>manualChunks</code> wird <em>aufgerufen</em> statt gelesen — die
+    Objektform ergibt einen <code>TypeError</code>.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Was beim Aufräumen zum Vorschein kam</span>
+    <p>Der Service Worker hielt <strong>seit der zweiten Stadt gar nichts mehr
+    vor</strong>. Die Datendateien waren nach <code>data/&lt;stadt&gt;/</code>
+    gewandert; seine Vorabliste stand als fünf feste Namen in der
+    Build-Konfiguration und zeigte weiter auf <code>data/zones.geojson</code>.
+    <code>cache.addAll</code> scheitert an einer <em>einzigen</em> 404 — und
+    der Worker fängt den Fehler ab. Also wurde nichts vorgehalten, die App war
+    nicht mehr offlinefähig, und zu sehen war davon nichts: Sie lud ja, sie
+    funktionierte, sie war nur nicht mehr das, was auf der Packung steht.</p>
+    <p>Die Liste kommt jetzt aus dem Verzeichnis statt aus dem Gedächtnis, und
+    zwei neue Tests rufen jeden Pfad aus dem ausgelieferten
+    <code>sw.js</code> ab. Der erste Versuch dieser Tests war selbst falsch —
+    das Muster traf nur doppelte Anführungszeichen, das Grundgerüst steht im
+    Worker aber in einfachen. Ein Test, der genau die Hälfte prüft und dabei
+    grün aussieht, ist schlimmer als keiner.</p>
   </div>
 </section>
 
@@ -934,7 +961,7 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
   <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
   beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
   Repository geblieben. Die Prüfläufe stammen aus dem Abschlusslauf gegen den
-  neuen Stand: 179 Unit-Tests, 101 End-to-End, 96,1 % Coverage.</p>
+  neuen Stand: 179 Unit-Tests, 105 End-to-End, 96,1 % Coverage.</p>
   <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
   <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
   die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die
