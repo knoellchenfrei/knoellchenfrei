@@ -339,7 +339,7 @@ export function App() {
             districts,
             umweltzone,
             meta: metaData,
-          } = await loadData()
+          } = await loadData(CITY.key)
           setMeta(metaData)
 
           const loaded = loadZones(zoneData)

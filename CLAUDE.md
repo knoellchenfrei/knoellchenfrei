@@ -19,11 +19,11 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @parkingzone/core test                # 151 Unit-Tests
+pnpm --filter @parkingzone/core test                # 179 Unit-Tests
 pnpm --filter @parkingzone/core test:coverage       # Coverage-Bericht
 pnpm --filter @parkingzone/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 93 End-to-End-Tests
+cd apps/web && npx playwright test                  # 101 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -38,7 +38,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=151 E2E_COUNT=93 npx tsx src/build-badges.ts
+TEST_COUNT=179 E2E_COUNT=101 npx tsx src/build-badges.ts
 scripts/build-tiles.sh 20260730                     # PMTiles-Ausschnitt Berlin
 ```
 
@@ -49,7 +49,9 @@ Diese kosten sonst je eine halbe Stunde Fehlersuche:
 | | |
 | --- | --- |
 | **Playwright** | Der vorinstallierte Chromium passt nicht zur erwarteten Build-Nummer. Immer mit `PLAYWRIGHT_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome` aufrufen (die Nummer kann sich ändern, `ls /opt/pw-browsers`). Die Skripte oben lesen dieselbe Variable. |
-| **Kartenkacheln** | `tile.openstreetmap.org` ist vom Egress-Proxy gesperrt. Jede Aufnahme und jeder Testlauf zeigt die Karte deshalb **ohne Hintergrund**. Das ist keine Regression — die Zonen sind eigene Daten und zeichnen sich trotzdem. |
+| **Kartenkacheln** | Der Egress-Proxy hat `tile.openstreetmap.org` zeitweise gesperrt; seit dem 6. September 2026 ist er offen. Was bleibt: Bilder in `public/screenshots/` und `docs/images/` sind noch ohne Hintergrundkarte aufgenommen. |
+| **Node und der Proxy** | Node ist hier anders als curl: Sein `fetch` ignoriert `HTTPS_PROXY`. Direkt hinaus antwortet `geodienste.hamburg.de` mit **403** — kein Netzwerkfehler, keine TLS-Meldung, nur ein Verbot, das nach einer Sperre der Behörde aussieht. Abhilfe: `NODE_USE_ENV_PROXY=1`, das `fetch-data`-Skript setzt es. Für curl gilt umgekehrt: `gdi.berlin.de` braucht `--cacert $(python3 -c 'import certifi; print(certifi.where())')`, weil dem System-Bundle die Telekom-Wurzel fehlt. |
+| **`pnpm fetch`** | Ist ein **eingebautes pnpm-Kommando** und lief still statt des Projektskripts. Das Skript heißt deshalb `fetch-data`. |
 | **Artifact** | Die Sicherheitsrichtlinie des Artifact-Sandkastens blockiert **jede** Bildanfrage an fremde Adressen. Im veröffentlichten Artifact gibt es prinzipiell keine Hintergrundkarte. Auch das ist kein Fehler. |
 | **E2E und die Karte** | `ready()` in `e2e/app.spec.ts` wartet auch darauf, dass `.loading` verschwindet. Ohne das klickten drei Tests auf eine Karte, an der noch keine Klick-Handler hingen: Mit gesperrtem Kachelserver kommt `styledata` nie, und `withMapReady` in `App.tsx` greift erst nach seinem 10-Sekunden-Rückfall. Auf einem kalten Lauf gingen sie durch, auf jedem weiteren fielen sie. |
 | **Weitere Sperren** | `download.geofabrik.de`, RDAP- und Whois-Dienste, `abfelbaum.dev`. `api.github.com` geht, ist aber auf die Repositories dieser Sitzung beschränkt. |
@@ -96,6 +98,20 @@ wiederholt.
   Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,
   nimmt die App eine Meldung an, die der Server danach verwirft, und niemand
   erfährt, warum.
+- **Zwei Feeds, zwei Parser — nie ein gemeinsamer.** Berlins und Hamburgs
+  Dienste teilen sich außer der Domäne nichts: andere Felder, andere
+  Schreibweisen, anderes Ausgabeformat, andere Achsenreihenfolge. Ein Parser
+  für beide wäre bei jeder Änderung an einer Stadt für die andere gefährlich.
+  `parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg.
+- **Die Achsenreihenfolge steht in der Konfiguration, nie in einer Heuristik.**
+  Auf dieselbe Anfrage (`urn:ogc:def:crs:EPSG::4326`) antwortet Berlin mit
+  `[lon, lat]` und Hamburg mit `[lat, lon]`. In Hamburg sind beide Zahlen
+  zweistellig und plausibel — geraten landen die Gebiete im Golf von Guinea,
+  und die Karte sieht dabei nur leer aus, nicht kaputt.
+- **Kein Betrag ist nicht null Euro.** Hamburgs Parkscheibengebiete kosten
+  nichts und verlangen trotzdem etwas; wer ohne Scheibe steht, zahlt.
+  `Fee` hat dafür `disc` und `unknown`, und `CostEstimate.priced` zwingt die
+  Oberfläche, etwas anderes zu sagen als „0,00 €".
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes
@@ -127,4 +143,5 @@ wiederholt.
 | [docs/hosting.md](docs/hosting.md) | Cloudflare, Worker, D1, Telegram, PMTiles — mit Befehlen |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
+| [docs/staedte.md](docs/staedte.md) | Zweite Stadt: Datenlage, Prüfliste, Hamburg im Einzelnen |
 | [SECURITY.md](SECURITY.md) | Bedrohungsmodell und Maßnahmen |

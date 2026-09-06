@@ -1,4 +1,4 @@
-import { euro, feeLabel, maxStayLabel, until } from '../format.js'
+import { duration, euro, feeLabel, maxStayLabel, until } from '../format.js'
 import type { ZoneStatus } from '../useZoneStatus.js'
 import type { ZoneProperties } from '../types.js'
 
@@ -62,7 +62,7 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
         )}
       </dl>
 
-      {chargeable && (
+      {chargeable && hourly.priced && (
         <p className="cost">
           Eine Stunde ab jetzt:{' '}
           <strong>
@@ -75,6 +75,27 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
               {' '}
               — die Quelle nennt für diese Zone eine Spanne, keinen festen Satz.
             </span>
+          )}
+        </p>
+      )}
+
+      {/*
+        Kein Betrag heisst nicht 0,00 €. Ein Parkscheibengebiet kostet nichts
+        und verlangt trotzdem etwas; wer ohne Scheibe steht, zahlt. Die Zahl
+        wegzulassen und den Grund zu nennen ist die einzige ehrliche Form.
+      */}
+      {chargeable && !hourly.priced && (
+        <p className="cost">
+          {properties.fee.kind === 'disc' ? (
+            <>
+              Keine Gebühr, aber <strong>Parkscheibe</strong> — sichtbar hinter der
+              Windschutzscheibe, mit der Ankunftszeit.
+            </>
+          ) : (
+            <>
+              Die Quelle nennt für dieses Gebiet <strong>keinen Tarif</strong>. Was gilt, steht
+              am Automaten oder auf dem Schild.
+            </>
           )}
         </p>
       )}
@@ -92,7 +113,21 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
         </p>
       )}
 
-      {properties.maxStay !== null && (
+      {/*
+        Zwei Sätze für zwei verschiedene Tatsachen, und sie dürfen sich nicht
+        vermischen: Hamburgs Höchstparkdauer gilt für das ganze Gebiet und
+        steht so im Feed. Berlins gilt für einzelne Abschnitte — sie als
+        Zonenregel auszusprechen war dort ein gefundener Fehler.
+      */}
+      {typeof properties.maxStayMinutes === 'number' && (
+        <p className="warn">
+          Höchstparkdauer in diesem Gebiet:{' '}
+          <strong>{duration(properties.maxStayMinutes * 60_000)}</strong>. Die Quelle nennt sie
+          für das gesamte Gebiet; die Beschilderung vor Ort geht trotzdem vor.
+        </p>
+      )}
+
+      {properties.maxStayMinutes == null && properties.maxStay !== null && (
         <p className="warn">
           Auf einzelnen Abschnitten dieser Zone gilt eine Höchstparkdauer von{' '}
           <strong>{properties.maxStayValues.map(maxStayLabel).join(' / ')}</strong> — nach Datenlage auf{' '}

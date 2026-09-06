@@ -86,7 +86,7 @@ OpenStreetMap-Kacheln — stattdessen zeichnen die Ortsteilgrenzen den
 geografischen Kontext — und keine Live-Abfrage des WFS; die Daten sind zum
 Build-Zeitpunkt eingefroren.
 
-Aktualisieren: `pnpm --filter @parkingzone/ingest fetch && … build-data`, dann
+Aktualisieren: `pnpm --filter @parkingzone/ingest fetch-data && … build-data`, dann
 `build-artifact` und dieselbe Datei erneut publizieren. Die URL bleibt.
 
 ## 2. Statisches Hosting — volle App, keine Kosten

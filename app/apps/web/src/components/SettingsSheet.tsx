@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 
-import { HISTORY_DAYS } from '@parkingzone/core'
+import { CITIES, HISTORY_DAYS, type City } from '@parkingzone/core'
 
+import { CITY, switchCity } from '../city.js'
+import { availableCities } from '../data-source.js'
 import { InstallRow, useInstallState } from './InstallHint.js'
 
 interface Props {
@@ -18,6 +20,18 @@ interface Props {
 
 const REPO = 'https://github.com/knoellchenfrei/knoellchenfrei'
 const FREIFAHREN = 'https://freifahren.org'
+
+/**
+ * Welche Städte diese Auslieferung zeigen kann.
+ *
+ * Auf einem statischen Host jede, die es im Bündel gibt — die Daten werden
+ * nachgeladen. Im Artifact nur die eingebetteten, weil dort nichts nachgeladen
+ * werden kann: Dessen Sicherheitsrichtlinie blockiert jede fremde Anfrage.
+ */
+function selectableCities(): readonly City[] {
+  const embedded = availableCities()
+  return embedded === null ? CITIES : CITIES.filter((city) => embedded.includes(city.key))
+}
 
 /**
  * Fragen, die diese App selbst aufwirft.
@@ -159,6 +173,41 @@ export function SettingsSheet({
         </p>
 
         {/*
+          Eine Stadt zur Zeit — dasselbe Modell wie FreiFahren. Zonen,
+          Meldungen, Heatmap und Grenzprüfung gehören zusammen; eine Karte, die
+          Berliner Zonen über Hamburger Meldungen legt, beantwortet keine Frage
+          richtig. Der Wechsel lädt die Seite neu, weil an ihm sechs Dinge
+          hängen und die eine, die man vergisst, still falsch wäre.
+        */}
+        {selectableCities().length > 1 && (
+          <>
+            <h3 className="sheet__label">Stadt</h3>
+            <ul className="rows">
+              {selectableCities().map((city) => (
+                <li key={city.key}>
+                  <button
+                    type="button"
+                    className="rows__item"
+                    aria-current={city.key === CITY.key ? 'true' : undefined}
+                    disabled={city.key === CITY.key}
+                    onClick={() => switchCity(city)}
+                  >
+                    <span>{city.name}</span>
+                    <span className="rows__chevron" aria-hidden="true">
+                      {city.key === CITY.key ? '✓' : '→'}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="sheet__hint">
+              Die App zeigt jeweils eine Stadt. Beim Wechsel lädt sie neu; ein gemerkter
+              Parkplatz in der anderen Stadt bleibt dort erhalten.
+            </p>
+          </>
+        )}
+
+        {/*
           Nur im Testbetrieb. Wer den Link bekommen hat, soll wissen, warum die
           Seite nirgends auffindbar ist und wem sie gerade gehört.
         */}
@@ -258,6 +307,19 @@ export function SettingsSheet({
           </a>
           . Kartenkacheln © OpenStreetMap-Mitwirkende (ODbL).
         </p>
+        {/*
+          Bei Hamburg ist die Nennung der Quelle Lizenzbedingung
+          (DL-DE/Namensnennung 2.0), bei Berlin freiwillig (DL-DE/Zero).
+          Deshalb steht sie dort nicht nur klein unter „Daten", sondern wird
+          ausdrücklich als Bedingung benannt — wer den Satz kürzt, kürzt eine
+          Auflage weg.
+        */}
+        {CITY.attribution.attributionRequired && (
+          <p className="sheet__hint">
+            Die Lizenz dieser Stadt <strong>verlangt</strong> die Nennung der Quelle. Wer die
+            Daten weiterverwendet, muss {CITY.attribution.source} nennen.
+          </p>
+        )}
       </div>
 
       <footer className="sheet__foot">

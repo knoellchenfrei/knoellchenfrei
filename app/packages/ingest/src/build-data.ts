@@ -13,12 +13,31 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 
-import { parseFee, parseSchedule, type Fee } from '@parkingzone/core'
+import { BERLIN, parseFee, parseSchedule, type Fee } from '@parkingzone/core'
 
+import { CITY_KEY } from './sources.js'
 import { roundPoint, simplifyGeometry } from './simplify.js'
 
-const RAW = process.env.RAW_DIR ?? join(process.cwd(), '../../.raw')
-const OUT = process.env.OUT_DIR ?? join(process.cwd(), '../../apps/web/public/data')
+// Dieses Skript ist der BERLINER Zweig. Hamburg hat einen eigenen
+// (`build-data-hamburg.ts`), weil die beiden Feeds ausser der Domaene nichts
+// teilen: andere Felder, andere Schreibweisen, andere Achsenreihenfolge. Ein
+// gemeinsames Skript mit zwei Zweigen waere bei jeder Aenderung an einer Stadt
+// fuer die andere gefaehrlich.
+if (CITY_KEY !== BERLIN.key) {
+  console.error(
+    `CITY=${CITY_KEY}: Dieses Skript baut nur Berlin. Fuer Hamburg: pnpm --filter @parkingzone/ingest build-data-hamburg`
+  )
+  process.exit(2)
+}
+
+// Je Stadt ein Verzeichnis, auf beiden Seiten. Vorher lagen die Dateien flach
+// unter `public/data/`; mit einer zweiten Stadt haetten sie sich gegenseitig
+// ueberschrieben, ohne dass irgendetwas fehlgeschlagen waere.
+const RAW = join(process.env.RAW_DIR ?? join(process.cwd(), '../../.raw'), BERLIN.key)
+const OUT = join(
+  process.env.OUT_DIR ?? join(process.cwd(), '../../apps/web/public/data'),
+  BERLIN.key
+)
 
 interface Feature<P> {
   id?: string
@@ -314,9 +333,15 @@ write('umweltzone.geojson', lowEmission)
 // ---------------------------------------------------------------- provenance
 const totalSpaces = [...stats.values()].reduce((sum, s) => sum + s.spaces, 0)
 write('meta.json', {
-  source: 'Geodateninfrastruktur Berlin (gdi.berlin.de), WFS 2.0.0',
-  licence: 'Datenlizenz Deutschland Zero 2.0',
-  licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
+  city: BERLIN.key,
+  cityName: BERLIN.name,
+  // Aus der Stadt-Konfiguration statt als Zeichenkette hier: Die
+  // Quellenangabe ist bei Hamburg Lizenzbedingung, und zwei Orte fuer
+  // dieselbe Aussage laufen auseinander.
+  source: `${BERLIN.attribution.source}, WFS 2.0.0`,
+  licence: BERLIN.attribution.licence,
+  licenceUrl: BERLIN.attribution.licenceUrl,
+  attributionRequired: BERLIN.attribution.attributionRequired,
   zones: zones.features.length,
   segments: segments.length,
   managedSpaces: totalSpaces,

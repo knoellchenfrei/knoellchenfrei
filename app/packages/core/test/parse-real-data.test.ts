@@ -79,7 +79,13 @@ describe('real WFS data', () => {
   it('reports the real rate span as 2.00 to 4.00 EUR', () => {
     const cents = ZONES.flatMap((z) => {
       const fee = parseFee(z.gebuehr)
-      return fee.kind === 'exact' ? [fee.centsPerHour] : [fee.minCentsPerHour, fee.maxCentsPerHour]
+      // `parseFee` liefert fuer den Berliner Feed nur 'exact' und 'range' —
+      // 'disc' und 'unknown' gibt es nur in Hamburg. Der Zweig steht trotzdem
+      // hier, weil der Typ sie kennt und ein stiller Durchfall sonst als
+      // fehlender Betrag durchginge.
+      if (fee.kind === 'exact') return [fee.centsPerHour]
+      if (fee.kind === 'range') return [fee.minCentsPerHour, fee.maxCentsPerHour]
+      throw new Error(`Berliner Feed liefert unerwartet ${fee.kind}`)
     })
     expect(Math.min(...cents)).toBe(200)
     expect(Math.max(...cents)).toBe(400)

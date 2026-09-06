@@ -8,6 +8,14 @@
  * ab, verwirft der Server Meldungen, die die App gerade noch angenommen hat,
  * und niemand sieht, warum.
  *
+ * Die Zonendaten hängen NICHT hier, sondern liegen je Stadt als eigene Dateien
+ * unter `public/data/<key>/`. Der Browser holt sie zur Laufzeit; ein
+ * Stadtwechsel lädt also nach, statt einen zweiten Build zu verlangen. (Eine
+ * frühere Fassung dieses Kommentars behauptete das Gegenteil und begründete
+ * damit einen Build je Stadt — das war falsch: `loadData` hat die Dateien
+ * schon immer per `fetch` geholt. Nur das Artifact bettet sie ein, und dort
+ * ist der Umschalter deshalb auf die eingebetteten Städte beschränkt.)
+ *
  * Was hier NICHT steht, obwohl es nach Stadt aussieht:
  *
  * - **Die Zeitzone.** `Europe/Berlin` gilt für ganz Deutschland; sie ist keine

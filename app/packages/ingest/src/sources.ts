@@ -1,18 +1,26 @@
 /**
  * Amtliche Quellen, nach Stadt.
  *
- * Zwei Städte, zwei Behörden, zwei Lizenzen — und das ist der Grund, warum das
- * hier nicht mehr eine flache Liste ist. Berlin gibt unter Datenlizenz
- * Deutschland **Zero** 2.0 heraus, Nennung freiwillig; Hamburg unter Datenlizenz
- * Deutschland **Namensnennung** 2.0, Nennung Bedingung. Wer die zweite Stadt
- * anschließt, ohne die Quelle zu nennen, verletzt eine Lizenz, nicht eine
- * Konvention. `City.attribution` in `@parkingzone/core` trägt diesen
- * Unterschied bis in die Oberfläche.
+ * Zwei Städte, zwei Behörden, zwei Lizenzen — und drei Unterschiede, die jeder
+ * einzeln einen halben Tag kosten, wenn man sie erst im Datenbau bemerkt:
  *
- * srsName wird ausdrücklich angefordert: Die Dienste liegen nativ in
- * EPSG:25833 (Berlin) bzw. EPSG:25832 (Hamburg) und projizieren auf Anfrage um.
- * Das hier zu verlangen hält jeden Verbraucher weiter unten frei davon.
+ * 1. **Ausgabeformat.** Berlin liefert `application/json`, Hamburg kennt das
+ *    nicht und will `application/geo+json`. Ein falscher Wert bringt keinen
+ *    Fehler, sondern GML — also gültiges XML, an dem `JSON.parse` scheitert.
+ * 2. **Achsenreihenfolge.** Auf dieselbe Anfrage (`urn:ogc:def:crs:EPSG::4326`)
+ *    antwortet Berlin mit `[lon, lat]` und Hamburg mit `[lat, lon]`. Hamburg
+ *    hält sich an die URN-Form, die Breite zuerst vorschreibt; Berlin liefert
+ *    GeoJSON-Konvention. Beides ist verteidigbar, und genau deshalb steht die
+ *    Reihenfolge hier als Feld: Wer sie rät, legt Hamburgs Zonen in den Indischen
+ *    Ozean, und die Karte sieht dabei aus, als wäre sie nur leer.
+ * 3. **Lizenz.** Berlin gibt unter Datenlizenz Deutschland **Zero** 2.0 heraus,
+ *    Nennung freiwillig; Hamburg unter **Namensnennung** 2.0, Nennung
+ *    Bedingung. `City.attribution` in `@parkingzone/core` trägt das bis in die
+ *    Oberfläche.
  */
+
+/** In welcher Reihenfolge der Dienst die Koordinaten schreibt. */
+export type AxisOrder = 'lon,lat' | 'lat,lon'
 
 export interface Source {
   key: string
@@ -21,9 +29,22 @@ export interface Source {
   typeName: string
   /** Ungefähr, damit ein still abgeschnittener Abruf auffällt. */
   expectedFeatures: number
+  outputFormat: string
+  axisOrder: AxisOrder
 }
 
 const BERLIN_WFS = 'https://gdi.berlin.de/services/wfs'
+const HAMBURG_WFS = 'https://geodienste.hamburg.de'
+
+const BERLIN_DEFAULTS = {
+  outputFormat: 'application/json',
+  axisOrder: 'lon,lat',
+} as const
+
+const HAMBURG_DEFAULTS = {
+  outputFormat: 'application/geo+json',
+  axisOrder: 'lat,lon',
+} as const
 
 /**
  * Berlin — Geodateninfrastruktur Berlin, DL-DE/Zero-2.0.
@@ -36,46 +57,50 @@ const BERLIN_WFS = 'https://gdi.berlin.de/services/wfs'
  * es in Worten.
  */
 const BERLIN_SOURCES: readonly Source[] = [
-  { key: 'zones', service: `${BERLIN_WFS}/parkraumbewirtschaftung`, typeName: 'parkraumbewirtschaftung:parkzonen', expectedFeatures: 103 },
-  { key: 'segments', service: `${BERLIN_WFS}/parkplaetze`, typeName: 'parkplaetze:parkplaetze', expectedFeatures: 45917 },
-  { key: 'parkAndRide', service: `${BERLIN_WFS}/park_and_ride`, typeName: 'park_and_ride:park_and_ride', expectedFeatures: 49 },
-  { key: 'parkAndRideUmland', service: `${BERLIN_WFS}/park_and_ride`, typeName: 'park_and_ride:park_and_ride_umland', expectedFeatures: 59 },
+  { key: 'zones', service: `${BERLIN_WFS}/parkraumbewirtschaftung`, typeName: 'parkraumbewirtschaftung:parkzonen', expectedFeatures: 103, ...BERLIN_DEFAULTS },
+  { key: 'segments', service: `${BERLIN_WFS}/parkplaetze`, typeName: 'parkplaetze:parkplaetze', expectedFeatures: 45917, ...BERLIN_DEFAULTS },
+  { key: 'parkAndRide', service: `${BERLIN_WFS}/park_and_ride`, typeName: 'park_and_ride:park_and_ride', expectedFeatures: 49, ...BERLIN_DEFAULTS },
+  { key: 'parkAndRideUmland', service: `${BERLIN_WFS}/park_and_ride`, typeName: 'park_and_ride:park_and_ride_umland', expectedFeatures: 59, ...BERLIN_DEFAULTS },
   // Ein Feature, 7 KB, und die einzige Ebene, die „darf ich hier überhaupt
   // fahren" beantwortet statt „was kostet Parken".
-  { key: 'lowEmissionZone', service: `${BERLIN_WFS}/umweltzone`, typeName: 'umweltzone:umweltzone', expectedFeatures: 1 },
-  { key: 'accessible', service: `${BERLIN_WFS}/behindertenparkplaetze`, typeName: 'behindertenparkplaetze:bpark', expectedFeatures: 923 },
+  { key: 'lowEmissionZone', service: `${BERLIN_WFS}/umweltzone`, typeName: 'umweltzone:umweltzone', expectedFeatures: 1, ...BERLIN_DEFAULTS },
+  { key: 'accessible', service: `${BERLIN_WFS}/behindertenparkplaetze`, typeName: 'behindertenparkplaetze:bpark', expectedFeatures: 923, ...BERLIN_DEFAULTS },
   // Nur Kontext: Ohne Hintergrundkarte schweben die Zonenpolygone im Nichts,
   // und Ortsteilgrenzen reichen, um Kreuzberg von Spandau zu unterscheiden.
-  { key: 'districts', service: `${BERLIN_WFS}/alkis_ortsteile`, typeName: 'alkis_ortsteile:ortsteile', expectedFeatures: 97 },
+  { key: 'districts', service: `${BERLIN_WFS}/alkis_ortsteile`, typeName: 'alkis_ortsteile:ortsteile', expectedFeatures: 97, ...BERLIN_DEFAULTS },
 ]
 
 /**
- * Hamburg — Landesbetrieb Geoinformation und Vermessung, DL-DE/BY-2.0.
+ * Hamburg — Freie und Hansestadt Hamburg, DL-DE/BY-2.0.
  *
- * **Recherchiert, nicht abgerufen.** Aus dieser Arbeitsumgebung sperrt der
- * Egress-Proxy `geodienste.hamburg.de` wie `suche.transparenz.hamburg.de`; die
- * Adressen und Typnamen stammen aus den Metadaten der Dienste, die Zahlen in
- * `expectedFeatures` sind **geschätzt**. Der erste echte Abruf wird sie
- * korrigieren — und genau dafür stehen sie hier: Ein Abruf, der 40 statt 250
- * Gebiete liefert, soll auffallen, auch wenn die Schätzung grob ist.
+ * Zahlen und Typnamen sind am 6. September 2026 gegen die Dienste selbst
+ * geprüft, nicht aus Metadaten übernommen.
  *
- * Was noch fehlt, bevor das läuft: ein Parser für die Hamburger Schreibweise
- * der Zeiten. Berlins „Mo-Sa 9-20 Uhr" ist eine Konvention dieses Feeds, keine
- * Norm. Bis der Parser steht, ist diese Liste Dokumentation, kein Abrufplan —
- * `citySources` gibt sie deshalb nur auf ausdrückliche Nachfrage heraus.
+ * Bewusst NICHT abgerufen: `de.hh.up:parkraum`, der **öffentliche Parkraum**
+ * mit 203.283 Polygonen — je Stellplatz eines. Das ist Hamburgs Gegenstück zu
+ * Berlins Straßenabschnitten, und es beantwortet eine andere Frage als diese
+ * App: Seine Attribute sind Ausrichtung zur Straße, Markierung, Fahrzeugtyp
+ * und Straßenname; ein Tarif steht nicht darin, und das Feld
+ * `geltungszeit_primaerer_bewirtschaftung` war in der Stichprobe leer. Für
+ * „kostet das hier gerade etwas" trägt die Ebene nichts bei, was die 146
+ * Gebiete nicht schon sagen — sie kostet nur ein Vielfaches an Bytes.
  */
 const HAMBURG_SOURCES: readonly Source[] = [
   {
-    key: 'residentZones',
-    service: 'https://geodienste.hamburg.de/HH_WFS_bewohnerparkgebiete',
+    key: 'zones',
+    service: `${HAMBURG_WFS}/HH_WFS_bewohnerparkgebiete`,
     typeName: 'de.hh.up:bewohnerparkgebiete',
-    expectedFeatures: 100,
+    expectedFeatures: 146,
+    ...HAMBURG_DEFAULTS,
   },
+  // Dieselbe Rolle wie Berlins Ortsteile: Ohne Hintergrundkarte schweben die
+  // Gebiete sonst im Nichts.
   {
-    key: 'publicParking',
-    service: 'https://geodienste.hamburg.de/HH_WFS_Parkraum',
-    typeName: 'de.hh.up:parkraum',
-    expectedFeatures: 1000,
+    key: 'districts',
+    service: `${HAMBURG_WFS}/HH_WFS_Verwaltungsgrenzen`,
+    typeName: 'app:stadtteile',
+    expectedFeatures: 104,
+    ...HAMBURG_DEFAULTS,
   },
 ]
 
@@ -101,8 +126,11 @@ export function citySources(cityKey: string): readonly Source[] {
   return sources
 }
 
+/** Die Stadt, die gerade gebaut wird. Ohne Angabe Berlin, wie überall sonst. */
+export const CITY_KEY = process.env.CITY ?? 'berlin'
+
 /** Die Quellen der Stadt, die heute gebaut wird. */
-export const SOURCES: readonly Source[] = citySources(process.env.CITY ?? 'berlin')
+export const SOURCES: readonly Source[] = citySources(CITY_KEY)
 
 export function wfsUrl(source: Source): string {
   const params = new URLSearchParams({
@@ -110,8 +138,26 @@ export function wfsUrl(source: Source): string {
     version: '2.0.0',
     request: 'GetFeature',
     typeNames: source.typeName,
-    outputFormat: 'application/json',
+    outputFormat: source.outputFormat,
     srsName: 'urn:ogc:def:crs:EPSG::4326',
   })
   return `${source.service}?${params}`
+}
+
+/**
+ * Dreht eine Koordinatenliste an Ort und Stelle in GeoJSON-Reihenfolge.
+ *
+ * Rekursiv über die verschachtelten Arrays, weil dieselbe Funktion Punkte,
+ * Linien, Polygone und Multipolygone treffen muss. Ein `[lat, lon]`-Paar
+ * erkennt man nicht am Wert — in Hamburg wären beide Zahlen plausibel
+ * zweistellig —, deshalb entscheidet die Konfiguration und nicht die Heuristik.
+ */
+export function toGeoJsonAxes(coordinates: unknown, order: AxisOrder): unknown {
+  if (order === 'lon,lat') return coordinates
+  if (!Array.isArray(coordinates)) return coordinates
+  if (typeof coordinates[0] === 'number' && typeof coordinates[1] === 'number') {
+    const [lat, lon, ...rest] = coordinates as number[]
+    return [lon, lat, ...rest]
+  }
+  return coordinates.map((node) => toGeoJsonAxes(node, order))
 }

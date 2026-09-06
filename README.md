@@ -135,7 +135,7 @@ zusätzliches Frontend, kein Rewrite.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 151 Unit-Tests
+pnpm test                              # 179 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @parkingzone/web dev
@@ -148,7 +148,7 @@ installiert hat, zeigt `PLAYWRIGHT_CHROMIUM=/pfad/zu/chromium` darauf.
 Daten neu ziehen:
 
 ```bash
-pnpm --filter @parkingzone/ingest fetch
+pnpm --filter @parkingzone/ingest fetch-data
 pnpm --filter @parkingzone/ingest build-data
 ```
 
@@ -161,9 +161,9 @@ und per `--cacert` übergeben — nicht die Verifikation abschalten.
 
 | | |
 | --- | --- |
-| Unit-Tests | 151, davon 24 Regressionstests für konkrete gefundene Fehler |
-| End-to-End | 93 bestanden über Desktop und Handy, gegen den Produktions-Build (ein 94. läuft nur in der Handy-Variante) |
-| Coverage | 96,6 % Zeilen, 90,4 % Zweige, 98,2 % Funktionen (`packages/core`) |
+| Unit-Tests | 179, davon 24 Regressionstests für konkrete gefundene Fehler |
+| End-to-End | 101 bestanden über Desktop und Handy, gegen den Produktions-Build (ein 102. läuft nur in der Handy-Variante) |
+| Coverage | 96,1 % Zeilen, 90,3 % Zweige, 98,4 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken |
 

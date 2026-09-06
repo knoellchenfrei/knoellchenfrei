@@ -43,11 +43,23 @@ function untilRaw(at: Date, from: Date): string {
   return sameDay ? CLOCK.format(at) : WEEKDAY_CLOCK.format(at)
 }
 
-/** A fee range must read as a range — quoting one figure misprices by up to 50%. */
+/**
+ * A fee range must read as a range — quoting one figure misprices by up to 50%.
+ *
+ * „Parkscheibe" und „nicht angegeben" bekommen Worte statt einer Null: 0,00 €
+ * läse sich als „hier ist nichts zu beachten", und beides heißt das Gegenteil.
+ */
 export function feeLabel(fee: Fee): string {
-  return fee.kind === 'exact'
-    ? `${euro(fee.centsPerHour)}/Std.`
-    : `${euro(fee.minCentsPerHour)}–${euro(fee.maxCentsPerHour)}/Std.`
+  switch (fee.kind) {
+    case 'exact':
+      return `${euro(fee.centsPerHour)}/Std.`
+    case 'range':
+      return `${euro(fee.minCentsPerHour)}–${euro(fee.maxCentsPerHour)}/Std.`
+    case 'disc':
+      return 'Parkscheibe'
+    case 'unknown':
+      return 'Tarif nicht angegeben'
+  }
 }
 
 export function duration(ms: number): string {

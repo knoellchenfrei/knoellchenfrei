@@ -7,7 +7,15 @@ import type { ZoneProperties } from './types.js'
 
 /** Adapts the shipped GeoJSON properties to the domain model in core. */
 export function toParkingZone(properties: ZoneProperties): ParkingZone {
-  const maxStay = properties.maxStay === null ? undefined : MAX_STAY_MINUTES[properties.maxStay]
+  // Hamburgs Feed nennt die Höchstparkdauer je Gebiet als Minutenzahl, Berlins
+  // nur als Schlüssel einer abschnittsweisen Auswertung. Die verbindliche
+  // Angabe gewinnt, wenn es sie gibt.
+  const maxStay =
+    properties.maxStayMinutes !== undefined && properties.maxStayMinutes !== null
+      ? properties.maxStayMinutes
+      : properties.maxStay === null
+        ? undefined
+        : MAX_STAY_MINUTES[properties.maxStay]
   return {
     id: properties.zone,
     name: properties.zone,

@@ -147,6 +147,13 @@ export interface CostEstimate {
   maxCents: number
   /** False when the source gives a range, so the UI must not quote one figure. */
   exact: boolean
+  /**
+   * False, wenn die Quelle gar keinen Betrag nennt — Parkscheibe oder
+   * Fehlanzeige. Dann sind `minCents` und `maxCents` beide 0, und das ist
+   * **kein Preis**: Die Oberfläche darf daraus keine „0,00 €“ machen, sondern
+   * muss sagen, was stattdessen gilt.
+   */
+  priced: boolean
   /** Minutes actually charged, excluding free periods. */
   chargedMinutes: number
   /** True when the stay exceeds the zone's maximum. */
@@ -191,15 +198,22 @@ export function estimateCost(
   }
 
   const bill = (centsPerHour: number): number => Math.ceil((chargedMinutes * centsPerHour) / 60)
+  const fee = zone.fee
+  // Ohne Betrag wird nicht gerechnet. Ein Parkscheibengebiet mit 0 Cent zu
+  // beziffern hiesse: "kostet nichts" — und wer dort ohne Scheibe steht, zahlt
+  // trotzdem. `priced: false` zwingt die Oberflaeche, etwas anderes zu sagen.
   const [minCents, maxCents] =
-    zone.fee.kind === 'exact'
-      ? [bill(zone.fee.centsPerHour), bill(zone.fee.centsPerHour)]
-      : [bill(zone.fee.minCentsPerHour), bill(zone.fee.maxCentsPerHour)]
+    fee.kind === 'exact'
+      ? [bill(fee.centsPerHour), bill(fee.centsPerHour)]
+      : fee.kind === 'range'
+        ? [bill(fee.minCentsPerHour), bill(fee.maxCentsPerHour)]
+        : [0, 0]
 
   return {
     minCents,
     maxCents,
-    exact: zone.fee.kind === 'exact',
+    exact: fee.kind === 'exact',
+    priced: fee.kind === 'exact' || fee.kind === 'range',
     chargedMinutes,
     exceedsMaxStay: zone.maxStayMinutes !== undefined && minutes > zone.maxStayMinutes,
   }

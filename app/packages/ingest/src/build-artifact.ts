@@ -13,6 +13,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { CITIES } from '@parkingzone/core'
 
 const DIST = process.env.DIST_DIR ?? join(process.cwd(), '../../apps/web/dist')
 const OUT = process.env.ARTIFACT_OUT ?? join(process.cwd(), '../../apps/web/artifact.html')
@@ -29,13 +30,27 @@ const styles = assets(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)
 
 if (scripts.length === 0) throw new Error('no script tags found in built index.html')
 
-const data = {
-  zones: JSON.parse(readFileSync(join(DIST, 'data/zones.geojson'), 'utf8')),
-  poi: JSON.parse(readFileSync(join(DIST, 'data/poi.geojson'), 'utf8')),
-  districts: JSON.parse(readFileSync(join(DIST, 'data/districts.geojson'), 'utf8')),
-  umweltzone: JSON.parse(readFileSync(join(DIST, 'data/umweltzone.geojson'), 'utf8')),
-  meta: JSON.parse(readFileSync(join(DIST, 'data/meta.json'), 'utf8')),
-}
+/**
+ * Alle Staedte, die im Bündel liegen, kommen mit ins Artifact.
+ *
+ * Nicht nur die voreingestellte: Das Artifact laedt nichts nach — seine
+ * Sicherheitsrichtlinie blockiert jede fremde Anfrage —, und ein Umschalter,
+ * der auf eine Stadt zeigt, die nicht eingebettet ist, waere ein Knopf, der
+ * die Seite kaputt macht. `availableCities()` im Web liest genau diese
+ * Schluessel und blendet den Rest aus.
+ */
+const data = Object.fromEntries(
+  CITIES.map((city) => [
+    city.key,
+    {
+      zones: JSON.parse(readFileSync(join(DIST, `data/${city.key}/zones.geojson`), 'utf8')),
+      poi: JSON.parse(readFileSync(join(DIST, `data/${city.key}/poi.geojson`), 'utf8')),
+      districts: JSON.parse(readFileSync(join(DIST, `data/${city.key}/districts.geojson`), 'utf8')),
+      umweltzone: JSON.parse(readFileSync(join(DIST, `data/${city.key}/umweltzone.geojson`), 'utf8')),
+      meta: JSON.parse(readFileSync(join(DIST, `data/${city.key}/meta.json`), 'utf8')),
+    },
+  ])
+)
 
 const read = (name: string): string => readFileSync(join(DIST, name), 'utf8')
 
@@ -84,4 +99,14 @@ writeFileSync(OUT, output)
 
 console.log(`artifact.html: ${(output.length / 1024 / 1024).toFixed(2)} MB`)
 console.log(`  ${scripts.length} script(s), ${styles.length} stylesheet(s)`)
-console.log(`  ${data.zones.features.length} zones, ${data.poi.features.length} POI, ${data.districts.features.length} districts`)
+for (const city of CITIES) {
+  const bundled = data[city.key] as {
+    zones: { features: unknown[] }
+    poi: { features: unknown[] }
+    districts: { features: unknown[] }
+  }
+  console.log(
+    `  ${city.name}: ${bundled.zones.features.length} Zonen, ` +
+      `${bundled.poi.features.length} POI, ${bundled.districts.features.length} Ortsteile`
+  )
+}

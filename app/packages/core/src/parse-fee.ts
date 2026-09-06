@@ -14,10 +14,21 @@
  *     range stays a range and the UI has to show it as one.
  */
 
-/** Cents per hour. `kind` says how much the source actually committed to. */
+/**
+ * Cents per hour. `kind` says how much the source actually committed to.
+ *
+ * `disc` und `unknown` kamen mit Hamburg dazu und sind bewusst **nicht** als
+ * `exact` mit 0 Cent modelliert. Ein Parkscheibengebiet ist nicht kostenlos im
+ * Sinne von „hier musst du nichts beachten“ — wer ohne Scheibe steht, zahlt.
+ * Und „die Quelle sagt nichts“ ist keine Aussage über den Preis.
+ */
 export type Fee =
   | { kind: 'exact'; centsPerHour: number }
   | { kind: 'range'; minCentsPerHour: number; maxCentsPerHour: number }
+  /** Keine Gebühr, aber Parkscheibe — und damit fast immer eine Höchstparkdauer. */
+  | { kind: 'disc' }
+  /** Die Quelle nennt keinen Tarif. Nicht raten, sondern sagen. */
+  | { kind: 'unknown' }
 
 export class FeeParseError extends Error {
   constructor(

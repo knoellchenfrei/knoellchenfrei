@@ -20,7 +20,7 @@ Namensnennung erforderlich, keine Weitergabebedingungen.
 | `umweltzone:umweltzone` | 1 Polygon | Umweltzonen-Umriss |
 | `alkis_ortsteile:ortsteile` | 97 Ortsteile | Kartenkontext ohne externe Kacheln |
 
-Abruf: `pnpm --filter @parkingzone/ingest fetch`. Die Endpunkte stehen in
+Abruf: `pnpm --filter @parkingzone/ingest fetch-data`. Die Endpunkte stehen in
 [`app/packages/ingest/src/sources.ts`](../app/packages/ingest/src/sources.ts).
 
 Kartenkacheln: **OpenStreetMap** (`tile.openstreetmap.org`), © OpenStreetMap-Mitwirkende,

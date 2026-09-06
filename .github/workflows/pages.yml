@@ -38,7 +38,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Fetch current Berlin data
-        run: pnpm --filter @parkingzone/ingest fetch
+        run: pnpm --filter @parkingzone/ingest fetch-data
         continue-on-error: true
 
       - name: Rebuild data snapshot

@@ -534,6 +534,73 @@ test.describe('provenance', () => {
   })
 })
 
+test.describe('die zweite Stadt', () => {
+  /** Öffnet die Einstellungen und liefert das Dialog-Locator zurück. */
+  async function openSettings(page: Page) {
+    await page.getByRole('button', { name: 'Einstellungen' }).click()
+    const sheet = page.getByRole('dialog', { name: 'Einstellungen' })
+    await expect(sheet).toBeVisible()
+    return sheet
+  }
+
+  test('offers both cities and marks the current one', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await expect(sheet.getByRole('button', { name: 'Berlin' })).toBeDisabled()
+    await expect(sheet.getByRole('button', { name: 'Hamburg' })).toBeEnabled()
+  })
+
+  // Der eigentliche Punkt: Nach dem Wechsel stehen ANDERE Daten auf der Karte.
+  // Ein Umschalter, der nur eine Beschriftung ändert, wäre schlimmer als keiner.
+  test('switches to Hamburg and loads Hamburg zones', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+
+    // Der Wechsel lädt neu; danach ist die App wieder von vorn hochzufahren.
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    // Hamburgs Gebietskennungen fangen mit einem Buchstaben an, Berlins sind Zahlen.
+    await page.locator('.search__input').fill('N10')
+    await expect(page.locator('.search__results button').first()).toBeVisible({ timeout: 15_000 })
+
+    await openPanel(page)
+    await expect(page.locator('.provenance')).toContainText('Hamburg')
+  })
+
+  test('names the Hamburg licence as a condition, not as a footnote', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    sheet = await openSettings(page)
+    await expect(sheet).toContainText('Datenlizenz Deutschland Namensnennung 2.0')
+    // Berlin gibt unter Zero heraus — dort fehlt dieser Satz zu Recht.
+    await expect(sheet).toContainText('verlangt')
+  })
+
+  // Berlin darf nicht als Nebenwirkung verlorengehen: Der Wechsel muss in
+  // beide Richtungen gehen, sonst ist die Voreinstellung eine Sackgasse.
+  test('switches back to Berlin', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Berlin' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    await openPanel(page)
+    await expect(page.locator('.provenance')).toContainText('gdi.berlin.de')
+  })
+})
+
 test.describe('acknowledgement', () => {
   test('names FreiFahren where users can see it, and links there', async ({ page }) => {
     await ready(page)
