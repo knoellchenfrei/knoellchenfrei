@@ -45,10 +45,13 @@ test.describe('der Service Worker', () => {
     expect(response.status()).toBe(200)
     const source = await response.text()
 
-    const paths = [...source.matchAll(/"(\.\/[^"]+)"/g)].map((match) => match[1] as string)
-    // Das Grundgeruest plus die gehashten Buendel plus die Daten. Faellt die
+    // Beide Anfuehrungsarten: Das Grundgeruest steht als Quelltext in einfachen,
+    // die eingesetzte Liste kommt als JSON in doppelten. Nur die doppelten zu
+    // nehmen liesse genau die Haelfte ungeprueft — die handgeschriebene.
+    const paths = [...source.matchAll(/['"](\.\/[^'"]*)['"]/g)].map((match) => match[1] as string)
+    // Acht feste Eintraege plus die gehashten Buendel plus die Daten. Faellt die
     // Liste unter diese Groesse, ist die Ersetzung schiefgegangen.
-    expect(paths.length).toBeGreaterThan(10)
+    expect(paths.length).toBeGreaterThan(14)
     expect(paths.some((path) => path.includes('/assets/'))).toBe(true)
     expect(paths.some((path) => path.includes('/data/'))).toBe(true)
 
