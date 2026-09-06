@@ -47,26 +47,41 @@ Sicherheitsfunktionen einschalten: *Settings → Code security* → Secret scann
 Push protection, Dependabot alerts. Für öffentliche Repositories ist das
 kostenlos.
 
-### 3. Cloudflare einrichten — ohne Terminal
+### 3. Cloudflare einrichten
 
-Der Weg über `wrangler` auf dem eigenen Rechner steht in
-[hosting.md](hosting.md). Nötig ist er nicht: Alles davon lässt sich vom Handy
-aus über die GitHub-Weboberfläche auslösen.
+**Ein Befehl von deinem Rechner:**
+
+```bash
+./scripts/einrichten.sh
+```
+
+Hier stand vorher ein Weg „ohne Terminal", der alles über Workflows auslöste.
+Er ist am 6. September zugunsten des Skripts entfallen — nicht aus
+Geschmacksgründen: **Bootstrap ist nicht Deployment.** Einmalige
+Ressourcenerzeugung gehört an einen Arbeitsplatz, an dem jemand sitzt; die
+Pipeline macht danach das, was ohne Menschen auskommt. Und der Zustand darf nur
+an einer Stelle stehen — vorher stand er in einem Skript *und* in einem
+Workflow, beide halb.
+
+Was du davor brauchst, und was das Skript nicht für dich tun kann:
 
 1. **Cloudflare-Konto** anlegen (kostenlos, Web-Formular).
 2. **API-Token** erzeugen: Cloudflare → My Profile → API Tokens → Create Token,
    Rechte *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*,
-   *Cloudflare Pages:Edit*. Die **Account-ID** steht im Dashboard rechts.
-3. Beides im Repository hinterlegen unter *Settings → Secrets and variables →
-   Actions*: `CLOUDFLARE_API_TOKEN` und `CLOUDFLARE_ACCOUNT_ID`.
-4. *Actions → **Cloudflare einrichten** → Run workflow* starten. Der Workflow
-   legt KV-Namespace und D1-Datenbank an, trägt die IDs in `wrangler.toml` ein,
-   committet das zurück und spielt das Schema ein. Zweimal starten schadet
-   nicht.
-5. *Actions → **Deploy** → Run workflow*. Die Worker-Adresse steht danach in der
-   Ausgabe; sie als drittes Secret `VITE_API_BASE` hinterlegen und Deploy einmal
-   erneut starten — erst dann teilt die App wirklich, und erst dann erscheint
-   das Feedback-Formular.
+   *Cloudflare Pages:Edit* — plus *Workers R2 Storage:Edit* für die Kacheln.
+   Fehlt eines, scheitert der Schritt, der es braucht, mit
+   `Authentication error [code: 10000]`; das Skript nennt die Liste vorher.
+
+Alles Weitere macht das Skript: KV, D1, Migrationen, Pages-Projekt, das Salz
+für die Client-Hashes, die CI-Geheimnisse (mit `gh`), Telegram samt Webhook.
+Danach rollt jeder Push auf `main` aus.
+
+> **Ein langlebiger Token im GitHub-Secret ist derzeit nicht vermeidbar.**
+> Der Zielzustand wäre OIDC — kurzlebige Zugangsdaten je Lauf, wie npm es mit
+> *trusted publishing* macht. Cloudflare kann das für `wrangler deploy` noch
+> nicht (`cloudflare/workers-sdk#11434`, `cloudflare/wrangler-action#402` sind
+> offen, und die Doku verlangt weiterhin einen API-Token für CI). Was bleibt:
+> den Token eng schneiden und ihm ein Ablaufdatum geben.
 
 **Ungetestet.** Der Einrichtungs-Workflow ist geschrieben, aber nie gegen ein
 echtes Cloudflare-Konto gelaufen — hier gibt es keins. Er schreibt deshalb die

@@ -1,3 +1,27 @@
+-- Migration 0001: das vollständige Schema.
+--
+-- Angewendet wird sie von `wrangler d1 migrations apply` — nicht von Hand und
+-- nicht mit `d1 execute`. Der Unterschied ist der Zustand: wrangler führt eine
+-- Tabelle `d1_migrations` mit und überspringt, was schon eingespielt ist.
+--
+-- Warum das hier steht: Am 6. September gab es kurzzeitig ein selbstgebautes
+-- Gegenstück — `schema.sql` plus eine Datei mit `ALTER TABLE`, eingespielt von
+-- einem Skript, das die Meldungen `duplicate column name` und `no such table`
+-- hinnahm, um zweimal laufen zu können. Das war ein Nachbau dessen, was D1
+-- eingebaut hat, und ein schlechterer: Er kannte den Zustand nicht, er riet ihn
+-- aus Fehlermeldungen. Einmal ging es dabei schon schief, weil die Reihenfolge
+-- vertauscht war (`no such column: city`).
+--
+-- Jede Anweisung hier ist `IF NOT EXISTS`. Auf einer Datenbank, die diesen
+-- Stand schon hat, ist die Migration deshalb folgenlos — genau das erlaubt es,
+-- sie auch dort einzuführen, wo vorher von Hand eingespielt wurde.
+--
+-- Die Spalte `city` kam nach der zweiten Stadt dazu. Sie hat **keinen**
+-- Vorgabewert: Ein vergessenes Feld im Code soll auffallen, statt still
+-- „berlin" zu werden. `visits` bekommt bewusst keine — ein Ping trägt keine
+-- Position, die Stadt wäre vom Client behauptet statt abgeleitet. Begründung
+-- bei `recordVisit` in src/worker.ts.
+
 -- Sightings of parking enforcement.
 --
 -- No history is kept: rows past the confidence model's hard cutoff are deleted

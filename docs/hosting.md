@@ -186,6 +186,46 @@ ignoriert. Für alles, was über eine Demo hinausgeht, ist das die richtige Wahl
 
 ### Einrichten
 
+**Ein Befehl:**
+
+```bash
+./scripts/einrichten.sh
+```
+
+Er legt KV-Namespace, D1-Datenbank und Pages-Projekt an, spielt die
+Migrationen ein, erzeugt das Salz für die Client-Hashes, hinterlegt den
+Telegram-Token samt Webhook, prüft die Repository-Einstellungen und trägt die
+Kennungen ins Repository zurück. Was nur im Browser geht — Konto anlegen,
+BotFather, Nameserver beim Registrar —, nennt er mit Adresse, wartet auf dich
+und **prüft danach nach**.
+
+`--pruefen` berichtet nur und ändert nichts. Ein einzelner Schritt geht auch:
+`./scripts/einrichten.sh telegram`. Zweimal laufen ist ungefährlich; das
+Skript fragt nur nach dem, was fehlt.
+
+#### Warum von deinem Rechner und nicht als Workflow
+
+Das ist die verbreitete Aufteilung, und sie hat einen Grund: **Bootstrap ist
+nicht Deployment.** Einmalige Ressourcenerzeugung läuft von einem Arbeitsplatz
+aus, selten und von Hand — ihr Zweck ist, CI/CD überhaupt zu ermöglichen.
+Danach macht die Pipeline den Rest ohne Menschen.
+
+Hier kam dazu: Ein Token gehört in ein Terminal, nicht erst durch eine
+GitHub-Secret-Maske und dann durch einen Workflow-Lauf. Und der Zustand darf
+nur an *einer* Stelle stehen. Es gab kurzzeitig beides — ein Skript, das
+Workflows anstieß, die Ressourcen anlegten. Das waren zwei halbe Wahrheiten.
+
+**Was das Skript bewusst nicht ist: Infrastructure as Code.** Der Lehrbuchweg
+für „welche Ressourcen existieren" wäre Terraform/OpenTofu mit dem
+Cloudflare-Provider — deklarativ, mit Zustand, idempotent von Bauart. Das
+Skript stellt Idempotenz von Hand her, indem es prüft, bevor es anlegt. Für
+fünf Ressourcen auf dem Free Tier ist der Zusatz aus State-Backend, Werkzeug
+und Provider-Zugangsdaten nicht verdient. **Wann es kippt:** sobald eine zweite
+Umgebung dazukommt (Staging, eine eigene Datenbank je Stadt) oder jemand außer
+dem Betreiber das betreibt.
+
+#### Einzelne Befehle, falls du es von Hand willst
+
 **Immer aus `app/` heraus und über den Workspace**, nie mit einem nackten
 `npx wrangler` aus `apps/api`. Zwei Gründe, beide sind schon passiert:
 `npx` zieht irgendeine wrangler-Version aus seinem Zwischenspeicher statt der
@@ -201,35 +241,25 @@ W="pnpm --filter @knoellchenfrei/api exec wrangler"
 
 $W kv namespace create CACHE                          # ID in wrangler.toml eintragen
 $W d1 create knoellchenfrei --jurisdiction eu         # ID in wrangler.toml eintragen
-$W d1 execute knoellchenfrei --file=schema.sql --remote
+$W d1 migrations apply knoellchenfrei --remote
+$W pages project create knoellchenfrei --production-branch main
 $W deploy
 ```
 
-Bequemer ist der Workflow: *Actions → Cloudflare einrichten → Run workflow*
-macht dieselben vier Schritte und trägt die IDs selbst ein.
+#### Migrationen
 
-#### Frische Datenbank oder bestehende — die Stadtspalte
+`wrangler d1 migrations apply` führt in der Datenbank eine Tabelle
+`d1_migrations` mit und spielt nur ein, was dort noch nicht steht. Zweimal
+laufen ist deshalb folgenlos, und der Stand ist eine Tatsache in der Datenbank
+statt einer Vermutung im Skript.
 
-Seit der Worker beide Städte bedient, tragen `sightings` und `marks` eine
-Spalte `city`. Welcher der beiden Wege gilt, entscheidet allein, ob die
-Datenbank schon existiert:
-
-- **Frisch angelegt: nichts tun.** `schema.sql` führt die Spalte im
-  `CREATE TABLE`; wer die Datenbank gerade erst erzeugt hat, ist fertig.
-- **Bestehend: einmal die Migration einspielen.** `schema.sql` allein reicht
-  dafür nicht — `CREATE TABLE IF NOT EXISTS` ist auf einer vorhandenen Tabelle
-  ein No-op, und SQLite kennt kein `ADD COLUMN IF NOT EXISTS`. Die Spalte käme
-  also nie an, und der Worker liefe gegen eine Tabelle ohne sie
-  (`no such column: city` bei jeder Meldung):
-
-  ```bash
-  pnpm --filter @knoellchenfrei/api exec wrangler d1 execute knoellchenfrei \
-    --file=migrations/001-stadt.sql --remote
-  ```
-
-  Genau einmal: Ein zweiter Lauf bricht mit `duplicate column name: city` ab.
-  Solange die Datenbank leer ist, ist Löschen und Neuanlegen die gleichwertige
-  Alternative — dann genügt wieder `schema.sql`.
+Das ist nicht selbstverständlich, weil es hier kurzzeitig anders war: eine
+`schema.sql` plus eine Datei mit `ALTER TABLE`, eingespielt von einem Skript,
+das `duplicate column name` und `no such table` hinnahm, um zweimal laufen zu
+können. Ein Nachbau dessen, was D1 mitbringt — und ein schlechterer: Er kannte
+den Zustand nicht, er erriet ihn aus Fehlermeldungen, und einmal lag er daneben
+(`no such column: city`, weil die Reihenfolge vertauscht war). Neue Migrationen
+kommen als `migrations/NNNN_name.sql` dazu, aufsteigend nummeriert.
 
 Danach `ALLOWED_ORIGINS` in `wrangler.toml` auf die Domain der Web-App setzen.
 Ohne diesen Wert antwortet der Worker ohne CORS-Header — er scheitert

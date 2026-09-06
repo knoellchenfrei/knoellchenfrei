@@ -14,6 +14,11 @@ id = "f9e9b42d68b64db79027cb29e9da509a"
 binding = "DB"
 database_name = "knoellchenfrei"
 database_id = "733e1c3b-b8f2-429f-8503-7e703e3ec6a4"
+# D1 bringt ein Migrationswerkzeug mit: `wrangler d1 migrations apply` führt
+# eine Tabelle `d1_migrations` mit und überspringt, was schon eingespielt ist.
+# Vorher stand hier ein selbstgebautes Gegenstück, das den Zustand aus
+# Fehlermeldungen erriet — und einmal danebenlag.
+migrations_dir = "migrations"
 
 # Purges expired sightings hourly so the table never becomes a movement history.
 [triggers]

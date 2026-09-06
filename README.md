@@ -231,9 +231,11 @@ Meldungen und Live-Daten. Details, Kostenrahmen und Einrichtung:
 Vorgesehen ist **Cloudflare** — Pages fürs Frontend, Worker plus D1 für die
 Meldungen, R2 für die Kartenkacheln; derselbe Aufbau wie bei FreiFahren. Die
 eigenen Domains gehören dorthin und nicht zu GitHub Pages: Ein Hostname kann
-nur an einer Stelle liegen. `setup-cloudflare.yml` legt KV, D1 und Schema an,
-sobald zwei Secrets hinterlegt sind — die Reihenfolge steht in
-[docs/todo.md](docs/todo.md).
+nur an einer Stelle liegen. Eingerichtet wird mit **einem Befehl von deinem
+Rechner** — `./scripts/einrichten.sh` legt KV, D1, Migrationen und
+Pages-Projekt an, setzt Geheimnisse und prüft, was noch fehlt. Die Workflows
+machen danach nur noch CI und Deploy: Bootstrap ist nicht Deployment, und der
+Zustand darf nur an einer Stelle stehen.
 
 ## Grenzen
 

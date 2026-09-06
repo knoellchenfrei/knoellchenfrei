@@ -63,7 +63,7 @@ jobs:
         working-directory: app/apps/api
         run: |
           if grep -q 'REPLACE_WITH_' wrangler.toml; then
-            echo "::error::wrangler.toml traegt noch Platzhalter. Erst *Actions -> Cloudflare einrichten -> Run workflow* starten; der Workflow legt KV, D1 und das Pages-Projekt an und traegt die Kennungen ein."
+            echo "::error::wrangler.toml traegt noch Platzhalter. Die Einrichtung laeuft nicht hier, sondern von deinem Rechner: ./scripts/einrichten.sh -- sie legt KV, D1, Migrationen und das Pages-Projekt an und committet die Kennungen zurueck."
             exit 1
           fi
           echo "KV und D1 sind eingetragen."
@@ -136,6 +136,8 @@ jobs:
               echo
               echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
               echo '- `CLOUDFLARE_ACCOUNT_ID` — steht im Cloudflare-Dashboard rechts in der Seitenleiste'
+              echo
+              echo 'Beides setzt `./scripts/einrichten.sh ci` für dich, wenn `gh` angemeldet ist.'
               echo '- `VITE_API_BASE` — **optional**. Ohne das Secret nimmt der Deploy die Adresse, die der Worker-Deploy selbst ausgibt. Nur nötig, wenn der Worker hinter einer eigenen Domain liegt.'
               echo
               echo 'Details: [docs/hosting.md](docs/hosting.md)'

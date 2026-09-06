@@ -175,6 +175,28 @@ wiederholt.
   nach einem kaputten Import aus und ist ein fehlender Symlink. Richtig:
   `cd app && pnpm install && pnpm --filter @knoellchenfrei/api exec wrangler …`.
   Die Befehle in `docs/hosting.md` waren die Fehlerquelle und sind korrigiert.
+- **Bootstrap ist nicht Deployment, und der Zustand steht an einer Stelle.**
+  Die Einrichtung läuft als `scripts/einrichten.sh` von einem Rechner, an dem
+  jemand sitzt; die Workflows machen nur CI und Deploy. Es gab am 6. September
+  kurzzeitig beides — ein Skript, das Workflows anstieß, die Ressourcen
+  anlegten. Zwei halbe Wahrheiten. `setup-cloudflare.yml` ist deshalb gelöscht.
+  Was das Skript **nicht** ist: Infrastructure as Code. Der Lehrbuchweg wäre
+  Terraform/OpenTofu mit dem Cloudflare-Provider; für fünf Ressourcen auf dem
+  Free Tier ist der Zusatz nicht verdient. Wiedervorlage, sobald eine zweite
+  Umgebung dazukommt oder jemand außer dem Betreiber das betreibt.
+- **D1-Migrationen laufen über `wrangler d1 migrations apply`, nie über
+  `d1 execute`.** Das Werkzeug führt eine Tabelle `d1_migrations` mit und
+  überspringt, was schon eingespielt ist — der Stand ist damit eine Tatsache in
+  der Datenbank statt einer Vermutung. Ich hatte das erst von Hand nachgebaut
+  (`schema.sql` plus `ALTER TABLE`, mit Hinnehmen von `duplicate column name`)
+  und lag damit prompt einmal daneben: `schema.sql` legt einen Index auf `city`
+  an, den es vor der Migration nicht geben kann — `no such column: city`.
+  Neue Migrationen heißen `migrations/NNNN_name.sql`, aufsteigend.
+- **OIDC statt langlebiger Token geht bei Cloudflare noch nicht.**
+  `cloudflare/workers-sdk#11434` und `cloudflare/wrangler-action#402` sind
+  offen; die Doku verlangt für CI weiterhin einen API-Token. Also: eng
+  schneiden, Ablaufdatum setzen — und die Frage bei Gelegenheit neu stellen,
+  statt sie für beantwortet zu halten.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

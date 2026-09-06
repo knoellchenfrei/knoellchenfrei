@@ -259,11 +259,11 @@ Beide sind ab hier Dokumentation eines abgeschlossenen Vorgangs.
 
 Was am neuen Repository noch offen ist — **du**:
 
-- [ ] **CI-Geheimnisse hinterlegen.** Die Workflows aus `.github/workflows/`
-      sind mitgezogen, aber ihre Secrets nicht: `deploy.yml` und
-      `setup-cloudflare.yml` brauchen `CLOUDFLARE_API_TOKEN` und
-      `CLOUDFLARE_ACCOUNT_ID`, `VITE_API_BASE`. Ohne sie läuft nur
-      `ci.yml` durch.
+- [x] **CI-Geheimnisse hinterlegt.** `deploy.yml` braucht
+      `CLOUDFLARE_API_TOKEN` und `CLOUDFLARE_ACCOUNT_ID`; `VITE_API_BASE` ist
+      seit dem 6. September **optional** — der Deploy nimmt die Worker-Adresse
+      aus seiner eigenen Ausgabe, wenn kein Secret gesetzt ist.
+      `./scripts/einrichten.sh ci` setzt beide, wenn `gh` angemeldet ist.
 - [ ] **Branch-Schutz für `main`** einschalten, wenn außer dir jemand pusht.
       Solange nicht, ist es Aufwand ohne Gegenwert.
 
