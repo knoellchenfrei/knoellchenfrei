@@ -884,6 +884,21 @@ cf_api() {
 # Skript "ließ sich nicht anlegen:" mit einer *leeren* Begründung. Ausgerechnet
 # an der Stelle, die dafür da ist, die echte Meldung zu zeigen. JSON gehört von
 # einem JSON-Leser gelesen, nicht von einem Muster.
+# Hat die API-Antwort geklappt?
+#
+# Vorher stand hier dreimal `grep -q '"success":true'`. Das trifft nicht: Die
+# Cloudflare-API antwortet mit einem Leerzeichen nach dem Doppelpunkt. Die Folge
+# war die schlimmste Sorte Fehlmeldung — das Skript legte vier Weiterleitungen
+# an und meldete viermal "liess sich nicht anlegen". Wer das glaubt, sucht den
+# Fehler an einer Stelle, an der keiner ist.
+cf_geklappt() {
+  printf '%s' "$1" | python3 -c "
+import sys, json
+try: sys.exit(0 if json.load(sys.stdin).get('success') else 1)
+except Exception: sys.exit(1)
+" 2>/dev/null
+}
+
 cf_fehler() {
   printf '%s' "$1" | python3 -c "
 import sys, json
@@ -962,7 +977,7 @@ schritt_dns() {
 
   # Erst pruefen, ob das Token ueberhaupt angenommen wird. Sonst meldet jeder
   # folgende Schritt "fehlt als Zone" — und das waere erfunden, nicht gemessen.
-  if ! cf_api GET "/user/tokens/verify" | grep -q '"success":true'; then
+  if ! cf_geklappt "$(cf_api GET "/user/tokens/verify")"; then
     schlimm "Cloudflare nimmt das Token nicht an:"
     cf_api GET "/user/tokens/verify" | python3 -c "
 import sys, json
@@ -996,7 +1011,7 @@ for e in d.get('errors', []): print('      ' + str(e.get('message')))
     # https://knöllchenfrei.de läuft in eine Warnung statt in ein Redirect.
     local antwort
     antwort="$(cf_api POST '/zones' "{\"name\":\"$d\",\"account\":{\"id\":\"$konto\"},\"type\":\"full\"}")"
-    if printf '%s' "$antwort" | grep -q '"success":true'; then
+    if cf_geklappt "$antwort"; then
       ok "$d als Zone angelegt"
       neue="$neue $d"
     else
@@ -1024,23 +1039,57 @@ for e in d.get('errors', []): print('      ' + str(e.get('message')))
   # Als Cloudflare *Redirect Rules*, nicht beim Registrar: Dessen
   # Weiterleitungen arbeiten oft mit Frames oder brechen auf der Apex-Domain
   # bei HTTPS.
+  #
+  # Geschrieben wird auf den **Phasen-Einstieg** (`PUT .../phases/…/entrypoint`),
+  # nicht mit `POST /rulesets`. Cloudflare erlaubt je Zone und Phase genau eine
+  # Regelmenge; ein zweites `POST` scheitert mit
+  #   'zone' is not a valid value for kind because exceeded maximum number of
+  #   zone rulesets for phase http_request_dynamic_redirect
+  # — was nach einem Fehler im Aufruf aussieht und "gibt es schon" heisst. `PUT`
+  # ist idempotent und damit das, was ein Skript braucht, das man zweimal
+  # laufen laesst.
   for d in $DOMAINS; do
     [ "$d" = "$HAUPTDOMAIN" ] && continue
     local id; id="$(zonen_id "$d")"
     [ -z "$id" ] && continue
-    local regeln
-    regeln="$(cf_api GET "/zones/$id/rulesets" || true)"
-    if printf '%s' "$regeln" | grep -q 'http_request_dynamic_redirect'; then
-      ok "$d hat eine Weiterleitung"
+
+    local vorhanden
+    vorhanden="$(cf_api GET "/zones/$id/rulesets" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+print(sum(1 for r in (d.get('result') or []) if r.get('phase') == 'http_request_dynamic_redirect'))
+" 2>/dev/null)"
+    if [ "${vorhanden:-0}" -gt 0 ]; then
+      ok "$d leitet auf $HAUPTDOMAIN weiter"
       continue
     fi
     fehlt "$d ohne Weiterleitung"
     if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+
+    # JSON von einem JSON-Schreiber bauen lassen. Der erste Entwurf setzte es
+    # aus Shell-Anfuehrungszeichen zusammen, mit vier Ebenen Maskierung um das
+    # `concat("https://…", …)` herum — unlesbar und beim ersten Umbau kaputt.
     local daten
-    daten="$(printf '%s' "{\"name\":\"Weiterleitung auf $HAUPTDOMAIN\",\"kind\":\"zone\",\"phase\":\"http_request_dynamic_redirect\",\"rules\":[{\"action\":\"redirect\",\"expression\":\"true\",\"description\":\"301 auf $HAUPTDOMAIN, Pfad erhalten\",\"action_parameters\":{\"from_value\":{\"status_code\":301,\"target_url\":{\"expression\":\"concat(\\\"https://$HAUPTDOMAIN\\\", http.request.uri.path)\"},\"preserve_query_string\":true}}}]}")"
+    daten="$(python3 -c "
+import json, sys
+ziel = sys.argv[1]
+print(json.dumps({
+  'rules': [{
+    'action': 'redirect',
+    'expression': 'true',
+    'description': f'301 auf {ziel}, Pfad erhalten',
+    'action_parameters': {'from_value': {
+      'status_code': 301,
+      'target_url': {'expression': f'concat(\"https://{ziel}\", http.request.uri.path)'},
+      'preserve_query_string': True,
+    }},
+  }]
+}))" "$HAUPTDOMAIN")"
+
     local antwort
-    antwort="$(cf_api POST "/zones/$id/rulesets" "$daten")"
-    if printf '%s' "$antwort" | grep -q '"success":true'; then
+    antwort="$(cf_api PUT "/zones/$id/rulesets/phases/http_request_dynamic_redirect/entrypoint" "$daten")"
+    if cf_geklappt "$antwort"; then
       ok "$d leitet jetzt mit 301 auf $HAUPTDOMAIN"
     else
       schlimm "$d: Weiterleitung ließ sich nicht anlegen:"
