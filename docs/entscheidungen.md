@@ -118,6 +118,45 @@ Worker. FreiFahren betreibt dafür einen eigenen `telegram-worker`, aber deren
 Umfang rechtfertigt das; bei uns wäre es eine zweite Betriebsumgebung für eine
 Funktion, die sich Datenbank, Einfügepfad und Meldegrenze mit der ersten teilt.
 
+## Zweite Stadt
+
+**Eine Stadt zur Zeit, umschaltbar in den Einstellungen** — nicht ein Build je
+Stadt, und nicht beide Städte gleichzeitig auf einer Karte.
+
+Die Begründung für einen Build je Stadt stand kurzzeitig im Quelltext und war
+**falsch**: Sie behauptete, die Zonendaten lägen im Bündel und ein Wechsel
+müsse den halben Datenbestand nachladen. Tatsächlich holt `loadData` die
+Dateien seit jeher per `fetch`; sie liegen jetzt je Stadt unter
+`public/data/<stadt>/`, und ein Wechsel lädt nach. Der Irrtum steht hier, weil
+er die Architektur der zweiten Stadt eine Stunde lang in die falsche Richtung
+geschoben hätte.
+
+Das Modell ist FreiFahrens, nachgesehen im ausgelieferten Bündel von
+`app.freifahren.org`: eine Stadt-Tabelle mit Schlüssel, Anzeigename,
+Kartenmittelpunkt und Datenbank je Stadt; ein `citySwitcher` hinter einem
+Feature-Flag; ein Onboarding-Schritt, der sagt „zeigt Community-Meldungen für
+jeweils eine Stadt“; und ein Standort-Vorschlag („Switch to {{city}}?“). Live
+sind dort Berlin und Leipzig, Hamburg liegt als `listed: false` bereit.
+
+**Beide Städte gleichzeitig zu zeigen wurde verworfen.** Zonen, Meldungen,
+Heatmap und Grenzprüfung gehören zusammen; eine Karte, die Berliner Zonen über
+Hamburger Meldungen legt, beantwortet keine Frage richtig.
+
+**Der Wechsel lädt die Seite neu.** Am Stadtwechsel hängen Kartenausschnitt,
+Zonendaten, Meldegrenze, gespeicherte Parksitzung, Heatmap und
+Feiertagskalender. Sie im laufenden Zustand einzeln umzuhängen hieße, sechs
+Stellen richtig zu treffen — und die eine, die man vergisst, zeigt danach
+Berliner Zonen mit Hamburger Grenzen.
+
+**Zwei Parser, nie ein gemeinsamer.** Die Feeds teilen sich außer der Domäne
+nichts: andere Felder, andere Schreibweisen, anderes Ausgabeformat, andere
+Achsenreihenfolge. Ein Parser für beide wäre bei jeder Änderung an einer Stadt
+für die andere gefährlich.
+
+**Hamburgs Stellplatz-Ebene bleibt draußen.** 203.283 Polygone, je Stellplatz
+eines, ohne Tarif und mit leerem Zeitfeld — dieselbe Begründung, aus der
+Berlins 214.173 Abschnitte außerhalb des Rings draußen bleiben.
+
 ## Oberfläche
 
 **Kopfzeile nach FreiFahrens Vorbild:** zwei Zeilen statt Raster — Suchfeld über

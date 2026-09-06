@@ -119,7 +119,7 @@ Standort-Vordialog.
 | Kontaktseite mit Ansprechpartnern | Setzt eine Organisation voraus, die es hier nicht gibt. Solange eine Person dahintersteht, ist das Impressum die ehrliche Form. |
 | Presse-Bereich | Braucht jemanden, der Presseanfragen beantwortet. |
 | Sprachumschaltung | Die Daten sind deutsch — Zonennamen, Bezirke, Freitext im Feed. Eine halbe Übersetzung ist schlechter als eine ganze deutsche App. |
-| Stadt-Umschaltung | Erst sinnvoll mit einer zweiten Stadt — und dann als Build je Stadt, nicht als Schalter: Die Zonendaten liegen im Bündel, ein Wechsel im Browser müsste den halben Datenbestand nachladen. |
+| ~~Stadt-Umschaltung~~ | **Gebaut.** Die Begründung dagegen war falsch: Die Zonendaten liegen nicht im Bündel, sondern werden zur Laufzeit geholt. Jetzt eine Stadt zur Zeit, umschaltbar in den Einstellungen — dasselbe Modell wie FreiFahren. |
 
 ## Zweite Stadt
 
@@ -134,8 +134,9 @@ fest verdrahten. Der Stand heute:
 | Ruhetags-Hinweis | nein — Wochentage und Stunden werden aus den geladenen Fahrplänen abgeleitet |
 | Feiertagskalender (`core/holidays`) | nein mehr — Tabelle je Bundesland, BE und HH belegt |
 | Kartenausschnitt und Grenzprüfung | nein mehr — `core/city`, ein Datensatz je Stadt |
-| Datenquelle (`ingest/sources`) | nach Stadt gegliedert, aber nur Berlin ist abgerufen |
-| Zeitfenster-Parser auf Hamburgs Schreibweise | **offen** — Berlins „Mo-Sa 9-20 Uhr" ist eine Konvention dieses Feeds |
+| Datenquelle (`ingest/sources`) | nein mehr — nach Stadt gegliedert, beide abgerufen |
+| Zeitfenster-Parser | nein mehr — je Stadt einer, `parse-schedule.ts` und `hamburg.ts` |
+| Zonendaten im Web | nein mehr — je Stadt unter `public/data/<stadt>/`, zur Laufzeit geholt |
 | Produktname (`index.html`, Manifest, `h1`) | **ja** — steht dreimal als „ParkingZone Berlin" |
 
 Was sich damit geändert hat: Berlin steckte an **sechs** Stellen als
@@ -146,9 +147,14 @@ Jetzt steht sie einmal in `core/city.ts`, und Browser, Worker und Bot lesen
 dieselbe. Auseinanderlaufende Grenzen waren der teuerste Fehler dieser Art:
 Der Server hätte Meldungen verworfen, die die App gerade angenommen hat.
 
-Offen bleibt der Weg von FreiFahren — `packages/cities` und eine Datenbank je
-Stadt. Solange es zwei Städte sind, wäre eine zweite Datenbank Aufwand ohne
-Gegenwert; ab der dritten nicht mehr.
+Offen bleibt eine **Datenbank je Stadt**. FreiFahren macht genau das: Ihr
+Bündel nennt `api-worker-db-eu`, `api-worker-db-hamburg-eu` und
+`api-worker-db-leipzig` als getrennte D1-Bindings an einem Worker, dazu eine
+Subdomain je Stadt. Solange hier nur Berlin einen Worker hat, wäre eine zweite
+Datenbank Aufwand ohne Gegenwert — aber sobald Meldungen für Hamburg
+hereinkommen sollen, ist es dieser Weg und nicht eine gemeinsame Tabelle mit
+einer Stadtspalte: Getrennte Datenbanken machen es unmöglich, dass eine
+Hamburger Meldung versehentlich auf einer Berliner Karte landet.
 
 ## Danach — und da kann ich wieder übernehmen
 

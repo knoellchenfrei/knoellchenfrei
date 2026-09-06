@@ -14,10 +14,18 @@ anderswo die Daten".** Das ist diese Analyse.
 
 ## Methodik und ihre Grenze
 
-Aus der Umgebung, in der diese Analyse entstand, sind fast alle kommunalen
-Open-Data-Portale gesperrt — erreichbar war nur `daten.berlin.de`. Die Aussagen
-zu den anderen Städten stammen daher aus Recherche, **nicht aus dem Abruf der
-Schnittstellen**. Die letzte Spalte sagt jeweils, wie belastbar ein Eintrag ist.
+Diese Analyse entstand in zwei Schritten. Zuerst aus **Recherche**: Der
+Egress-Proxy der Arbeitsumgebung ließ nur `daten.berlin.de` durch, alle
+anderen Portale antworteten mit 403. Seit dem 6. September 2026 ist er offen,
+und Hamburg ist seitdem **abgerufen** — Feld für Feld, nicht aus Metadaten
+abgeschrieben. Für alle übrigen Städte gilt die erste Fassung unverändert: Sie
+stammen aus Recherche, **nicht aus dem Abruf der Schnittstellen**. Die letzte
+Spalte sagt jeweils, wie belastbar ein Eintrag ist.
+
+Der Unterschied war kein akademischer. Vier der sieben Befunde zu Hamburg
+weiter unten — die umgekehrte Achsenreihenfolge, die Fenster über Mitternacht,
+die Platzhalter in der Höchstparkdauer und die Gebiete ohne Gebühr — stehen in
+keinem Metadatensatz. Sie zeigen sich erst, wenn man die Zeilen liest.
 
 | Stufe | Bedeutung |
 | --- | --- |
@@ -85,7 +93,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | Stadt | Geometrie | Tarif | Zeiten | Lizenz | Stufe |
 | --- | --- | --- | --- | --- | --- |
 | **Berlin** | WFS, Zonen und Abschnitte | im selben Feed | im selben Feed | DL-DE/Zero-2.0 | **geprüft** |
-| **Hamburg** | zwei WFS, Adressen und Typnamen unten | im Datensatz „Öffentlicher Parkraum" | im selben Datensatz | DL-DE/**Namensnennung** 2.0 | **belegt** |
+| **Hamburg** | 146 Bewohnerparkgebiete als WFS | je Gebiet, als „3,50 € je Stunde" | je Gebiet, zehn Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
 | **München** | Datensatz „Parkraummanagementgebiete" als Polygone im Open-Data-Portal, dazu 76 Parklizenzgebiete im GeoPortal | offen | offen | Portal ist auf offene Lizenzen ausgelegt | **belegt** |
 | **Frankfurt / Rhein-Main** | Regionalverband stellt Karten und Geodaten als WFS bereit | offen | offen | als Open Data ausgewiesen | **Hinweis** |
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
@@ -118,43 +126,104 @@ geratene wäre es nicht.
 
 ## Hamburg im Einzelnen
 
-Nachgesehen am 6. September 2026, über Websuche — die Portale selbst sind aus
-dieser Umgebung gesperrt (`geodienste.hamburg.de` und
-`suche.transparenz.hamburg.de` beantworten den CONNECT des Egress-Proxys mit
-403). Die Stufe bleibt deshalb **belegt**, nicht *geprüft*: Kein Feld wurde
-selbst gesehen.
+Abgerufen und Feld für Feld angesehen am 6. September 2026 — Stufe **geprüft**,
+nicht mehr *belegt*. Angeschlossen ist Hamburg seither auch: `core/hamburg.ts`
+liest den Feed, `ingest/build-data-hamburg.ts` baut ihn, und in den
+Einstellungen lässt sich zwischen beiden Städten wechseln.
 
 | | |
 | --- | --- |
-| **Bewohnerparkgebiete** | `https://geodienste.hamburg.de/HH_WFS_bewohnerparkgebiete`, Typname `de.hh.up:bewohnerparkgebiete` |
-| **Öffentlicher Parkraum** | `https://geodienste.hamburg.de/HH_WFS_Parkraum`, Typname vermutlich `de.hh.up:parkraum` — nicht bestätigt |
-| Herausgeber | Landesbetrieb Verkehr (LBV) bzw. Landesbetrieb Geoinformation und Vermessung |
-| Formate | WFS (GML), WMS, CSV, dazu eine OGC-API-Features-Schnittstelle |
+| **Bewohnerparkgebiete** | `https://geodienste.hamburg.de/HH_WFS_bewohnerparkgebiete`, Typname `de.hh.up:bewohnerparkgebiete`, **146** Gebiete |
+| **Stadtteile** | `https://geodienste.hamburg.de/HH_WFS_Verwaltungsgrenzen`, Typname `app:stadtteile`, **104** — Hamburgs Gegenstück zu Berlins Ortsteilen |
+| **Öffentlicher Parkraum** | `https://geodienste.hamburg.de/HH_WFS_Parkraum`, Typname `de.hh.up:parkraum`, **203.283** Polygone — nicht abgerufen, Begründung unten |
+| Ausgabeformat | `application/geo+json`. **Nicht** `application/json` wie Berlin — falsch angefragt kommt GML, also gültiges XML, an dem `JSON.parse` scheitert |
+| Herausgeber | Freie und Hansestadt Hamburg, Landesbetrieb Geoinformation und Vermessung |
 | Lizenz | Datenlizenz Deutschland **Namensnennung** 2.0 |
-| Attribute laut Metadaten | Lage, Parkzeiten, Parkzone, Höchstparkdauer, Handyparkzone |
 
-Drei Dinge, die daran hängen:
+### Die Felder, die tragen
 
-**1. Die Lizenz ist eine andere als in Berlin.** Berlin gibt unter DL-DE/**Zero**
-heraus — Nennung freiwillig. Hamburg verlangt sie. Das ist keine Formalie,
-sondern Lizenzbedingung: Eine Hamburg-Ansicht ohne Quellenangabe verletzt sie.
-`City.attribution.attributionRequired` trägt den Unterschied bis in die
-Oberfläche, damit ihn niemand übersieht.
+Ein Bewohnerparkgebiet sieht so aus:
 
-**2. Die Metadaten des Dienstes nennen veraltete Preise.** Ihre Beschreibung
-spricht von drei Zonen zu 3, 2 und 1 Euro je Stunde. Tatsächlich hat Hamburg
-seit dem **1. Juli 2026 vier Zonen**: 4,00 / 3,50 / 3,00 / 2,00 Euro je Stunde,
-angehoben um 50 Cent je Zone mit Verweis auf die Inflation. Genau der Fall, vor
-dem die Prüfliste unten warnt — nur dass hier nicht der Datensatz alt ist,
-sondern seine Beschreibung. Wer den Tarif aus dem Metadatentext liest statt aus
-dem Feature, liefert falsche Preise aus.
+```json
+{ "bwp_code": "N101", "bwp_name": "N 101 Flughafenstraße",
+  "bewirtschaftungszeit": "täglich 9-20 Uhr", "gebuehrenzone": "Parkscheibe",
+  "hoechstparkdauer": "180", "bewirtschaftungsart": "Parkscheibe, Bewohner mit Ausweis frei",
+  "geplant_aktiv": 2 }
+```
 
-**3. Vier Zonen statt drei sind kein Sonderfall für den Code.** `ParkingZone`
-kennt keine Zonenanzahl; Tarif und Zeitfenster stehen je Zone. Was fehlt, ist
-der Parser für Hamburgs *Schreibweise* der Zeiten — Berlins „Mo-Sa 9-20 Uhr"
-ist eine Konvention dieses Feeds, keine Norm. Den kann niemand schreiben, ohne
-den Feed einmal gesehen zu haben; er ist die eine Aufgabe, die diese Umgebung
-nicht erledigen kann.
+Verglichen mit Berlin ist das **einfacher** — zehn Schreibweisen der Zeiten
+statt achtzehn, die Höchstparkdauer als Zahl statt als Prosa — und trotzdem
+enthält es vier Dinge, die Berlin nicht kennt. Jedes davon ist ein eigener
+Fallstrick, und jedes hat einen Test:
+
+**1. Die Achsenreihenfolge ist umgekehrt.** Auf dieselbe Anfrage
+(`srsName=urn:ogc:def:crs:EPSG::4326`) antwortet Berlin mit `[lon, lat]` und
+Hamburg mit `[lat, lon]`. Hamburg hält sich an die URN-Form, die die Breite
+zuerst vorschreibt; Berlin liefert GeoJSON-Konvention. Beides ist
+verteidigbar. Ungedreht landen Hamburgs Gebiete bei 9° Nord, 53° Ost — im Golf
+von Guinea —, und auf der Karte sieht das nicht nach einem Fehler aus, sondern
+nach einer leeren Stadt. Die Reihenfolge steht deshalb als Feld in
+`ingest/sources.ts` und wird nicht geraten: In Hamburg sind beide Zahlen
+zweistellig und plausibel.
+
+**2. Fenster laufen über Mitternacht.** Fünf Gebiete lauten „täglich 9-2 Uhr".
+Ein einzelnes `ChargeWindow` kann das nicht — `fromMinute > toMinute` heißt in
+der Prüfung schlicht „nie". Der Parser zerlegt es in 9:00–24:00 und 0:00–2:00
+des **Folgetags**; bei „täglich" fällt der Tageswechsel nicht auf, bei
+„werktags" schon.
+
+**3. „werktags" ist Montag bis Samstag.** Nicht Montag bis Freitag. Das folgt
+der Legaldefinition in § 3 Abs. 2 BUrlG („Werktage sind alle Kalendertage, die
+nicht Sonn- oder gesetzliche Feiertage sind") und ständiger Rechtsprechung des
+BGH; im Verkehrsrecht wird das Zusatzzeichen genauso gelesen. Andersherum
+gelesen meldete die App an **31 Gebieten** samstags „gebührenfrei", und das
+kostet ein Knöllchen.
+
+**4. Es gibt Gebiete ohne Gebühr.** `gebuehrenzone` trägt in sieben Gebieten
+„Parkscheibe", in zwei „-", in einem nichts. Das ist **kein Preis von null**:
+Wer im Parkscheibengebiet ohne Scheibe steht, zahlt. `Fee` hat dafür die
+Varianten `disc` und `unknown` bekommen, und `CostEstimate.priced` zwingt die
+Oberfläche, etwas anderes zu sagen als „0,00 €".
+
+Dazu zwei Kleinigkeiten, die still falsch geworden wären: `hoechstparkdauer`
+benutzt **9999 und 0 als Platzhalter** für „unbegrenzt" — ungeprüft übernommen
+stünde in der App „6 Tage 22 Stunden". Und `geplant_aktiv` unterscheidet
+aktive von geplanten Gebieten (145 gegen 1); welche Zahl was heißt, sagt der
+Feed nicht, deshalb gilt die vorsichtige Lesart: nur der häufige Wert zählt als
+aktiv. Ein Gebiet zu übersehen kostet einen fehlenden Hinweis, ein geplantes
+auszuliefern eine falsche Warnung.
+
+### Die Preise: der Feed stimmt, seine Beschreibung nicht
+
+Die Metadaten des Dienstes sprechen von drei Zonen zu 3, 2 und 1 Euro je
+Stunde. Der **Feed selbst** trägt 4,00 / 3,50 / 3,00 / 2,00 € — die Sätze, die
+seit dem **1. Juli 2026** gelten, angehoben um je 50 Cent mit Verweis auf die
+Inflation. Wer den Tarif aus dem Metadatentext liest statt aus dem Feature,
+liefert falsche Preise aus. Ein Test hält die vier Sätze fest, damit die
+nächste Anhebung auffällt.
+
+### Was nicht mitkommt
+
+**`de.hh.up:parkraum`, 203.283 Polygone** — je Stellplatz eines. Hamburgs
+Gegenstück zu Berlins Straßenabschnitten, und es beantwortet eine andere Frage
+als diese App: Die Attribute sind Ausrichtung zur Straße, Markierung,
+Fahrzeugtyp und Straßenname. Ein Tarif steht nicht darin, und
+`geltungszeit_primaerer_bewirtschaftung` war in der Stichprobe leer. Für
+„kostet das hier gerade etwas" trägt die Ebene nichts bei, was die 146 Gebiete
+nicht schon sagen.
+
+**POI und Umweltzone.** Ladepunkte, P+R, Behindertenparkplätze und Carsharing
+liegen in Hamburg in anderen Diensten mit anderen Feldern; sie fehlen, statt
+halb dazusein. Eine Umweltzone hat Hamburg nicht — es gibt
+Durchfahrtsbeschränkungen für Diesel auf zwei Straßenabschnitten, und das ist
+etwas anderes. `meta.json` trägt die Lücken als `absent`, damit die Oberfläche
+„gibt es hier nicht" von „noch nicht geladen" unterscheiden kann.
+
+**Der Bezirk.** Der Feed nennt zu einem Gebiet keinen Stadtteil, nur einen
+Namen wie „N 101 Flughafenstraße". Der Datenbau ordnet ihn über den
+Mittelpunkt gegen die **unvereinfachten** Stadtteilgrenzen zu — vereinfachte
+wandern um Dutzende Meter, und ein Gebiet an der Grenze bekäme den Nachbarn
+zugeschrieben. 145 von 145 treffen.
 
 ## Was am Code dafür zu tun ist
 
@@ -190,13 +259,23 @@ Drei Aufgaben waren das. Zwei sind erledigt:
    Code, nicht an dreien wie hier behauptet — die sechste saß im
    Telegram-Parser, und eine abweichende Grenze dort heißt: Der Bot nimmt an,
    was die App verwirft.
-3. **Der Parser muss unbekannte Schreibweisen abweisen können**, ohne den Build
-   einer anderen Stadt mitzureißen. Offen, und zeigt sich erst, wenn der erste
-   fremde Feed hereinkommt.
+3. ~~**Der Parser muss unbekannte Schreibweisen abweisen können**, ohne den
+   Build einer anderen Stadt mitzureißen.~~ Erledigt, und die Antwort war
+   nicht ein toleranterer Parser, sondern **zwei getrennte**:
+   `parse-schedule.ts`/`parse-fee.ts` lesen Berlin, `hamburg.ts` liest Hamburg.
+   Ein gemeinsamer Parser müsste beide Grammatiken kennen und wäre bei jeder
+   Änderung an einer Stadt für die andere gefährlich. Beide weisen ab, was sie
+   nicht kennen, und ein Fehler bricht den *Datenbau* der eigenen Stadt ab —
+   die andere baut weiter.
 
-Was danach noch offen ist: der Hamburger Feed selbst — Abruf, Parser, Zonendaten
-im Bündel — und der Produktname, der in `index.html`, im Manifest und in der
-`h1` weiter „ParkingZone Berlin" lautet.
+Und die zweite Stadt selbst ist angeschlossen: Zonendaten liegen je Stadt unter
+`apps/web/public/data/<stadt>/`, der Browser holt sie zur Laufzeit, und in den
+Einstellungen lässt sich wechseln — eine Stadt zur Zeit, wie bei FreiFahren.
+
+Was noch offen ist: der Produktname, der in `index.html`, im Manifest und in
+der `h1` weiter „ParkingZone Berlin" lautet, und ein Standort-Vorschlag beim
+ersten Öffnen („Du scheinst in Hamburg zu sein — wechseln?"), wie FreiFahren
+ihn als `cityLocationPrompt` hat.
 
 ## Prüfliste je Stadt
 
@@ -211,19 +290,19 @@ Prüfung:
 - [ ] Wie oft wird **aktualisiert**? Ein Datensatz von 2019 nennt falsche Preise.
 - [ ] Gibt es einen **Ansprechpartner** für Rückfragen zu Auffälligkeiten?
 
-Stand für Hamburg, nach dem Abschnitt oben:
+Stand für Hamburg, nach dem Abschnitt oben — alles abgerufen, nicht abgeschrieben:
 
-- [x] Geometrie — zwei WFS, benannt.
+- [x] Geometrie — 146 Bewohnerparkgebiete, dazu 104 Stadtteile als Kontext.
 - [x] Lizenz — DL-DE/Namensnennung 2.0, offen, aber mit Pflicht zur Nennung.
-- [x] Maschinell abrufbar — WFS, CSV, OGC API Features.
-- [x] Tarif — laut Metadaten im Datensatz „Öffentlicher Parkraum".
-- [x] Zeiten — ebenda, Schreibweise **unbekannt**. Das ist der offene Punkt.
-- [x] Aktualisierung — bei Änderung der Gebiete. Die *Beschreibung* des Dienstes
-      hinkt allerdings hinterher, siehe oben.
-- [ ] Ansprechpartner — nicht ermittelt.
+- [x] Maschinell abrufbar — WFS mit `application/geo+json`.
+- [x] Tarif — je Gebiet in `gebuehrenzone`, als „3,50 € je Stunde".
+- [x] Zeiten — je Gebiet in `bewirtschaftungszeit`, zehn Schreibweisen, alle
+      auf einem Muster: Tagesangabe, Stundenspanne, „Uhr".
+- [x] Aktualisierung — bei Änderung der Gebiete. Die *Beschreibung* des
+      Dienstes hinkt hinterher und nennt veraltete Preise, siehe oben.
+- [ ] Ansprechpartner — nicht ermittelt. Der einzige offene Punkt.
 
-Damit fällt Hamburg an keiner Stelle durch. Was fehlt, ist der Blick in den
-Feed selbst, und der geht aus dieser Umgebung nicht.
+Hamburg fällt an keiner Stelle durch und ist angeschlossen.
 
 Zu jeder Stadt, die durchfällt, gehört ein Eintrag in
 [data-sources.md](data-sources.md) — Negativbefunde sind Arbeitsergebnisse und

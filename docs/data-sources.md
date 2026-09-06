@@ -1,7 +1,8 @@
 # Datenquellen
 
 Alle in der App verwendeten Daten mit Herkunft, Lizenz und Abrufweg. Stand der
-Erhebung: 6. September 2026.
+Erhebung: 6. September 2026. Zwei Städte, zwei Behörden, **zwei verschiedene
+Lizenzen** — der Unterschied steht bei Hamburg.
 
 ## Verwendet
 
@@ -41,28 +42,49 @@ kein laufender Kachelserver — so macht es FreiFahren.
 | `eladeinfrastruktur` | 25 Features | Enthält keine Ladesäulen-Standorte, nur Planungshilfen. Das Feld `ladesaeule` im Segment-Layer ist die bessere Quelle. |
 | OpenStreetMap Parkhäuser | unbestimmt | Die einzige Quelle für Tiefgaragen in Berlin, aber ODbL mit Share-alike: Ein Snapshot, der OSM-Daten mit den Berliner Segmenten verschmilzt, wäre eine abgeleitete Datenbank und müsste selbst unter ODbL stehen. Machbar als **getrennter** Layer, bisher nicht umgesetzt. |
 
-## Vorbereitet, noch nicht abgerufen — Hamburg
+## Verwendet — Hamburg
 
-Recherche vom 6. September 2026, über Websuche. `geodienste.hamburg.de` und
-`suche.transparenz.hamburg.de` beantworten den CONNECT des Egress-Proxys mit
-403; kein Feld wurde selbst gesehen. Die vollständige Prüfung steht in
-[staedte.md](staedte.md#hamburg-im-einzelnen), die Adressen und Typnamen in
-`app/packages/ingest/src/sources.ts`.
+Abgerufen am 6. September 2026 von der **Freien und Hansestadt Hamburg**,
+Landesbetrieb Geoinformation und Vermessung, über `geodienste.hamburg.de`,
+WFS 2.0.0. Zwei Ebenen:
 
-Zwei Punkte gehören hierher, weil sie die Datenherkunft betreffen:
+| Ebene | Typname | Umfang |
+| --- | --- | --- |
+| Bewohnerparkgebiete | `de.hh.up:bewohnerparkgebiete` | 146, davon 145 aktiv |
+| Stadtteile | `app:stadtteile` | 104, nur als Kartenkontext |
 
-- **Die Lizenz ist eine andere.** Hamburg gibt unter
-  [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0)
-  heraus, nicht unter Zero wie Berlin. Die Nennung der Quelle ist damit
-  Lizenzbedingung und keine Höflichkeit. `City.attribution.attributionRequired`
-  in `core/city.ts` trägt den Unterschied bis in die Oberfläche.
-- **Die Beschreibung des Dienstes nennt veraltete Preise** — drei Zonen zu 3, 2
-  und 1 Euro je Stunde. Seit dem 1. Juli 2026 gelten vier Zonen zu 4,00 / 3,50 /
-  3,00 / 2,00 Euro. Wer den Tarif aus dem Metadatentext liest statt aus dem
-  Feature, liefert falsche Preise aus. Das ist derselbe Fehler wie ein
-  Datensatz von 2019, nur eine Ebene höher.
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0).**
+Das ist der Unterschied zu Berlin, und er ist keine Formalie: Berlin gibt unter
+*Zero* heraus, Nennung freiwillig; bei Hamburg ist die Quellenangabe
+**Lizenzbedingung**. `City.attribution.attributionRequired` trägt sie bis in
+die Einstellungen, wo sie als Bedingung benannt wird und nicht als Fußnote.
 
-## Geprüft und nicht verfügbar
+Zwei Dinge, die man erst im Feed sieht und die deshalb hier stehen:
+
+- **Das Ausgabeformat heißt `application/geo+json`**, nicht `application/json`
+  wie in Berlin. Falsch angefragt antwortet der Dienst nicht mit einem Fehler,
+  sondern mit GML — gültigem XML, an dem `JSON.parse` scheitert, mit einer
+  Meldung, die nach kaputten Daten aussieht statt nach einer falschen Anfrage.
+- **Die Achsenreihenfolge ist umgekehrt.** Auf dieselbe Anfrage
+  (`srsName=urn:ogc:def:crs:EPSG::4326`) antwortet Berlin `[lon, lat]` und
+  Hamburg `[lat, lon]`. Hamburg folgt der URN-Form, Berlin der
+  GeoJSON-Konvention; beides ist verteidigbar. Ungedreht liegen die Gebiete im
+  Golf von Guinea, und die Karte sieht dabei nur leer aus.
+
+**Die Beschreibung des Dienstes nennt veraltete Preise** — drei Zonen zu 3, 2
+und 1 € je Stunde. Der Feed selbst trägt 4,00 / 3,50 / 3,00 / 2,00 €, die
+Sätze seit dem 1. Juli 2026. Wer den Tarif aus dem Metadatentext liest statt
+aus dem Feature, liefert falsche Preise aus.
+
+Nicht abgerufen: **`de.hh.up:parkraum`** mit 203.283 Polygonen, je Stellplatz
+eines. Ohne Tarif, mit leerem Zeitfeld — für „kostet das hier gerade etwas"
+trägt die Ebene nichts bei, was die 146 Gebiete nicht schon sagen. Ebenso
+fehlen POI und Umweltzone: Die einen liegen in anderen Diensten, die andere
+gibt es in Hamburg nicht. `meta.json` führt beides unter `absent`.
+
+Vollständige Feldanalyse in [staedte.md](staedte.md#hamburg-im-einzelnen).
+
+## Geprüft und nicht verfügbar## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
 sie nicht erneut untersucht werden:

@@ -201,12 +201,13 @@ Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen an einen Dritten,
 über den unsere Datenschutzerklärung Auskunft geben muss. Details in
 [hosting.md](hosting.md).
 
-## 5. Zweite Stadt vorbereiten — **ich**
+## 5. Zweite Stadt — Hamburg läuft, München offen — **ich**
 
-Analyse der Datenlage in [staedte.md](staedte.md). Kurz: **Hamburg zuerst**,
-danach München — das sind die einzigen beiden Städte, für die ein konkreter
-Datensatz belegt ist. Alles darunter ist bisher nur ein Portal, in dem noch
-niemand nachgesehen hat.
+Analyse der Datenlage in [staedte.md](staedte.md). Hamburg ist seit dem
+6. September angeschlossen: 145 Gebiete, umschaltbar in den Einstellungen.
+Danach München — die einzige weitere Stadt, für die ein konkreter Datensatz
+belegt ist. Alles darunter ist bisher nur ein Portal, in dem noch niemand
+nachgesehen hat.
 
 - [x] **Stadt als Konfiguration statt als Konstante.** `core/city.ts` trägt
       Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze, Bundesland und
@@ -225,13 +226,24 @@ niemand nachgesehen hat.
       **Nennung der Quelle**, und die Dienst-Beschreibung nennt **veraltete
       Preise** — drei Zonen zu 3/2/1 Euro, während seit dem 1. Juli 2026 vier
       Zonen zu 4,00/3,50/3,00/2,00 Euro gelten.
-- [ ] **Hamburger Feed anschließen — geht aus dieser Umgebung nicht.**
-      `geodienste.hamburg.de` und `suche.transparenz.hamburg.de` beantworten
-      den CONNECT des Egress-Proxys mit 403. Nötig sind: ein Abruf, ein Parser
-      für Hamburgs Schreibweise der Zeiten (Berlins „Mo-Sa 9-20 Uhr" ist eine
-      Konvention dieses Feeds, keine Norm) und die Zonendaten im Bündel.
-      Die geschätzten `expectedFeatures` in `ingest/sources` korrigiert der
-      erste echte Abruf.
+- [x] **Hamburger Feed angeschlossen.** Der Egress-Proxy ist seit dem
+      6. September offen; Hamburg ist abgerufen, geparst und ausgeliefert.
+      145 aktive Gebiete von 146, dazu 104 Stadtteile als Kartenkontext.
+      Vier Eigenheiten, die kein Metadatensatz nennt und die alle einen Test
+      haben: umgekehrte Achsenreihenfolge, Fenster über Mitternacht,
+      „werktags" als Mo–**Sa**, und Gebiete ohne Gebühr (Parkscheibe), die
+      keine null Euro sind. Einzelheiten in [staedte.md](staedte.md#hamburg-im-einzelnen).
+- [x] **Stadtwechsel in den Einstellungen**, nach FreiFahrens Modell: eine
+      Stadt zur Zeit, Daten je Stadt unter `public/data/<stadt>/`, zur Laufzeit
+      nachgeladen. Die frühere Begründung für einen Build je Stadt war falsch —
+      `loadData` hat die Dateien schon immer geholt.
+- [ ] **Standort-Vorschlag beim ersten Öffnen.** FreiFahren fragt „Switch to
+      {{city}}? Your location looks like you are in {{city}}." Sinnvoll, sobald
+      es mehr als zwei Städte gibt; bei zweien reicht der Umschalter.
+- [ ] **München als dritte Stadt.** Der Datensatz ist benannt, aber nicht
+      geprüft. Vorher ist die Feiertagstabelle zu klären: Mariä Himmelfahrt
+      gilt in Bayern **gemeindeweise**, für München also an der Stadt und nicht
+      am Land.
 - [ ] **Produktname entberlinern.** „ParkingZone Berlin" steht dreimal fest:
       `apps/web/index.html`, `public/manifest.webmanifest` und die `h1` in
       `App.tsx`. Ein Block, kein Streuschaden — und die Gelegenheit, ihn auf
