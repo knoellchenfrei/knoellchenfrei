@@ -8,17 +8,21 @@ Drei Wege, aufsteigend nach Aufwand. Alle drei kosten bei dieser Last **null Eur
 Datenstand zeigt: Cloudflare.** Frontend auf Pages, API als Worker, Daten in D1,
 WFS-Cache in KV — ein Konto, eine Domain, kein Server, kein Euro. Der
 Artifact-Link ist bequemer, setzt beim Gegenüber aber einen Claude-Zugang
-voraus; GitHub Pages scheitert bei einem privaten Repository an der
-Plan-Grenze.
+voraus.
 
 | | Artifact | GitHub Pages | **Cloudflare** |
 | --- | --- | --- | --- |
 | Öffentlich teilbar | nur mit Claude-Zugang | ja | **ja** |
-| Privates Repo | egal | GitHub Pro nötig ($4/Monat) | **egal** |
 | Geteilte Meldungen | ja (`db`) | nein | **ja (D1)** |
 | Live-Zähler | ja (`room`) | nein | **ja (`/visits`)** |
 | Kartenkacheln | nein (CSP) | ja | **ja** |
 | Live-Daten (WFS, Ladepunkte) | nein | nein | **ja (Worker)** |
+
+**Stand am 6. September 2026, abends:** Das Repository ist öffentlich, GitHub
+Pages ist eingeschaltet und liefert aus, das Cloudflare-Konto steht, und das
+API-Token hat seit dem Nachtrag unten auch `Workers Scripts:Edit`. Offen sind
+der erste erfolgreiche Worker-Deploy, `VITE_API_BASE` und der R2-Eimer für die
+Kacheln.
 
 ## Wie FreiFahren es macht
 
@@ -86,8 +90,11 @@ OpenStreetMap-Kacheln — stattdessen zeichnen die Ortsteilgrenzen den
 geografischen Kontext — und keine Live-Abfrage des WFS; die Daten sind zum
 Build-Zeitpunkt eingefroren.
 
-Aktualisieren: `pnpm --filter @knoellchenfrei/ingest fetch-data && … build-data`, dann
-`build-artifact` und dieselbe Datei erneut publizieren. Die URL bleibt.
+Aktualisieren: `pnpm --filter @knoellchenfrei/ingest fetch-data && … build-data`,
+dann `pnpm artifact` und dieselbe Datei erneut publizieren — **nie** durch
+Einpacken von `dist/`, das ergibt eine schwarze Seite. Die URL bleibt.
+Das Artifact trägt beide Städte: 103 Berliner Zonen und 145 Hamburger Gebiete
+in einer Datei von 2,17 MB.
 
 ## 2. Statisches Hosting — volle App, keine Kosten
 
@@ -96,33 +103,28 @@ Für die vollständige Fassung mit Kartenkacheln.
 | Anbieter | Kostenlos | Grenzen |
 | --- | --- | --- |
 | **Cloudflare Pages** | ja, unbegrenzt Traffic | 500 Builds/Monat |
-| **GitHub Pages** | ja | Bei privatem Repo nur mit GitHub Pro/Team |
+| **GitHub Pages** | ja | Bei privatem Repo nur mit GitHub Pro/Team — hier öffentlich, also frei |
 | **Netlify** | ja | 100 GB Traffic/Monat |
 
-### GitHub Pages aktivieren — ein Handgriff, den nur du machen kannst
+### GitHub Pages — eingeschaltet am 6. September
 
-Der Workflow läuft bereits und baut sauber durch; nur der letzte Schritt schlägt
-fehl, solange Pages im Repository nicht eingeschaltet ist:
+Bis dahin baute der Workflow sauber durch und scheiterte erst am letzten
+Schritt:
 
 > `Failed to create deployment (status: 404) … Ensure GitHub Pages has been enabled`
 
-So geht es:
-
-1. **https://github.com/knoellchenfrei/knoellchenfrei/settings/pages** öffnen
-2. Unter **Build and deployment → Source** auf **GitHub Actions** stellen
-3. Unter *Actions → Deploy to GitHub Pages* den letzten Lauf erneut starten
-   (**Re-run all jobs**) — oder einfach den nächsten Push abwarten
-
-Danach liegt die App unter
+Das war kein Fehler im Workflow, sondern ein Schalter im Repository:
+*Settings → Pages → Build and deployment → Source* auf **GitHub Actions**.
+Seither ist der Lauf grün. Die App liegt unter
 `https://knoellchenfrei.github.io/knoellchenfrei/`. **Ins Feld *Custom domain*
 gehört nichts:** `knoellchenfrei.de` ist für Cloudflare Pages vorgesehen, und
 ein Hostname kann nur an einer Stelle liegen. Die Begründung im Einzelnen
 steht in [todo.md](todo.md#7-auftritt--du-vorbereitet-ist-alles).
 
-Bei einem **privaten** Repository braucht Pages einen bezahlten Plan
-(GitHub Pro, Team oder Enterprise). Zeigt die Einstellungsseite das Feature
-nicht an, ist das der Grund — dann ist Cloudflare Pages die Alternative ohne
-diese Einschränkung, oder das Repository wird öffentlich.
+Der Vollständigkeit halber, falls das Repository je wieder privat wird: Dann
+braucht Pages einen bezahlten Plan (GitHub Pro, Team oder Enterprise), und die
+Einstellungsseite zeigt das Feature schlicht nicht an. Cloudflare Pages kennt
+diese Grenze nicht.
 
 Build-Kommando: `pnpm install && pnpm --filter @knoellchenfrei/web build`,
 Ausgabeverzeichnis `app/apps/web/dist`.
@@ -276,6 +278,29 @@ VITE_API_BASE = https://knoellchenfrei-api.<konto>.workers.dev
 Ohne diese Variable läuft die App im lokalen Modus: Meldungen bleiben auf dem
 Gerät, und die Live-Zähler zeigen „nur dieses Gerät". Das ist kein Fehler,
 sondern die ehrliche Anzeige dessen, was ohne Backend zählbar ist.
+
+### Der Worker kennt nur **eine** Stadt — die App nicht mehr
+
+Das ist die offene Kante der Hamburg-Arbeit, und sie fällt genau dann auf, wenn
+der Worker scharf geht. `Env.CITY` wählt die Stadt, ohne Wert bleibt es Berlin;
+`withinCity` weist alles ab, was außerhalb liegt. Die App dagegen kann seit dem
+6. September zwischen Berlin und Hamburg umschalten. Zusammen heißt das:
+
+- Eine Meldung aus Hamburg beantwortet der Berlin-Worker mit
+  **`422 position outside Berlin`**. In der App sieht das aus, als sei das
+  Melden kaputt.
+- Umgekehrt filtert `GET /sightings` **nicht** nach Stadt — die Antwort enthält
+  alles, was noch lebt. Auf der Karte fällt das nicht auf, weil 250 km
+  dazwischen liegen; die Live-Zähler zählen aber beide Städte zusammen.
+- Dasselbe gilt für `marks`: Das 250-Meter-Raster ist global, Berliner und
+  Hamburger Felder kollidieren also nicht — aber der Bericht mischt sie.
+
+`schema.sql` hat **keine Stadtspalte**. Zwei Wege, beide vertretbar:
+FreiFahren betreibt **eine D1 je Stadt** (`api-worker-db-eu`,
+`…-hamburg-eu`, `…-leipzig`) und damit auch je einen Worker. Der kleinere
+Eingriff wäre eine Spalte `city`, aus der Position abgeleitet, mit einem
+Filter beim Lesen. Bis das entschieden ist, gilt: **Der Worker ist eine
+Berlin-Instanz.** Steht als offener Punkt in [todo.md](todo.md).
 
 ### Was im Worker liegt
 

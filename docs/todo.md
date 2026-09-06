@@ -434,7 +434,35 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
       Das setzt voraus, dass die Zone schon bei Cloudflare liegt, und braucht
       die `CNAME`-Datei aus Punkt 3. Vorher lohnt es nicht.
 
-## 8. Kleinkram — **ich**
+## 8. Der Worker kennt nur eine Stadt — **ich**
+
+Beim Durchsehen von [hosting.md](hosting.md) aufgefallen, und es fällt erst
+auf, wenn der Worker scharf geht: Die App schaltet seit dem 6. September
+zwischen Berlin und Hamburg um, der Worker nicht. `Env.CITY` wählt **eine**
+Stadt (ohne Wert: Berlin), `withinCity` weist alles andere ab, und
+`schema.sql` hat keine Stadtspalte.
+
+- Eine Hamburger Meldung bekommt **`422 position outside Berlin`**. In der App
+  sieht das aus, als sei das Melden kaputt — genau der stille Fehler, gegen den
+  `core/city.ts` angetreten ist, nur eine Ebene weiter außen.
+- `GET /sightings` filtert nicht nach Stadt. Auf der Karte fällt das nicht auf
+  (250 km dazwischen), in den Live-Zählern und im Kontroll-Bericht schon.
+
+- [ ] **Entscheiden: eine D1 je Stadt oder eine Spalte `city`.** FreiFahren
+      fährt je Stadt eine eigene Datenbank *und* einen eigenen Worker — sauber
+      getrennt, aber n-mal Betrieb. Der kleinere Eingriff ist eine Spalte,
+      beim Schreiben aus der Position abgeleitet (welche `reportBounds`
+      enthalten sie — keine, dann 422), beim Lesen als Filter. Für zwei Städte
+      auf dem Free Tier spricht mehr für die Spalte.
+- [ ] Danach: `ALTER TABLE`-Zeile ins Schema, Filter in `/sightings`,
+      `/marks` und den Zählern, `CITY` aus `wrangler.toml` entfernen, und je
+      ein Test für die Grenze zwischen den Städten.
+
+Solange das offen ist, gilt: **Der Worker ist eine Berlin-Instanz.** Das ist
+kein Drama, solange nichts öffentlich ist — aber es gehört vor den ersten
+geteilten Link erledigt, nicht danach.
+
+## 9. Kleinkram — **ich**
 
 - [ ] Bilder für die Installations-Karte neu aufnehmen, sobald die Kacheln
       erreichbar sind: `public/screenshots/` zeigt zurzeit die App ohne
