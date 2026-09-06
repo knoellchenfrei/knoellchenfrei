@@ -364,6 +364,28 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
       has been enabled`. Falls die App stattdessen über Cloudflare Pages
       laufen soll: `pages.yml` löschen, statt sie rot stehen zu lassen.
 
+      **Ins Feld *Custom domain* gehört nichts.** Drei Gründe, jeder für sich
+      ausreichend:
+
+      1. Ein Hostname kann nur an einer Stelle liegen. `knoellchenfrei.de` ist
+         für **Cloudflare Pages** vorgesehen (Punkt 2 und
+         [hosting.md](hosting.md)); trägt man ihn hier ein, zeigt das DNS auf
+         GitHub, und der Umzug später kostet eine Ausfallzeit.
+      2. `base: './'` in `vite.config.ts` erzeugt **relative** Pfade. Die App
+         läuft deshalb ohne jede Anpassung unter
+         `knoellchenfrei.github.io/knoellchenfrei/` — für einen geschlossenen
+         Test ist das genug, und es kostet keine DNS-Entscheidung.
+      3. Eine eigene Domain hier bräuchte zusätzlich eine Datei `CNAME` im
+         **ausgelieferten** Verzeichnis, also `apps/web/public/CNAME`. Ohne
+         sie setzt `actions/deploy-pages` die Einstellung bei jedem Lauf
+         zurück — die Domain funktioniert dann bis zum nächsten Push.
+
+      Wenn es während der Beta trotzdem eine eigene Adresse sein soll, dann
+      **nicht die Hauptdomain**, sondern eine eigene Unterdomain, etwa
+      `beta.knoellchenfrei.de` als `CNAME` auf `knoellchenfrei.github.io`.
+      Das setzt voraus, dass die Zone schon bei Cloudflare liegt, und braucht
+      die `CNAME`-Datei aus Punkt 3. Vorher lohnt es nicht.
+
 ## 8. Kleinkram — **ich**
 
 - [ ] Bilder für die Installations-Karte neu aufnehmen, sobald die Kacheln

@@ -293,7 +293,21 @@ echten Ursache:
   Dateien auf der Platte stehen. Unser Plugin las dort die fertige
   `dist/index.html` — `ENOENT`. Es liest sie jetzt im `writeBundle` aus dem
   Bundle-Objekt, das den Inhalt ohnehin hält. Der Umweg über das Dateisystem
-  war nie nötig.
+  war nie nötig. Zweiter Stolperstein derselben Umstellung:
+  `output.manualChunks` wird von rolldown **aufgerufen** — die Objektform
+  ergibt `TypeError: manualChunks is not a function`. Die Funktionsform
+  verstehen beide Bundler, also steht dort jetzt eine Funktion.
+
+  **Und der Umbau hat einen Fehler ans Licht geholt, der nicht von ihm kam.**
+  Der Service Worker hielt seit der zweiten Stadt gar nichts mehr vor: Die
+  Datendateien wanderten nach `data/<stadt>/`, seine Vorabliste stand als fünf
+  fest verdrahtete Namen in `vite.config.ts` und zeigte weiter auf
+  `data/zones.geojson`. `cache.addAll` scheitert an einer einzigen 404, und
+  der Worker fängt den Fehler ab — also wurde **nichts** vorgehalten, die
+  App war nicht mehr offlinefähig, und zu sehen war davon nichts. Das ist
+  genau die Sorte Fehler, für die es in diesem Projekt eine Regel gibt: Die
+  Liste wird jetzt aus dem Verzeichnis gelesen, nicht aufgeschrieben, und zwei
+  E2E-Tests rufen jeden Pfad aus dem ausgelieferten `sw.js` ab.
 - **`@vitejs/plugin-react` 6** verlangt Vite 8 und kann einzeln gar nicht grün
   werden. Dependabot kann das nicht wissen: Es gibt keine Gruppe für
   Hauptversionen, und eine wäre auch falsch — dann führe jeder große Sprung

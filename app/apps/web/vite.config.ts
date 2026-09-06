@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import react from '@vitejs/plugin-react'
@@ -20,22 +20,50 @@ function stampServiceWorker(singleBundle: boolean): Plugin {
     configResolved(config) {
       outDir = join(config.root, config.build.outDir)
     },
-    closeBundle() {
+    // `writeBundle` statt `closeBundle`, und die index.html aus dem Bundle
+    // statt von der Platte: Unter Vite 8 (rolldown) lief `closeBundle`, bevor
+    // die Dateien geschrieben waren, und der Build brach mit
+    // `ENOENT … dist/index.html` ab. Das Bundle-Objekt hat den Inhalt ohnehin
+    // schon — der Umweg über das Dateisystem war nie nötig. Der Rückfall auf
+    // die Datei bleibt für den Fall, dass ein anderer Plugin-Lauf die
+    // index.html erst danach einhängt.
+    writeBundle(_options, bundle) {
       // A published artifact is one file with no origin to register a worker
       // against, and its build writes to its own directory — stamping here
       // would read the wrong index.html and overwrite the real build's worker.
       if (singleBundle) return
       const swPath = join(outDir, 'sw.js')
       const source = readFileSync(join(process.cwd(), 'src/sw-template.js'), 'utf8')
-      const indexHtml = readFileSync(join(outDir, 'index.html'), 'utf8')
+      const emitted = bundle['index.html']
+      const indexHtml =
+        emitted !== undefined && emitted.type === 'asset'
+          ? typeof emitted.source === 'string'
+            ? emitted.source
+            : new TextDecoder().decode(emitted.source)
+          : readFileSync(join(outDir, 'index.html'), 'utf8')
       const id = createHash('sha256').update(indexHtml).digest('hex').slice(0, 12)
       // Precache the hashed bundles and the data files so the very first visit
       // is enough to work offline.
       const assets = [
         ...indexHtml.matchAll(/(?:src|href)="(\.\/assets\/[^"]+)"/g),
       ].map((match) => match[1])
-      const data = ['zones.geojson', 'poi.geojson', 'districts.geojson', 'umweltzone.geojson', 'meta.json']
-        .map((name) => `./data/${name}`)
+      // Die Datendateien liegen seit der zweiten Stadt unter
+      // `data/<stadt>/`, nicht mehr flach unter `data/`. Die fest
+      // verdrahtete Liste zeigte danach auf fünf Pfade, die es nicht gibt —
+      // und weil `cache.addAll` schon an einer einzigen 404 scheitert und der
+      // Worker den Fehler verschluckt, wurde daraufhin **gar nichts**
+      // vorgehalten. Die App sah dabei völlig gesund aus und war nur nicht
+      // mehr offlinefähig. Deshalb wird die Liste jetzt aus dem Verzeichnis
+      // gelesen statt aufgeschrieben.
+      const cityKey = process.env.VITE_CITY ?? 'berlin'
+      const cityDir = join(process.cwd(), 'public/data', cityKey)
+      const data = readdirSync(cityDir)
+        .filter((name) => name.endsWith('.json') || name.endsWith('.geojson'))
+        .sort()
+        .map((name) => `./data/${cityKey}/${name}`)
+      if (data.length === 0) {
+        throw new Error(`keine Datendateien unter public/data/${cityKey}`)
+      }
       const stamped = source
         .replaceAll('__BUILD_ID__', id)
         .replaceAll('__SHELL_ASSETS__', JSON.stringify([...assets, ...data]))
@@ -111,7 +139,15 @@ export default defineConfig({
         : // MapLibre is by far the largest dependency and changes rarely;
           // splitting it keeps the app chunk small enough to re-download on
           // every deploy.
-          { manualChunks: { maplibre: ['maplibre-gl'] } },
+          //
+          // Als Funktion, nicht als Objekt: rolldown (Vite 8) ruft
+          // `manualChunks` auf, statt die Objektform zu lesen, und bricht sonst
+          // mit `TypeError: manualChunks is not a function` ab. Die Funktion
+          // versteht auch Rollup — sie ist die Form, die beide kennen.
+          {
+            manualChunks: (id: string) =>
+              id.includes('maplibre-gl') ? 'maplibre' : undefined,
+          },
     },
   },
 })

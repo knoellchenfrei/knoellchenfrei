@@ -33,6 +33,39 @@ async function manifest(page: Page): Promise<Manifest> {
   return (await response.json()) as Manifest
 }
 
+test.describe('der Service Worker', () => {
+  // Gefunden beim Sprung auf Vite 8, verursacht hat es die zweite Stadt: Die
+  // Datendateien wanderten nach `data/<stadt>/`, die Vorabliste im Worker
+  // zeigte weiter auf `data/zones.geojson`. `cache.addAll` scheitert an einer
+  // einzigen 404 und der Worker verschluckt den Fehler — vorgehalten wurde
+  // danach **nichts**, und die App sah dabei gesund aus. Ein Test, der jeden
+  // Pfad abruft, hätte das sofort gezeigt.
+  test('jede Datei, die er vorab holt, gibt es auch', async ({ page }) => {
+    const response = await page.request.get('/sw.js')
+    expect(response.status()).toBe(200)
+    const source = await response.text()
+
+    const paths = [...source.matchAll(/"(\.\/[^"]+)"/g)].map((match) => match[1] as string)
+    // Das Grundgeruest plus die gehashten Buendel plus die Daten. Faellt die
+    // Liste unter diese Groesse, ist die Ersetzung schiefgegangen.
+    expect(paths.length).toBeGreaterThan(10)
+    expect(paths.some((path) => path.includes('/assets/'))).toBe(true)
+    expect(paths.some((path) => path.includes('/data/'))).toBe(true)
+
+    for (const path of paths) {
+      const asset = await page.request.get(path.replace(/^\.\//, '/'))
+      expect(asset.status(), `${path} fehlt — cache.addAll bricht daran ab`).toBe(200)
+    }
+  })
+
+  test('traegt eine ersetzte Build-Kennung, keinen Platzhalter', async ({ page }) => {
+    const source = await (await page.request.get('/sw.js')).text()
+    expect(source).not.toContain('__BUILD_ID__')
+    expect(source).not.toContain('__SHELL_ASSETS__')
+    expect(source).toMatch(/const CACHE = 'parkingzone-[0-9a-f]{12}'/)
+  })
+})
+
 test.describe('the manifest', () => {
   test('every file it names actually exists', async ({ page }) => {
     const data = await manifest(page)

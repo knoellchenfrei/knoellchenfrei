@@ -146,6 +146,21 @@ wiederholt.
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
   `lint-workflows.yml` prüft nur, ob die Datei *parst*, nicht ob das Schema
   stimmt; es hätte das nicht gefunden.
+- **Was der Service Worker vorab holt, wird gelesen, nicht aufgeschrieben.**
+  Die Liste stand als fünf Dateinamen in `vite.config.ts`. Mit der zweiten
+  Stadt wanderten die Daten nach `data/<stadt>/`, und die Liste zeigte auf
+  fünf Pfade, die es nicht mehr gab. `cache.addAll` bricht schon an einer
+  einzigen 404 ab, der Worker verschluckt den Fehler
+  (`.catch(() => undefined)`) — vorgehalten wurde daraufhin **nichts**, die
+  Offlinefähigkeit war weg, und zu sehen war davon nichts. Sie kommt jetzt aus
+  `readdirSync(public/data/<stadt>)`, und zwei E2E-Tests rufen jeden Pfad aus
+  `sw.js` ab.
+- **Vite 8 baut mit rolldown, und zwei Dinge sind dort anders.** `closeBundle`
+  läuft, **bevor** die Dateien geschrieben sind — wer die fertige
+  `dist/index.html` braucht, nimmt `writeBundle` und liest sie aus dem
+  Bundle-Objekt. Und `output.manualChunks` wird **aufgerufen**, die Objektform
+  ergibt `TypeError: manualChunks is not a function`; die Funktionsform
+  verstehen beide Bundler.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes
