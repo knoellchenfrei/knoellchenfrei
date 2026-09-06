@@ -134,7 +134,7 @@ jobs:
               echo
               echo "Unter *Settings → Secrets and variables → Actions* anlegen:"
               echo
-              echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
+              echo '- `CLOUDFLARE_API_TOKEN` — braucht genau zwei Rechte: *Workers Scripts:Edit* und *Cloudflare Pages:Edit*. Mehr nicht: Dieser Workflow rollt nur aus, angelegt wird lokal mit `scripts/einrichten.sh`.'
               echo '- `CLOUDFLARE_ACCOUNT_ID` — steht im Cloudflare-Dashboard rechts in der Seitenleiste'
               echo
               echo 'Beides setzt `./scripts/einrichten.sh ci` für dich, wenn `gh` angemeldet ist.'

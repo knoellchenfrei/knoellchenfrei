@@ -216,6 +216,44 @@ Skript nach.
 `./scripts/einrichten.sh telegram`. Zweimal laufen ist ungefährlich; das
 Skript fragt nur nach dem, was fehlt.
 
+#### Zwei Token, zwei Rechtemengen
+
+Sie werden gern verwechselt, und die Verwechslung kostet jedes Mal einen roten
+Lauf.
+
+**Dein Token** (auf dem Rechner, für `einrichten.sh`) legt Ressourcen an und
+braucht entsprechend viel: *Workers Scripts:Edit*, *Workers KV Storage:Edit*,
+*D1:Edit*, *Cloudflare Pages:Edit*, *Workers R2 Storage:Edit* — und für die
+Domains zusätzlich *Zone:Read*, *DNS:Edit*, *Single Redirect:Edit* sowie
+*Account Rulesets:Edit*. (In der Oberfläche heißt die Regelmenge für
+Weiterleitungen **Single Redirect**; die API nennt dieselbe Sache
+`http_request_dynamic_redirect`.)
+
+**Das CI-Token** (im GitHub-Secret, für `deploy.yml`) tut genau zwei Dinge —
+`wrangler deploy` und `pages deploy` — und braucht deshalb genau zwei Rechte:
+
+```
+Workers Scripts:Edit
+Cloudflare Pages:Edit
+```
+
+Alles darüber ist zu viel. Gerade hier zählt das: Der Token liegt in einem
+fremden System, wird unbeaufsichtigt benutzt und lässt sich nach einem Leck
+nicht zurückrufen, nur rollen. Ein Ablaufdatum gehört dazu.
+
+**Nicht** nötig sind KV, D1 und R2 — die CI fasst sie nicht an, seit die
+Einrichtung lokal läuft — und **Workers Routes** ebenfalls nicht, solange
+`wrangler.toml` keine `routes` deklariert. Nachgesehen: Dort stehen nur `name`,
+`main`, Bindings, Cron-Trigger und Vars; der Worker liegt auf der
+`workers.dev`-Adresse.
+
+> **Das ändert sich mit einer eigenen Domain.** Trägst du
+> `api.knoellchenfrei.de` als `routes` in die `wrangler.toml`, braucht die CI
+> *Workers Routes:Edit* — und ohne das scheitert der Deploy mit einem
+> Rechte-Fehler, der wie ein Konfigurationsproblem aussieht. Wer die Domain nur
+> im Dashboard einträgt und die Datei in Ruhe lässt, bleibt bei den zwei
+> Rechten.
+
 #### Warum von deinem Rechner und nicht als Workflow
 
 Das ist die verbreitete Aufteilung, und sie hat einen Grund: **Bootstrap ist
