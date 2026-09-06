@@ -315,6 +315,13 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
 - [ ] Bewusst **nicht**: Sponsor-Knopf (dahinter steht kein Konto), private
       E-Mail im Profil (kommt dort nicht wieder weg), Discussions (ein leeres
       Forum wirkt verlassener als keins).
+- [ ] **Dependabot-Warnungen und Sicherheitsupdates einschalten.**
+      `Settings → Advanced Security` → *Dependabot alerts* und
+      *Dependabot security updates*. Die Konfiguration in
+      `.github/dependabot.yml` steuert nur die **Versions**updates; die
+      Sicherheitsseite hängt an diesen beiden Schaltern und lässt sich nicht
+      aus dem Repository heraus setzen. Ohne sie fehlt genau der Teil, der
+      dringend ist — und der als einziger nicht vom Cooldown gebremst wird.
 
 ## 8. Kleinkram — **ich**
 

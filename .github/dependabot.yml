@@ -1,0 +1,97 @@
+# Abhängigkeiten aktuell halten — mit Dependabot, nicht mit Renovate.
+#
+# Beides tut dasselbe. Dependabot ist bei GitHub eingebaut: keine fremde App in
+# der Organisation, keine zusätzlichen Rechte, keine zweite Stelle, an der
+# jemand ein Token hinterlegt. Renovate kann mehr, aber „mehr" ist hier kein
+# Argument — dieses Projekt hat fünf `package.json` und fünf Workflow-Dateien.
+#
+# Zwei Dinge, die man beim Lesen dieser Datei wissen sollte:
+#
+# 1. **`cooldown` gilt nur für Versionsupdates, nie für Sicherheitsupdates.**
+#    Das steht so in der Doku, und es ist der Grund, warum die Wartezeiten unten
+#    großzügig sein dürfen: Eine gemeldete Lücke wird trotzdem sofort gemeldet.
+#    Ohne diese Regel wäre eine Woche Cooldown fahrlässig.
+# 2. **Ohne Cooldown wartet Dependabot trotzdem drei Tage.** Das ist seit
+#    Mitte 2026 die Voreinstellung. Die Werte hier sind also keine neue
+#    Bremse, sondern eine bewusst gesetzte statt einer geerbten.
+#
+# Warum überhaupt warten: Der häufigste Angriff auf die npm-Lieferkette ist
+# eine übernommene Paketpflegerschaft, die eine bösartige Version
+# veröffentlicht — und die wird meist binnen ein bis zwei Tagen zurückgezogen.
+# Wer nicht sofort zugreift, sieht sie nie.
+
+version: 2
+
+updates:
+  # --- npm/pnpm ---------------------------------------------------------
+  #
+  # Ein Eintrag für den ganzen Workspace. `directory: /app` ist die Wurzel mit
+  # `pnpm-workspace.yaml` und `pnpm-lock.yaml`; von dort erfasst Dependabot
+  # auch die vier Pakete darunter. Ein zweiter Eintrag je Paket wäre nicht nur
+  # überflüssig, sondern falsch: Die Doku verlangt, dass sich die Verzeichnisse
+  # zweier Einträge desselben Ökosystems nicht überschneiden.
+  #
+  # pnpm läuft unter `package-ecosystem: npm`; unterstützt sind pnpm 7 bis 10,
+  # das Projekt steht auf 10.33.
+  - package-ecosystem: npm
+    directory: /app
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Berlin
+    # Zehn statt der voreingestellten fünf: Durch die Gruppen unten sind es in
+    # der Regel zwei Sammel-PRs, der Rest sind einzelne Hauptversionssprünge —
+    # und die sollen nicht gegenseitig den Platz wegnehmen.
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+      # Patches sind selten der Weg für einen Angriff und meistens der Weg aus
+      # einem Fehler heraus. Drei Tage reichen.
+      semver-patch-days: 3
+      semver-minor-days: 7
+      # Hauptversionen liest ohnehin ein Mensch. Drei Wochen kosten nichts und
+      # ersparen es, einem gerade erschienenen Major hinterherzuräumen.
+      semver-major-days: 21
+    groups:
+      # Nur Minor und Patch werden gebündelt. Hauptversionen bleiben einzeln:
+      # MapLibre, React, Vite und Playwright springen nicht folgenlos, und in
+      # einem Sammel-PR mit zwölf anderen Zeilen fällt das niemandem auf.
+      werkzeug:
+        dependency-type: development
+        update-types: [minor, patch]
+      laufzeit:
+        dependency-type: production
+        update-types: [minor, patch]
+    commit-message:
+      # Macht die maschinellen Commits auf einen Blick von den handgeschriebenen
+      # unterscheidbar. Die sind deutsche Sätze, Dependabot schreibt englische
+      # Einzeiler — das ist kein Stilbruch, sondern eine Kennzeichnung.
+      prefix: deps
+      prefix-development: deps-dev
+
+  # --- GitHub Actions ---------------------------------------------------
+  #
+  # `directory: /` ist hier Vorschrift, nicht Nachlässigkeit: Für dieses
+  # Ökosystem sucht Dependabot fest in `.github/workflows` und in einer
+  # `action.yml` im Wurzelverzeichnis.
+  #
+  # Warum das nicht optional ist: In den fünf Workflows stecken
+  # `actions/checkout`, `actions/setup-node`, `pnpm/action-setup` und
+  # `actions/upload-artifact`. Die laufen mit Repository-Rechten. Eine
+  # veraltete Action ist genau die Art Abhängigkeit, die niemand mitzählt.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: ci

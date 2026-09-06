@@ -1,15 +1,20 @@
-# Prüft, dass jede Workflow-Datei gültiges YAML ist.
+# Prüft, dass jede Datei unter .github gültiges YAML ist.
 #
 # Eine kaputte Workflow-Datei fällt sonst erst auf, wenn GitHub sie ignoriert —
 # und "der Workflow läuft nicht" ist ein deutlich schlechteres Signal als ein
 # roter Haken mit Zeilennummer. Genau das ist hier einmal passiert.
+#
+# `dependabot.yml` steht aus demselben Grund mit drin: GitHub ignoriert auch
+# sie stillschweigend, wenn sie nicht parst. Der Unterschied ist nur, dass dann
+# nichts rot wird, sondern schlicht nie ein Update-PR kommt — und darauf zu
+# warten, dass etwas nicht passiert, merkt niemand.
 name: Workflows prüfen
 
 on:
   push:
-    paths: ['.github/workflows/**']
+    paths: ['.github/**.yml']
   pull_request:
-    paths: ['.github/workflows/**']
+    paths: ['.github/**.yml']
 
 permissions:
   contents: read
@@ -24,7 +29,11 @@ jobs:
           python3 - <<'PY'
           import pathlib, sys, yaml
           bad = []
-          for path in sorted(pathlib.Path('.github/workflows').glob('*.yml')):
+          files = sorted(pathlib.Path('.github/workflows').glob('*.yml'))
+          dependabot = pathlib.Path('.github/dependabot.yml')
+          if dependabot.exists():
+              files.append(dependabot)
+          for path in files:
               try:
                   yaml.safe_load(path.read_text())
                   print(f'ok   {path}')

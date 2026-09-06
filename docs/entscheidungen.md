@@ -201,6 +201,50 @@ toter Link in jedem Beitrag, der ihn je geteilt hat.
 
 *(Recherchiert am 6. September 2026, keine Rechtsberatung.)*
 
+## Abhängigkeiten aktuell halten
+
+**Dependabot, nicht Renovate.** Beide tun dasselbe. Dependabot ist bei GitHub
+eingebaut — keine fremde App in der Organisation, keine zusätzlichen Rechte,
+keine zweite Stelle, an der ein Token liegt. Renovate kann mehr; „mehr" ist bei
+fünf `package.json` und fünf Workflow-Dateien kein Argument, und die
+Organisation hat ohnehin schon das Problem, dass die eine App, die dort
+Rechte hat, zu wenige davon hat.
+
+**Wöchentlich, gebündelt, mit Wartezeit.** Drei Entscheidungen, die zusammen
+den Lärm begrenzen, ohne die Sicherheit zu senken:
+
+- **Gruppen** fassen Minor und Patch zu je einem PR für Werkzeug- und
+  Laufzeitabhängigkeiten zusammen. Hauptversionen bleiben einzeln: MapLibre,
+  React, Vite und Playwright springen nicht folgenlos, und in einem Sammel-PR
+  mit zwölf anderen Zeilen liest die niemand.
+- **Cooldown** von sieben Tagen (Patches drei, Hauptversionen 21). Der Grund
+  ist die npm-Lieferkette: Der häufigste Angriff ist eine übernommene
+  Paketpflegerschaft, die eine bösartige Version veröffentlicht — und die wird
+  meist binnen ein bis zwei Tagen zurückgezogen. Wer nicht sofort zugreift,
+  sieht sie nie.
+- **Das kostet keine Sicherheit**, und das ist der Punkt, an dem die
+  Entscheidung hängt: Laut GitHub-Doku ist `cooldown` „only available for
+  version updates, not security updates". Eine gemeldete Lücke kommt weiter
+  sofort. Ohne diese Eigenschaft wäre eine Woche Wartezeit fahrlässig statt
+  vorsichtig.
+
+**Ein Eintrag für den ganzen pnpm-Workspace.** `directory: /app` ist die Wurzel
+mit `pnpm-workspace.yaml`; von dort erfasst Dependabot die vier Pakete darunter
+mit. Ein Eintrag je Paket wäre nicht nur überflüssig, sondern regelwidrig — die
+Doku verlangt, dass sich die Verzeichnisse zweier Einträge desselben
+Ökosystems nicht überschneiden. pnpm läuft dabei unter
+`package-ecosystem: npm`, unterstützt sind pnpm 7 bis 10.
+
+**GitHub Actions bekommt einen eigenen Eintrag.** In den fünf Workflows stecken
+`actions/checkout`, `actions/setup-node`, `pnpm/action-setup` und
+`actions/upload-artifact` — sie laufen mit Repository-Rechten. Eine veraltete
+Action ist genau die Art Abhängigkeit, die niemand mitzählt.
+
+**Was Dependabot nicht kann und hier auch nicht soll:** den Pin
+`packageManager: pnpm@10.33.0` heben (keine Abhängigkeit, sondern eine
+Festlegung), und die Sicherheitswarnungen einschalten — die hängen an zwei
+Schaltern in den Repository-Einstellungen, siehe [todo.md](todo.md#7-auftritt--du-vorbereitet-ist-alles).
+
 ## Oberfläche
 
 **Kopfzeile nach FreiFahrens Vorbild:** zwei Zeilen statt Raster — Suchfeld über

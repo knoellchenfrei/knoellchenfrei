@@ -2,7 +2,12 @@ name: CI
 
 on:
   push:
-    branches: ['**']
+    # Ohne den Ausschluss laeuft die Suite bei jedem Dependabot-PR zweimal:
+    # einmal fuer den Push auf den dependabot/-Branch, einmal fuer den PR
+    # selbst. Bei rund neun Minuten E2E ist das keine Kleinigkeit.
+    # Negativmuster IN der Liste, nicht als zweiter Schluessel: `branches` und
+    # `branches-ignore` zusammen im selben Ereignis lehnt GitHub Actions ab.
+    branches: ['**', '!dependabot/**']
   pull_request:
 
 jobs:

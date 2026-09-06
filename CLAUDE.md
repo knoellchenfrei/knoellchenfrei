@@ -119,6 +119,17 @@ wiederholt.
   es keine Abrechnung. Vor „gibt es nicht" also noch einmal fragen. Für eine
   *fremde* Sitzung desselben Kontos geht derselbe Aufruf mit `session_id` —
   so lässt sich eine Vorgängersitzung nachprüfen, statt ihre Zahlen zu glauben.
+- **Abhängigkeiten aktualisiert Dependabot, nicht Renovate.** Begründung und
+  Konfiguration in `.github/dependabot.yml`. Zwei Dinge daraus, die man leicht
+  falsch annimmt: `cooldown` gilt **nur für Versionsupdates**, nie für
+  Sicherheitsupdates — deshalb dürfen die Wartezeiten großzügig sein. Und ohne
+  gesetzten `cooldown` wartet Dependabot trotzdem drei Tage; die Werte dort
+  sind eine gesetzte statt einer geerbten Voreinstellung.
+- **In einem `on: push` nie `branches` und `branches-ignore` zusammen.**
+  GitHub Actions lehnt das ab, und der Workflow läuft dann gar nicht — ohne
+  roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
+  `lint-workflows.yml` prüft nur, ob die Datei *parst*, nicht ob das Schema
+  stimmt; es hätte das nicht gefunden.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

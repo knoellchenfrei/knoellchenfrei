@@ -2,7 +2,11 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [develop, master, claude/github-repo-integration-cqhab3]
+    # Nach dem Umzug: Der Standardbranch heisst `main`. Hier standen noch
+    # `develop`, `master` und der Arbeitsbranch der alten Sitzung — keiner
+    # davon existiert in diesem Repository, der Workflow waere also nie
+    # gelaufen und niemandem waere es aufgefallen.
+    branches: [main]
   # Refresh the frozen data snapshot every morning. The Berlin services publish
   # zone changes irregularly (new zones 58 and 68 arrived in 2026), so a daily
   # rebuild keeps the app current without any server.
