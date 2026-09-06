@@ -15,7 +15,7 @@ cd app/apps/web && node scripts/make-brand.mjs
 | `brand/social-preview-1280x640.png` | „Social preview" des Repositories, taugt auch als `og:image` | 1280 × 640 |
 | `brand/telegram-dach-512.png` | Gruppe `@knoellchenfrei` | 512 × 512 |
 | `brand/telegram-bot-512.png` | Bot `@knoellchenfrei_bot` | 512 × 512 |
-| `brand/telegram-berlin-512.png` | Gruppe `@knoellchenfrei_BE` | 512 × 512 |
+| `brand/telegram-berlin-512.png` | Gruppe `@knoellchenfrei_B` | 512 × 512 |
 | `brand/telegram-hamburg-512.png` | Gruppe `@knoellchenfrei_HH` | 512 × 512 |
 | `brand/*.svg` | Die Quellen dazu | — |
 
@@ -33,11 +33,19 @@ nicht nach Zuschnitt aus, sondern nach einem schlecht gezeichneten Buchstaben.
 | --- | --- | --- |
 | **Dach** `@knoellchenfrei` | blaue Fläche, weißes P | die Marke selbst |
 | **Bot** `@knoellchenfrei_bot` | dunkle Fläche, weißes P | Auf 24 Pixeln trägt nur ein Helligkeitswechsel. **Nicht weiß**, obwohl das der naheliegende Gegenpol wäre: In einer hellen Chatliste hätte ein weißes Bild keinen Rand, und das P schwebte ohne Fläche. |
-| **Berlin** `@knoellchenfrei_BE` | Marke plus Kürzel `BE` | Klein verschmilzt das Kürzel zu einem Punkt und stört nicht; groß beantwortet es die Frage, in welcher Gruppe man ist. |
-| **Hamburg** `@knoellchenfrei_HH` | Marke plus Kürzel `HH` | dasselbe |
+| **Berlin** `@knoellchenfrei_B` | Marke plus Kennzeichen `B` | Klein verschmilzt das Kürzel zu einem Punkt und stört nicht; groß beantwortet es die Frage, in welcher Gruppe man ist. |
+| **Hamburg** `@knoellchenfrei_HH` | Marke plus Kennzeichen `HH` | dasselbe |
 
 Ausgeschriebene Städtenamen wären bei dieser Größe unlesbar — ein Wort, das
-niemand entziffert, ist Dekoration. Das Kürzel sitzt in einem Kreis mit einem
+niemand entziffert, ist Dekoration.
+
+**Das Kfz-Kennzeichen, nicht der Ländercode.** Berlin ist `B`, Hamburg `HH` —
+das, was auf jedem Auto steht, und die App handelt von Autos. **Nicht zu
+verwechseln** mit `Land` in `core/holidays.ts`: Dort heißt Berlin `BE`, weil
+das der ISO-Code des Bundeslands ist und der Feiertagskalender daran hängt.
+Zwei Kürzel für dieselbe Stadt, und sie meinen Verschiedenes — ein `B` im
+Feiertagskalender wäre ein Fehler, ein `BE` auf dem Gruppenbild wäre falsches
+Deutsch für Autofahrer. Das Kürzel sitzt in einem Kreis mit einem
 Ring in der Flächenfarbe; der erste Entwurf hatte ihn auf dem Schaft des P
 sitzen, und die zwei Buchstaben liefen rechts aus ihm heraus.
 
@@ -148,7 +156,7 @@ stehen, nicht danach. FreiFahren macht es mit einem Stadtkürzel:
 | Name | Rolle |
 | --- | --- |
 | `@knoellchenfrei` | Dach: Ankündigungen, alle Städte |
-| `@knoellchenfrei_BE` | Community Berlin |
+| `@knoellchenfrei_B` | Community Berlin |
 | `@knoellchenfrei_HH` | Community Hamburg |
 | `@knoellchenfrei_bot` | Meldebot, Stufe 1 aus [todo.md](todo.md#6-telegram--du-token-dann-ich) |
 

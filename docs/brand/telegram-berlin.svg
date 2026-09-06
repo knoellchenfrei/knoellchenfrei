@@ -5,6 +5,6 @@
     <circle cx="374" cy="374" r="78" fill="#fff"/>
     <text x="374" y="376" text-anchor="middle" dominant-baseline="central"
           font-family="Archivo, Helvetica Neue, Arial, sans-serif"
-          font-size="62" font-weight="700" letter-spacing="-2" fill="#1d4ed8">BE</text>
+          font-size="84" font-weight="700" letter-spacing="-2" fill="#1d4ed8">B</text>
   </g>
 </svg>

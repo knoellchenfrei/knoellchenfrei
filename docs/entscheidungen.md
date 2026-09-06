@@ -193,8 +193,10 @@ Beiträge daranhängt. Das ist derselbe Grund, aus dem die App noch `noindex`
 ausliefert.
 
 **Das Schema steht vor dem ersten Namen**, weil andere Städte kommen.
-FreiFahren macht es mit einem Stadtkürzel — `@FreiFahren_BE`. Hier genauso:
-`@knoellchenfrei` als Dach, `@knoellchenfrei_BE` und `@knoellchenfrei_HH` je
+FreiFahren macht es mit einem Stadtkürzel — `@FreiFahren_BE`. Hier genauso,
+aber mit dem **Kfz-Kennzeichen** statt dem Ländercode: Die App handelt von
+Autos, und ein Unterscheidungszeichen ist das, was auf jedem davon steht.
+`@knoellchenfrei` als Dach, `@knoellchenfrei_B` und `@knoellchenfrei_HH` je
 Stadt, `@knoellchenfrei_bot` für den Meldeweg. Ein Name ohne Schema müsste bei
 der dritten Stadt umbenannt werden, und ein umbenannter Telegram-Link ist ein
 toter Link in jedem Beitrag, der ihn je geteilt hat.

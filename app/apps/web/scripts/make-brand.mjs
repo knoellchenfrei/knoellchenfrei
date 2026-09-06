@@ -99,10 +99,17 @@ const SOCIAL = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" w
  *   verlässlich trägt; ein zusätzliches Zeichen wäre dort ein Fleck. **Nicht**
  *   weiß, obwohl das der naheliegende Gegenpol wäre: In einer hellen Chatliste
  *   hätte ein weißes Bild keinen Rand, und das P schwebte ohne Fläche.
- * - **Berlin / Hamburg**: dieselbe Marke plus ein Kürzel unten rechts. Klein
- *   verschmilzt es zu einem Punkt und stört nicht; groß beantwortet es die
- *   Frage, in welcher Gruppe man ist. Ausgeschriebene Städtenamen wären bei
- *   dieser Größe unlesbar — ein Wort, das niemand entziffert, ist Dekoration.
+ * - **Berlin / Hamburg**: dieselbe Marke plus das **Kfz-Kennzeichen** unten
+ *   rechts — `B` und `HH`. Klein verschmilzt es zu einem Punkt und stört
+ *   nicht; groß beantwortet es die Frage, in welcher Gruppe man ist.
+ *   Ausgeschriebene Städtenamen wären bei dieser Größe unlesbar — ein Wort,
+ *   das niemand entziffert, ist Dekoration.
+ *
+ *   Das Kennzeichen und nicht der Ländercode: Die App handelt von Autos, und
+ *   ein Unterscheidungszeichen ist das, was auf jedem davon steht. **Nicht zu
+ *   verwechseln** mit `Land` in `core/holidays.ts` — dort steht `BE` für
+ *   Berlin, weil das der ISO-Code des Bundeslands ist. Zwei Kürzel für
+ *   dieselbe Stadt, und sie meinen Verschiedenes.
  */
 const KREIS_SICHER = 0.78
 
@@ -119,12 +126,15 @@ const KREIS_SICHER = 0.78
  * Punkt des Kreises muss innerhalb des einbeschriebenen Kreises bleiben.
  */
 function marke(text) {
+  // Ein Zeichen darf größer stehen als zwei — sonst sieht `B` verloren aus in
+  // einem Kreis, der für `HH` bemessen ist.
+  const groesse = text.length > 1 ? 62 : 84
   return `<g>
     <circle cx="374" cy="374" r="90" fill="${BLUE}"/>
     <circle cx="374" cy="374" r="78" fill="#fff"/>
     <text x="374" y="376" text-anchor="middle" dominant-baseline="central"
           font-family="Archivo, Helvetica Neue, Arial, sans-serif"
-          font-size="62" font-weight="700" letter-spacing="-2" fill="${BLUE}">${text}</text>
+          font-size="${groesse}" font-weight="700" letter-spacing="-2" fill="${BLUE}">${text}</text>
   </g>`
 }
 
@@ -143,7 +153,7 @@ function glyphFarbe(scale, farbe) {
 
 const TG_DACH    = tgFlaeche(glyphFarbe(KREIS_SICHER, '#fff'))
 const TG_BOT     = tgFlaeche(glyphFarbe(KREIS_SICHER, '#fff'), DUNKEL)
-const TG_BERLIN  = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('BE')}`)
+const TG_BERLIN  = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('B')}`)
 const TG_HAMBURG = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('HH')}`)
 
 const JOBS = [

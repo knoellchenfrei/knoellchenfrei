@@ -351,7 +351,7 @@ Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
       6. September angelegt; welche der vier Namen damit belegt sind, kann ich
       nicht nachsehen — Telegram ist von hier aus nicht erreichbar, und ich
       trage nur ein, was ich geprüft habe. Offen bleiben nach meinem Stand:
-      `@knoellchenfrei` (Dach), `@knoellchenfrei_BE`, `@knoellchenfrei_HH`,
+      `@knoellchenfrei` (Dach), `@knoellchenfrei_B`, `@knoellchenfrei_HH`,
       `@knoellchenfrei_bot`. Am 6. September 2026 waren alle vier frei.
       **Nicht als leere Hülle:** Telegram behält sich ausdrücklich vor, Namen
       ungenutzter Kanäle zurückzuholen — also anlegen, benennen, ein paar Leute
