@@ -157,6 +157,50 @@ für die andere gefährlich.
 eines, ohne Tarif und mit leerem Zeitfeld — dieselbe Begründung, aus der
 Berlins 214.173 Abschnitte außerhalb des Rings draußen bleiben.
 
+## Telegram und der Name
+
+**Die Namen jetzt belegen, die Gruppen aber geschlossen halten.** Zwei Fragen,
+die sich nur zusammen beantworten lassen.
+
+*Kann der Name weg sein, wenn ich warte?* Ja, aber anders als vermutet. Die
+Telegram-FAQ sagt wörtlich:
+
+> „Due to the fact that one account can register multiple bot and channel
+> usernames, we reserve the right to recall usernames assigned to **unused bots
+> and channels**, as well as **openly squatted usernames**."
+
+Das schneidet in beide Richtungen. Es schützt vor dem Horten durch andere —
+und es heißt, dass eine **leere Reservierung nichts wert ist**: Ein Kanal, in
+dem nichts passiert, ist genau der Fall, den Telegram sich vorbehält
+zurückzuholen. Ein Name ist also nicht durch Anmelden gesichert, sondern durch
+Benutzen.
+
+Dazu kommt: Seit den *Collectible Usernames* auf Fragment kann Telegram einen
+dort gehandelten Namen **gar nicht mehr zuteilen** — „they can only be managed
+by their respective owners". Wer zu spät kommt, kann ihn dann nur kaufen.
+
+*Sind die Namen frei?* Am 6. September 2026 ja, alle vier. Geprüft über
+`t.me/<name>`: Ein vergebener Name liefert Titel und Beschreibung des Kanals,
+ein freier nur den Platzhalter „Telegram: Contact @…". Gegenprobe mit
+`t.me/durov` und `t.me/freifahren_BE` — beide liefern echte Titel.
+
+**Deshalb: anlegen, benennen, ein paar Leute hineinholen, Beitritt auf
+Genehmigung stellen.** Das erfüllt „benutzt" und bleibt trotzdem hinter dem
+Riegel, den [todo.md](todo.md#1-trägerschaft-verein-gründen--du) für alles
+Öffentliche setzt: Wer eine öffentlich beworbene Gruppe betreibt, betreibt sie
+als Privatperson, mit allem, was an Moderationspflicht und Haftung für fremde
+Beiträge daranhängt. Das ist derselbe Grund, aus dem die App noch `noindex`
+ausliefert.
+
+**Das Schema steht vor dem ersten Namen**, weil andere Städte kommen.
+FreiFahren macht es mit einem Stadtkürzel — `@FreiFahren_BE`. Hier genauso:
+`@knoellchenfrei` als Dach, `@knoellchenfrei_BE` und `@knoellchenfrei_HH` je
+Stadt, `@knoellchenfrei_bot` für den Meldeweg. Ein Name ohne Schema müsste bei
+der dritten Stadt umbenannt werden, und ein umbenannter Telegram-Link ist ein
+toter Link in jedem Beitrag, der ihn je geteilt hat.
+
+*(Recherchiert am 6. September 2026, keine Rechtsberatung.)*
+
 ## Oberfläche
 
 **Kopfzeile nach FreiFahrens Vorbild:** zwei Zeilen statt Raster — Suchfeld über

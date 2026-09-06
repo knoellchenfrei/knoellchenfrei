@@ -244,10 +244,10 @@ nachgesehen hat.
       geprüft. Vorher ist die Feiertagstabelle zu klären: Mariä Himmelfahrt
       gilt in Bayern **gemeindeweise**, für München also an der Stadt und nicht
       am Land.
-- [ ] **Produktname entberlinern.** „ParkingZone Berlin" steht dreimal fest:
-      `apps/web/index.html`, `public/manifest.webmanifest` und die `h1` in
-      `App.tsx`. Ein Block, kein Streuschaden — und die Gelegenheit, ihn auf
-      `knoellchenfrei` umzustellen.
+- [x] **Produktname entberlinert.** Die App heißt jetzt überall
+      `knoellchenfrei`; die `h1` nennt die geladene Stadt dazu. Der interne
+      Paketname `@parkingzone/*` bleibt: Ihn umzubenennen wäre Aufwand ohne
+      Wirkung nach außen.
 
 ## 6. Telegram — **du** (Token), dann **ich**
 
@@ -260,6 +260,14 @@ Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
       Telegram-Nutzerkennung wird gehasht wie eine IP-Adresse und nur für die
       Meldegrenze benutzt, die Chat-Kennung gar nicht gespeichert.
       21 Unit-Tests auf dem Parser, weil dort fremder Text ankommt.
+- [ ] **Namen jetzt belegen — vier Stück, bevor sie weg sind.**
+      `@knoellchenfrei` (Dach), `@knoellchenfrei_BE`, `@knoellchenfrei_HH`,
+      `@knoellchenfrei_bot`. Am 6. September 2026 waren alle vier frei.
+      **Nicht als leere Hülle:** Telegram behält sich ausdrücklich vor, Namen
+      ungenutzter Kanäle zurückzuholen — also anlegen, benennen, ein paar Leute
+      hineinholen und den Beitritt auf Genehmigung stellen. Das erfüllt
+      „benutzt" und bleibt hinter dem Riegel aus Punkt 1. Begründung und
+      Wortlaut in [entscheidungen.md](entscheidungen.md#telegram-und-der-name).
 - [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
       im Worker hinterlegen — die Befehle stehen in
       [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet
@@ -285,7 +293,30 @@ Die Community ist davon unabhängig: Eine Telegram-Gruppe ist die Community, der
 Bot ist nur eine Datenleitung. Die Gruppe kann sofort aufmachen, der Bot muss
 warten, bis der Worker steht.
 
-## 7. Kleinkram — **ich**
+## 7. Auftritt — **du**, vorbereitet ist alles
+
+Bilder, Beschreibungstexte und Namensschema stehen in
+[marke.md](marke.md); der Text der Org-Profilseite in
+[org-profil.md](org-profil.md). Nichts davon geht über die GitHub-App: Sie darf
+in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
+(`403 Resource not accessible by integration`).
+
+- [ ] **Bild der Organisation hochladen** — `docs/brand/org-avatar-512.png`.
+- [ ] **Vorschaubild des Repositories setzen** — `docs/brand/social-preview-1280x640.png`.
+      Ohne das zeigt jeder geteilte Link ein automatisch erzeugtes Bild mit
+      Commit-Zahlen.
+- [ ] **Beschreibung und Topics** am Repository setzen. Die Topics sind kein
+      Schmuck: über `github.com/topics/open-data` und `/civic-tech` findet
+      jemand das Projekt, der nicht nach dem Namen sucht. Fertiger
+      `gh repo edit`-Befehl in [marke.md](marke.md#3-repository-beschreiben).
+- [ ] **Profilseite der Organisation** anlegen — ein Repository namens
+      `.github` mit `profile/README.md`, Inhalt steht fertig in
+      [org-profil.md](org-profil.md).
+- [ ] Bewusst **nicht**: Sponsor-Knopf (dahinter steht kein Konto), private
+      E-Mail im Profil (kommt dort nicht wieder weg), Discussions (ein leeres
+      Forum wirkt verlassener als keins).
+
+## 8. Kleinkram — **ich**
 
 - [ ] Bilder für die Installations-Karte neu aufnehmen, sobald die Kacheln
       erreichbar sind: `public/screenshots/` zeigt zurzeit die App ohne

@@ -1102,7 +1102,7 @@ export function App() {
           Überschrift ist für Screenreader ein Rückschritt, und den Namen tragen
           Tab-Titel und Manifest ohnehin.
         */}
-        <h1 className="visually-hidden">ParkingZone Berlin</h1>
+        <h1 className="visually-hidden">knoellchenfrei — {CITY.name}</h1>
         <SearchBox zones={zones} onPick={focusZone} />
         <div className="hud">
           <BetaBadge />

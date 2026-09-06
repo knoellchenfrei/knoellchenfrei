@@ -87,7 +87,7 @@ const bundles = scripts.map((name) => {
 })
 
 const parts = [
-  '<title>ParkingZone Berlin</title>',
+  '<title>knoellchenfrei</title>',
   ...styles.map((name) => `<style>\n${read(name)}\n</style>`),
   '<div id="root"></div>',
   `<script>window.__PARKINGZONE_DATA__ = ${safeJson(data)};</script>`,

@@ -272,10 +272,9 @@ Und die zweite Stadt selbst ist angeschlossen: Zonendaten liegen je Stadt unter
 `apps/web/public/data/<stadt>/`, der Browser holt sie zur Laufzeit, und in den
 Einstellungen lässt sich wechseln — eine Stadt zur Zeit, wie bei FreiFahren.
 
-Was noch offen ist: der Produktname, der in `index.html`, im Manifest und in
-der `h1` weiter „ParkingZone Berlin" lautet, und ein Standort-Vorschlag beim
-ersten Öffnen („Du scheinst in Hamburg zu sein — wechseln?"), wie FreiFahren
-ihn als `cityLocationPrompt` hat.
+Was noch offen ist: ein Standort-Vorschlag beim ersten Öffnen („Du scheinst
+in Hamburg zu sein — wechseln?"), wie FreiFahren ihn als `cityLocationPrompt`
+hat. Bei zwei Städten reicht der Umschalter; ab der dritten nicht mehr.
 
 ## Prüfliste je Stadt
 

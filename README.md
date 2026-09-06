@@ -1,4 +1,4 @@
-# ParkingZone Berlin
+# knoellchenfrei
 
 ![build](docs/badges/build.svg)
 ![tests](docs/badges/tests.svg)
@@ -45,11 +45,10 @@ Homescreen installierbar, ohne Server.
 
 ## Herkunft
 
-Dieses Repository begann 2012 als Java/Spring-Anwendung (`ParkingZone/`). Die
-liegt unverändert daneben und wird nicht mehr gebaut — die Domäne ist dieselbe,
-der Code teilt keine Zeile. Beim Umzug ins neue Repository bleibt sie zurück:
-Von 2,8 MB waren nur 256 KB eigener Quelltext, der Rest Bezirksgrenzen in
-doppelter Ausfertigung, einkopierte Fremdbibliotheken und eine
+Das Projekt begann 2012 als Java/Spring-Anwendung. Sie ist beim Umzug am
+6. September 2026 im alten Repository geblieben — die Domäne ist dieselbe, der
+Code teilt keine Zeile. Von 2,8 MB waren nur 256 KB eigener Quelltext, der Rest
+Bezirksgrenzen in doppelter Ausfertigung, einkopierte Fremdbibliotheken und eine
 Excel-Add-in-Datei mit Makros.
 
 Was den Neubau nötig machte: Die Zonendaten von damals waren von Hand in
@@ -124,7 +123,6 @@ app/
   packages/ingest    WFS → eingefrorene Web-Assets, Geometrie-Vereinfachung, Artifact-Bundle
   apps/web           PWA: React 19, Vite 7, MapLibre GL 5
   apps/api           Cloudflare Worker: WFS-Cache + geteilte Meldungen (optional)
-ParkingZone/         Java-Original von 2012, nicht gebaut, zieht nicht mit um
 ```
 
 `core` hängt von keinem Framework ab. Ein späterer nativer Client wäre ein

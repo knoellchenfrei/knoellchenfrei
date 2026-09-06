@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "ParkingZone Berlin",
-  "short_name": "ParkingZone",
-  "description": "Berliner Parkzonen: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen.",
+  "name": "knoellchenfrei",
+  "short_name": "knoellchenfrei",
+  "description": "Parkzonen in Berlin und Hamburg: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -137,7 +137,7 @@ fest verdrahten. Der Stand heute:
 | Datenquelle (`ingest/sources`) | nein mehr — nach Stadt gegliedert, beide abgerufen |
 | Zeitfenster-Parser | nein mehr — je Stadt einer, `parse-schedule.ts` und `hamburg.ts` |
 | Zonendaten im Web | nein mehr — je Stadt unter `public/data/<stadt>/`, zur Laufzeit geholt |
-| Produktname (`index.html`, Manifest, `h1`) | **ja** — steht dreimal als „ParkingZone Berlin" |
+| Produktname (`index.html`, Manifest, `h1`) | nein mehr — heißt `knoellchenfrei`, die `h1` nennt die geladene Stadt |
 
 Was sich damit geändert hat: Berlin steckte an **sechs** Stellen als
 Zahlenpaar im Code — zwei im Browser-Speicher, eine im Kartenmittelpunkt, eine
