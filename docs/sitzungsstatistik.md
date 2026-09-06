@@ -329,3 +329,55 @@ Werkzeugaufrufe je Stunde (UTC):
 | End-to-End-Tests | 93 → 101 |
 | Gefundene Fehler | ein Wettlauf in der E2E-Suite, auf dem unveränderten Vorgängerstand reproduziert |
 | Widerlegte eigene Behauptungen | 3 (Datenlayout, CA-Problem im Code, „Berlin steckt an drei Stellen") |
+
+## Dieselbe Sitzung, zu Ende gemessen — 23:25 Uhr
+
+Der Abschnitt darüber war ein **Zwischenstand**, aufgenommen um 16:21 Uhr. Die
+Sitzung lief danach noch sieben Stunden weiter: Abhängigkeiten, mehrstädtiger
+Worker, Umbenennung, die ganze Cloudflare-Einrichtung, Telegram. Hier die
+Endabrechnung derselben Sitzung — abgerufen über `get_session` →
+`external_metadata.usage`.
+
+| Kennzahl | 16:21 Uhr | **23:25 Uhr** |
+| --- | --- | --- |
+| Laufzeit | 3 h 00 min | **10 h 04 min** |
+| Kosten | 43,45 $ | **169,05 $** |
+| Tokens gesamt | 69,77 Mio. | **268,84 Mio.** |
+| davon Cache-Lesevorgänge | 69,05 Mio. (99 %) | **265,76 Mio. (98,9 %)** |
+| Cache-Schreibvorgänge | — | 2,47 Mio. |
+| Eingabe / Ausgabe | — | 130.487 / 473.125 |
+| Verhältnis gelesen : geschrieben | 122 : 1 | **107 : 1** |
+| Agenten | 0 | **1** (mehrstädtiger Worker) |
+| Modell | `claude-opus-5` | `claude-opus-5`, kein Wechsel, kein Rückfall |
+
+**Die Kosten sind nicht linear mit der Zeit gewachsen** — 43 $ in drei Stunden,
+169 $ in zehn. Der Grund steht in derselben Zeile: Bei jeder Anfrage geht der
+bisherige Verlauf erneut mit, und der Verlauf wird länger. Der Anteil des
+Wiederlesens bleibt dabei fast konstant bei 99 %; was wächst, ist die absolute
+Menge.
+
+### Was die zweite Hälfte geliefert hat
+
+| | |
+| --- | --- |
+| Abhängigkeiten | 11 Dependabot-PRs, alle zusammengeführt; MapLibre 6, Vite 8, TypeScript 7 |
+| Worker | von einer Stadt auf beide — Stadt aus der Position statt aus der Konfiguration |
+| Umbenennung | `parkingzone` → `knoellchenfrei` in Scope, Worker, Datenbank, Pages, Cache, Browser-Speicher |
+| Infrastruktur | Worker, Pages, D1, KV, R2 und Kacheln laufen; Telegram-Bot samt Webhook |
+| Einrichtung | ~900 Zeilen `scripts/einrichten.sh`, ein gelöschter Workflow |
+| Unit-Tests | 179 → **190** |
+| End-to-End-Tests | 101 → **107** |
+| Gefundene Fehler in eigener Arbeit | **acht** allein beim ersten echten Lauf des Einrichtungsskripts |
+
+### Die Kennzahl, die in keiner Spalte steht
+
+Das Einrichtungsskript war **nie ausgeführt** worden, bevor es committet wurde.
+Der erste echte Lauf gegen ein eingerichtetes Konto meldete acht Dinge falsch —
+darunter vier angelegte Weiterleitungen als vier Misserfolge, weil ein
+`grep`-Muster ein Leerzeichen nach dem Doppelpunkt nicht kannte.
+
+Gekostet hat das keine Tokens, sondern **fremde Zeit**: die des Menschen, der
+es ausgeführt und jeden Punkt gemeldet hat. Das ist die Währung, in der
+schlecht geprüfte Arbeit abgerechnet wird, und sie taucht in keiner Abrechnung
+auf. Wer diese Datei für eine Kostenrechnung liest, sollte die Zeile
+mitdenken.
