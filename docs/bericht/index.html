@@ -1,0 +1,632 @@
+<title>Nachtschicht und Tagwerk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --ground: #eef2f4;
+    --surface: #ffffff;
+    --surface-2: #e4ebee;
+    --ink: #11171a;
+    --muted: #566268;
+    --faint: #7d8b91;
+    --rule: #cfdadf;
+    --sign: #0b4a8f;
+    --sign-ink: #ffffff;
+    --charge: #a3380f;
+    --free: #0d6b70;
+    --shadow: 0 1px 2px rgba(17, 23, 26, .06), 0 8px 24px -18px rgba(17, 23, 26, .5);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1113;
+      --surface: #151b1e;
+      --surface-2: #1d2529;
+      --ink: #e3ebee;
+      --muted: #9aa8ae;
+      --faint: #7b898f;
+      --rule: #2a353a;
+      --sign: #74aae4;
+      --sign-ink: #08131f;
+      --charge: #e8996f;
+      --free: #4dc0c5;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 8px 24px -18px #000;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1113;
+    --surface: #151b1e;
+    --surface-2: #1d2529;
+    --ink: #e3ebee;
+    --muted: #9aa8ae;
+    --faint: #7b898f;
+    --rule: #2a353a;
+    --sign: #74aae4;
+    --sign-ink: #08131f;
+    --charge: #e8996f;
+    --free: #4dc0c5;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 8px 24px -18px #000;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Newsreader, Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px 96px; }
+  .col { max-width: 66ch; }
+
+  h1, h2, h3, .ui { font-family: Archivo, "Helvetica Neue", Arial, sans-serif; }
+  .mono, td.t, .fig-n, .chip, code { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  code { font-size: .86em; background: var(--surface-2); padding: .1em .34em; border-radius: 3px; }
+  a { color: var(--sign); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--sign); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- header ---------- */
+  header { padding: 72px 0 40px; }
+  .mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 5px;
+    background: var(--sign); color: var(--sign-ink);
+    font-family: Archivo, sans-serif; font-weight: 700; font-size: 26px;
+    line-height: 1; letter-spacing: -.02em;
+  }
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--faint);
+    margin-top: 22px;
+  }
+  h1 {
+    font-size: clamp(44px, 8vw, 82px); font-weight: 700; letter-spacing: -.035em;
+    line-height: .96; margin: 10px 0 0; text-wrap: balance;
+  }
+  .deck {
+    font-size: clamp(19px, 2.2vw, 23px); color: var(--muted); font-weight: 300;
+    max-width: 60ch; margin-top: 20px; text-wrap: pretty;
+  }
+
+  /* ---------- figures ---------- */
+  .figs {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+    border-radius: 8px; overflow: hidden; margin: 44px 0 0;
+  }
+  .fig { background: var(--surface); padding: 20px 22px 18px; }
+  .fig-n {
+    font-size: 30px; font-weight: 600; letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .fig-l {
+    font-family: Archivo, sans-serif; font-size: 12px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
+    margin-top: 6px;
+  }
+  .fig-s { font-size: 15px; color: var(--muted); margin-top: 4px; }
+
+  /* ---------- sections ---------- */
+  section { margin-top: 72px; }
+  h2 {
+    font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--faint); margin: 0 0 6px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h3 {
+    font-size: 25px; font-weight: 600; letter-spacing: -.02em; margin: 28px 0 10px;
+    text-wrap: balance;
+  }
+  h2 + h3 { margin-top: 22px; }
+  p { margin: 0 0 16px; }
+  p + p { margin-top: -2px; }
+
+  /* ---------- tables ---------- */
+  .scroll { overflow-x: auto; margin: 22px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 16.5px; }
+  th {
+    font-family: Archivo, sans-serif; font-size: 11.5px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--faint);
+    text-align: left; padding: 0 16px 10px 0; white-space: nowrap;
+    border-bottom: 1px solid var(--rule);
+  }
+  td { padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  td.t { white-space: nowrap; font-size: 14px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  td.k { font-family: Archivo, sans-serif; font-weight: 600; font-size: 15.5px; white-space: nowrap; }
+  td.n { font-family: "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+
+  .chip {
+    display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 7px; border-radius: 3px; white-space: nowrap;
+    border: 1px solid currentColor;
+  }
+  .chip.user { color: var(--charge); }
+  .chip.agent { color: var(--sign); }
+  .chip.build { color: var(--free); }
+  .chip.mine { color: var(--charge); }
+
+  /* ---------- timeline ---------- */
+  .ledger { margin: 22px 0 0; border-top: 1px solid var(--rule); }
+  .row {
+    display: grid; grid-template-columns: 62px 1fr; gap: 0 20px;
+    padding: 11px 0; border-bottom: 1px solid var(--rule); align-items: baseline;
+  }
+  .row .time {
+    font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .row .what { font-size: 17px; text-wrap: pretty; }
+  .row.mark-row .what { font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
+  .row.mark-row { background: var(--surface-2); }
+  .row.mark-row .time, .row.mark-row .what { padding-left: 0; }
+  .row.mark-row { padding-left: 10px; padding-right: 10px; margin-left: -10px; margin-right: -10px; }
+
+  /* ---------- callout ---------- */
+  .note {
+    background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--sign);
+    border-radius: 0 7px 7px 0; padding: 18px 22px; margin: 24px 0; box-shadow: var(--shadow);
+  }
+  .note p:last-child { margin-bottom: 0; }
+  .note .lbl {
+    font-family: Archivo, sans-serif; font-size: 11.5px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--sign);
+    display: block; margin-bottom: 8px;
+  }
+
+  ul { margin: 0 0 16px; padding-left: 1.15em; }
+  li { margin-bottom: 9px; }
+  li::marker { color: var(--faint); }
+
+  .quotes {
+    font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.9;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 7px;
+    padding: 16px 18px; overflow-x: auto; white-space: pre; color: var(--muted);
+    margin: 20px 0;
+  }
+
+  footer {
+    margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--rule);
+    font-size: 15px; color: var(--faint);
+  }
+
+  @media (max-width: 620px) {
+    body { font-size: 17px; }
+    .wrap { padding: 0 18px 64px; }
+    header { padding-top: 48px; }
+    .row { grid-template-columns: 52px 1fr; gap: 0 12px; }
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="mark" aria-hidden="true">P</div>
+  <div class="eyebrow">5.–6. September 2026 · Berlin · <span class="mono">knoellchenfrei</span></div>
+  <h1>Nachtschicht<br>und Tagwerk</h1>
+  <p class="deck">Aus einem Java/Spring-Projekt von 2012 wurde eine PWA auf den amtlichen
+  Berliner Parkraumdaten — in einer Nacht gebaut, an einem Tag zur Veröffentlichung
+  getrieben. Was entschieden wurde, was gebaut wurde, was schiefging, wo ich selbst
+  falsch lag, und was noch aussteht.</p>
+
+  <div class="figs">
+    <div class="fig">
+      <div class="fig-n">12 h 52</div>
+      <div class="fig-l">Laufzeit</div>
+      <div class="fig-s">23:19 am 5. bis 12:11 am 6. September</div>
+    </div>
+    <div class="fig">
+      <div class="fig-n">47</div>
+      <div class="fig-l">Commits</div>
+      <div class="fig-s">141 versionierte Dateien, 9.758 Zeilen TypeScript</div>
+    </div>
+    <div class="fig">
+      <div class="fig-n">96,3 %</div>
+      <div class="fig-l">Coverage</div>
+      <div class="fig-s">129 Unit-Tests, 92 End-to-End-Tests — grün</div>
+    </div>
+    <div class="fig">
+      <div class="fig-n">210.527</div>
+      <div class="fig-l">Stellplätze</div>
+      <div class="fig-s">103 Zonen, 45.917 Abschnitte, 1.499 Orte</div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <h2>Kurzfassung</h2>
+  <div class="col">
+    <h3>Die App ist fertig. Was fehlt, sind Konten und ein Verein.</h3>
+    <p>Sie beantwortet vier Fragen: <em>Wo stehe ich, kostet das gerade etwas, wie
+    viel, und wo war zuletzt das Ordnungsamt.</em> Alles läuft im Browser, ohne
+    Server, offlinefähig, auf dem Homescreen installierbar.</p>
+    <p><strong>Kein Code blockiert die Veröffentlichung mehr.</strong> Es fehlen ein
+    Cloudflare-Konto, eine GitHub-Organisation, ein Trägerverein und ein
+    Impressum-Dienstleister — alle vier nur von einem Menschen zu erledigen. Der Stand
+    ist <strong>geschlossener Testbetrieb</strong>: nicht öffentlich, für Suchmaschinen
+    gesperrt, weil das Impressum bis zur Vereinseintragung auf eine Privatperson läuft.</p>
+    <p>Der Code des Originals von 2012 wurde nicht angefasst — er liegt unverändert
+    unter <code>ParkingZone/</code> und zieht nicht mit ins neue Repository um.
+    Geteilt wird nur die Domäne. Die Ideenliste
+    von damals (<code>doc/Ideen.txt</code>) ist erstaunlich gut gealtert und war
+    die Vorlage für den Funktionsumfang.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Umgesetzt</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Funktion</th><th>Was sie tut</th><th>Grundlage</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Zone finden</td><td>Standort oder Tippen auf die Karte. 103 amtliche Zonen, live eingefärbt nach „kassiert gerade“.</td><td class="n">WFS parkzonen</td></tr>
+        <tr><td class="k">Kosten</td><td>Tarif, Geltungszeiten, „noch bis“ / „frei bis“, Kostenschätzung für eine Dauer. Sommerzeit und Feiertage inbegriffen.</td><td class="n">core/tariff</td></tr>
+        <tr><td class="k">Parkuhr</td><td>Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar, Position auch von Hand setzbar. Übersteht Neuladen.</td><td class="n">localStorage</td></tr>
+        <tr><td class="k">Umfeld</td><td>385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzonen-Umriss. Klick zeigt Details.</td><td class="n">5 WFS-Layer</td></tr>
+        <tr><td class="k">Ordnungsamt</td><td>Melden, von anderen bestätigen oder widersprechen lassen, Konfidenz aus Zustimmung × Zeitverfall, harter Verfall nach 90 Minuten.</td><td class="n">core/sighting</td></tr>
+        <tr><td class="k">Suche</td><td>Zone nach Nummer oder Ortsteil, Karte springt hin und der Anker springt mit.</td><td class="n">apps/web</td></tr>
+        <tr><td class="k">Abgeschleppt?</td><td>Direkter Weg zur Auskunfts- und Fahndungsstelle der Polizei Berlin.</td><td class="n">berlin.de</td></tr>
+        <tr><td class="k">Offline</td><td>Service Worker, Daten zur Buildzeit eingefroren. Funktioniert in der Tiefgarage.</td><td class="n">PWA</td></tr>
+        <tr><td class="k">Kontrolldichte</td><td>Heatmap der letzten 28 Tage plus Bericht: letzte 24 Stunden, Histogramm über die Tage, Stundenprofil des Wochentags, häufigste Zonen.</td><td class="n">core/heatmap</td></tr>
+        <tr><td class="k">Telegram</td><td>Standort an den Bot schicken, Meldung steht auf der Karte. Am selben Worker, derselben Datenbank, derselben Meldegrenze.</td><td class="n">core/telegram</td></tr>
+        <tr><td class="k">Als App ablegen</td><td>Manifest mit eigenem und zuschnittsicherem Symbol, Bildern für die Installations-Karte, drei Verknüpfungen im Symbol-Menü. Neue Versionen melden sich, statt zu übernehmen.</td><td class="n">PWA</td></tr>
+        <tr><td class="k">Einstellungen</td><td>Stehender Hinweis, sieben häufige Fragen, Mitmachen-Wege, rechtliche Links, Feedback-Formular — nach FreiFahrens Muster.</td><td class="n">apps/web</td></tr>
+        <tr><td class="k">Ruhetag erklärt</td><td>Wenn auffällig wenige Zonen kassieren, sagt die App warum. Wochentage und Stunden aus den Daten abgeleitet, nicht verdrahtet. Wegklickbar.</td><td class="n">core/quiet-day</td></tr>
+        <tr><td class="k">Layer-Panel</td><td>Einklappbar — es nahm zu viel Karte weg.</td><td class="n">nachgereicht</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Drei Speicher-Varianten hinter einer Schnittstelle: geteilt über die
+    <code>db</code>-Fähigkeit des Artifacts, geteilt über einen Cloudflare Worker
+    (D1 + KV, fertig geschrieben, nicht deployed), oder lokal. Die Oberfläche sagt
+    ehrlich, welche gerade gilt — „Geteilt“ oder „Nur auf diesem Gerät“ — statt
+    geteilten Zustand vorzutäuschen.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Entschieden</h2>
+  <div class="col">
+    <p>Die Begründungen stehen im Repository unter
+    <code>docs/entscheidungen.md</code>. Hier steht, <em>dass</em> entschieden wurde —
+    und was daraus geworden ist.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Frage</th><th>Entscheidung</th><th>Stand</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Name</td><td><span class="mono">knoellchenfrei</span> — gegen <span class="mono">freiparken</span> und <span class="mono">kiezparken</span></td><td>entschieden</td></tr>
+        <tr><td class="k">Domains</td><td>Fünf: alle vier Schreibweisen unter <span class="mono">.de</span>, dazu <span class="mono">knoellchenfrei.org</span></td><td>bestellt, vier live</td></tr>
+        <tr><td class="k">Trägerschaft</td><td>e.V. nach dem Vorbild von FreiFahren e.V., spendenfinanziert, ohne Werbung</td><td>offen — braucht sieben Menschen</td></tr>
+        <tr><td class="k">Repository</td><td><span class="mono">knoellchenfrei/knoellchenfrei</span>, neue Historie mit einem einzigen Commit</td><td>Umzugsskript liegt bereit</td></tr>
+        <tr><td class="k">Lizenz</td><td>MIT, öffentlich, kein finanzielles Interesse</td><td>umgesetzt</td></tr>
+        <tr><td class="k">Hosting</td><td>Cloudflare — Pages, Worker, D1, R2. Derselbe Aufbau wie FreiFahren.</td><td>vorbereitet, Konto fehlt</td></tr>
+        <tr><td class="k">Veröffentlichung</td><td>Geschlossene Beta bis zur Vereinseintragung; Impressum über einen Dienstleister</td><td>Riegel eingebaut</td></tr>
+        <tr><td class="k">Oberfläche</td><td>Layout nach FreiFahrens Vorbild; Farbe nur noch dort, wo sie etwas aussagt</td><td>umgesetzt</td></tr>
+        <tr><td class="k">Kartenkacheln</td><td>Eigenes PMTiles-Archiv in R2 statt Rasterkacheln von OpenStreetMap</td><td>Client fertig, Archiv fehlt</td></tr>
+        <tr><td class="k">Telegram</td><td>Bot am bestehenden Worker. Gruppen mitlesen ausdrücklich <em>nicht</em>.</td><td>Stufe 1 gebaut</td></tr>
+        <tr><td class="k">Behindertenparkplätze</td><td>Bleiben — 923 von 1.499 Orten —, aber gedämpft statt in Signalfarbe</td><td>umgesetzt</td></tr>
+        <tr><td class="k">Art der Sichtung</td><td>Wird nicht erfasst. Es soll kein Abschleppwagen meldbar sein.</td><td>entschieden</td></tr>
+        <tr><td class="k">Zweite Stadt</td><td>Stehende Anforderung: Berlin darf nicht fest verdrahtet werden</td><td>teilweise, Rest notiert</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Chronik</h2>
+  <div class="col">
+    <h3>Die Nacht: aus 2012 wird 2026</h3>
+    <p>Vom Gerüst bis zur getesteten App, ohne Unterbrechung.</p>
+  </div>
+  <div class="ledger">
+    <div class="row mark-row"><div class="time">23:19</div><div class="what">Start — Repo gesichtet, alle Branches gelesen, 2012er Code verstanden</div></div>
+    <div class="row"><div class="time">00:05</div><div class="what">Monorepo-Skelett, Konfidenzmodell für Sichtungen</div></div>
+    <div class="row"><div class="time">00:15</div><div class="what">Tarife, Feiertage, Berliner Wanduhrzeit</div></div>
+    <div class="row"><div class="time">00:49</div><div class="what">Echte WFS-Daten geparst — und dabei die pauschale Sonntagsregel verworfen</div></div>
+    <div class="row"><div class="time">01:13</div><div class="what">Die PWA: Karte, Zonen-Lookup, Parkuhr, Sichtungen</div></div>
+    <div class="row"><div class="time">01:17</div><div class="what">Zonensuche, Abschlepp-Auskunft</div></div>
+    <div class="row"><div class="time">01:28</div><div class="what">Ortsteile, Geometrie-Vereinfachung, Artifact-Bundle, API-Worker</div></div>
+    <div class="row"><div class="time">01:33</div><div class="what">Umweltzone, P+R Umland — und die eigene CORS-Behauptung korrigiert</div></div>
+    <div class="row mark-row"><div class="time">01:36</div><div class="what">Erste Fehlermeldungen aus echter Nutzung</div></div>
+    <div class="row"><div class="time">01:39</div><div class="what">Kartenklick schwärzte die App; Karte wird vollwertiger Ersatz für GPS</div></div>
+    <div class="row"><div class="time">01:41</div><div class="what">GitHub Pages dokumentiert</div></div>
+    <div class="row"><div class="time">01:59</div><div class="what">Härtung gegen feindliche Eingaben, 1,5-Sekunden-Hänger, Mobile-Layout neu</div></div>
+    <div class="row"><div class="time">02:04</div><div class="what">Querformat, Notch-Abstände, Touch-Ziele</div></div>
+    <div class="row"><div class="time">02:06</div><div class="what"><code>localStorage</code> wird beim Lesen validiert</div></div>
+    <div class="row"><div class="time">02:55</div><div class="what">E2E-Suite plus alles, was sie und die Review-Agenten fanden</div></div>
+    <div class="row"><div class="time">03:01</div><div class="what">Open-Source-Vorbereitung: Lizenz, Beitragsleitfaden, Architektur, Quellen</div></div>
+    <div class="row"><div class="time">03:32</div><div class="what">Verlorene Parksession, GPS überschrieb Taps, WCAG AA erreicht</div></div>
+    <div class="row"><div class="time">03:46</div><div class="what">„1 Std. 0 Min.“ auf der vollen Stunde; Screenshots gegen den Endstand</div></div>
+    <div class="row"><div class="time">03:54</div><div class="what">„1 Plätze“ an der Quelle behoben; Coverage-Report aus der Versionierung genommen</div></div>
+    <div class="row mark-row"><div class="time">04:0x</div><div class="what">Abschlusslauf: Typecheck, 62 Unit-Tests, 94,1 % Coverage, 32 E2E, Audit — grün</div></div>
+  </div>
+
+  <div class="col">
+    <h3>Der Morgen: was du gemeldet hast</h3>
+    <p>Vier Fehlerberichte, jeder davon berechtigt.</p>
+  </div>
+  <div class="ledger">
+    <div class="row"><div class="time">06:50</div><div class="what">„Der Link ist einfach nur schwarz“ — falsch gepackter Artifact; der Build bricht seitdem ab, statt das auszuliefern</div></div>
+    <div class="row"><div class="time">07:04</div><div class="what">Heatmap der Kontrolldichte über vier Wochen</div></div>
+    <div class="row"><div class="time">07:15</div><div class="what">„Der Butten macht nix“ — verschluckte Fehler beim Melden</div></div>
+    <div class="row"><div class="time">07:44</div><div class="what">Meldungen verschwanden nach dem Neuladen; dazu Live-Zahlen auf der Karte</div></div>
+    <div class="row"><div class="time">08:02</div><div class="what">Überlappende Ebenen zusammengeführt, Bericht hinter der Heatmap</div></div>
+    <div class="row"><div class="time">08:07</div><div class="what">Histogramm über die Tage — das Stundenprofil brauchte Daten, die es noch nicht gab</div></div>
+  </div>
+
+  <div class="col">
+    <h3>Der Tag: von der App zum Projekt</h3>
+    <p>Weniger Code, mehr Entscheidungen — und alles, was eine Veröffentlichung braucht.</p>
+  </div>
+  <div class="ledger">
+    <div class="row"><div class="time">08:28</div><div class="what">FreiFahrens Hosting nachgesehen und festgehalten, was davon zu übernehmen ist</div></div>
+    <div class="row"><div class="time">08:37</div><div class="what">Repository für eine Veröffentlichung hergerichtet</div></div>
+    <div class="row"><div class="time">08:55</div><div class="what">Melde-Dialog nach FreiFahrens Vorbild: Ort als Formularfeld statt Kartengeste</div></div>
+    <div class="row"><div class="time">09:09</div><div class="what">Feedback-Formular — und die Erkenntnis, dass sein Versprechen im Artifact nicht haltbar ist</div></div>
+    <div class="row"><div class="time">09:30</div><div class="what">Einstellungen, FAQ, Standort-Vordialog — alles nach FreiFahrens Muster</div></div>
+    <div class="row"><div class="time">09:56</div><div class="what">Ruhetags-Hinweis aus den Daten statt aus einer Regel im Code</div></div>
+    <div class="row mark-row"><div class="time">10:20</div><div class="what">Zweizeilige Kopfzeile und Homescreen-Installation</div></div>
+    <div class="row"><div class="time">10:42</div><div class="what">Zonenfarbe umgewichtet: Orange füllt, Türkis flüstert</div></div>
+    <div class="row"><div class="time">10:54</div><div class="what">Domains entschieden — erst drei, dann fünf</div></div>
+    <div class="row"><div class="time">11:02</div><div class="what">Vereinsgründung recherchiert: der Notartermin geht online, der Rest nicht</div></div>
+    <div class="row mark-row"><div class="time">11:15</div><div class="what">Geschlossene Beta verriegelt statt angekündigt</div></div>
+    <div class="row"><div class="time">11:24</div><div class="what">Umzugsskript fürs neue Repository, im Wegwerf-Klon durchgespielt</div></div>
+    <div class="row mark-row"><div class="time">11:49</div><div class="what">Telegram-Meldungen, Vektorkacheln vorbereitet, POI-Ebene gedämpft</div></div>
+    <div class="row"><div class="time">12:11</div><div class="what">Alles ins Repository geschrieben, was nur im Chat stand</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Gefundene Fehler</h2>
+  <div class="col">
+    <h3>Dreiundzwanzig, die echt waren</h3>
+    <p>Nicht Stilfragen — Dinge, die die App kaputt machten, falsche Preise nannten
+    oder Daten verloren. Vier davon hast du selbst gemeldet; die schwersten
+    stammen aus dieser Liste.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Gefunden</th><th>Fehler</th><th>Ursache</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip user">gemeldet</span></td><td class="k">Kartenklick schwärzte die App</td><td>MapLibre wandelt verschachtelte GeoJSON-Properties in Strings. <code>windows.some</code> war keine Funktion, und ohne Error Boundary riss das alles mit.</td></tr>
+        <tr><td><span class="chip user">gemeldet</span></td><td class="k">Kein Standort-Dialog</td><td>Eingebettete Frames verweigern die Abfrage stumm. Die Karte ist jetzt vollwertiger Ersatz statt Notlösung.</td></tr>
+        <tr><td><span class="chip user">gemeldet</span></td><td class="k">„Hier gesehen“ ausgegraut</td><td>Hing an einer GPS-Position, die nie kam.</td></tr>
+        <tr><td><span class="chip user">gemeldet</span></td><td class="k">Parkplatz merken ging nicht</td><td>Gleiche Ursache. Position ist jetzt von Hand setzbar und der Marker verschiebbar.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Aus Zone 132 in Zone 133 geparkt</td><td>Der Anker nach einer Suche war der Bbox-Mittelpunkt. Bei L- oder Ringform liegt der außerhalb des Polygons — bei Zone 11 und 91 sogar außerhalb jeder Zone. Jetzt wird ein Punkt garantiert innerhalb gewählt.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Veraltete Auswahl nach Tap ins Leere</td><td>Das Panel zeigte weiter „Parkzone 34“, während „Hier geparkt“ außerhalb parkte. Ein Tap ohne Zonentreffer löscht die Auswahl jetzt.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Höchstparkdauer als Zonenregel</td><td>Sie ist auf 747 von 45.917 Abschnitten gesetzt. Die App nennt jetzt den Wert samt tatsächlicher Abdeckung.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Advents-Samstage „gebührenfrei“</td><td>An vier echten Kassiertagen. Zeigt jetzt „unsicher“ und verweist auf den Automaten.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">„gebührenfrei“ überversprochen</td><td>Keine Gebühr heißt nicht Parken erlaubt. Halteverbote gelten weiter.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Unkillbare Falschmeldung</td><td>Ein Zeitstempel aus der Zukunft wurde auf Alter 0 geklemmt — Bestbewertung, die nie verfiel.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Pfad-Injection über <code>id</code></td><td>Eine Zeile, die <code>id: "../anderswo"</code> behauptete, ließ andere Clients dorthin schreiben. Die ID kommt jetzt aus dem Dokumentschlüssel.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Rate-Limit wirkungslos</td><td>Der Client-Hash enthielt den User-Agent. Ein Zeichen ändern, neues Kontingent.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Stimmrichtung ging verloren</td><td>Der Worker-Adapter schickte jedes „weg“ als „gesehen“.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">Artifact-Speicher löschte nie</td><td>Die Oberfläche versprach 90 Minuten Verfall, der Speicher behielt alles.</td></tr>
+        <tr><td><span class="chip agent">Agent</span></td><td class="k">ReDoS im Fahrplan-Parser</td><td>Quadratisches Backtracking: 100k Zeichen brauchten 15 Sekunden zum Ablehnen. Jetzt Längengrenze bei 200; der längste echte Wert hat 51.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">Kartencontainer hatte Höhe 0</td><td><code>maplibre-gl.css</code> setzt dieselbe Regel bei gleicher Spezifität und wurde später importiert.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">1,5 s Hänger alle 15 s</td><td>Ein 7-Tage-Minutenscan über 103 Zonen im Render-Pfad.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k"><code>remindAt: 9e15</code></td><td>Dauerhafter Absturzbildschirm, der einen Reload überlebte. <code>localStorage</code> wird jetzt beim Lesen validiert statt repariert.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">Parksession beim Reload weg</td><td>Der Persist-Effekt lief beim Mounten mit leerem Zustand; die Ref-Sperre versagte unter StrictMode.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">GPS überschrieb Taps</td><td><code>position ?? anchor</code> statt umgekehrt — wer tippte, wurde vom nächsten GPS-Fix zurückgeworfen.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">Suche ließ den Anker stehen</td><td>Panel zeigte die gesuchte Zone, „Hier geparkt“ benutzte den alten Punkt — Auto in der falschen Zone.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">Legende blockierte die Karte</td><td>Über die volle Breite, ohne <code>pointer-events: none</code>.</td></tr>
+        <tr><td><span class="chip build">im Build</span></td><td class="k">OSM-Namensnennung verdeckt</td><td>Kein Schönheitsfehler, sondern Lizenzbedingung der ODbL.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Selbstkritik</h2>
+  <div class="col">
+    <h3>Vier Stellen, an denen ich falsch lag</h3>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th></th><th>Behauptung</th><th>Realität</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">„Der WFS sendet keine CORS-Header“</td><td>Stand so in der README. Gemessen sendet <code>gdi.berlin.de</code> <code>Access-Control-Allow-Origin: *</code>. Ein Recherche-Agent hat es widerlegt; die Begründung fürs Einfrieren der Daten ist trotzdem gültig, nur eine andere (Größe, Offline, Reproduzierbarkeit).</td></tr>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">„Egress ist per Policy blockiert“</td><td>Zweimal falsch diagnostiziert. Der Proxy antwortet auf <em>jedes</em> Klartext-HTTP mit 403. Echte Ursache war eine fehlende <em>Telekom Security TLS RSA Root 2023</em> im Container. Behoben über ein aktuelles Mozilla-Bundle — nicht durch Abschalten der Zertifikatsprüfung.</td></tr>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">„Service Worker ist repariert“</td><td>War er nicht. <code>String.replace</code> traf den Platzhalter im eigenen Kommentar der Datei, und eine Kopie unter <code>public/</code> machte den Fix zusätzlich rückgängig. Jetzt <code>replaceAll</code>, Template nach <code>src/</code> verschoben, und der Build bricht ab, wenn ein Platzhalter überlebt.</td></tr>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">Behauptung ohne Prüfung</td><td>Zu <span class="mono">freifahren-jetzt.de</span> gesagt, die Seite sei „nicht von ihnen“ — nachgesehen hatte ich das nie. Die Quelle war aus dieser Umgebung gesperrt; die Anzeichen sprechen eher dafür, dass sie doch von FreiFahren stammt. Richtiggestellt.</td></tr>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">Zweimal kaputtes Workflow-YAML</td><td>Eine mehrzeilige Commit-Nachricht bricht aus dem Blockskalar aus. Beide Male ging der Commit raus, beide Male meldete ich Erfolg. Ursache dahinter: eine <span class="mono">&amp;&amp;</span>-Kette, die ein gescheitertes Skript nicht stoppte. Seitdem prüft die CI jede Workflow-Datei.</td></tr>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">Test nach dem Commit gebrochen</td><td>Der Beta-Hinweis fügte einen zweiten Hinweiskasten in die Einstellungen und verletzte damit einen Strict-Mode-Zugriff im Bestand. Ich hatte committet, bevor der Testlauf zurück war.</td></tr>
+        <tr><td><span class="chip mine">korrigiert</span></td><td class="k">Veralteter Artifact-Link</td><td>Einen halben Tag weitergebaut, ohne neu zu veröffentlichen. Du hast auf eine Fassung von vorgestern geschaut und dich über die Zonenfärbung gewundert, die längst anders war.</td></tr>
+        <tr><td><span class="chip mine">gelernt</span></td><td class="k">Die eigene E2E-Suite war blind</td><td>Sie hatte nie in die Karte geklickt. Der Totalausfall, den du gemeldet hast, lag genau in diesem ungetesteten Pfad. Seitdem klickt sie — auf Zonen, auf POI, ins Leere, und zweimal schnell hintereinander.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Der schwierige Teil</h2>
+  <div class="col">
+    <h3>Zeiten und Gebühren kommen als Freitext</h3>
+    <p>28 Schreibweisen über beide Berliner Feeds für rund zehn tatsächliche
+    Fahrpläne:</p>
+  </div>
+  <div class="quotes">Mo-Fr 9-20 Uhr / Sa 9-18 Uhr        Mo-Sa, 9-22 Uhr
+Mo-Sa / 9-20 Uhr                    Mo-Fr 09:00-20:00 Uhr, Sa 09:00-18:00 Uhr
+Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -17 Uhr</div>
+  <div class="col">
+    <p><code>/</code> und <code>,</code> sind überladen: In der ersten Zeile trennen
+    sie zwei Klauseln, in der dritten Tagesangabe und Uhrzeit derselben Klausel.
+    Ein Split am Trennzeichen zerstört vier Zonen. Der Parser sucht deshalb nach
+    vollständigen Tag-plus-Zeit-Klauseln und behandelt jeden Rest als Fehler — und
+    ein Fehler bricht den <em>Datenbuild</em> ab, nicht erst die Laufzeit. Eine
+    still falsch geparste Zone nennt jemandem einen Preis, für den er ein
+    Knöllchen bekommt.</p>
+
+    <div class="note">
+      <span class="lbl">Zone 29, Mitte</span>
+      <p>Steht im Feed als <code>Mo-So 9-24 Uhr</code> und kassiert sonntags. Die
+      naheliegende Vereinfachung „sonntags ist frei“ hätte dort 0 € geschätzt für
+      einen Aufenthalt, der 4 €/h kostet. Feiertage zählen dagegen sehr wohl wie
+      Sonntage — ohne diese Regel sagt die App am Karfreitag „zahlen“.</p>
+    </div>
+
+    <p>Vier Dinge behauptet die App bewusst nicht: welche Samstage
+    <code>Advents-Sa</code> meint, einen Mittelwert für Gebührenspannen, die
+    Höchstparkdauer als Zonenregel, und dass „keine Gebühr“ gleich „Parken
+    erlaubt“ wäre. Lieber eine benannte Lücke als eine plausible Füllung.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Qualität</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Prüfung</th><th>Ergebnis</th><th>Umfang</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Unit-Tests</td><td class="n">129 / 129 grün</td><td>davon 24 Regressionstests für konkret gefundene Fehler und 21 auf den Telegram-Parser</td></tr>
+        <tr><td class="k">End-to-End</td><td class="n">91 grün, 1 übersprungen</td><td>über Desktop und Handy, gegen den Produktions-Build. Der übersprungene überspringt sich selbst, wenn der Tag nichts zu erklären hat.</td></tr>
+        <tr><td class="k">Nutzerreisen</td><td class="n">903 / 903 grün</td><td>Sechs Reisen über 12 Zonen und drei simulierte Zeitpunkte, jeweils Desktop und Handy</td></tr>
+        <tr><td class="k">Coverage</td><td class="n">96,3 % Zeilen</td><td>89,8 % Zweige, 98,0 % Funktionen — Schwellwerte im CI bei 85/80</td></tr>
+        <tr><td class="k">Typprüfung</td><td class="n">sauber</td><td><code>strict</code> inkl. <code>noUncheckedIndexedAccess</code>, <code>exactOptionalPropertyTypes</code></td></tr>
+        <tr><td class="k">Barrierefreiheit</td><td class="n">0 Verstöße</td><td>axe über 9 Zustände, WCAG AA</td></tr>
+        <tr><td class="k">Abhängigkeiten</td><td class="n">keine Lücken</td><td><code>pnpm audit</code>, plus Secret-Scan im CI</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Die sieben Badges in der README werden aus diesen echten Messwerten
+    generiert — als eigene SVGs, ohne externen Dienst. Das war kein Purismus:
+    shields.io würde den Repository-Namen an einen Dritten senden und in einem
+    privaten Repository ohnehin nichts anzeigen.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Sicherheit</h2>
+  <div class="col">
+    <p>Drei Eingabequellen, alle als nicht vertrauenswürdig behandelt: der fremde
+    Behördenfeed, die von anderen Nutzern geschriebenen Meldungen, und
+    <code>localStorage</code>, das Deploys übersteht und von Hand editierbar ist.</p>
+    <ul>
+      <li><strong>Eingaben</strong> — Längengrenzen gegen Backtracking, Koordinaten müssen im Berliner Bereich liegen, Zeitstempel beidseitig begrenzt, Zählerstände gedeckelt.</li>
+      <li><strong>XSS</strong> — kein <code>innerHTML</code> im Anwendungscode, die einzige HTML-Konstruktion (Karten-Popups) escaped jeden Wert, der Artifact-Build escaped <code>&lt;</code> beim Einbetten von JSON.</li>
+      <li><strong>Datenschutz</strong> — Meldungen auf ~10 m gerundet und auf 5-Minuten-Raster gelegt, keine Historie, kein Bewegungsprofil. Der Client-Hash im Worker ist gesalzen und wird nach Ablauf des Fensters auf <code>NULL</code> gesetzt.</li>
+      <li><strong>Telegram</strong> — die Nutzerkennung wird gehasht wie eine IP-Adresse und nur zum Durchsetzen der Meldegrenze benutzt, die Chat-Kennung gar nicht gespeichert. Der Webhook antwortet nur bei passendem Geheimnis und ist ohne Token gar nicht vorhanden.</li>
+      <li><strong>Freitext-Feedback</strong> — hat bewusst <em>keinen</em> Lesepfad; nur der Betreiber sieht es. Im Artifact ist dieses Versprechen technisch nicht ausdrückbar, deshalb gibt es Feedback dort nicht.</li>
+      <li><strong>Worker</strong> — alle SQL-Werte gebunden, Rate-Limits (6 Meldungen/h, 40 Stimmen/h), eine Stimme je Client und Meldung über den Primärschlüssel, <code>Origin</code>-Prüfung zusätzlich zu CORS, CORS fällt geschlossen aus.</li>
+    </ul>
+    <p>Bedrohungsmodell, alle Maßnahmen und die bekannten Grenzen stehen in
+    <code>SECURITY.md</code>. Ein Punkt daraus gehört hierher: In der Git-Historie
+    des 2012er Projekts liegt ein MySQL-Entwicklungspasswort. Es zeigt auf
+    <code>localhost</code> und wird von nichts Aktuellem benutzt — vor einer
+    Veröffentlichung trotzdem prüfen, ob es anderswo wiederverwendet wurde.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Daten</h2>
+  <div class="col">
+    <p>Alles von der Geodateninfrastruktur Berlin, WFS 2.0.0, unter <em>Datenlizenz
+    Deutschland Zero 2.0</em> — freie Nutzung, keine Namensnennung nötig. Sieben
+    Layer, zur Buildzeit geprüft und eingefroren. Kartenkacheln kommen von
+    OpenStreetMap unter ODbL; deren Namensnennung in der App ist
+    Lizenzbedingung, keine Höflichkeit.</p>
+    <p>Ebenso festgehalten sind die <em>Negativbefunde</em>, damit sie niemand
+    zweimal untersucht: Parkhaus-Belegung existiert in Berlin nicht als offene
+    Quelle (kein aktives Parkleitsystem, ParkAPI deckt Berlin nicht ab, TomTom
+    nicht im Freikontingent, DB-BahnPark abgekündigt). Carsharing in Echtzeit gibt
+    es im GBFS-Register nur von Getaround. Die P+R-„Auslastung“ ist ein statischer
+    Erfahrungswert. Ladepunkt-Status läge bei der VIZ Berlin vor, weist aber keine
+    Lizenz aus und war von hier nicht erreichbar.</p>
+    <p>Ein Layer wurde bewusst weggelassen: <code>parkplaetze_aussen</code> mit
+    214.173 Objekten meldet in jeder Zeile „nicht bewirtschaftet“ — er beantwortet
+    für rund 190 MB eine Frage, die der Zonen-Lookup ohne ihn beantwortet.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Offen</h2>
+  <div class="col">
+    <h3>Was noch aussteht</h3>
+    <p>Kein Punkt davon ist Code. Was übrig ist, sind Konten, Unterschriften und
+    sieben Menschen.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Aufgabe</th><th>Wer</th><th>Blockiert</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Sieben Vereinsmitglieder finden</td><td><span class="chip user">du</span></td><td>Impressum, Veröffentlichung</td></tr>
+        <tr><td class="k">Auto-Renew für alle fünf Domains</td><td><span class="chip user">du</span></td><td>—</td></tr>
+        <tr><td class="k">Cloudflare-Konto, fünf Zonen, Nameserver umstellen</td><td><span class="chip user">du</span></td><td>Hosting, Worker, Kacheln</td></tr>
+        <tr><td class="k">Impressum-Dienstleister buchen</td><td><span class="chip user">du</span></td><td>Veröffentlichung</td></tr>
+        <tr><td class="k">Organisation anlegen, Zugriff freigeben</td><td><span class="chip user">du</span></td><td>Umzug</td></tr>
+        <tr><td class="k">Telegram-Token, Webhook anmelden</td><td><span class="chip user">du</span></td><td>Telegram-Meldungen</td></tr>
+        <tr><td class="k">R2-Eimer, Archiv hochladen, CORS und Range-Requests</td><td><span class="chip user">du</span></td><td>eigene Kacheln</td></tr>
+        <tr><td class="k">Umzug ins neue Repository ausführen</td><td><span class="chip agent">ich</span></td><td>wartet auf die Organisation</td></tr>
+        <tr><td class="k">Impressum und Datenschutz ausformulieren</td><td><span class="chip agent">ich</span></td><td>wartet auf Verein und Dienstleister</td></tr>
+        <tr><td class="k">Zweite Stadt: Feiertage, Datenquelle, Ausschnitt</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
+        <tr><td class="k">Telegram Stufe 2: Gruppen mitlesen</td><td><span class="chip agent">ich</span></td><td>braucht einen Missbrauchsfilter</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Reihenfolge</span>
+    <p>Der Verein sollte stehen, <strong>bevor</strong> die App öffentlich beworben wird.
+    Ein Impressum mit einer Privatanschrift lässt sich später nicht zurücknehmen — es
+    steht dann in Archiven.</p>
+  </div>
+
+  <div class="col">
+    <p>Weiterhin offen und weiterhin richtig: die <strong>rechtliche Prüfung</strong>
+    der Sichtungsfunktion (§ 23 Abs. 1c StVO richtet sich an Fahrende, nicht an
+    Betreiber — deshalb existiert blitzer.de legal; das ist keine Rechtsberatung),
+    <strong>OSM-Parkhäuser</strong> nur als getrennter Layer, weil ein Merge mit den
+    Berliner Daten eine abgeleitete Datenbank wäre, und die
+    <strong>Ladepunkt-Belegung</strong>, deren Lizenzfrage bei der SenMVKU hängt.</p>
+    <p>Nicht möglich, egal wie viel Zeit: Bezahlfunktion (Handyparken läuft über die
+    geschlossene Plattform <em>smartparking</em>), zeitgesteuerte Benachrichtigungen bei
+    geschlossener Seite, Hintergrund-Geofencing. Grenzen des Webs, keine Lücken im Bau.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Statistik</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>Wert</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="k">Laufzeit</td><td class="n">12 h 52 min</td><td>23:19 am 5. bis 12:11 am 6. September</td></tr>
+        <tr><td class="k">Commits</td><td class="n">47</td><td>auf <code>claude/github-repo-integration-cqhab3</code>; 18 in der Nacht, 6 am Morgen, 23 am Tag</td></tr>
+        <tr><td class="k">Versionierte Dateien</td><td class="n">141</td><td>ohne das unangetastete Original von 2012</td></tr>
+        <tr><td class="k">TypeScript</td><td class="n">9.758 Zeilen</td><td>core, ingest, web, api — plus Tests</td></tr>
+        <tr><td class="k">Dokumentation</td><td class="n">2.102 Zeilen</td><td>README, CLAUDE.md, Entscheidungen, Todo, Architektur, Quellen, Hosting, Security</td></tr>
+        <tr><td class="k">Unit-Tests</td><td class="n">129</td><td>24 Regressionstests für gefundene Fehler, 21 auf den Telegram-Parser</td></tr>
+        <tr><td class="k">End-to-End</td><td class="n">92</td><td>Desktop und Handy, gegen den Produktions-Build</td></tr>
+        <tr><td class="k">Coverage</td><td class="n">96,3 %</td><td>Zeilen; 89,8 % Zweige, 98,0 % Funktionen</td></tr>
+        <tr><td class="k">Bündel</td><td class="n">266 kB</td><td>plus 1,05 MB MapLibre, getrennt geladen; PMTiles-Leser und Vektor-Theme nur bei Bedarf</td></tr>
+        <tr><td class="k">Abhängigkeiten</td><td class="n">keine Lücken</td><td><code>pnpm audit</code>, plus Secret-Scan im CI</td></tr>
+        <tr><td class="k">Datenbestand</td><td class="n">103 Zonen</td><td>45.917 Abschnitte, 210.527 Stellplätze, 1.499 Orte, 97 Ortsteile</td></tr>
+        <tr><td class="k">Agenten</td><td class="n">über 20</td><td>Recherche, Domänenprüfung, Sicherheit, Mobile, UI/UX, Barrierefreiheit, E2E</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Zu den Agenten eine ehrliche Bilanz: Sie haben Dinge gefunden, die ich allein
+    nicht gefunden hätte — die überversprochene Höchstparkdauer, die Advents-Samstage,
+    das wirkungslose Rate-Limit, die widerlegte CORS-Behauptung. Mehrere andere hingen
+    dagegen in Warteschleifen fest und lieferten nichts Verwertbares; deren Arbeit habe
+    ich selbst nachgeholt. Der Gewinn lag im Fächern der Blickwinkel, nicht im
+    Durchsatz.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Stand 6. September 2026, 12:11 Uhr. Alles Genannte ist committet und auf
+  <span class="mono">claude/github-repo-integration-cqhab3</span> gepusht; die Prüfläufe
+  stammen aus dem Abschlusslauf gegen genau diesen Stand.</p>
+  <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
+  <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
+  die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die
+  Beschilderung vor Ort — das sagt die Quelle selbst, und die App sagt es auch.</p>
+</footer>
+
+</div>

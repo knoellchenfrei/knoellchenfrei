@@ -1,0 +1,946 @@
+:root {
+  --bg: #0f1216;
+  --panel: #171c22;
+  --panel-edge: #262d36;
+  --text: #e8edf3;
+  --muted: #94a3b8;
+  /* #2563eb statt #3b82f6: weißer Text erreicht darauf 5,2:1, auf dem alten Blau nur 3,7:1. */
+  --accent: #2563eb;
+  --paid: #fb923c;
+  --free: #22d3ee;
+  --warn: #fbbf24;
+  --danger: #ef4444;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app { position: relative; height: 100%; overflow: hidden; }
+/* Wins over maplibre-gl.css's own `.maplibregl-map` rule regardless of order. */
+.app > .map.map { position: absolute; inset: 0; }
+
+.topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  /* Zwei Zeilen: Suche, darunter die Leiste. Vorher ein Raster, das auf dem
+     Handy bis zu vier Zeilen hoch wurde. */
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+  padding: 12px 16px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  /* Above the sidebar: the search dropdown opens downwards across it. */
+  z-index: 4;
+  pointer-events: none;
+}
+.topbar > * { pointer-events: auto; }
+
+/* Ab Tablet-Breite eine Spalte links, damit Suchfeld und Standort-Knopf nicht
+   unter der Seitenleiste rechts landen. */
+@media (min-width: 721px) {
+  .topbar { right: auto; width: min(400px, calc(100% - 32px)); }
+}
+
+/* Both map overlays live in one positioned column, so they cannot collide.
+   Everything inside is inert; only the controls opt back in. */
+.overlay {
+  position: absolute;
+  left: 16px; bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  max-width: min(420px, calc(100% - 32px));
+  z-index: 3;
+  pointer-events: none;
+}
+.legend {
+  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px;
+  width: 100%;
+  /* The container spans the width even when it holds one chip; without this it
+     was a dead strip that swallowed map taps and blocked dragging the car. */
+  pointer-events: none;
+}
+.legend > * { pointer-events: auto; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  background: rgba(23, 28, 34, 0.9);
+  color: var(--muted);
+  font: inherit; font-size: 12px;
+  cursor: pointer;
+}
+.chip--on { color: var(--text); border-color: #3f4854; background: rgba(35, 42, 51, 0.95); }
+.chip__dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.sidebar {
+  position: absolute;
+  /* Nebeneinander, nicht untereinander: Die Kopfzeile bleibt links. */
+  top: 16px; right: 16px; bottom: 16px;
+  width: min(380px, calc(100% - 32px));
+  display: flex; flex-direction: column; gap: 12px;
+  overflow-y: auto;
+  z-index: 3;
+  scrollbar-width: thin;
+}
+
+.panel {
+  background: rgba(23, 28, 34, 0.96);
+  border: 1px solid var(--panel-edge);
+  border-radius: 14px;
+  padding: 14px 16px;
+  backdrop-filter: blur(12px);
+}
+
+.panel__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.panel__eyebrow { margin: 0 0 2px; color: var(--muted); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.panel__title { margin: 0; font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
+
+.badge {
+  flex: none;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.badge--paid { background: rgba(251, 146, 60, 0.16); color: var(--paid); }
+.badge--free { background: rgba(34, 211, 238, 0.16); color: var(--free); }
+
+.facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; margin: 14px 0 0; }
+.facts dt { color: var(--muted); font-size: 12px; }
+.facts dd { margin: 2px 0 0; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.cost { margin: 12px 0 0; font-size: 14px; }
+.cost strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+.cost__hint { color: var(--muted); font-size: 13px; }
+
+.hours, .note { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.hours code { background: rgba(255, 255, 255, 0.06); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.note { border-left: 2px solid var(--panel-edge); padding-left: 10px; }
+
+.warn {
+  margin: 10px 0 0;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: rgba(251, 191, 36, 0.1);
+  color: var(--warn);
+  font-size: 13px;
+}
+.warn--loud { background: rgba(239, 68, 68, 0.12); color: #fca5a5; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.demo-note {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border: 1px dashed var(--panel-edge);
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.demo-note strong { color: var(--text); }
+
+.button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 9px 14px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font: inherit; font-weight: 550;
+  cursor: pointer;
+}
+.button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+.button--primary { margin-top: 0; width: auto; background: var(--accent); border-color: transparent; color: #fff; }
+.button--primary:hover:not(:disabled) { background: #1d4ed8; }
+.button--ghost { margin-top: 0; width: auto; font-size: 13px; padding: 5px 10px; }
+.button--chip { margin: 0; width: auto; padding: 3px 9px; font-size: 12px; border-radius: 999px; }
+
+.timer--expired { border-color: rgba(239, 68, 68, 0.5); }
+.reminder { margin-top: 12px; }
+.reminder__label { margin: 0 0 6px; color: var(--muted); font-size: 12px; }
+.reminder__row { display: flex; gap: 6px; }
+
+.sightings { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.sightings__item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.sightings__meta { flex: 1; color: var(--muted); }
+.sightings__actions { display: flex; gap: 4px; }
+.stars { color: var(--danger); letter-spacing: -1px; min-width: 32px; }
+.stars--0, .stars--1 { opacity: 0.8; }
+
+.provenance { color: var(--muted); font-size: 11.5px; padding: 0 4px 8px; }
+.provenance p { margin: 0 0 4px; }
+.provenance a { color: var(--muted); }
+.provenance__warn { color: var(--warn); opacity: 0.85; }
+
+/* 22px plus a transparent hit area: the car marker is draggable, and 16px is
+   below what a thumb can reliably grab. */
+.marker { width: 22px; height: 22px; border-radius: 50%; border: 3px solid #0f1216; }
+.marker--car { cursor: grab; }
+
+/*
+ * The zoom buttons sat top-right, under the search field and the sidebar's
+ * toggle; "Zoom out" was 80% covered. Top-left, below the measured topbar, is
+ * the one corner nothing else claims on a wide screen.
+ */
+.maplibregl-ctrl-top-left { top: var(--topbar-height, 60px); }
+
+/*
+ * Attribution must stay visible: OpenStreetMap's licence requires it, and it sat
+ * behind the sheet and the toggle in every mobile layout.
+ */
+/*
+ * The topbar overlays the map's top-right corner, where MapLibre puts its zoom
+ * buttons: clicking them started geolocation instead of zooming. Push them below
+ * the measured topbar.
+ */
+.maplibregl-ctrl-top-right { margin-top: calc(var(--topbar-height, 60px) + 8px); }
+
+.maplibregl-ctrl-bottom-right { z-index: 5; }
+@media (max-width: 720px) {
+  /* Below the topbar, not over it: at top:0 it covered "Wo bin ich?" until
+     the first tap on the map collapsed it. */
+  .maplibregl-ctrl-bottom-right { bottom: auto; top: var(--topbar-height, 120px); right: 0; }
+  .maplibregl-ctrl-attrib { font-size: 10px; opacity: 0.85; }
+}
+.marker--car::after {
+  content: ''; position: absolute; inset: -11px; border-radius: 50%;
+}
+.marker--car { background: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+.marker--me { background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25); }
+
+@media (max-width: 720px) {
+  .sidebar {
+    top: auto; left: 12px; right: 12px; bottom: 12px;
+    width: auto;
+    max-height: 62%;
+  }
+  /* Gemessen statt geraten: Die Kopfzeile ist seit den zwei Zeilen höher. */
+  .overlay { bottom: auto; top: calc(var(--topbar-height, 100px) + 8px); left: 12px; }
+}
+
+.search { position: relative; flex: none; width: 100%; }
+.search__input {
+  width: 100%;
+  padding: 7px 11px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 9px;
+  background: rgba(23, 28, 34, 0.92);
+  color: var(--text);
+  font: inherit; font-size: 13px;
+}
+.search__input::placeholder { color: var(--muted); }
+.search__results {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  z-index: 5;
+  list-style: none; margin: 0; padding: 4px;
+  background: rgba(23, 28, 34, 0.98);
+  border: 1px solid var(--panel-edge);
+  border-radius: 9px;
+  max-height: 260px; overflow-y: auto;
+}
+.search__results button {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; padding: 11px 10px; min-height: 44px;
+  border: 0; border-radius: 6px; background: none;
+  color: var(--text); font: inherit; font-size: 13px; text-align: left;
+  cursor: pointer;
+}
+.search__results button:hover { background: rgba(255, 255, 255, 0.07); }
+.search__results span { color: var(--muted); }
+
+.disclosure {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  padding: 4px 0; min-height: 44px; border: 0; background: none;
+  color: var(--text); font: inherit; font-weight: 600; font-size: 15px;
+  cursor: pointer;
+}
+.disclosure__heading { margin: 0; font: inherit; }
+.disclosure__body { margin-top: 10px; }
+.disclosure__body .button { display: block; text-align: center; text-decoration: none; }
+
+.crash {
+  max-width: 460px;
+  margin: 15vh auto;
+  padding: 24px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 14px;
+  background: var(--panel);
+}
+.crash h1 { margin: 0 0 8px; font-size: 19px; }
+.crash p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+.crash pre {
+  margin: 0 0 12px; padding: 10px;
+  background: rgba(239, 68, 68, 0.1); border-radius: 8px;
+  color: #fca5a5; font-size: 12px; white-space: pre-wrap; word-break: break-word;
+}
+
+/* ---------------------------------------------------------------- popups */
+.maplibregl-popup-content {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+}
+.maplibregl-popup-content strong { font-size: 14px; }
+.maplibregl-popup-content span { color: var(--muted); }
+.popup__kind { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.maplibregl-popup-tip { border-top-color: var(--panel) !important; border-bottom-color: var(--panel) !important; }
+.maplibregl-popup-close-button { color: var(--muted); font-size: 18px; padding: 0 6px; }
+
+/* ------------------------------------------------------- panel collapsing */
+
+
+.chip--toggle { font-weight: 600; }
+.chip__count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px; margin-left: 2px;
+  border-radius: 999px;
+  background: var(--accent); color: #fff;
+  font-size: 10px; font-weight: 700;
+}
+
+/* ------------------------------------------------------------ mobile first */
+@media (max-width: 720px) {
+  .topbar {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    /* Keeps the safe-area inset the base rule sets; a plain `padding` shorthand
+       here silently dropped it and put the title under the notch. */
+    padding: 10px 12px;
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+
+    
+  .sidebar {
+    top: auto; left: 0; right: 0; bottom: 0;
+    width: auto;
+    /*
+     * 60vh left only a 111px strip on a 568px-tall phone. Capping by remaining
+     * space instead keeps the map usable on the smallest screens.
+     */
+    max-height: min(58vh, calc(100vh - var(--topbar-height, 120px) - 160px));
+    padding: 10px 12px calc(64px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(15, 18, 22, 0), rgba(15, 18, 22, 0.9) 40px);
+    border-radius: 18px 18px 0 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .overlay {
+    bottom: auto;
+    top: calc(var(--topbar-height, 120px) + 8px);
+    left: max(12px, env(safe-area-inset-left));
+    /* Leaves the attribution button its corner. */
+    right: max(44px, env(safe-area-inset-right));
+    max-width: none;
+  }
+  /*
+   * Hidden on touch: the buttons are 29px, below any sane touch target, they
+   * collided with the layer chips, and pinch-zoom already does the job.
+   */
+  .maplibregl-ctrl-top-left, .maplibregl-ctrl-top-right { display: none; }
+
+  .facts { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .panel { padding: 16px; }
+}
+
+@media (max-width: 380px) {
+  .facts { grid-template-columns: 1fr; }
+}
+.badge--unsure { background: rgba(251, 191, 36, 0.18); color: var(--warn); }
+
+/* --------------------------------------------------- sidebar as a sheet */
+.sidebar__body { display: flex; flex-direction: column; gap: 12px; }
+/*
+ * `display: flex` outranks the `hidden` attribute, so a collapsed panel stayed
+ * laid out and kept swallowing taps meant for the map. This restores it.
+ */
+.sidebar__body[hidden] { display: none; }
+
+.panel-toggle {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  background: rgba(23, 28, 34, 0.96);
+  color: var(--muted);
+  font: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+.panel-toggle:hover { color: var(--text); }
+.panel-toggle__grip { display: none; }
+
+.sidebar--collapsed { overflow: visible; }
+
+@media (max-width: 720px) {
+  .panel-toggle {
+    flex-direction: column; gap: 4px;
+    padding: 10px 12px;
+    min-height: 48px;
+    border-radius: 16px 16px 0 0;
+    font-size: 13px;
+  }
+  .panel-toggle__grip {
+    display: block;
+    width: 36px; height: 4px;
+    border-radius: 999px;
+    background: var(--panel-edge);
+  }
+  .sidebar { padding-top: 0; gap: 8px; }
+  .sidebar--collapsed {
+    max-height: none;
+    top: auto;
+    background: none;
+    /* Without this the collapsed sheet kept a 64px transparent strip that still
+       intercepted taps meant for the map. */
+    padding-bottom: env(safe-area-inset-bottom);
+    overflow: visible;
+  }
+  .sidebar--collapsed .panel-toggle { background: var(--accent); color: #fff; border-color: transparent; }
+  .sidebar--collapsed .panel-toggle__grip { background: rgba(255, 255, 255, 0.5); }
+}
+
+/* ------------------------------------------------------------ touch input */
+/*
+ * Keyed to the pointer, not the viewport width. A phone held sideways is 844px
+ * wide and was getting 26px tap targets from the desktop rules.
+ */
+@media (pointer: coarse) {
+  .button, .chip, .search__input, .panel-toggle { min-height: 44px; }
+  .button--chip { min-height: 44px; padding: 12px 16px; }
+  .chip { padding: 11px 14px; font-size: 13px; }
+  .search__results button { min-height: 44px; }
+  .maplibregl-ctrl-top-left, .maplibregl-ctrl-top-right { display: none; }
+}
+
+/* --------------------------------------------------- short viewports */
+/*
+ * A landscape phone: wide enough for the desktop breakpoint, far too short for
+ * it. The sheet becomes a side panel so the map keeps most of the screen.
+ */
+@media (max-height: 520px) and (min-width: 520px) {
+  /*
+   * Below 720px wide the sheet rules above also apply (a 1280px desktop at
+   * 200% zoom is 640×360). Every property the sheet sets is reset here, or
+   * the panel ended up top-left under the title with left:0 and top:auto.
+   */
+  .sidebar {
+    top: calc(var(--topbar-height, 44px) + 4px); bottom: 8px; right: 8px; left: auto;
+    width: min(320px, 42vw);
+    max-height: none;
+    padding: 0; gap: 12px;
+    background: none; border-radius: 0;
+  }
+  .sidebar.sidebar--collapsed { top: calc(var(--topbar-height, 44px) + 4px); bottom: auto; }
+  .panel-toggle { flex-direction: row; min-height: 0; border-radius: 999px; }
+  .panel-toggle__grip { display: none; }
+  .topbar { padding: 6px 12px; }
+  .overlay { top: auto; right: auto; bottom: 8px; left: 8px; max-width: 46vw; }
+  .maplibregl-ctrl-bottom-right { top: auto; bottom: 0; }
+  .panel { padding: 12px 14px; }
+  .panel__title { font-size: 16px; }
+  .facts { gap: 8px 12px; }
+}
+
+.loading {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 16px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  background: rgba(23, 28, 34, 0.94);
+  color: var(--muted);
+  font-size: 13px;
+  z-index: 2;
+}
+
+.toast {
+  position: absolute;
+  top: calc(var(--topbar-height, 120px) + 8px);
+  left: 12px; right: 12px;
+  z-index: 7;
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 12px;
+  background: rgba(40, 22, 24, 0.97);
+  color: #fca5a5;
+  font-size: 13px;
+  backdrop-filter: blur(10px);
+}
+.toast button {
+  flex: none; padding: 0 4px; min-width: 32px; min-height: 32px;
+  border: 0; background: none; color: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+}
+/* left + margin-left:auto: stays right-aligned but can never cover the zoom buttons. */
+@media (min-width: 721px) { .toast { left: 60px; right: 420px; max-width: 380px; margin-left: auto; } }
+
+.panel-toggle--alert { background: #b4232a; color: #fff; border-color: transparent; }
+.panel-toggle--alert .panel-toggle__grip { background: rgba(255, 255, 255, 0.6); }
+.button--block { display: block; width: 100%; margin-top: 14px; text-align: center; }
+
+/* ----------------------------------------------------- accessibility */
+/* Explicit ring: the UA default is 1px and vanishes on the dark panels. */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid #f8fafc;
+  outline-offset: 2px;
+}
+.maplibregl-canvas:focus-visible { outline: 2px solid #f8fafc; outline-offset: -2px; }
+.maplibregl-ctrl-group button:focus:focus-visible { box-shadow: 0 0 0 2px #f8fafc; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* The chip wrapper only carries an id for aria-controls; layout stays flat. */
+.legend__layers { display: contents; }
+
+/*
+ * MapLibre honours this for easeTo/fitBounds itself; the remaining motion is
+ * its popup/marker transitions and the sidebar's smooth scroll.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The layer chip's dot carries the heat ramp itself rather than one colour:
+   the layer has no single colour to stand for. */
+.chip__dot--heat {
+  background: linear-gradient(90deg, #3b82f6 0%, #a855f7 45%, #f4723a 75%, #ef4444 100%);
+}
+
+.heat-top { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.heat-top li { position: relative; padding: 4px 8px; border-radius: 4px; overflow: hidden; }
+.heat-top__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.35), rgba(168, 85, 247, 0.18));
+  border-radius: 4px;
+}
+.heat-top__label { position: relative; font-size: 13px; color: var(--muted); }
+
+/* Live figures, pinned above the layer chips so both stay clear of the sheet.
+   pointer-events: none throughout — this is a readout, and a strip that eats
+   map taps is the legend bug all over again. */
+.live {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: min(60vw, 420px);
+  pointer-events: none;
+}
+.live__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(23, 28, 34, 0.82);
+  border: 1px solid var(--panel-edge);
+  backdrop-filter: blur(6px);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.live__item strong { color: var(--text); font-weight: 650; font-variant-numeric: tabular-nums; }
+.live__item--muted { font-style: italic; }
+.live__pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--free);
+  box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.6);
+  animation: live-pulse 2.4s ease-out infinite;
+}
+@keyframes live-pulse {
+  70% { box-shadow: 0 0 0 7px rgba(34, 211, 238, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .live__pulse { animation: none; } }
+
+@media (max-width: 620px) {
+  .live__item { font-size: 11px; padding: 3px 8px; }
+}
+
+/* ---- report ---- */
+.report__figures {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; margin: 12px 0 0; padding: 0;
+  background: var(--panel-edge); border: 1px solid var(--panel-edge); border-radius: 8px;
+  overflow: hidden;
+}
+.report__figures > div { background: var(--panel); padding: 8px 10px; }
+.report__figures dt {
+  font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 2px;
+}
+.report__figures dd {
+  margin: 0; font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums;
+}
+.report__unit { font-size: 12px; font-weight: 400; color: var(--muted); }
+
+.report__block { margin-top: 14px; }
+.report__label {
+  margin: 0 0 6px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+
+/* 24 bars, one per hour. Flex rather than SVG: the row has to survive a narrow
+   phone, and a viewBox that does not stretch clips its own labels. */
+.chart {
+  position: relative;
+  display: flex; align-items: flex-end; gap: 2px;
+  height: 64px; padding: 0 1px;
+}
+.chart__now {
+  position: absolute; top: -3px; bottom: -3px; width: 2px;
+  margin-left: -1px; border-radius: 1px;
+  background: var(--warn);
+  box-shadow: 0 0 0 1px rgba(15, 18, 22, 0.7);
+}
+.chart__bar {
+  flex: 1 1 0; min-width: 0; border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg, #a855f7, #3b82f6);
+  opacity: 0.75;
+}
+.chart--days { height: 48px; gap: 1px; }
+.chart__bar--today { background: linear-gradient(180deg, var(--warn), var(--paid)); opacity: 1; }
+.chart__axis {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--muted); margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.chart__caption {
+  display: flex; justify-content: space-between; gap: 8px;
+  margin: 6px 0 0; font-size: 12px; color: var(--muted);
+}
+.chart__caption-right { margin-left: auto; }
+
+.heat-top__value { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--text); }
+.heat-top__label { display: flex; align-items: baseline; gap: 8px; width: 100%; }
+.heat-top__sub { position: relative; display: block; font-size: 11.5px; color: var(--muted); }
+
+/* ---- Melde-Sheet ----
+   Vollbild auf dem Handy, zentriertes Panel auf dem Desktop. Die Karte bleibt
+   dahinter bedienbar: ein Tipp darauf setzt den Anker, und das Sheet nimmt ihn
+   als erste Vorauswahl auf, statt sich zu schließen. */
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+}
+.sheet__head {
+  display: flex; align-items: center; gap: 8px;
+  padding: max(10px, env(safe-area-inset-top)) 14px 10px;
+  border-bottom: 1px solid var(--panel-edge);
+}
+.sheet__back {
+  width: 40px; height: 40px; flex: none;
+  display: grid; place-items: center;
+  font-size: 26px; line-height: 1;
+  background: transparent; border: 0; border-radius: 50%;
+  color: var(--text); cursor: pointer;
+}
+.sheet__back:hover { background: var(--panel); }
+.sheet__title { margin: 0; font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
+
+.sheet__body { flex: 1; overflow-y: auto; padding: 14px; -webkit-overflow-scrolling: touch; }
+.sheet__label {
+  margin: 0 0 8px; font-size: 13px; font-weight: 650;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.sheet__required {
+  margin-left: 6px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; color: var(--danger);
+}
+.sheet__group {
+  display: flex; align-items: center; gap: 6px;
+  margin: 16px 0 6px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+
+.sheet__search {
+  width: 100%; margin-top: 12px; padding: 12px 14px;
+  font: inherit; font-size: 16px; /* unter 16px zoomt iOS beim Fokus hinein */
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--panel-edge); border-radius: 10px;
+}
+.sheet__search:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.sheet__options { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.sheet__option {
+  width: 100%; min-height: 56px; /* Fingergröße, nicht Textgröße */
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 10px 14px; text-align: left; cursor: pointer;
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--panel-edge); border-radius: 10px;
+}
+.sheet__option:hover { border-color: var(--muted); }
+.sheet__option--on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--panel)); }
+.sheet__option-label { font-size: 16px; font-weight: 600; }
+.sheet__option-detail { font-size: 13px; color: var(--muted); }
+.sheet__empty, .sheet__hint { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+
+.sheet__foot {
+  padding: 12px 14px max(14px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--panel-edge);
+  background: var(--bg);
+}
+.sheet__submit { width: 100%; min-height: 52px; font-size: 16px; }
+/* Neutral, nicht blass-blau: ein abgeschwächter Primärknopf sieht aus wie ein
+   drückbarer, und genau diese Verwechslung hat hier schon zweimal Zeit gekostet. */
+.sheet__submit:disabled {
+  background: var(--panel);
+  border-color: var(--panel-edge);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.sheet__note { margin: 8px 0 0; font-size: 12px; color: var(--muted); text-align: center; }
+
+@media (min-width: 721px) {
+  .sheet {
+    inset: auto; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: min(440px, calc(100vw - 32px)); max-height: min(80vh, 720px);
+    border: 1px solid var(--panel-edge); border-radius: 14px;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Feedback-Sheet: nutzt die Sheet-Grundlage, ergänzt nur, was es zusätzlich braucht. */
+.sheet__aside {
+  margin-left: auto; padding: 8px 12px;
+  font: inherit; font-size: 14px; font-weight: 600;
+  color: var(--accent); background: transparent;
+  border: 0; border-radius: 8px; cursor: pointer;
+}
+.sheet__aside:hover { background: var(--panel); }
+
+.segmented {
+  display: flex; gap: 4px; padding: 4px;
+  background: var(--panel); border: 1px solid var(--panel-edge); border-radius: 10px;
+}
+.segmented__item {
+  flex: 1; min-height: 44px; padding: 8px 10px;
+  font: inherit; font-size: 15px; font-weight: 600;
+  color: var(--muted); background: transparent;
+  border: 0; border-radius: 7px; cursor: pointer;
+}
+.segmented__item--on { color: var(--text); background: var(--bg); box-shadow: inset 0 0 0 1px var(--panel-edge); }
+
+.sheet__label--field { margin-top: 18px; display: block; text-transform: none; letter-spacing: 0; font-size: 15px; }
+.sheet__textarea {
+  width: 100%; padding: 12px 14px; resize: vertical;
+  font: inherit; font-size: 16px; /* unter 16px zoomt iOS beim Fokus hinein */
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--panel-edge); border-radius: 10px;
+}
+.sheet__textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sheet__counter { margin: 6px 0 0; font-size: 12px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.sheet__error { margin: 12px 0 0; padding: 10px 12px; font-size: 13px; color: var(--text); background: color-mix(in srgb, var(--danger) 18%, var(--panel)); border-radius: 8px; }
+.sheet__done { margin: 24px 0 8px; font-size: 22px; font-weight: 650; }
+
+/* Sieht aus wie die Links daneben, ist aber ein Knopf — er öffnet etwas,
+   statt irgendwohin zu führen. */
+.provenance__link {
+  padding: 0; font: inherit; color: var(--accent);
+  background: none; border: 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+
+/* Zahnrad in der Kopfzeile — dieselbe Höhe wie die Knöpfe daneben, damit die
+   Zeile nicht ausfranst. */
+.topbar__icon {
+  width: 40px; height: 40px; flex: none;
+  display: grid; place-items: center;
+  font-size: 18px; line-height: 1;
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--panel-edge); border-radius: 10px; cursor: pointer;
+}
+.topbar__icon:hover { border-color: var(--muted); }
+
+/* Standort-Vordialog: sitzt unten, wo der Daumen ist, nicht oben beim
+   Systemdialog — die beiden sollen nicht verwechselt werden. */
+.prompt {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 18;
+  max-width: 440px; margin: 0 auto;
+  padding: 16px 18px;
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--panel-edge); border-radius: 14px;
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.75);
+}
+.prompt__title { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 18px; font-weight: 650; }
+.prompt__pin { color: var(--danger); font-size: 15px; }
+.prompt__body { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+.prompt__actions { display: flex; gap: 8px; }
+.prompt__actions .button { flex: 1; margin-top: 0; min-height: 46px; }
+.prompt__note { margin: 10px 0 0; font-size: 12px; color: var(--muted); text-align: center; }
+
+/* Hinweiskarte im Sheet, Gegenstück zu FreiFahrens „ersetzt kein Ticket". */
+.callout {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin: 0 0 18px; padding: 12px 14px;
+  font-size: 13.5px; line-height: 1.5;
+  background: color-mix(in srgb, var(--warn) 12%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--panel-edge));
+  border-radius: 10px;
+}
+.callout__mark { color: var(--warn); font-size: 15px; line-height: 1.4; }
+
+.faq { display: grid; gap: 6px; }
+.faq__item { background: var(--panel); border: 1px solid var(--panel-edge); border-radius: 10px; }
+.faq__item summary {
+  padding: 12px 14px; min-height: 48px;
+  display: flex; align-items: center;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.faq__item summary::marker { color: var(--muted); }
+.faq__answer { padding: 0 14px 14px; font-size: 14px; color: var(--muted); line-height: 1.6; }
+.faq__answer code { font-size: 0.9em; }
+
+.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.rows__item {
+  width: 100%; min-height: 52px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; text-align: left; text-decoration: none; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 600;
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--panel-edge); border-radius: 10px;
+}
+.rows__item:hover { border-color: var(--muted); }
+.rows__chevron { color: var(--muted); font-size: 18px; }
+
+.legal { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; font-size: 13px; }
+
+/* Ruhetags-Hinweis: sitzt unter der Statuszeile, nimmt die volle Breite der
+   Kopfzeile ein und verschwindet auf Wunsch. Bewusst kein Warnton — das ist
+   eine Erklärung, keine Störung. */
+.daynote {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin: 0 0 10px; padding: 10px 12px;
+  font-size: 12.5px; line-height: 1.45; color: var(--muted);
+  background: var(--panel); border: 1px solid var(--panel-edge); border-radius: 8px;
+}
+.daynote button {
+  margin-left: auto; flex: none;
+  width: 26px; height: 26px; display: grid; place-items: center;
+  font-size: 17px; line-height: 1; cursor: pointer;
+  color: var(--muted); background: transparent; border: 0; border-radius: 6px;
+}
+.daynote button:hover { color: var(--text); background: var(--bg); }
+
+
+/* Leiste unter dem Suchfeld: nur Zahnrad, Status und Standort. Alles schwebt
+   über der Karte, statt eine Balkenzeile zu belegen — wie bei FreiFahren. */
+.hud {
+  display: flex; align-items: center; gap: 8px;
+  pointer-events: none;
+}
+.hud > * { pointer-events: auto; }
+.hud .topbar__stat {
+  flex: 0 1 auto; margin: 0 auto; padding: 6px 12px;
+  font-size: 12.5px; color: var(--muted); text-align: center;
+  background: rgba(23, 28, 34, 0.86);
+  border: 1px solid var(--panel-edge); border-radius: 999px;
+  backdrop-filter: blur(6px);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.topbar__icon--accent { background: var(--accent); border-color: transparent; color: #fff; }
+.topbar__icon--accent:hover { background: #1d4ed8; border-color: transparent; }
+.topbar__icon:disabled { opacity: 0.6; cursor: progress; }
+
+/* ------------------------------------------------------- Ablegen und Updates */
+
+/* Wie `.daynote` eine Karte in der Seitenleiste, nicht ein Balken über der
+   Karte: Ein Installationsbanner, das die Ansicht überdeckt, ist der Grund,
+   warum solche Banner reflexhaft weggetippt werden. */
+.installbar {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0 0 10px; padding: 10px 12px;
+  background: var(--panel); border: 1px solid var(--panel-edge); border-radius: 8px;
+}
+.installbar__icon { flex: none; border-radius: 6px; }
+.installbar__text { display: grid; gap: 2px; min-width: 0; }
+.installbar__text strong { font-size: 13px; }
+.installbar__text span { font-size: 12px; line-height: 1.4; color: var(--muted); }
+.installbar__go { flex: none; padding: 7px 12px; font-size: 12px; }
+.installbar__close {
+  flex: none; width: 26px; height: 26px; display: grid; place-items: center;
+  font-size: 17px; line-height: 1; cursor: pointer;
+  color: var(--muted); background: transparent; border: 0; border-radius: 6px;
+}
+.installbar__close:hover { color: var(--text); background: var(--bg); }
+
+.install { display: grid; gap: 8px; margin-bottom: 6px; }
+.install__note, .install__done {
+  margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted);
+}
+.install__steps {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+  margin: 0; padding: 0; list-style: none;
+  font-size: 12.5px; color: var(--muted);
+  counter-reset: step;
+}
+.install__steps li { display: flex; align-items: center; gap: 6px; }
+.install__steps li::before {
+  counter-increment: step; content: counter(step);
+  flex: none; width: 18px; height: 18px; display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+  background: var(--accent); border-radius: 50%;
+}
+/* Der Pfeil trennt die Schritte, ohne dass er vorgelesen wird. */
+.install__steps li + li::after { content: none; }
+
+/* Dritte Zeile der Kopfzeile statt schwebender Meldung: Die Höhe der Kopfzeile
+   wird gemessen, also rückt alles darunter von selbst nach — eine über die
+   Karte gelegte Meldung müsste jeder anderen Ebene ausweichen. */
+.updatebar {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 7px 12px;
+  font-size: 12.5px; color: var(--text);
+  background: rgba(23, 28, 34, 0.92);
+  border: 1px solid var(--panel-edge); border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+.updatebar__go {
+  padding: 4px 10px; font-size: 12px; font-weight: 650; cursor: pointer;
+  color: #fff; background: var(--accent); border: 0; border-radius: 999px;
+}
+.updatebar__go:hover { background: #1d4ed8; }
+
+/* ------------------------------------------------------------------- Beta */
+
+.beta {
+  flex: none; padding: 5px 10px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #fde68a; background: rgba(120, 53, 15, 0.85);
+  border: 1px solid rgba(253, 230, 138, 0.35); border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+.callout--beta { border-color: rgba(253, 230, 138, 0.35); }
+.callout--beta .callout__mark { color: #fbbf24; }

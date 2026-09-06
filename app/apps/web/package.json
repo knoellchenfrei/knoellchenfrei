@@ -1,0 +1,30 @@
+{
+  "name": "@parkingzone/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:artifact": "BUILD_TARGET=artifact vite build --outDir dist-artifact",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test",
+    "e2e:report": "playwright show-report"
+  },
+  "dependencies": {
+    "@parkingzone/core": "workspace:*",
+    "maplibre-gl": "^5.9.0",
+    "pmtiles": "4.5.0",
+    "protomaps-themes-base": "4.5.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "vite": "^7.1.0"
+  }
+}

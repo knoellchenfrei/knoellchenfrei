@@ -1,0 +1,26 @@
+name: Falsche Daten
+description: Tarif, Zeiten oder Zonengrenze stimmen nicht
+labels: [daten]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Die App gibt den amtlichen Feed wieder. Weicht sie von der
+        **Beschilderung vor Ort** ab, ist beides interessant: ein Fehler bei uns
+        oder ein Fehler in der Quelle.
+  - type: input
+    id: zone
+    attributes:
+      label: Zonennummer
+    validations: { required: true }
+  - type: textarea
+    id: app
+    attributes:
+      label: Was die App sagt
+    validations: { required: true }
+  - type: textarea
+    id: sign
+    attributes:
+      label: Was das Schild sagt
+      description: Wortlaut, gern mit Foto.
+    validations: { required: true }

@@ -1,0 +1,98 @@
+# Rollt Worker und Web-App aus, sobald die Zugangsdaten im Repository liegen.
+#
+# Der Workflow ist absichtlich so gebaut, dass er OHNE eingerichtetes
+# Cloudflare-Konto sauber durchläuft und die Schritte überspringt, statt rot zu
+# werden: ein Fork oder ein Pull Request soll nicht an fehlenden Secrets
+# scheitern. Was fehlt, sagt der Zusammenfassungsschritt am Ende.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+
+      - name: Abhängigkeiten
+        working-directory: app
+        run: pnpm install --frozen-lockfile
+
+      # Ohne diesen Schritt ginge eine kaputte Version live; die Prüfungen
+      # laufen in ci.yml zwar auch, aber nicht zwingend vor diesem Workflow.
+      - name: Prüfen
+        working-directory: app
+        run: pnpm typecheck && pnpm test
+
+      - name: Fehlende Zugangsdaten feststellen
+        id: gate
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Worker ausrollen
+        if: steps.gate.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: app/apps/api
+
+      - name: Web-App bauen
+        if: steps.gate.outputs.ready == 'true'
+        working-directory: app
+        env:
+          # Zur Buildzeit, nicht zur Laufzeit: ohne diesen Wert läuft die App im
+          # lokalen Modus und teilt nichts.
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+        run: pnpm --filter @parkingzone/web build
+
+      - name: Web-App ausrollen
+        if: steps.gate.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy app/apps/web/dist --project-name=parkingzone
+
+      - name: Zusammenfassung
+        run: |
+          if [ "${{ steps.gate.outputs.ready }}" = "true" ]; then
+            echo "Worker und Web-App ausgerollt." >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "### Nicht ausgerollt — Zugangsdaten fehlen"
+              echo
+              echo "Unter *Settings → Secrets and variables → Actions* anlegen:"
+              echo
+              echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
+              echo '- `CLOUDFLARE_ACCOUNT_ID` — steht im Cloudflare-Dashboard rechts in der Seitenleiste'
+              echo '- `VITE_API_BASE` — z. B. `https://parkingzone-api.<konto>.workers.dev`'
+              echo
+              echo 'Details: [docs/hosting.md](docs/hosting.md)'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

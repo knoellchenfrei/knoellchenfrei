@@ -1,0 +1,29 @@
+name = "parkingzone-api"
+main = "src/worker.ts"
+compatibility_date = "2026-09-01"
+
+# Free tier: 100k requests/day, 10ms CPU per request. This worker does one
+# upstream fetch on a cache miss and cheap JSON work otherwise, so the ceiling
+# is requests, not CPU.
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "REPLACE_WITH_KV_ID"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "parkingzone"
+database_id = "REPLACE_WITH_D1_ID"
+
+# Purges expired sightings hourly so the table never becomes a movement history.
+[triggers]
+crons = ["7 * * * *"]
+
+[observability]
+enabled = true
+
+[vars]
+# Comma-separated. Unset means same-origin only — the worker fails closed
+# rather than defaulting to a wildcard.
+ALLOWED_ORIGINS = ""
+

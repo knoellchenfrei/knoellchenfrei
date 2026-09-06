@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [develop, master, claude/github-repo-integration-cqhab3]
+  # Refresh the frozen data snapshot every morning. The Berlin services publish
+  # zone changes irregularly (new zones 58 and 68 arrived in 2026), so a daily
+  # rebuild keeps the app current without any server.
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+
+      - name: Fetch current Berlin data
+        run: pnpm --filter @parkingzone/ingest fetch
+        continue-on-error: true
+
+      - name: Rebuild data snapshot
+        run: pnpm --filter @parkingzone/ingest build-data
+        continue-on-error: true
+
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm --filter @parkingzone/web build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

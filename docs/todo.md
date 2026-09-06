@@ -1,0 +1,253 @@
+# Todo
+
+Offene Punkte in der Reihenfolge, in der sie sinnvoll sind. Getroffene
+Entscheidungen mit Begründung stehen in [entscheidungen.md](entscheidungen.md);
+Eigenheiten der Arbeitsumgebung in [../CLAUDE.md](../CLAUDE.md). Was hier steht, ist
+entschieden; was noch zur Debatte steht, steht in
+[oeffentlich-machen.md](oeffentlich-machen.md).
+
+Zeichen: **du** = geht nur mit deinem Konto, deiner Unterschrift oder deinem
+Geld. **ich** = kann ich übernehmen, sobald der Vorlauf steht.
+
+## 1. Trägerschaft: Verein gründen — **du**
+
+Das Vorbild ist eingetragen: **FreiFahren e.V.**, Amtsgericht Charlottenburg,
+VR 42496, finanziert über Spenden, ohne Werbung und ohne Abo
+([Impressum](https://freifahren.org/impressum/)). Genau diese Form löst drei
+Probleme, die eine Privatperson als Betreiber nicht löst:
+
+| Problem | Privatperson | e.V. |
+| --- | --- | --- |
+| Haftung für Inhalte und Ausfälle | privat, unbeschränkt | Vereinsvermögen |
+| Name und Anschrift im Impressum | deine, öffentlich | die des Vereins |
+| Spenden annehmen | Einkommen | Vereinskonto, bei Gemeinnützigkeit mit Bescheinigung |
+| Wenn du keine Lust mehr hast | Projekt ist tot | Vorstand wechselt |
+
+Was dafür nötig ist — die Zahlen sind Größenordnungen, nicht der Kostenvoranschlag
+deines Notariats:
+
+- [ ] **Sieben Gründungsmitglieder** finden. Das ist die harte Untergrenze für
+      die Eintragung (§ 56 BGB) und in der Praxis die Hürde, an der solche
+      Vorhaben scheitern — nicht das Geld.
+- [ ] **Satzung** schreiben. Zweck, Sitz, Name, Ein- und Austritt, Beiträge,
+      Vorstand, Mitgliederversammlung, Auflösung. Für die Gemeinnützigkeit muss
+      der Zweck in der Satzung wörtlich einem Katalogzweck des § 52 Abs. 2 AO
+      entsprechen.
+- [ ] **Gründungsversammlung** abhalten, Protokoll unterschreiben.
+- [ ] **Anmeldung beim Vereinsregister**, notariell beglaubigt (§ 77 BGB).
+      Das geht seit dem 1. August 2023 **online**: Das Digitale-Register-Gesetz
+      hat § 77 Abs. 2 BGB eingefügt, damit fällt die Vereinsanmeldung unter das
+      Verfahren nach § 40a BeurkG — öffentliche Beglaubigung per
+      Videokommunikation über das System der Bundesnotarkammer. Nötig sind ein
+      Ausweis mit eID, ein Termin und eine qualifizierte elektronische Signatur.
+      Zuständig für ganz Berlin ist das Amtsgericht Charlottenburg.
+      Beglaubigung rund 40–70 €, Eintragung rund 75–100 €, Bekanntmachung
+      10–30 € — zusammen etwa 150 €. Bei anerkannter Gemeinnützigkeit entfällt
+      die Eintragungsgebühr.
+- [ ] **Gemeinnützigkeit prüfen lassen** — vom Finanzamt für Körperschaften I,
+      Berlin. Offen und ehrlich: Der naheliegende Katalogzweck wäre
+      *Verbraucherberatung und Verbraucherschutz* (§ 52 Abs. 2 Nr. 16 AO), und
+      dazu passt eine App, die sagt, was Parken kostet und wie lange man stehen
+      darf. Die Kontroll-Heatmap passt schlechter dazu, weil sie sich als
+      Hilfestellung beim Umgehen von Kontrollen lesen lässt. Das ist keine
+      Formalie, sondern die eine Frage, die vorab geklärt gehört — mit
+      Steuerberatung, nicht mit einer Websuche.
+- [ ] **Vereinskonto** eröffnen, Spendenweg entscheiden.
+- [ ] Erst danach: Impressum und Datenschutzerklärung auf den Verein umschreiben
+      (die Platzhalter stehen in [impressum.md](impressum.md) und
+      [datenschutz.md](datenschutz.md)).
+
+**In zehn Minuten geht das nicht.** Der Notartermin ist online möglich, alles
+andere nicht: sieben Gründungsmitglieder, eine Versammlung mit Protokoll, eine
+Satzung — und danach das Amtsgericht, das Wochen bis Monate braucht. Der Verein
+existiert erst mit der Eintragung.
+
+Der schnelle Ausweg trägt nicht: Ein **Verein ohne Rechtspersönlichkeit** ist in
+zehn Minuten gegründet (Satzung, zwei Leute, kein Notar, kein Register). Seit
+dem MoPeG zum 1. Januar 2024 haften seine Mitglieder auch nicht mehr persönlich
+— aber § 54 BGB lässt die **Handelndenhaftung** stehen: Wer für den Verein
+handelt, haftet persönlich. Das ist genau die Person, die die App betreibt und
+im Impressum steht. Der nicht eingetragene Verein löst also das eine Problem
+nicht, wegen dem er hier in Frage käme.
+
+(Recherchiert, keine Rechtsberatung. Die Satzung und die Frage der
+Gemeinnützigkeit gehören vor einen Notar und eine Steuerberatung.)
+
+### Bis dahin: geschlossene Beta
+
+Entschieden. Umgesetzt ist der Riegel, nicht bloß ein Hinweis:
+
+- `noindex, nofollow, noarchive` im Dokument und eine `robots.txt`, die alles
+  sperrt. Beides hängt an einem Schalter, nicht an einem Menschen: Ohne
+  `PUBLIC_LAUNCH=1` baut Vite die Beta-Variante. Zum Start einmal
+  `PUBLIC_LAUNCH=1 pnpm build` — dann fällt beides weg.
+- Eine „Beta"-Pille in der Kopfzeile und ein Absatz in den Einstellungen, der
+  sagt, dass die App von einer Privatperson betrieben wird, bis der Verein
+  eingetragen ist.
+- Der Link wird nicht beworben. Weitergeben an Bekannte ist der Zweck, posten
+  nicht.
+
+- [ ] **Impressum-Dienstleister buchen.** Empfehlung: `online-impressum.de`
+      (Clear-Media UG, Europaring 90, 53757 Sankt Augustin), ab 3 €/Monat —
+      derselbe Anbieter, den FreiFahren e.V. nutzt. Das ist kein Werbeurteil,
+      sondern der einzige belastbare Hinweis: Ein vergleichbares Berliner
+      Projekt fährt damit seit Jahren, samt öffentlicher Aufmerksamkeit und
+      Reibung mit der BVG.
+      Grenzen, die dazugehören: § 5 DDG (seit 14. Mai 2024 an der Stelle des
+      alten § 5 TMG) verlangt eine ladungsfähige Anschrift. Ein reiner
+      Briefkasten ohne Zustellungsbevollmächtigten genügt dem nicht — die
+      Anbieter unterscheiden sich genau darin. Und die **Haftung bleibt bei
+      dir**: Der Dienst versteckt die Anschrift, er ersetzt den Verein nicht.
+
+Reihenfolge zählt: Der Verein sollte stehen, **bevor** die App öffentlich
+beworben wird. Ein Impressum mit deiner Privatanschrift lässt sich später nicht
+mehr zurücknehmen — es steht dann in Archiven.
+
+## 2. Domains — bestellt, Rest offen — **du**
+
+Am 6. September 2026 bestellt. Begründung der Auswahl in
+[entscheidungen.md](entscheidungen.md#name-und-adressen).
+
+| Domain | Rolle | Stand |
+| --- | --- | --- |
+| `knoellchenfrei.de` | **liefert aus** | registriert |
+| `knöllchenfrei.de` — `xn--knllchenfrei-5ib.de` | 301 | registriert |
+| `knölchenfrei.de` — `xn--knlchenfrei-sfb.de` | 301 | registriert |
+| `knoelchenfrei.de` | 301 | registriert |
+| `knoellchenfrei.org` | Vereinsadresse, 301 | zuletzt noch ausstehend |
+
+Die Punycode-Formen stehen dabei, weil Cloudflare und die meisten Werkzeuge die
+Umlautdomains so verlangen.
+
+- [ ] **Auto-Renew für alle fünf einschalten.** Eine abgelaufene Hauptdomain
+      wird binnen Stunden von Drop-Catchern gegriffen. Das ist das einzige echte
+      Risiko an diesem Paket und kostet einen Klick.
+- [ ] **Cloudflare-Konto anlegen, alle fünf als eigene Zone hinzufügen**, dann
+      beim Registrar die Nameserver umstellen. Eigene Zone auch für die reinen
+      Weiterleitungen — sonst gibt es für sie kein Zertifikat, und
+      `https://knöllchenfrei.de` läuft in eine Warnung statt in ein Redirect.
+- [ ] **Weiterleitungen bei Cloudflare einrichten, nicht beim Registrar.**
+      Cloudflare *Redirect Rules* sind kostenlos und machen ein sauberes 301 auf
+      `https://knoellchenfrei.de/$1`. Registrar-Weiterleitungen arbeiten oft mit
+      Frames oder brechen auf der Apex-Domain bei HTTPS.
+- [ ] Falls `.org` länger hängt: im Registrar-Konto nachsehen, ob eine
+      Bestätigungsmail offen ist. Bei gTLDs ist eine unbestätigte
+      E-Mail-Adresse der häufigste Grund für ein stehendes „pending".
+
+## 3. Umzug ins neue Repository — **du**, danach **ich**
+
+Entschieden: **`github.com/knoellchenfrei/knoellchenfrei`** — Organisation und
+Repository gleich benannt, klein geschrieben, wie bei
+`github.com/FreiFahren/FreiFahren`.
+
+Warum nicht `knoellchenfrei/app`: Repository-Namen wandern in Verzeichnisse, in
+CI-Konfigurationen und in `git remote -v`, und dort fällt das Präfix der
+Organisation weg. Ein Ordner namens `app` auf der Platte sagt nichts. Die
+Doppelnennung in der Adresse ist der Preis dafür, dass der Name überall dort
+noch trägt, wo er allein steht. Getrennte Repositories brauchen wir absehbar
+nicht: Der Kachel-Bau und der Telegram-Worker teilen sich Typen und
+Deploy-Werkzeug mit dem Rest und gehören als Pakete in dasselbe Monorepo.
+
+- [ ] Organisation `knoellchenfrei` auf GitHub anlegen. Ob der Name frei ist,
+      zeigt verlässlich erst das Formular — die Suche, die mir zur Verfügung
+      steht, findet nur Nutzerkonten, keine Organisationen.
+- [ ] Repository `knoellchenfrei` darin anlegen, leer, öffentlich.
+- [ ] **Zugriff freigeben — keine Einladung.** Es gibt kein GitHub-Konto
+      „Claude", das man in die Organisation aufnehmen könnte; der Zugriff läuft
+      über die Claude-GitHub-App. Auf claude.ai unter *Einstellungen →
+      Connectors → GitHub* neu verbinden und dabei die Organisation auswählen;
+      als Inhaber zusätzlich unter `claude.ai/admin-settings/claude-tag`
+      festlegen, welche Repositories erreichbar sind.
+- [ ] **Neue Claude-Sitzung mit dem neuen Repository als Quelle starten.** Die
+      laufende Sitzung ist an den Eigentümer `herbeus` gebunden und kann ein
+      Repository unter einem anderen Eigentümer nicht nachladen — sie antwortet
+      darauf mit „cross-tier adds are not supported".
+- [ ] **Umzug ausführen:** `./scripts/umzug.sh Knoellchenfrei/Knoellchenfrei`
+      im alten Klon. Das Skript schreibt die vier Stellen mit der alten
+      Repository-Adresse um, legt einen Branch mit genau einem Commit an und
+      pusht **nicht** von selbst — es nennt den Befehl, damit du vorher
+      hineinsehen kannst. Der alte Klon bleibt unangetastet.
+Grund für die saubere Historie: In den alten Commits steht ein Passwort von
+2012. Es ist längst wertlos, aber es steht dort, und ein neues Repository ist
+der einzige Weg, es loszuwerden, ohne die Historie eines bestehenden zu
+zerschreiben.
+
+## 4. Eigene Kartenkacheln — **du** (R2), der Rest ist fertig
+
+- [x] **MapLibre kann Vektorkacheln.** Ist `VITE_TILES_URL` gesetzt, zeichnet
+      die App aus einem PMTiles-Archiv statt aus OSM-Rasterkacheln — mit
+      deutscher Beschriftung und einem Stil, der zur Oberfläche passt. Ohne den
+      Wert bleibt alles wie bisher, und der Vektor-Teil liegt nicht einmal im
+      Bündel.
+- [x] **Bau-Skript steht:** `app/packages/ingest/scripts/build-tiles.sh`.
+      Schneidet Berlin aus dem globalen Tagesarchiv von Protomaps — kein
+      eigener OSM-Import nötig.
+- [ ] **R2-Eimer anlegen**, Archiv hochladen, `tiles.knoellchenfrei.de`
+      davorhängen. Zwei Einstellungen entscheiden, ob überhaupt ein Byte
+      ankommt: CORS für die App-Domain und durchgereichte Range-Requests.
+      Schritte in [hosting.md](hosting.md#4-eigene-kartenkacheln).
+
+Warum das nicht warten sollte: Die Kacheln kommen zurzeit von
+`tile.openstreetmap.org`. Deren Nutzungsrichtlinie deckt ausgelieferte
+Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen an einen Dritten,
+über den unsere Datenschutzerklärung Auskunft geben muss. Details in
+[hosting.md](hosting.md).
+
+## 5. Zweite Stadt vorbereiten — **ich**
+
+Analyse der Datenlage in [staedte.md](staedte.md). Kurz: **Hamburg zuerst**,
+danach München — das sind die einzigen beiden Städte, für die ein konkreter
+Datensatz belegt ist. Alles darunter ist bisher nur ein Portal, in dem noch
+niemand nachgesehen hat.
+
+- [ ] Stadt als Konfiguration statt als Konstante: Datenquelle,
+      Kartenausschnitt, Grenzprüfung, Feiertagsland.
+- [ ] Feiertagskalender je Bundesland — der 8. März ist in Berlin Feiertag, in
+      Hamburg nicht.
+- [ ] Prüfliste aus [staedte.md](staedte.md) für Hamburg abarbeiten. Aus dieser
+      Umgebung sind die Portale gesperrt; die Analyse ist Recherche, kein Abruf.
+
+## 6. Telegram — **du** (Token), dann **ich**
+
+Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
+
+- [x] **Stufe 1: Bot, den man anschreibt — gebaut.** Route `/telegram` am
+      bestehenden Worker, kein zweiter Dienst. Ein gesendeter Standort wird über
+      denselben Pfad eingetragen wie eine Meldung aus der App; `/hilfe`
+      erklärt es; alles andere bekommt eine höfliche Absage. Die
+      Telegram-Nutzerkennung wird gehasht wie eine IP-Adresse und nur für die
+      Meldegrenze benutzt, die Chat-Kennung gar nicht gespeichert.
+      21 Unit-Tests auf dem Parser, weil dort fremder Text ankommt.
+- [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
+      im Worker hinterlegen — die Befehle stehen in
+      [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet
+      `/telegram` mit 404.
+- [ ] **Stufe 2: öffentliche Gruppen mitlesen.** Deutlich mehr Meldungen, aber
+      ungeprüfter Fremdtext. FreiFahren hängt dafür einen eigenen Dienst
+      (`report-gate`) vor jeden Schreibpfad; das brauchen wir dann auch, samt
+      einem Satz in der Datenschutzerklärung.
+**AtAdminBot ist angesehen — und hilft beim Melden nicht.** Nachgesehen am
+6. September 2026 unter
+`git.abfelbaum.dev/abfelbaum/bots/telegram/atadminbot`: Das ist ein
+**Moderationsbot**, kein Meldebot. Schreibt jemand `@admin` in eine Gruppe,
+benachrichtigt er die Administratoren; `/solve` schließt den Fall. Schlagworte
+des Projekts: `bot`, `group-administration`, `telegram`. Geschrieben in C#/.NET,
+AGPLv3, letzte Änderung Juni 2024, keine Sterne, keine Forks.
+
+Für die Community-Gruppe kann er später nützlich sein — für die Meldungen
+nicht, und in unseren Stack (TypeScript, Cloudflare Worker) passt ein
+eigenständiger .NET-Dienst nicht ohne zweite Betriebsumgebung. Unser Meldeweg
+bleibt Stufe 1 oben.
+
+Die Community ist davon unabhängig: Eine Telegram-Gruppe ist die Community, der
+Bot ist nur eine Datenleitung. Die Gruppe kann sofort aufmachen, der Bot muss
+warten, bis der Worker steht.
+
+## 7. Kleinkram — **ich**
+
+- [ ] Bilder für die Installations-Karte neu aufnehmen, sobald die Kacheln
+      erreichbar sind: `public/screenshots/` zeigt zurzeit die App ohne
+      Hintergrundkarte, weil die Aufnahme in einer Umgebung ohne Zugang zu
+      `tile.openstreetmap.org` entstanden ist. Befehl steht im Kopf von
+      `apps/web/scripts/make-screenshots.mjs`.
+- [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.

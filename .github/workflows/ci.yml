@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  check:
+    name: Typen, Tests, Coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Coverage (bricht unter den Schwellwerten ab)
+        run: pnpm test:coverage
+      - run: pnpm --filter @parkingzone/web build
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: app/packages/core/coverage/
+          retention-days: 14
+
+  e2e:
+    name: End-to-End
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @parkingzone/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @parkingzone/web exec playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: app/apps/web/test-results/
+          retention-days: 14
+
+  security:
+    name: Sicherheit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+
+      - name: Bekannte Schwachstellen in Abhängigkeiten
+        run: pnpm audit --audit-level moderate
+
+      - name: Keine offensichtlichen Secrets im ausgelieferten Bundle
+        run: |
+          pnpm --filter @parkingzone/web build
+          if grep -rIiE '(api[_-]?key|secret|password|token)["'"'"']?\s*[:=]\s*["'"'"'][A-Za-z0-9_\-]{16,}' apps/web/dist/assets/ ; then
+            echo "::error::Mögliches Secret im Bundle gefunden"
+            exit 1
+          fi
+          echo "Keine Treffer."

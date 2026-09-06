@@ -1,0 +1,63 @@
+{
+  "id": "./",
+  "name": "ParkingZone Berlin",
+  "short_name": "ParkingZone",
+  "description": "Berliner Parkzonen: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#101418",
+  "theme_color": "#101418",
+  "lang": "de",
+  "dir": "ltr",
+  "categories": ["navigation", "travel", "utilities"],
+  "launch_handler": { "client_mode": "navigate-existing" },
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/handy.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Karte mit Parkzonen und Status"
+    },
+    {
+      "src": "./screenshots/desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Karte, Zonendetails und Kontrollen der letzten Wochen"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Kontrolle melden",
+      "short_name": "Melden",
+      "description": "Eintragen, dass hier gerade kontrolliert wird",
+      "url": "./?start=melden",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Wo bin ich?",
+      "short_name": "Standort",
+      "description": "Zur eigenen Position springen und die Zone anzeigen",
+      "url": "./?start=standort",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Kontrollen der letzten Wochen",
+      "short_name": "Kontrollen",
+      "description": "Heatmap der gemeldeten Kontrollen öffnen",
+      "url": "./?start=kontrollen",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

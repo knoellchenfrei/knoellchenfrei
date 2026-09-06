@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-artifact/
+*.tsbuildinfo
+.env
+.env.local
+.raw/
+artifact.html
+coverage/
+test-results/
+playwright-report/

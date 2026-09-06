@@ -1,0 +1,40 @@
+name: Fehler melden
+description: Etwas funktioniert nicht wie beschrieben
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Für **Sicherheitslücken bitte kein Issue** — der Weg steht in
+        [SECURITY.md](../../blob/main/SECURITY.md).
+  - type: textarea
+    id: what
+    attributes:
+      label: Was passiert
+      description: Was du erwartet hast und was stattdessen geschah.
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes:
+      label: Schritte
+      placeholder: |
+        1. Karte antippen bei …
+        2. „Hier gesehen" drücken
+        3. …
+    validations: { required: true }
+  - type: input
+    id: zone
+    attributes:
+      label: Zone oder Ort
+      description: Falls es um eine bestimmte Parkzone geht — die Nummer hilft enorm.
+  - type: input
+    id: env
+    attributes:
+      label: Gerät und Browser
+      placeholder: iPhone 15, Safari 18 · Firefox 141 auf Linux
+  - type: checkboxes
+    id: source
+    attributes:
+      label: Datenlage
+      options:
+        - label: Ich habe geprüft, ob die Beschilderung vor Ort etwas anderes sagt als die App

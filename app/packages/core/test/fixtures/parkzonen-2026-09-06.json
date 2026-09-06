@@ -1,0 +1,826 @@
+[
+ {
+  "id": "parkzonen.1",
+  "parkzone": "1",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen. Die Höchstparkdauer rund um den Gendarmenmarkt ist auf 4 Stunden begrenzt."
+ },
+ {
+  "id": "parkzonen.2",
+  "parkzone": "2",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen. Die Höchstparkdauer rund um den Gendarmenmarkt ist auf 4 Stunden begrenzt."
+ },
+ {
+  "id": "parkzonen.3",
+  "parkzone": "3",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.4",
+  "parkzone": "4",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-20 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.5",
+  "parkzone": "5",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.6",
+  "parkzone": "6",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-20 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.7",
+  "parkzone": "7",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.8",
+  "parkzone": "8",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.10",
+  "parkzone": "10",
+  "bezirk": "Spandau",
+  "zeiten": "Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -17 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.11",
+  "parkzone": "11",
+  "bezirk": "Spandau",
+  "zeiten": "Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -17 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.12",
+  "parkzone": "12",
+  "bezirk": "Spandau",
+  "zeiten": "Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -17 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.13",
+  "parkzone": "13",
+  "bezirk": "Spandau",
+  "zeiten": "Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -17 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.14",
+  "parkzone": "14",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.15",
+  "parkzone": "15",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen. Die Höchstparkdauer rund um den Gendarmenmarkt ist auf 4 Stunden begrenzt."
+ },
+ {
+  "id": "parkzonen.16",
+  "parkzone": "16",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.18",
+  "parkzone": "18",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.19",
+  "parkzone": "19",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.20",
+  "parkzone": "20",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.21",
+  "parkzone": "21",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.22",
+  "parkzone": "22",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.23",
+  "parkzone": "23",
+  "bezirk": "Steglitz-Zehlendorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.24",
+  "parkzone": "24",
+  "bezirk": "Steglitz-Zehlendorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.25",
+  "parkzone": "25",
+  "bezirk": "Steglitz-Zehlendorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.26",
+  "parkzone": "26",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-20 Uhr/ Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.27",
+  "parkzone": "27",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-20 Uhr/ Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.28",
+  "parkzone": "28",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-20 Uhr/ Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.29",
+  "parkzone": "29",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-So 9-24 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.30",
+  "parkzone": "30",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.33",
+  "parkzone": "33",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.34",
+  "parkzone": "34",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.35",
+  "parkzone": "35",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.36",
+  "parkzone": "36",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.37",
+  "parkzone": "37",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.38",
+  "parkzone": "38",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.40",
+  "parkzone": "40",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.42",
+  "parkzone": "42",
+  "bezirk": "Pankow",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "2,00-3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.43",
+  "parkzone": "43",
+  "bezirk": "Pankow",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "2,00-3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.44",
+  "parkzone": "44",
+  "bezirk": "Pankow",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.45",
+  "parkzone": "45",
+  "bezirk": "Pankow",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.46",
+  "parkzone": "46",
+  "bezirk": "Pankow",
+  "zeiten": "Mo-Sa / 9-20 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.49",
+  "parkzone": "49",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.50",
+  "parkzone": "50",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.54",
+  "parkzone": "54",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": null
+ },
+ {
+  "id": "parkzonen.55",
+  "parkzone": "55",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-20 / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.60",
+  "parkzone": "60",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.61",
+  "parkzone": "61",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.63",
+  "parkzone": "63",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.64",
+  "parkzone": "64",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.65",
+  "parkzone": "65",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa, 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.66",
+  "parkzone": "66",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.67",
+  "parkzone": "67",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.68",
+  "parkzone": "68",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa, 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": null
+ },
+ {
+  "id": "parkzonen.69",
+  "parkzone": "69",
+  "bezirk": "Friedrichshain-Kreuzberg\n",
+  "zeiten": "Mo-Sa, 9-22 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": null
+ },
+ {
+  "id": "parkzonen.70",
+  "parkzone": "70",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.71",
+  "parkzone": "71",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.72",
+  "parkzone": "72",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.73",
+  "parkzone": "73",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.74",
+  "parkzone": "74",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.75",
+  "parkzone": "75",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.76",
+  "parkzone": "76",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.77",
+  "parkzone": "77",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.78",
+  "parkzone": "78",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.79",
+  "parkzone": "79",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.80",
+  "parkzone": "80",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.81",
+  "parkzone": "81",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.82",
+  "parkzone": "82",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.83",
+  "parkzone": "83",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.84",
+  "parkzone": "84",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.85",
+  "parkzone": "85",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen.\n"
+ },
+ {
+  "id": "parkzonen.86",
+  "parkzone": "86",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen.\n"
+ },
+ {
+  "id": "parkzonen.87",
+  "parkzone": "87",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.88",
+  "parkzone": "88",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen.\n"
+ },
+ {
+  "id": "parkzonen.89",
+  "parkzone": "89",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen.\n"
+ },
+ {
+  "id": "parkzonen.90",
+  "parkzone": "90",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.91",
+  "parkzone": "91",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-22 Uhr / Sa 9-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.92",
+  "parkzone": "92",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-20 / Sa 9-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.100",
+  "parkzone": "100",
+  "bezirk": "Neukölln",
+  "zeiten": "Mo-Fr 9-20 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.101",
+  "parkzone": "101",
+  "bezirk": "Neukölln",
+  "zeiten": "Mo-Fr 9-20 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.105",
+  "parkzone": "105",
+  "bezirk": "Neukölln",
+  "zeiten": "Mo-Fr 9-20 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.106",
+  "parkzone": "106",
+  "bezirk": "Neukölln",
+  "zeiten": "Mo-Fr 9-20 Uhr",
+  "gebuehr": "4,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.120",
+  "parkzone": "120",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-22 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.121",
+  "parkzone": "121",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-22 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.126",
+  "parkzone": "126",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.127",
+  "parkzone": "127",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.128",
+  "parkzone": "128",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.129",
+  "parkzone": "129",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.130",
+  "parkzone": "130",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.131",
+  "parkzone": "131",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.132",
+  "parkzone": "132",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.133",
+  "parkzone": "133",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.134",
+  "parkzone": "134",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.135",
+  "parkzone": "135",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.136",
+  "parkzone": "136",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.137",
+  "parkzone": "137",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.138",
+  "parkzone": "138",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 09-20 Uhr / Sa 09-18 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen."
+ },
+ {
+  "id": "parkzonen.17CW",
+  "parkzone": "17-CW",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Fr 9-20 Uhr / Sa 9-20 Uhr",
+  "gebuehr": "2,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.17TS",
+  "parkzone": "17-TS",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Fr 9-19 Uhr / Sa 9-14 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.41Mitte",
+  "parkzone": "41-Mitte",
+  "bezirk": "Mitte",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.41Pankow",
+  "parkzone": "41-Pankow",
+  "bezirk": "Pankow",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "2,00-3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.51ArenaSued",
+  "parkzone": "51-Arena Süd",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "4,00Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.51OberbaumCity",
+  "parkzone": "51-OberbaumCity",
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "zeiten": "Mo-Sa 9-24 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.9CW",
+  "parkzone": "9-CW",
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ },
+ {
+  "id": "parkzonen.9TS",
+  "parkzone": "9-TS",
+  "bezirk": "Tempelhof-Schöneberg",
+  "zeiten": "Mo-Sa 9-22 Uhr",
+  "gebuehr": "3,00 Euro",
+  "bemerkung": "Gebührenhöhe und Bewirtschaftungszeiten können auf lokal begrenzten Abschnitten bisweilen abweichen"
+ }
+]
