@@ -69,7 +69,7 @@ jobs:
           # Zur Buildzeit, nicht zur Laufzeit: ohne diesen Wert läuft die App im
           # lokalen Modus und teilt nichts.
           VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
-        run: pnpm --filter @parkingzone/web build
+        run: pnpm --filter @knoellchenfrei/web build
 
       - name: Web-App ausrollen
         if: steps.gate.outputs.ready == 'true'
@@ -77,7 +77,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy app/apps/web/dist --project-name=parkingzone
+          command: pages deploy app/apps/web/dist --project-name=knoellchenfrei
 
       - name: Zusammenfassung
         run: |
@@ -91,7 +91,7 @@ jobs:
               echo
               echo '- `CLOUDFLARE_API_TOKEN` — Token mit den Rechten *Workers Scripts:Edit*, *D1:Edit*, *Cloudflare Pages:Edit*'
               echo '- `CLOUDFLARE_ACCOUNT_ID` — steht im Cloudflare-Dashboard rechts in der Seitenleiste'
-              echo '- `VITE_API_BASE` — z. B. `https://parkingzone-api.<konto>.workers.dev`'
+              echo '- `VITE_API_BASE` — z. B. `https://knoellchenfrei-api.<konto>.workers.dev`'
               echo
               echo 'Details: [docs/hosting.md](docs/hosting.md)'
             } >> "$GITHUB_STEP_SUMMARY"

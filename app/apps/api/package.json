@@ -1,5 +1,5 @@
 {
-  "name": "@parkingzone/api",
+  "name": "@knoellchenfrei/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,6 +13,6 @@
     "wrangler": "^4.129.0"
   },
   "dependencies": {
-    "@parkingzone/core": "workspace:*"
+    "@knoellchenfrei/core": "workspace:*"
   }
 }

@@ -1,4 +1,4 @@
-import type { Fee } from '@parkingzone/core'
+import type { Fee } from '@knoellchenfrei/core'
 
 const EURO = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' })
 const CLOCK = new Intl.DateTimeFormat('de-DE', {

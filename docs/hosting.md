@@ -86,7 +86,7 @@ OpenStreetMap-Kacheln — stattdessen zeichnen die Ortsteilgrenzen den
 geografischen Kontext — und keine Live-Abfrage des WFS; die Daten sind zum
 Build-Zeitpunkt eingefroren.
 
-Aktualisieren: `pnpm --filter @parkingzone/ingest fetch-data && … build-data`, dann
+Aktualisieren: `pnpm --filter @knoellchenfrei/ingest fetch-data && … build-data`, dann
 `build-artifact` und dieselbe Datei erneut publizieren. Die URL bleibt.
 
 ## 2. Statisches Hosting — volle App, keine Kosten
@@ -113,14 +113,18 @@ So geht es:
 3. Unter *Actions → Deploy to GitHub Pages* den letzten Lauf erneut starten
    (**Re-run all jobs**) — oder einfach den nächsten Push abwarten
 
-Danach liegt die App unter `https://herbeus.github.io/parkingzone/`.
+Danach liegt die App unter
+`https://knoellchenfrei.github.io/knoellchenfrei/`. **Ins Feld *Custom domain*
+gehört nichts:** `knoellchenfrei.de` ist für Cloudflare Pages vorgesehen, und
+ein Hostname kann nur an einer Stelle liegen. Die Begründung im Einzelnen
+steht in [todo.md](todo.md#7-auftritt--du-vorbereitet-ist-alles).
 
 Bei einem **privaten** Repository braucht Pages einen bezahlten Plan
 (GitHub Pro, Team oder Enterprise). Zeigt die Einstellungsseite das Feature
 nicht an, ist das der Grund — dann ist Cloudflare Pages die Alternative ohne
 diese Einschränkung, oder das Repository wird öffentlich.
 
-Build-Kommando: `pnpm install && pnpm --filter @parkingzone/web build`,
+Build-Kommando: `pnpm install && pnpm --filter @knoellchenfrei/web build`,
 Ausgabeverzeichnis `app/apps/web/dist`.
 
 Der Workflow unter `.github/workflows/pages.yml` zieht die Daten vor jedem
@@ -170,8 +174,8 @@ D1 legt die Datenbank standardmäßig dort an, wo `wrangler` läuft. Für ein
 Berliner Projekt gehört sie nach Europa:
 
 ```bash
-npx wrangler d1 create parkingzone --location weur   # Standort-Hinweis
-npx wrangler d1 create parkingzone --jurisdiction eu # verbindlich, für DSGVO
+pnpm --filter @knoellchenfrei/api exec wrangler d1 create knoellchenfrei --location weur   # Standort-Hinweis
+pnpm --filter @knoellchenfrei/api exec wrangler d1 create knoellchenfrei --jurisdiction eu # verbindlich, DSGVO
 ```
 
 `--jurisdiction eu` ist die stärkere Zusage: Sie **beschränkt** Ausführung und
@@ -180,13 +184,27 @@ ignoriert. Für alles, was über eine Demo hinausgeht, ist das die richtige Wahl
 
 ### Einrichten
 
+**Immer aus `app/` heraus und über den Workspace**, nie mit einem nackten
+`npx wrangler` aus `apps/api`. Zwei Gründe, beide sind schon passiert:
+`npx` zieht irgendeine wrangler-Version aus seinem Zwischenspeicher statt der
+im Lockfile festgelegten, und ohne ein `pnpm install` im Wurzelverzeichnis
+fehlt der Verweis auf `@knoellchenfrei/core` — der Build bricht dann mit
+`Could not resolve "@knoellchenfrei/core"` ab, was nach einem kaputten Import
+aussieht und keiner ist.
+
 ```bash
-cd app/apps/api
-npx wrangler kv namespace create CACHE               # ID in wrangler.toml eintragen
-npx wrangler d1 create parkingzone --jurisdiction eu # ID in wrangler.toml eintragen
-npx wrangler d1 execute parkingzone --file=schema.sql --remote
-npx wrangler deploy
+cd app
+pnpm install                                          # legt die Workspace-Verweise an
+W="pnpm --filter @knoellchenfrei/api exec wrangler"
+
+$W kv namespace create CACHE                          # ID in wrangler.toml eintragen
+$W d1 create knoellchenfrei --jurisdiction eu         # ID in wrangler.toml eintragen
+$W d1 execute knoellchenfrei --file=schema.sql --remote
+$W deploy
 ```
+
+Bequemer ist der Workflow: *Actions → Cloudflare einrichten → Run workflow*
+macht dieselben vier Schritte und trägt die IDs selbst ein.
 
 Danach `ALLOWED_ORIGINS` in `wrangler.toml` auf die Domain der Web-App setzen.
 Ohne diesen Wert antwortet der Worker ohne CORS-Header — er scheitert
@@ -195,7 +213,7 @@ absichtlich geschlossen statt mit einem Wildcard zu öffnen.
 Und den Salz-Wert setzen, bevor die erste Meldung eingeht:
 
 ```bash
-npx wrangler secret put CLIENT_SALT     # beliebig, täglich wechseln
+pnpm --filter @knoellchenfrei/api exec wrangler secret put CLIENT_SALT   # beliebig
 ```
 
 Ohne ihn ist der gespeicherte Hash über den IPv4-Raum in Minuten
@@ -217,8 +235,10 @@ sich mit der ersten alles teilt.
 3. Beides hinterlegen und den Webhook anmelden:
 
 ```bash
-npx wrangler secret put TELEGRAM_TOKEN      # von @BotFather
-npx wrangler secret put TELEGRAM_SECRET     # selbst ausgedacht
+cd app                                      # nicht apps/api, siehe „Einrichten"
+W="pnpm --filter @knoellchenfrei/api exec wrangler"
+$W secret put TELEGRAM_TOKEN                # von @BotFather
+$W secret put TELEGRAM_SECRET               # selbst ausgedacht
 
 curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook" \
   -H 'Content-Type: application/json' \
@@ -250,7 +270,7 @@ Die Web-App spricht den Worker nur an, wenn sie zur **Buildzeit** weiß, wo er
 steht. In Cloudflare Pages unter *Settings → Environment variables*:
 
 ```
-VITE_API_BASE = https://parkingzone-api.<konto>.workers.dev
+VITE_API_BASE = https://knoellchenfrei-api.<konto>.workers.dev
 ```
 
 Ohne diese Variable läuft die App im lokalen Modus: Meldungen bleiben auf dem

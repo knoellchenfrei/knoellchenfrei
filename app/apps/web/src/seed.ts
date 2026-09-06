@@ -1,4 +1,4 @@
-import { berlinWallClock, HISTORY_DAYS, markFor, type HeatMark } from '@parkingzone/core'
+import { berlinWallClock, HISTORY_DAYS, markFor, type HeatMark } from '@knoellchenfrei/core'
 
 import type { StoredSighting } from './storage.js'
 

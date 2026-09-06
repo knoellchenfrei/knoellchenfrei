@@ -20,7 +20,7 @@ importers:
 
   apps/api:
     dependencies:
-      '@parkingzone/core':
+      '@knoellchenfrei/core':
         specifier: workspace:*
         version: link:../../packages/core
     devDependencies:
@@ -33,7 +33,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@parkingzone/core':
+      '@knoellchenfrei/core':
         specifier: workspace:*
         version: link:../../packages/core
       maplibre-gl:
@@ -72,7 +72,7 @@ importers:
 
   packages/ingest:
     dependencies:
-      '@parkingzone/core':
+      '@knoellchenfrei/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

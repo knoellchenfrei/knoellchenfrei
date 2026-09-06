@@ -1,4 +1,4 @@
-name = "parkingzone-api"
+name = "knoellchenfrei-api"
 main = "src/worker.ts"
 compatibility_date = "2026-09-01"
 
@@ -8,12 +8,12 @@ compatibility_date = "2026-09-01"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "5206119c869e4f84b80225963838bb5c"
+id = "REPLACE_WITH_KV_ID"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "parkingzone"
-database_id = "b9d6c579-66d6-4a05-9899-859fa08ad93c"
+database_name = "knoellchenfrei"
+database_id = "REPLACE_WITH_D1_ID"
 
 # Purges expired sightings hourly so the table never becomes a movement history.
 [triggers]

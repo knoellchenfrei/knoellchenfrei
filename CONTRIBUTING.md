@@ -7,7 +7,7 @@ cd app
 pnpm install
 pnpm test          # 62 Unit-Tests
 pnpm typecheck
-pnpm --filter @parkingzone/web dev
+pnpm --filter @knoellchenfrei/web dev
 ```
 
 ## Grundsätze
@@ -50,7 +50,7 @@ cd app
 pnpm typecheck
 pnpm test
 pnpm test:coverage    # Schwellwerte: 85 % Zeilen, 80 % Zweige
-pnpm --filter @parkingzone/web build
+pnpm --filter @knoellchenfrei/web build
 cd apps/web && npx playwright test
 ```
 
@@ -59,8 +59,8 @@ Die CI führt dasselbe aus.
 ## Daten aktualisieren
 
 ```bash
-pnpm --filter @parkingzone/ingest fetch
-pnpm --filter @parkingzone/ingest build-data
+pnpm --filter @knoellchenfrei/ingest fetch
+pnpm --filter @knoellchenfrei/ingest build-data
 ```
 
 Schlägt `build-data` fehl, hat der Feed eine Schreibweise, die der Parser nicht

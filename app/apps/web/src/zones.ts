@@ -5,7 +5,7 @@ import {
   type BoundingBox,
   type PolygonRings,
   type Position,
-} from '@parkingzone/core'
+} from '@knoellchenfrei/core'
 
 import type { ZoneProperties } from './types.js'
 

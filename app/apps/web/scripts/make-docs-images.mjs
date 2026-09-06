@@ -5,7 +5,7 @@
  * von vorletzter Woche, und niemandem fällt es auf, weil sie ja „ein Bild der
  * App" sind. Ein Skript macht das Nachziehen zu einem Befehl.
  *
- *   pnpm --filter @parkingzone/web build && node scripts/make-docs-images.mjs
+ *   pnpm --filter @knoellchenfrei/web build && node scripts/make-docs-images.mjs
  *
  * Ohne Zugang zu tile.openstreetmap.org fehlt die Hintergrundkarte. Das ist
  * kein Fehler des Skripts — die Zonen sind eigene Daten und zeichnen sich

@@ -1,4 +1,4 @@
-import { expiredMarks, withinCity, withinCitySession, type HeatMark } from '@parkingzone/core'
+import { expiredMarks, withinCity, withinCitySession, type HeatMark } from '@knoellchenfrei/core'
 
 import { CITY } from './city.js'
 import { sanitiseMark } from './sighting-backend.js'
@@ -38,12 +38,12 @@ export interface ParkingSession {
   remindAt: number | null
 }
 
-const SESSION_KEY = 'parkingzone.session'
-const SIGHTINGS_KEY = 'parkingzone.sightings'
-const MARKS_KEY = 'parkingzone.marks.v1'
-const LOCATION_ASKED_KEY = 'parkingzone.locationAsked.v1'
-const VISITS_KEY = 'parkingzone.visits.v1'
-const INSTALL_HIDDEN_KEY = 'parkingzone.installHidden.v1'
+const SESSION_KEY = 'knoellchenfrei.session'
+const SIGHTINGS_KEY = 'knoellchenfrei.sightings'
+const MARKS_KEY = 'knoellchenfrei.marks.v1'
+const LOCATION_ASKED_KEY = 'knoellchenfrei.locationAsked.v1'
+const VISITS_KEY = 'knoellchenfrei.visits.v1'
+const INSTALL_HIDDEN_KEY = 'knoellchenfrei.installHidden.v1'
 
 /**
  * Stored state is not trusted on the way back in.

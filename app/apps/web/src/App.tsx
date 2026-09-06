@@ -17,7 +17,7 @@ import {
   type HeatMark,
   type Position,
   type Sighting,
-} from '@parkingzone/core'
+} from '@knoellchenfrei/core'
 
 import { CITY } from './city.js'
 import { baseStyle } from './map-style.js'

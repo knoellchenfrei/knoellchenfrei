@@ -1,4 +1,4 @@
-import type { ChargeWindow, Fee } from '@parkingzone/core'
+import type { ChargeWindow, Fee } from '@knoellchenfrei/core'
 
 export interface ZoneProperties {
   zone: string

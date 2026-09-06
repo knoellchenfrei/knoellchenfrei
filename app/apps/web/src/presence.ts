@@ -51,7 +51,7 @@ export interface LiveStats {
   today: number | null
 }
 
-const VISIT_KEY = 'parkingzone.visit.v1'
+const VISIT_KEY = 'knoellchenfrei.visit.v1'
 /** Tally rows are kept one day beyond the window, so a day boundary is not a cliff. */
 const VISIT_KEEP_DAYS = 2
 
@@ -171,7 +171,7 @@ export function openLiveStats(onChange: (patch: Partial<LiveStats>) => void): ()
       if (room === null || stopped) return
       // Nothing identifying: the count is the whole point, and presence is
       // readable by everyone in the room.
-      void room.presence({ app: 'parkingzone' }).catch(() => undefined)
+      void room.presence({ app: 'knoellchenfrei' }).catch(() => undefined)
       teardown.push(
         room.onPeers(
           (change) => {

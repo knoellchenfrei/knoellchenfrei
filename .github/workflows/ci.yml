@@ -33,7 +33,7 @@ jobs:
       - run: pnpm test
       - name: Coverage (bricht unter den Schwellwerten ab)
         run: pnpm test:coverage
-      - run: pnpm --filter @parkingzone/web build
+      - run: pnpm --filter @knoellchenfrei/web build
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -59,8 +59,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: app/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @parkingzone/web exec playwright install --with-deps chromium
-      - run: pnpm --filter @parkingzone/web exec playwright test
+      - run: pnpm --filter @knoellchenfrei/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @knoellchenfrei/web exec playwright test
 
       - uses: actions/upload-artifact@v4
         if: failure()
@@ -92,7 +92,7 @@ jobs:
 
       - name: Keine offensichtlichen Secrets im ausgelieferten Bundle
         run: |
-          pnpm --filter @parkingzone/web build
+          pnpm --filter @knoellchenfrei/web build
           if grep -rIiE '(api[_-]?key|secret|password|token)["'"'"']?\s*[:=]\s*["'"'"'][A-Za-z0-9_\-]{16,}' apps/web/dist/assets/ ; then
             echo "::error::Mögliches Secret im Bundle gefunden"
             exit 1

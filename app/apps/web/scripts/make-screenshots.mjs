@@ -9,7 +9,7 @@
  *
  * Aufnahme vom gebauten Stand, nicht vom Entwicklungsserver — sonst zeigt das
  * Bild eine Version, die so nie ausgeliefert wurde:
- *   pnpm --filter @parkingzone/web build && node scripts/make-screenshots.mjs
+ *   pnpm --filter @knoellchenfrei/web build && node scripts/make-screenshots.mjs
  */
 import { createReadStream } from 'node:fs'
 import { mkdir, stat, writeFile } from 'node:fs/promises'

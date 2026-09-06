@@ -27,7 +27,7 @@ import {
   windowStart,
   withinCity,
   type City,
-} from '@parkingzone/core'
+} from '@knoellchenfrei/core'
 
 // The one place the worker does NOT re-implement a core rule. Everything else
 // here is deliberately independent, but the heat grid's cell ids are stored:

@@ -37,7 +37,7 @@ import {
   type PolygonRings,
   type Position,
   type HamburgZoneProperties,
-} from '@parkingzone/core'
+} from '@knoellchenfrei/core'
 
 import { citySources, toGeoJsonAxes, type AxisOrder } from './sources.js'
 import { simplifyGeometry } from './simplify.js'

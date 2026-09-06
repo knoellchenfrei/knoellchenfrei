@@ -453,8 +453,8 @@ test.describe('resilience', () => {
   test('survives corrupt stored state', async ({ page }) => {
     await page.addInitScript(() => {
       try {
-        localStorage.setItem('parkingzone.session', '{kaputt')
-        localStorage.setItem('parkingzone.sightings', '{"nicht":"array"}')
+        localStorage.setItem('knoellchenfrei.session', '{kaputt')
+        localStorage.setItem('knoellchenfrei.sightings', '{"nicht":"array"}')
       } catch {
         /* storage unavailable */
       }

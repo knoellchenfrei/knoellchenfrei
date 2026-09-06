@@ -15,7 +15,7 @@
  *    Ozean, und die Karte sieht dabei aus, als wäre sie nur leer.
  * 3. **Lizenz.** Berlin gibt unter Datenlizenz Deutschland **Zero** 2.0 heraus,
  *    Nennung freiwillig; Hamburg unter **Namensnennung** 2.0, Nennung
- *    Bedingung. `City.attribution` in `@parkingzone/core` trägt das bis in die
+ *    Bedingung. `City.attribution` in `@knoellchenfrei/core` trägt das bis in die
  *    Oberfläche.
  */
 

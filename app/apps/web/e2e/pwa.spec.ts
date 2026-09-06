@@ -65,7 +65,7 @@ test.describe('der Service Worker', () => {
     const source = await (await page.request.get('/sw.js')).text()
     expect(source).not.toContain('__BUILD_ID__')
     expect(source).not.toContain('__SHELL_ASSETS__')
-    expect(source).toMatch(/const CACHE = 'parkingzone-[0-9a-f]{12}'/)
+    expect(source).toMatch(/const CACHE = 'knoellchenfrei-[0-9a-f]{12}'/)
   })
 })
 

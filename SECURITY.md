@@ -62,7 +62,7 @@ tagesfrische beantwortet nur „wie viele verschiedene Geräte heute".
 
 Die Zahl „gerade offen" wird im Artifact gar nicht gespeichert: sie kommt aus
 der Anwesenheitsfunktion der Laufzeit und ist weg, sobald jemand den Tab
-schließt. Die App veröffentlicht dort ausschließlich `{app: 'parkingzone'}` —
+schließt. Die App veröffentlicht dort ausschließlich `{app: 'knoellchenfrei'}` —
 nichts, was eine Person kennzeichnet.
 
 Beim eigenen Worker gibt es keinen solchen Kanal, deshalb kommt beides aus

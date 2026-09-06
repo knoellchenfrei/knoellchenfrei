@@ -19,9 +19,9 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @parkingzone/core test                # 179 Unit-Tests
-pnpm --filter @parkingzone/core test:coverage       # Coverage-Bericht
-pnpm --filter @parkingzone/web build                # Web-Build
+pnpm --filter @knoellchenfrei/core test                # 179 Unit-Tests
+pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht
+pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 105 End-to-End-Tests
 ```
@@ -161,6 +161,20 @@ wiederholt.
   Bundle-Objekt. Und `output.manualChunks` wird **aufgerufen**, die Objektform
   ergibt `TypeError: manualChunks is not a function`; die Funktionsform
   verstehen beide Bundler.
+- **Der Name ist `knoellchenfrei`, nicht `parkingzone`.** Der Arbeitstitel steckte
+  im npm-Scope, im Worker-Namen, in der D1-Datenbank, im Pages-Projekt, im
+  Cache-Namen des Service Workers und in sieben `localStorage`-Schlüsseln. Alles
+  umbenannt; ohne Übernahmecode, weil die App noch bei niemandem lief. Stehen
+  bleiben darf `parkingzone` nur da, wo es eine **historische Tatsache** ist:
+  die Adresse `herbeus/parkingzone` und die JDBC-Zeile von 2012.
+- **`wrangler` immer über den Workspace, nie als nacktes `npx`.**
+  `npx wrangler` zieht irgendeine Version aus seinem Zwischenspeicher (gesehen:
+  4.97 statt der festgelegten 4.129), und ohne `pnpm install` im
+  Wurzelverzeichnis `app/` fehlt der Verweis auf `@knoellchenfrei/core` — der
+  Build bricht mit `Could not resolve "@knoellchenfrei/core"` ab. Das sieht
+  nach einem kaputten Import aus und ist ein fehlender Symlink. Richtig:
+  `cd app && pnpm install && pnpm --filter @knoellchenfrei/api exec wrangler …`.
+  Die Befehle in `docs/hosting.md` waren die Fehlerquelle und sind korrigiert.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

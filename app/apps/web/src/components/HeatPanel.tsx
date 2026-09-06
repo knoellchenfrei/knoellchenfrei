@@ -3,7 +3,7 @@ import {
   MIN_MARKS_FOR_PATTERN,
   type HeatActivity,
   type Heatmap,
-} from '@parkingzone/core'
+} from '@knoellchenfrei/core'
 
 export interface HeatTopEntry {
   label: string

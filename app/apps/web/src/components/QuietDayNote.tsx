@@ -1,4 +1,4 @@
-import type { QuietDay } from '@parkingzone/core'
+import type { QuietDay } from '@knoellchenfrei/core'
 
 interface Props {
   note: QuietDay

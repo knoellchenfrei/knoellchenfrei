@@ -18,6 +18,36 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    Rechte: *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*,
    *Cloudflare Pages:Edit* — und *Workers R2 Storage:Edit*, wenn im selben
    Zug die Kacheln aus Punkt 4 dazukommen sollen.
+
+   > **Am 6. September fehlte genau `Workers Scripts:Edit`.** KV und D1 legte
+   > der Workflow an, der Worker scheiterte mit
+   > `Authentication error [code: 10000]` auf
+   > `/accounts/…/workers/services/…`. Das sieht nach einem Fehler im Code aus
+   > und ist eine fehlende Häkchenreihe im Token.
+
+1a. **Einmalig aufräumen.** Der erste Lauf hat KV und D1 noch unter dem alten
+   Namen *parkingzone* angelegt. Beide sind leer, also ist das Löschen
+   folgenlos — aber es muss vor dem nächsten Lauf passieren, sonst stehen zwei
+   Datenbanken nebeneinander und keine weiß, welche gemeint ist:
+
+   ```bash
+   cd app && pnpm install
+   W="pnpm --filter @knoellchenfrei/api exec wrangler"
+
+   $W d1 list                      # zeigt, was da ist
+   $W d1 delete parkingzone        # fragt nach, tippt den Namen zur Bestätigung
+   $W kv namespace list            # den Eintrag mit CACHE im Titel suchen
+   $W kv namespace delete --namespace-id 5206119c869e4f84b80225963838bb5c
+
+   # Falls doch ein Worker unter dem alten Namen liegt — der Deploy war
+   # gescheitert, wahrscheinlich gibt es keinen:
+   $W deployments list --name parkingzone-api   # 'not found' heißt: nichts zu tun
+   $W delete --name parkingzone-api             # nur falls es ihn doch gibt
+   ```
+
+   `wrangler.toml` trägt wieder `REPLACE_WITH_KV_ID` und `REPLACE_WITH_D1_ID`;
+   der Einrichtungs-Workflow füllt beide neu.
+
 2. Beides als Repository-Secrets hinterlegen: `Settings → Secrets and
    variables → Actions` → `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
    **Danach macht den Rest ein Workflow**, nicht du: `Actions → Cloudflare
@@ -282,7 +312,7 @@ nachgesehen hat.
       am Land.
 - [x] **Produktname entberlinert.** Die App heißt jetzt überall
       `knoellchenfrei`; die `h1` nennt die geladene Stadt dazu. Der interne
-      Paketname `@parkingzone/*` bleibt: Ihn umzubenennen wäre Aufwand ohne
+      Paketname `@knoellchenfrei/*` bleibt: Ihn umzubenennen wäre Aufwand ohne
       Wirkung nach außen.
 
 ## 6. Telegram — **du** (Token), dann **ich**

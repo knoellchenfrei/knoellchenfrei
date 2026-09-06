@@ -8,7 +8,7 @@
  * shell is served from an old cache forever and a deployed fix never reaches an
  * installed app.
  */
-const CACHE = 'parkingzone-__BUILD_ID__'
+const CACHE = 'knoellchenfrei-__BUILD_ID__'
 
 /**
  * The list below is completed at build time with the hashed bundle paths.

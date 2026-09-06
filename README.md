@@ -182,7 +182,7 @@ pnpm install
 pnpm test                              # 179 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
-pnpm --filter @parkingzone/web dev
+pnpm --filter @knoellchenfrei/web dev
 cd apps/web && npx playwright test     # 105 End-to-End-Tests
 ```
 
@@ -192,8 +192,8 @@ installiert hat, zeigt `PLAYWRIGHT_CHROMIUM=/pfad/zu/chromium` darauf.
 Daten neu ziehen:
 
 ```bash
-pnpm --filter @parkingzone/ingest fetch-data
-pnpm --filter @parkingzone/ingest build-data
+pnpm --filter @knoellchenfrei/ingest fetch-data
+pnpm --filter @knoellchenfrei/ingest build-data
 ```
 
 `gdi.berlin.de` wird von der *Telekom Security TLS RSA Root 2023* signiert, die

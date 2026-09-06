@@ -15,7 +15,7 @@
  * direction of a vote in the process.
  */
 
-import { expiredMarks, markFor, windowStart, withinCity, type HeatMark } from '@parkingzone/core'
+import { expiredMarks, markFor, windowStart, withinCity, type HeatMark } from '@knoellchenfrei/core'
 
 import { CITY } from './city.js'
 

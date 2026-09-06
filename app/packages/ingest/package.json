@@ -1,5 +1,5 @@
 {
-  "name": "@parkingzone/ingest",
+  "name": "@knoellchenfrei/ingest",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "build-badges": "tsx src/build-badges.ts"
   },
   "dependencies": {
-    "@parkingzone/core": "workspace:*"
+    "@knoellchenfrei/core": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.20.6",

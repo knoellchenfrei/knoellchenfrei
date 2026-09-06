@@ -22,7 +22,7 @@
  * nicht stillschweigend Berlin ausliefern.
  */
 
-import { BERLIN, cityByKey, type City } from '@parkingzone/core'
+import { BERLIN, cityByKey, type City } from '@knoellchenfrei/core'
 
 const STORAGE_KEY = 'knoellchenfrei:city'
 

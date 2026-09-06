@@ -13,7 +13,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { CITIES } from '@parkingzone/core'
+import { CITIES } from '@knoellchenfrei/core'
 
 const DIST = process.env.DIST_DIR ?? join(process.cwd(), '../../apps/web/dist')
 const OUT = process.env.ARTIFACT_OUT ?? join(process.cwd(), '../../apps/web/artifact.html')

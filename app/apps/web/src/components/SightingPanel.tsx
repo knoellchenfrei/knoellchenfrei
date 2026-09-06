@@ -1,4 +1,4 @@
-import { activeSightings, type Sighting } from '@parkingzone/core'
+import { activeSightings, type Sighting } from '@knoellchenfrei/core'
 
 import { duration } from '../format.js'
 

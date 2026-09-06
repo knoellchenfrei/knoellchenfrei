@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { CITIES, HISTORY_DAYS, type City } from '@parkingzone/core'
+import { CITIES, HISTORY_DAYS, type City } from '@knoellchenfrei/core'
 
 import { CITY, switchCity } from '../city.js'
 import { availableCities } from '../data-source.js'

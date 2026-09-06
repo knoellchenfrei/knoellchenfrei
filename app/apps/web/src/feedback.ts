@@ -17,9 +17,9 @@
  * wäre schlechter als eine fehlende Funktion.
  */
 
-import { tidyFeedback, type FeedbackKind } from '@parkingzone/core'
+import { tidyFeedback, type FeedbackKind } from '@knoellchenfrei/core'
 
-export { MAX_FEEDBACK_LENGTH, type FeedbackKind } from '@parkingzone/core'
+export { MAX_FEEDBACK_LENGTH, type FeedbackKind } from '@knoellchenfrei/core'
 
 export interface FeedbackBackend {
   send: (kind: FeedbackKind, text: string) => Promise<void>

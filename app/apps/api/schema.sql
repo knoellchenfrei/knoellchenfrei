@@ -75,7 +75,7 @@ CREATE INDEX IF NOT EXISTS visits_seen ON visits (seen_at);
 -- die es **keinen Lese-Endpunkt gibt**. Sichtungen sind für alle sichtbar;
 -- eine Rückmeldung ist es ausdrücklich nicht. Gelesen wird sie über
 --
---   npx wrangler d1 execute parkingzone --remote \
+--   npx wrangler d1 execute knoellchenfrei --remote \
 --     --command "SELECT created_at, kind, text FROM feedback ORDER BY created_at DESC LIMIT 50"
 --
 -- Kein Kontaktfeld: Wer keine Adresse abfragt, speichert auch keine.

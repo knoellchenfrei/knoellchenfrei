@@ -42,16 +42,16 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Fetch current Berlin data
-        run: pnpm --filter @parkingzone/ingest fetch-data
+        run: pnpm --filter @knoellchenfrei/ingest fetch-data
         continue-on-error: true
 
       - name: Rebuild data snapshot
-        run: pnpm --filter @parkingzone/ingest build-data
+        run: pnpm --filter @knoellchenfrei/ingest build-data
         continue-on-error: true
 
       - run: pnpm typecheck
       - run: pnpm test
-      - run: pnpm --filter @parkingzone/web build
+      - run: pnpm --filter @knoellchenfrei/web build
 
       - uses: actions/upload-pages-artifact@v5
         with:

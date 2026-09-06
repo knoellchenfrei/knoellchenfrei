@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { chargeableAt, estimateCost, type ParkingZone } from '@parkingzone/core'
+import { chargeableAt, estimateCost, type ParkingZone } from '@knoellchenfrei/core'
 
 import { CITY } from './city.js'
 import { MAX_STAY_MINUTES } from './format.js'

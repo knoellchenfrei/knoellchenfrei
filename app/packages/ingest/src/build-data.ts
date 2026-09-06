@@ -13,7 +13,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 
-import { BERLIN, parseFee, parseSchedule, type Fee } from '@parkingzone/core'
+import { BERLIN, parseFee, parseSchedule, type Fee } from '@knoellchenfrei/core'
 
 import { CITY_KEY } from './sources.js'
 import { roundPoint, simplifyGeometry } from './simplify.js'
@@ -25,7 +25,7 @@ import { roundPoint, simplifyGeometry } from './simplify.js'
 // fuer die andere gefaehrlich.
 if (CITY_KEY !== BERLIN.key) {
   console.error(
-    `CITY=${CITY_KEY}: Dieses Skript baut nur Berlin. Fuer Hamburg: pnpm --filter @parkingzone/ingest build-data-hamburg`
+    `CITY=${CITY_KEY}: Dieses Skript baut nur Berlin. Fuer Hamburg: pnpm --filter @knoellchenfrei/ingest build-data-hamburg`
   )
   process.exit(2)
 }

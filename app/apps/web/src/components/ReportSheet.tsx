@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react'
 
-import { distanceMetres, type Position } from '@parkingzone/core'
+import { distanceMetres, type Position } from '@knoellchenfrei/core'
 
 import { representativePoint, zoneAt, type LoadedZone } from '../zones.js'
 
