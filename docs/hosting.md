@@ -192,12 +192,25 @@ ignoriert. Für alles, was über eine Demo hinausgeht, ist das die richtige Wahl
 ./scripts/einrichten.sh
 ```
 
-Er legt KV-Namespace, D1-Datenbank und Pages-Projekt an, spielt die
-Migrationen ein, erzeugt das Salz für die Client-Hashes, hinterlegt den
-Telegram-Token samt Webhook, prüft die Repository-Einstellungen und trägt die
-Kennungen ins Repository zurück. Was nur im Browser geht — Konto anlegen,
-BotFather, Nameserver beim Registrar —, nennt er mit Adresse, wartet auf dich
-und **prüft danach nach**.
+Er **erledigt**, was sich erledigen lässt, statt es aufzuzählen:
+
+| | |
+| --- | --- |
+| Werkzeuge | `pnpm` über corepack, `gh`, `pmtiles` — fehlend? Wird angeboten und installiert |
+| Cloudflare | KV-Namespace, D1-Datenbank, Migrationen, Pages-Projekt, `CLIENT_SALT` |
+| CI | `CLOUDFLARE_API_TOKEN` und `CLOUDFLARE_ACCOUNT_ID` als Repository-Secrets |
+| Telegram | Token entgegennehmen, `TELEGRAM_SECRET` erzeugen, Webhook anmelden |
+| R2 | Eimer, CORS aus `apps/api/r2-cors.json`, `tiles.knoellchenfrei.de` verbinden, Archiv bauen und hochladen |
+| DNS | alle fünf Zonen anlegen, 301-Weiterleitungen als Redirect Rules |
+| GitHub | Beschreibung, zwölf Themen, Pages einschalten, Dependabot-Warnungen und Sicherheitsupdates, Wiki und Projects aus |
+| Repository | geänderte `wrangler.toml` committen und pushen |
+
+**Was übrig bleibt, kann keine Schnittstelle** — und das sagt das Skript auch so,
+statt „fehlt" zu melden: Cloudflare-Konto anlegen, das Token erzeugen,
+BotFather anschreiben, die Nameserver beim Registrar umstellen, Auto-Renew
+einschalten, Organisationsbild und Vorschaubild hochladen (für beide gibt es in
+der GitHub-API keinen Endpunkt). Jedes davon mit Adresse; danach prüft das
+Skript nach.
 
 `--pruefen` berichtet nur und ändert nichts. Ein einzelner Schritt geht auch:
 `./scripts/einrichten.sh telegram`. Zweimal laufen ist ungefährlich; das
@@ -396,7 +409,7 @@ Basiskarte; daraus wird per Range-Request nur Berlin herausgeschnitten:
 
 ```bash
 # Datum eines Tagesarchivs von https://maps.protomaps.com/builds
-app/packages/ingest/scripts/build-tiles.sh 20260730
+app/packages/ingest/scripts/build-tiles.sh
 ```
 
 Das Skript nennt am Ende den Upload-Befehl. Der Pfad im Eimer trägt das Datum

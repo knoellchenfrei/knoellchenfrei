@@ -39,7 +39,7 @@ node scripts/make-screenshots.mjs                   # Bilder für die Installati
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
 TEST_COUNT=190 E2E_COUNT=105 npx tsx src/build-badges.ts
-scripts/build-tiles.sh 20260730                     # PMTiles-Ausschnitt Berlin
+scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
 ## Eigenheiten der Umgebung
@@ -197,6 +197,13 @@ wiederholt.
   offen; die Doku verlangt für CI weiterhin einen API-Token. Also: eng
   schneiden, Ablaufdatum setzen — und die Frage bei Gelegenheit neu stellen,
   statt sie für beantwortet zu halten.
+- **Kein Datum aus einer Anleitung abtippen — Protomaps' Archive verfallen.**
+  `build-tiles.sh 20260730` lief in `HTTP error: 404`, was nach einem kaputten
+  Skript aussieht und ein abgelaufenes Archiv ist. Gemessen am 6. September
+  2026: `20260904` und `20260901` antworteten, `20260903` und alles ab
+  `20260828` abwärts nicht. Das Skript sucht das neueste jetzt selbst und
+  prüft ein angegebenes Datum, bevor `pmtiles` minutenlang läuft. Aufrufen
+  also **ohne** Datum.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

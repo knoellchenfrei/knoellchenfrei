@@ -78,6 +78,70 @@ geheim_fragen() {
   printf '%s' "$antwort"
 }
 
+# Ein Einrichtungsskript, das an einem fehlenden Werkzeug abbricht und dich
+# selbst installieren laesst, hat die Haelfte seiner Aufgabe nicht getan.
+# Also: anbieten, installieren, nachpruefen.
+paketmanager() {
+  if command -v brew    >/dev/null 2>&1; then printf 'brew'; return; fi
+  if command -v apt-get >/dev/null 2>&1; then printf 'apt';  return; fi
+  printf 'keiner'
+}
+
+installieren() {
+  local werkzeug="$1" pm; pm="$(paketmanager)"
+  case "$werkzeug" in
+    pnpm)
+      # Ueber corepack, nicht ueber `npm -g`: package.json legt mit
+      # `packageManager: pnpm@10.33.0` eine Version fest, und corepack haelt
+      # sich daran. Ein global installiertes pnpm taete das nicht.
+      if command -v corepack >/dev/null 2>&1; then
+        corepack enable pnpm >/dev/null 2>&1
+        (cd "$APP" && corepack install >/dev/null 2>&1) || true
+      fi
+      command -v pnpm >/dev/null 2>&1 && return 0
+      [ "$pm" = brew ] && brew install pnpm >/dev/null 2>&1
+      ;;
+    gh)
+      [ "$pm" = brew ] && brew install gh >/dev/null 2>&1
+      [ "$pm" = apt ]  && { sudo apt-get update -qq && sudo apt-get install -y gh >/dev/null 2>&1; }
+      ;;
+    pmtiles)
+      # Kein npm-Paket, sondern eine Go-Binaerdatei.
+      [ "$pm" = brew ] && brew install protomaps/tap/pmtiles >/dev/null 2>&1
+      ;;
+  esac
+  command -v "$werkzeug" >/dev/null 2>&1
+}
+
+hinweis_installation() {
+  case "$1" in
+    pnpm)    hinweis "corepack enable pnpm && (cd app && corepack install)"
+             hinweis "corepack liegt bei Node bei und haelt sich an die Version"
+             hinweis "aus package.json — anders als ein globales npm -g pnpm." ;;
+    gh)      hinweis "brew install gh   —  danach: gh auth login" ;;
+    pmtiles) hinweis "brew install protomaps/tap/pmtiles"
+             hinweis "oder eine Binaerdatei von https://github.com/protomaps/go-pmtiles/releases" ;;
+  esac
+}
+
+sicherstellen() {
+  # sicherstellen <werkzeug> [pflicht] -> 0, wenn es danach da ist
+  local werkzeug="$1" art="${2:-kuer}"
+  command -v "$werkzeug" >/dev/null 2>&1 && return 0
+  fehlt "$werkzeug fehlt"
+  if [ "$NUR_PRUEFEN" = ja ]; then hinweis_installation "$werkzeug"; return 1; fi
+  if ja_nein "Jetzt installieren?"; then
+    if installieren "$werkzeug"; then
+      ok "$werkzeug installiert"
+      return 0
+    fi
+    schlimm "Das ging nicht automatisch."
+  fi
+  hinweis_installation "$werkzeug"
+  if [ "$art" = pflicht ]; then schlimm "Ohne $werkzeug geht es nicht weiter."; exit 1; fi
+  return 1
+}
+
 ja_nein() {
   local a
   a="$(frage "$1 [j/N]")"
@@ -92,6 +156,14 @@ D1_NAME="knoellchenfrei"
 PAGES_PROJEKT="knoellchenfrei"
 R2_EIMER="knoellchenfrei-tiles"
 D1_JURISDIKTION="${D1_JURISDIKTION:-eu}"
+TILES_DOMAIN="tiles.knoellchenfrei.de"
+HAUPTDOMAIN="knoellchenfrei.de"
+# Die Punycode-Formen stehen hier, weil Cloudflare und die meisten Werkzeuge
+# Umlautdomains so verlangen.
+DOMAINS="knoellchenfrei.de xn--knllchenfrei-5ib.de xn--knlchenfrei-sfb.de knoelchenfrei.de knoellchenfrei.org"
+
+REPO_BESCHREIBUNG="Wo Parken gerade etwas kostet, wie viel und wie lange — aus amtlichen Geodaten. PWA für Berlin und Hamburg, offlinefähig, ohne Server."
+REPO_THEMEN="parking open-data berlin hamburg pwa typescript maplibre geojson wfs offline-first civic-tech cloudflare-workers"
 
 WURZEL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP="$WURZEL/app"
@@ -135,8 +207,10 @@ braucht_cf() {
 
 schritt_werkzeuge() {
   ueberschrift "Werkzeuge"
+  # node, curl, openssl und git bringt jedes brauchbare System mit — fehlen
+  # sie, ist das kein Fall fuer ein Projektskript.
   local fehlend=''
-  for werkzeug in node pnpm curl openssl git; do
+  for werkzeug in node curl openssl git; do
     if command -v "$werkzeug" >/dev/null 2>&1; then
       ok "$werkzeug $("$werkzeug" --version 2>/dev/null | head -1)"
     else
@@ -149,6 +223,10 @@ schritt_werkzeuge() {
     exit 1
   fi
 
+  # pnpm ist eine Projektentscheidung — also bringt das Projekt es mit, statt
+  # dich danach zu schicken.
+  sicherstellen pnpm pflicht && ok "pnpm $(pnpm --version 2>/dev/null)"
+
   if [ ! -d "$APP/node_modules" ]; then
     fehlt "Abhängigkeiten fehlen — hole ich nach"
     [ "$NUR_PRUEFEN" = ja ] || (cd "$APP" && pnpm install)
@@ -156,13 +234,17 @@ schritt_werkzeuge() {
     ok "Abhängigkeiten liegen"
   fi
 
-  if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    ok "gh angemeldet"
-    HAT_GH=ja
-  else
-    fehlt "gh fehlt oder ist nicht angemeldet"
+  if sicherstellen gh; then
+    if gh auth status >/dev/null 2>&1; then
+      ok "gh angemeldet"
+      HAT_GH=ja
+    elif [ "$NUR_PRUEFEN" != ja ] && ja_nein "gh ist da, aber nicht angemeldet. Jetzt anmelden?"; then
+      gh auth login && gh auth status >/dev/null 2>&1 && { ok "angemeldet"; HAT_GH=ja; }
+    fi
+  fi
+  if [ "$HAT_GH" != ja ]; then
+    fehlt "gh nicht einsatzbereit"
     hinweis "Ohne gh nennt das Skript nur die Adressen, an denen du es selbst tust."
-    hinweis "Nachholen: brew install gh && gh auth login"
   fi
 
   # Cloudflare: entweder ein Token in der Umgebung oder eine angemeldete
@@ -445,88 +527,202 @@ schritt_kacheln() {
   hinweis "Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen an einen"
   hinweis "Dritten, über den die Datenschutzerklärung Auskunft geben muss."
 
+  # --- Eimer ------------------------------------------------------------
   if wr r2 bucket list 2>/dev/null | grep -q "$R2_EIMER"; then
     ok "R2-Eimer $R2_EIMER besteht"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "R2-Eimer $R2_EIMER fehlt"; offen_merken; return 0
   else
-    fehlt "R2-Eimer $R2_EIMER fehlt"
-    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; else
-      if ja_nein "Jetzt anlegen?"; then
-        wr r2 bucket create "$R2_EIMER" >/dev/null 2>&1 && ok "angelegt" \
-          || { schlimm "ging nicht — fehlt dem Token *Workers R2 Storage:Edit*?"; offen_merken; }
+    if wr r2 bucket create "$R2_EIMER" >/dev/null 2>&1; then
+      ok "R2-Eimer $R2_EIMER angelegt"
+    else
+      schlimm "ging nicht — fehlt dem Token *Workers R2 Storage:Edit*?"
+      offen_merken; return 0
+    fi
+  fi
+
+  # --- CORS -------------------------------------------------------------
+  # Ohne CORS lädt der Browser kein einziges Kachelbyte, und der Fehler steht
+  # nur in der Entwicklerkonsole: Die Karte bleibt einfach leer.
+  if wr r2 bucket cors list "$R2_EIMER" 2>/dev/null | grep -q "$HAUPTDOMAIN"; then
+    ok "CORS am Eimer gesetzt"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "CORS fehlt"; offen_merken
+  else
+    if wr r2 bucket cors set "$R2_EIMER" --file="$APP/apps/api/r2-cors.json" --force >/dev/null 2>&1; then
+      ok "CORS gesetzt (aus apps/api/r2-cors.json)"
+    else
+      schlimm "CORS ließ sich nicht setzen"; offen_merken
+    fi
+  fi
+
+  # Range-Requests muss man nicht einschalten: R2 beherrscht sie, und PMTiles
+  # baut darauf. Erwähnt wird es trotzdem, weil ein davorgehängter Proxy sie
+  # verschlucken kann — dann lädt die Karte nichts und sieht nicht kaputt aus.
+
+  # --- eigene Domain am Eimer -------------------------------------------
+  if wr r2 bucket domain list "$R2_EIMER" 2>/dev/null | grep -q "$TILES_DOMAIN"; then
+    ok "$TILES_DOMAIN zeigt auf den Eimer"
+  else
+    local zid=''
+    [ -n "${CLOUDFLARE_API_TOKEN:-}" ] && zid="$(zonen_id "$HAUPTDOMAIN")"
+    if [ -z "$zid" ]; then
+      fehlt "$TILES_DOMAIN noch nicht verbunden — die Zone $HAUPTDOMAIN fehlt (Schritt 5)"
+      offen_merken
+    elif [ "$NUR_PRUEFEN" = ja ]; then
+      fehlt "$TILES_DOMAIN noch nicht verbunden"; offen_merken
+    else
+      if wr r2 bucket domain add "$R2_EIMER" --domain "$TILES_DOMAIN" --zone-id "$zid" --min-tls 1.2 --force >/dev/null 2>&1; then
+        ok "$TILES_DOMAIN mit dem Eimer verbunden"
       else
-        offen_merken
+        schlimm "ließ sich nicht verbinden"; offen_merken
       fi
     fi
   fi
 
-  local archiv="$APP/packages/ingest/tiles/berlin.pmtiles"
-  if [ -f "$archiv" ]; then
-    ok "Archiv liegt ($(du -h "$archiv" | cut -f1))"
-    if [ "$NUR_PRUEFEN" != ja ] && ja_nein "Hochladen?"; then
-      wr r2 object put "$R2_EIMER/berlin.pmtiles" --file="$archiv" --remote \
-        && ok "hochgeladen" || { schlimm "ging nicht"; offen_merken; }
+  # --- Archiv bauen und hochladen ---------------------------------------
+  # Der Pfad im Eimer trägt das Build-Datum (v<datum>/berlin.pmtiles), damit
+  # ein Zwischenstand nie eine laufende Version überschreibt und der Browser
+  # beliebig lange cachen darf. Deshalb baut und lädt **build-tiles.sh**, nicht
+  # dieses Skript: Zwei Stellen, die denselben Pfad bilden, laufen auseinander,
+  # und das fällt erst auf, wenn eine Karte alte Kacheln zeigt.
+  if sicherstellen pmtiles; then
+    if [ "$NUR_PRUEFEN" = ja ]; then
+      fehlt "Archiv nicht geprüft (Prüfmodus baut nichts)"
+      offen_merken
+    elif ja_nein "Kachelarchiv bauen und hochladen? (dauert einige Minuten)"; then
+      if "$APP/packages/ingest/scripts/build-tiles.sh" --hochladen; then
+        ok "Archiv gebaut und hochgeladen"
+      else
+        schlimm "build-tiles.sh ist gescheitert — Ausgabe oben"
+        offen_merken
+      fi
+    else
+      fehlt "Archiv übersprungen"
+      hinweis "Später: app/packages/ingest/scripts/build-tiles.sh --hochladen"
+      offen_merken
     fi
   else
-    fehlt "Archiv fehlt — bauen mit: app/packages/ingest/scripts/build-tiles.sh 20260730"
     offen_merken
   fi
 
-  fehlt "Zwei Einstellungen entscheiden, ob überhaupt ein Byte ankommt:"
-  hinweis "CORS für die App-Domain und durchgereichte Range-Requests."
-  hinweis "Beides im Dashboard am Eimer; Schritte in docs/hosting.md."
-  hinweis "Danach VITE_TILES_URL setzen — ohne den Wert bleibt alles bei OSM."
+  hinweis ""
+  hinweis "Zuletzt VITE_TILES_URL setzen — die Adresse steht am Ende der"
+  hinweis "Ausgabe von build-tiles.sh. Ohne den Wert bleibt alles bei OSM,"
+  hinweis "und der Vektor-Teil liegt nicht einmal im Bündel."
 }
 
 # ----------------------------------------------------------------- 5. DNS
 
+# Die Zonen-API ist die einzige Stelle, an der wrangler nicht hilft — es
+# verwaltet Worker, keine DNS-Zonen. Also direkt gegen die REST-API, und dafür
+# braucht es einen Token in der Umgebung (eine wrangler-Anmeldung reicht nicht).
+cf_api() {
+  # cf_api <METHODE> <pfad> [daten]
+  local methode="$1" pfad="$2" daten="${3:-}"
+  if [ -n "$daten" ]; then
+    curl -sS -X "$methode" -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN:-}" \
+      -H 'Content-Type: application/json' -d "$daten" \
+      "https://api.cloudflare.com/client/v4$pfad"
+  else
+    curl -sS -X "$methode" -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN:-}" \
+      "https://api.cloudflare.com/client/v4$pfad"
+  fi
+}
+
+zonen_id() {
+  cf_api GET "/zones?name=$1" \
+    | tr '{' '\n' | grep -m1 "\"name\":\"$1\"" | grep -oE '"id":"[0-9a-f]{32}"' | head -1 | cut -d'"' -f4
+}
+
 schritt_dns() {
   ueberschrift "5. Domains und DNS"
-  local domains="knoellchenfrei.de xn--knllchenfrei-5ib.de xn--knlchenfrei-sfb.de knoelchenfrei.de knoellchenfrei.org"
-  # Zonen listet nur die REST-API, nicht wrangler. Ohne Token gibt es keinen
-  # Befund — und dann wird auch keiner behauptet: Fünf Zeilen "fehlt als Zone"
-  # ohne eine einzige Messung wären erfunden.
-  local zonen=''
-  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
-    zonen="$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-      'https://api.cloudflare.com/client/v4/zones?per_page=50' 2>/dev/null \
-      | tr ',' '\n' | grep -o '"name":"[^"]*"' | cut -d'"' -f4 || true)"
-  fi
-  if [ -z "$zonen" ]; then
-    fehlt "nicht prüfbar — Zonen listet nur die REST-API, dafür braucht es"
+
+  if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+    fehlt "nicht möglich — Zonen verwaltet nur die REST-API, dafür braucht es"
     hinweis "CLOUDFLARE_API_TOKEN in der Umgebung (eine wrangler-Anmeldung reicht nicht)."
-    hinweis "Nachsehen kannst du selbst hier:"
-    adresse "https://dash.cloudflare.com/"
+    hinweis "  export CLOUDFLARE_API_TOKEN=…"
+    hinweis "Das Token braucht dafür zusätzlich *Zone:Edit* und *DNS:Edit*."
     offen_merken
     return 0
   fi
 
-  local fehlende=''
-  for d in $domains; do
-    if printf '%s\n' "$zonen" | grep -qx "$d"; then
-      ok "$d ist eine Zone"
+  local konto
+  konto="$(cf_api GET '/accounts' | tr '{' '\n' | grep -oE '"id":"[0-9a-f]{32}"' | head -1 | cut -d'"' -f4)"
+  if [ -z "$konto" ]; then
+    schlimm "Konto nicht abrufbar — fehlt dem Token *Account Settings:Read*?"
+    offen_merken
+    return 0
+  fi
+
+  local neue=''
+  for d in $DOMAINS; do
+    local id; id="$(zonen_id "$d")"
+    if [ -n "$id" ]; then
+      ok "$d ist eine Zone ($id)"
+      continue
+    fi
+    fehlt "$d fehlt als Zone"
+    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+    # Jede Domain braucht eine **eigene** Zone, auch die reinen
+    # Weiterleitungen — sonst gibt es für sie kein Zertifikat, und
+    # https://knöllchenfrei.de läuft in eine Warnung statt in ein Redirect.
+    local antwort
+    antwort="$(cf_api POST '/zones' "{\"name\":\"$d\",\"account\":{\"id\":\"$konto\"},\"type\":\"full\"}")"
+    if printf '%s' "$antwort" | grep -q '"success":true'; then
+      ok "$d als Zone angelegt"
+      neue="$neue $d"
     else
-      fehlt "$d fehlt als Zone"
-      fehlende="$fehlende $d"
+      schlimm "$d ließ sich nicht anlegen:"
+      printf '%s\n' "$antwort" | grep -o '"message":"[^"]*"' | cut -d'"' -f4 | sed 's/^/      /'
+      offen_merken
     fi
   done
 
-  if [ -n "$fehlende" ]; then
+  if [ -n "$neue" ]; then
+    hinweis ""
+    hinweis "Diese Zonen sind angelegt, aber noch nicht aktiv: Beim Registrar"
+    hinweis "müssen dafür die Nameserver umgestellt werden — das kann keine API,"
+    hinweis "die dem Registrar nicht gehört. Die Namen je Zone:"
+    for d in $neue; do
+      local id ns
+      id="$(zonen_id "$d")"
+      ns="$(cf_api GET "/zones/$id" | tr ',' '\n' | grep -oE '[a-z]+\.ns\.cloudflare\.com' | sort -u | tr '\n' ' ')"
+      hinweis "  $d → ${ns:-(noch nicht zugewiesen)}"
+    done
     offen_merken
-    [ "$NUR_PRUEFEN" = ja ] && return 0
-    hinweis "Jede Domain braucht eine **eigene** Zone, auch die reinen"
-    hinweis "Weiterleitungen — sonst gibt es für sie kein Zertifikat, und"
-    hinweis "https://knöllchenfrei.de läuft in eine Warnung statt in ein Redirect."
-    hinweis "Die Punycode-Formen stehen dabei, weil Cloudflare sie so verlangt."
-    adresse "https://dash.cloudflare.com/?to=/:account/add-site"
-    hinweis "Danach beim Registrar die Nameserver umstellen."
-    hinweis "Weiterleitungen als Cloudflare *Redirect Rules* (301 auf"
-    hinweis "https://knoellchenfrei.de/\$1), nicht beim Registrar: dessen"
-    hinweis "Weiterleitungen arbeiten oft mit Frames oder brechen auf der"
-    hinweis "Apex-Domain bei HTTPS."
-    weiter || true
   fi
 
-  fehlt "Auto-Renew für alle fünf prüfen"
+  # --- Weiterleitungen -------------------------------------------------
+  # Als Cloudflare *Redirect Rules*, nicht beim Registrar: Dessen
+  # Weiterleitungen arbeiten oft mit Frames oder brechen auf der Apex-Domain
+  # bei HTTPS.
+  for d in $DOMAINS; do
+    [ "$d" = "$HAUPTDOMAIN" ] && continue
+    local id; id="$(zonen_id "$d")"
+    [ -z "$id" ] && continue
+    local regeln
+    regeln="$(cf_api GET "/zones/$id/rulesets" || true)"
+    if printf '%s' "$regeln" | grep -q 'http_request_dynamic_redirect'; then
+      ok "$d hat eine Weiterleitung"
+      continue
+    fi
+    fehlt "$d ohne Weiterleitung"
+    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+    local daten
+    daten="$(printf '%s' "{\"name\":\"Weiterleitung auf $HAUPTDOMAIN\",\"kind\":\"zone\",\"phase\":\"http_request_dynamic_redirect\",\"rules\":[{\"action\":\"redirect\",\"expression\":\"true\",\"description\":\"301 auf $HAUPTDOMAIN, Pfad erhalten\",\"action_parameters\":{\"from_value\":{\"status_code\":301,\"target_url\":{\"expression\":\"concat(\\\"https://$HAUPTDOMAIN\\\", http.request.uri.path)\"},\"preserve_query_string\":true}}}]}")"
+    local antwort
+    antwort="$(cf_api POST "/zones/$id/rulesets" "$daten")"
+    if printf '%s' "$antwort" | grep -q '"success":true'; then
+      ok "$d leitet jetzt mit 301 auf $HAUPTDOMAIN"
+    else
+      schlimm "$d: Weiterleitung ließ sich nicht anlegen:"
+      printf '%s\n' "$antwort" | grep -o '"message":"[^"]*"' | cut -d'"' -f4 | sed 's/^/      /'
+      offen_merken
+    fi
+  done
+
+  fehlt "Auto-Renew für alle fünf prüfen — das kann nur der Registrar"
   hinweis "Der einzige Punkt dieser Liste, an dem ein Versäumnis nicht"
   hinweis "reparierbar ist: Eine abgelaufene Hauptdomain wird binnen Stunden"
   hinweis "von Drop-Catchern gegriffen."
@@ -539,7 +735,7 @@ schritt_github() {
   ueberschrift "6. Repository und Organisation"
 
   if [ "$HAT_GH" != ja ]; then
-    fehlt "ohne gh nicht prüfbar"
+    fehlt "nicht möglich — gh fehlt oder ist nicht angemeldet"
     adresse "https://github.com/$REPO_SLUG/settings"
     offen_merken
     return 0
@@ -548,36 +744,91 @@ schritt_github() {
   local json
   json="$(gh api "repos/$REPO_SLUG" 2>/dev/null || true)"
 
-  printf '%s' "$json" | grep -q '"has_pages":true' \
-    && ok "GitHub Pages ist an" \
-    || { fehlt "GitHub Pages aus — Quelle auf *GitHub Actions*, Custom domain leer lassen"
-         adresse "https://github.com/$REPO_SLUG/settings/pages"; offen_merken; }
-
+  # --- Beschreibung, Themen, ungenutzte Bereiche ------------------------
   local beschreibung
   beschreibung="$(printf '%s' "$json" | grep -o '"description":"[^"]*"' | head -1 | cut -d'"' -f4)"
-  [ -n "$beschreibung" ] && ok "Beschreibung steht" || { fehlt "Beschreibung fehlt"; offen_merken; }
+  if [ -n "$beschreibung" ]; then
+    ok "Beschreibung steht"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "Beschreibung fehlt"; offen_merken
+  else
+    # Wiki und Projects sind leer und bleiben es. Ein leerer Bereich sieht
+    # verlassener aus als keiner.
+    if gh api -X PATCH "repos/$REPO_SLUG" \
+         -f description="$REPO_BESCHREIBUNG" \
+         -F has_wiki=false -F has_projects=false >/dev/null 2>&1; then
+      ok "Beschreibung gesetzt, Wiki und Projects aus"
+    else
+      schlimm "ließ sich nicht setzen"; offen_merken
+    fi
+  fi
 
   local anzahl
   anzahl="$(gh api "repos/$REPO_SLUG/topics" 2>/dev/null | tr ',' '\n' | grep -c '"[a-z]' || true)"
-  [ "${anzahl:-0}" -gt 5 ] && ok "Topics gesetzt ($anzahl)" || { fehlt "Topics fehlen"; offen_merken; }
-
-  # Diese beiden Schalter hängen nicht am Repository-Inhalt. Die Konfiguration
-  # in .github/dependabot.yml steuert nur die *Versions*updates; ohne die
-  # Schalter fehlt genau der Teil, der dringend ist.
-  if gh api "repos/$REPO_SLUG/vulnerability-alerts" >/dev/null 2>&1; then
-    ok "Dependabot-Warnungen sind an"
+  if [ "${anzahl:-0}" -gt 5 ]; then
+    ok "Themen gesetzt ($anzahl)"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "Themen fehlen"; offen_merken
   else
-    fehlt "Dependabot-Warnungen und Sicherheitsupdates einschalten"
-    adresse "https://github.com/$REPO_SLUG/settings/security_analysis"
-    offen_merken
+    # Die Themen sind kein Schmuck: über github.com/topics/open-data und
+    # /civic-tech findet jemand das Projekt, der nicht nach dem Namen sucht.
+    local args=''
+    for t in $REPO_THEMEN; do args="$args -f names[]=$t"; done
+    # shellcheck disable=SC2086
+    if gh api -X PUT "repos/$REPO_SLUG/topics" $args >/dev/null 2>&1; then
+      ok "Themen gesetzt"
+    else
+      schlimm "ließen sich nicht setzen"; offen_merken
+    fi
   fi
 
-  # Für das Organisationsbild gibt es in der GitHub-API keinen Endpunkt. Das
-  # geht ausschließlich über die Weboberfläche — deshalb steht es hier als
-  # Hinweis und nicht als Prüfung.
-  hinweis "Nicht prüfbar, weil die API es nicht kennt: das Organisationsbild"
-  hinweis "(docs/brand/org-avatar-512.png) und das Vorschaubild des Repositories"
-  hinweis "(docs/brand/social-preview-1280x640.png). Beides nur im Browser."
+  # --- GitHub Pages -----------------------------------------------------
+  if printf '%s' "$json" | grep -q '"has_pages":true'; then
+    ok "GitHub Pages ist an"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "GitHub Pages aus"; offen_merken
+  else
+    # Quelle *GitHub Actions*, kein Zweig — der Workflow baut und liefert.
+    # Und ausdrücklich keine eigene Domain: knoellchenfrei.de gehört zu
+    # Cloudflare Pages, und ein Hostname liegt nur an einer Stelle.
+    if gh api -X POST "repos/$REPO_SLUG/pages" -f build_type=workflow >/dev/null 2>&1; then
+      ok "GitHub Pages eingeschaltet (Quelle: Actions, ohne eigene Domain)"
+    else
+      fehlt "ließ sich nicht einschalten"
+      adresse "https://github.com/$REPO_SLUG/settings/pages"
+      offen_merken
+    fi
+  fi
+
+  # --- Dependabot -------------------------------------------------------
+  # Die Konfiguration in .github/dependabot.yml steuert nur die
+  # *Versions*updates. Die Sicherheitsmeldungen hängen an diesen beiden
+  # Schaltern — ohne sie fehlt genau der Teil, der dringend ist.
+  if gh api "repos/$REPO_SLUG/vulnerability-alerts" >/dev/null 2>&1; then
+    ok "Dependabot-Warnungen sind an"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "Dependabot-Warnungen aus"; offen_merken
+  else
+    gh api -X PUT "repos/$REPO_SLUG/vulnerability-alerts" >/dev/null 2>&1 \
+      && ok "Dependabot-Warnungen eingeschaltet" \
+      || { fehlt "ließen sich nicht einschalten"; offen_merken; }
+  fi
+  if [ "$NUR_PRUEFEN" != ja ]; then
+    gh api -X PUT "repos/$REPO_SLUG/automated-security-fixes" >/dev/null 2>&1 \
+      && ok "Dependabot-Sicherheitsupdates eingeschaltet" || true
+  fi
+
+  # --- Was die API nicht kann ------------------------------------------
+  # Für das Organisationsbild gibt es in der GitHub-API keinen Endpunkt, und
+  # das Vorschaubild des Repositories ebenso wenig. Beides kann ausschliesslich
+  # die Weboberfläche — deshalb steht es hier als Hinweis und nicht als
+  # Prüfung, die immer "fehlt" sagen würde.
+  hinweis ""
+  hinweis "Zwei Dinge kann keine API, nur der Browser:"
+  hinweis "  Organisationsbild   docs/brand/org-avatar-512.png"
+  adresse "https://github.com/organizations/${REPO_SLUG%%/*}/settings/profile"
+  hinweis "  Vorschaubild        docs/brand/social-preview-1280x640.png"
+  adresse "https://github.com/$REPO_SLUG/settings"
 }
 
 # ---------------------------------------------------------------- Bericht

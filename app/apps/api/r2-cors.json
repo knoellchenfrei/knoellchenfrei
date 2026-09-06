@@ -1,0 +1,15 @@
+[
+  {
+    "AllowedOrigins": [
+      "https://knoellchenfrei.pages.dev",
+      "https://knoellchenfrei.de",
+      "https://www.knoellchenfrei.de",
+      "http://localhost:5173",
+      "http://localhost:4173"
+    ],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedHeaders": ["range", "if-match"],
+    "ExposeHeaders": ["etag", "content-range", "content-length", "accept-ranges"],
+    "MaxAgeSeconds": 3600
+  }
+]
