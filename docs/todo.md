@@ -55,12 +55,16 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    Kennungen zurück ins Repository.
 3. **Dependabot-Warnungen** und **Sicherheitsupdates** einschalten
    (Punkt 7) — zwei Schalter, und genau die, die den dringenden Teil abdecken.
-4. **Organisationsbild und Vorschaubild** hochladen, Beschreibung und Topics
-   setzen (Punkt 7). Die Bilder liegen fertig unter `docs/brand/`.
-5. **Auto-Renew** für die fünf Domains (Punkt 2). Der einzige Punkt auf dieser
+4. **Auto-Renew** für die fünf Domains (Punkt 2). Der einzige Punkt auf dieser
    Liste, an dem ein Versäumnis nicht reparierbar ist.
-6. **Telegram-Token** beim BotFather holen (Punkt 6) und die vier Namen
+5. **Telegram-Token** beim BotFather holen (Punkt 6) und die restlichen Namen
    sichern, solange sie frei sind.
+
+**Am 6. September abends erledigt** (nachgeprüft, nicht geglaubt):
+Organisationsbild, Vorschaubild des Repositories, Beschreibung und alle zwölf
+Topics, die Profilseite der Organisation aus einem *öffentlichen*
+`.github`-Repository, GitHub Pages mit grünem Lauf — und das API-Token um
+`Workers Scripts:Edit` ergänzt, das dem ersten Deploy gefehlt hatte.
 
 > **Warum ich das nicht selbst klicke.** Nicht aus Vorsicht — es geht
 > technisch nicht. Ein Browser läuft hier zwar (Chromium und Playwright sind
@@ -326,7 +330,10 @@ Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
       Telegram-Nutzerkennung wird gehasht wie eine IP-Adresse und nur für die
       Meldegrenze benutzt, die Chat-Kennung gar nicht gespeichert.
       21 Unit-Tests auf dem Parser, weil dort fremder Text ankommt.
-- [ ] **Namen jetzt belegen — vier Stück, bevor sie weg sind.**
+- [~] **Namen belegen — vier Stück, bevor sie weg sind.** Eine Gruppe ist am
+      6. September angelegt; welche der vier Namen damit belegt sind, kann ich
+      nicht nachsehen — Telegram ist von hier aus nicht erreichbar, und ich
+      trage nur ein, was ich geprüft habe. Offen bleiben nach meinem Stand:
       `@knoellchenfrei` (Dach), `@knoellchenfrei_BE`, `@knoellchenfrei_HH`,
       `@knoellchenfrei_bot`. Am 6. September 2026 waren alle vier frei.
       **Nicht als leere Hülle:** Telegram behält sich ausdrücklich vor, Namen
@@ -367,32 +374,43 @@ Bilder, Beschreibungstexte und Namensschema stehen in
 in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
 (`403 Resource not accessible by integration`).
 
-- [ ] **Bild der Organisation hochladen** — `docs/brand/org-avatar-512.png`.
-- [ ] **Vorschaubild des Repositories setzen** — `docs/brand/social-preview-1280x640.png`.
-      Ohne das zeigt jeder geteilte Link ein automatisch erzeugtes Bild mit
-      Commit-Zahlen.
-- [ ] **Beschreibung und Topics** am Repository setzen. Die Topics sind kein
-      Schmuck: über `github.com/topics/open-data` und `/civic-tech` findet
-      jemand das Projekt, der nicht nach dem Namen sucht. Fertiger
-      `gh repo edit`-Befehl in [marke.md](marke.md#3-repository-beschreiben).
-- [ ] **Profilseite der Organisation** anlegen — ein Repository namens
-      `.github` mit `profile/README.md`, Inhalt steht fertig in
-      [org-profil.md](org-profil.md).
+- [x] **Bild der Organisation hochgeladen** — nachgeprüft am 6. September:
+      `avatars.githubusercontent.com/u/325612516` liefert das blaue P,
+      460 × 460, also unser `docs/brand/org-avatar-512.png` und kein
+      Platzhalter-Muster.
+- [x] **Vorschaubild des Repositories gesetzt.** Nachgeprüft am `og:image`
+      der Repository-Seite: Es zeigt auf
+      `repository-images.githubusercontent.com/…` — das ist die hochgeladene
+      Datei. Ein automatisch erzeugtes Bild käme von
+      `opengraph.githubassets.com`.
+- [x] **Beschreibung und Topics gesetzt.** Alle **zwölf** Topics aus
+      [marke.md](marke.md#3-repository-beschreiben) stehen, keins fehlt.
+- [x] **Profilseite der Organisation steht.** Das Repository
+      `knoellchenfrei/.github` ist angelegt und — nachgeprüft — **öffentlich**;
+      `github.com/knoellchenfrei` zeigt den Text aus
+      [org-profil.md](org-profil.md). Das ist die eigentliche Bedingung: Aus
+      einem *privaten* `.github` rendert GitHub keine Profilseite, und man
+      sieht dem Repository nicht an, dass es nichts tut.
 - [ ] Bewusst **nicht**: Sponsor-Knopf (dahinter steht kein Konto), private
       E-Mail im Profil (kommt dort nicht wieder weg), Discussions (ein leeres
       Forum wirkt verlassener als keins).
-- [ ] **Dependabot-Warnungen und Sicherheitsupdates einschalten.**
+- [ ] **Dependabot-Warnungen und Sicherheitsupdates einschalten.** *(Ob das
+      schon geschehen ist, kann ich nicht nachsehen: Der Egress-Proxy
+      beantwortet `GET /repos/…/vulnerability-alerts` und
+      `…/automated-security-fixes` mit 403. Bitte im Zweifel selbst
+      nachschauen.)*
       `Settings → Advanced Security` → *Dependabot alerts* und
       *Dependabot security updates*. Die Konfiguration in
       `.github/dependabot.yml` steuert nur die **Versions**updates; die
       Sicherheitsseite hängt an diesen beiden Schaltern und lässt sich nicht
       aus dem Repository heraus setzen. Ohne sie fehlt genau der Teil, der
       dringend ist.
-- [ ] **GitHub Pages einschalten**, wenn die App dort liegen soll.
-      `Settings → Pages`, Quelle *GitHub Actions*. Der Workflow baut sauber
-      durch und scheitert erst beim Ausliefern mit `404 … Ensure GitHub Pages
-      has been enabled`. Falls die App stattdessen über Cloudflare Pages
-      laufen soll: `pages.yml` löschen, statt sie rot stehen zu lassen.
+- [x] **GitHub Pages ist eingeschaltet.** Nachgeprüft: `has_pages: true`, und
+      der Lauf vom 6. September, 18:24 Uhr, ist grün durchgelaufen. Damit liegt
+      die App unter `https://knoellchenfrei.github.io/knoellchenfrei/`.
+      *(Die Adresse selbst kann ich nicht abrufen — `github.io` ist vom
+      Egress-Proxy gesperrt. Der grüne Lauf ist der Beleg, nicht ein
+      Seitenaufruf.)*
 
       **Ins Feld *Custom domain* gehört nichts.** Drei Gründe, jeder für sich
       ausreichend:
