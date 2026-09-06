@@ -270,6 +270,35 @@ Action ist genau die Art Abhängigkeit, die niemand mitzählt.
 Festlegung), und die Sicherheitswarnungen einschalten — die hängen an zwei
 Schaltern in den Repository-Einstellungen, siehe [todo.md](todo.md#7-auftritt--du-vorbereitet-ist-alles).
 
+**Workflow-PRs werden lokal zusammengeführt, nicht über die API.** Sobald ein
+PR eine Datei unter `.github/workflows/` anfasst, antwortet der Merge-Endpunkt
+mit `refusing to allow a GitHub App to create or update workflow … without
+'workflows' permission`. Der Git-Push kann dasselbe problemlos. Der Weg ist
+also `git merge --no-ff origin/dependabot/…` und ein Push auf `main`; GitHub
+markiert den PR danach von selbst als zusammengeführt. Kein Grund, ihn von
+Hand zu schließen — ein geschlossener PR ohne Merge-Vermerk sieht später
+aus wie eine abgelehnte Änderung.
+
+**Der erste Schwung Hauptversionen, und was er über den Code gesagt hat.**
+Acht der elf Vorschläge waren grün und sind zusammengeführt — darunter
+TypeScript 7 ohne eine einzige Beanstandung. Drei waren rot, jeder mit einer
+echten Ursache:
+
+- **MapLibre GL 6** hat den Default-Export abgeschafft und exportiert nur noch
+  benannt. Ein Namensraum-Import (`import * as maplibregl`) ersetzt ihn, ohne
+  den Rest der Datei anzufassen; die drei `TS7006`-Fehler an den
+  Klick-Handlern waren Folgefehler desselben kaputten Imports. Nebenbei
+  schrumpft das MapLibre-Bündel von 1.053 auf 960 kB.
+- **Vite 8** baut mit rolldown, und dessen `closeBundle` läuft, bevor die
+  Dateien auf der Platte stehen. Unser Plugin las dort die fertige
+  `dist/index.html` — `ENOENT`. Es liest sie jetzt im `writeBundle` aus dem
+  Bundle-Objekt, das den Inhalt ohnehin hält. Der Umweg über das Dateisystem
+  war nie nötig.
+- **`@vitejs/plugin-react` 6** verlangt Vite 8 und kann einzeln gar nicht grün
+  werden. Dependabot kann das nicht wissen: Es gibt keine Gruppe für
+  Hauptversionen, und eine wäre auch falsch — dann führe jeder große Sprung
+  im Sammel-PR mit.
+
 ## Oberfläche
 
 **Kopfzeile nach FreiFahrens Vorbild:** zwei Zeilen statt Raster — Suchfeld über

@@ -9,6 +9,42 @@ entschieden; was noch zur Debatte steht, steht in
 Zeichen: **du** = geht nur mit deinem Konto, deiner Unterschrift oder deinem
 Geld. **ich** = kann ich übernehmen, sobald der Vorlauf steht.
 
+## Deine halbe Stunde, in der Reihenfolge
+
+Warum das nicht an mich delegierbar ist, steht darunter im Kasten. Alles
+Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
+
+1. **Cloudflare-Konto anlegen**, API-Token erzeugen, Kontokennung notieren.
+   Rechte: *Workers Scripts:Edit*, *Workers KV Storage:Edit*, *D1:Edit*,
+   *Cloudflare Pages:Edit* — und *Workers R2 Storage:Edit*, wenn im selben
+   Zug die Kacheln aus Punkt 4 dazukommen sollen.
+2. Beides als Repository-Secrets hinterlegen: `Settings → Secrets and
+   variables → Actions` → `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+   **Danach macht den Rest ein Workflow**, nicht du: `Actions → Cloudflare
+   einrichten → Run workflow` legt KV, D1 und Schema an und trägt die
+   Kennungen zurück ins Repository.
+3. **Dependabot-Warnungen** und **Sicherheitsupdates** einschalten
+   (Punkt 7) — zwei Schalter, und genau die, die den dringenden Teil abdecken.
+4. **Organisationsbild und Vorschaubild** hochladen, Beschreibung und Topics
+   setzen (Punkt 7). Die Bilder liegen fertig unter `docs/brand/`.
+5. **Auto-Renew** für die fünf Domains (Punkt 2). Der einzige Punkt auf dieser
+   Liste, an dem ein Versäumnis nicht reparierbar ist.
+6. **Telegram-Token** beim BotFather holen (Punkt 6) und die vier Namen
+   sichern, solange sie frei sind.
+
+> **Warum ich das nicht selbst klicke.** Nicht aus Vorsicht — es geht
+> technisch nicht. Ein Browser läuft hier zwar (Chromium und Playwright sind
+> installiert), aber kopflos in einem Container, den du weder siehst noch
+> bedienst: Es gibt keinen Weg, ein Passwort oder einen zweiten Faktor in
+> *diese* Sitzung einzugeben, und ins Chat gehören Zugangsdaten nicht. Über
+> die API geht es ebenfalls nicht, und zwar aus zwei getrennten Gründen:
+> `PATCH /repos/…` beantwortet der Egress-Proxy dieser Umgebung mit
+> **„Repository settings writes are not permitted through this proxy"**, und
+> für das **Organisationsbild** gibt es in der GitHub-API überhaupt keinen
+> Endpunkt — das kann nur die Weboberfläche. Was ich stattdessen getan habe:
+> alles vorbereitet, was ohne dein Konto geht, und deinen Teil auf Klicks
+> reduziert (siehe Schritt 2 — der Cloudflare-Aufbau läuft als Workflow).
+
 ## 1. Trägerschaft: Verein gründen — **du**
 
 Das Vorbild ist eingetragen: **FreiFahren e.V.**, Amtsgericht Charlottenburg,

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import maplibregl, { type GeoJSONSource, type Map as MapLibreMap } from 'maplibre-gl'
+// MapLibre 6 hat den Default-Export abgeschafft und exportiert nur noch
+// benannt. Ein Namensraum-Import laesst `maplibregl.Marker` als Typ *und* als
+// Konstruktor stehen, also bleibt der Rest der Datei unberuehrt.
+import * as maplibregl from 'maplibre-gl'
+import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl'
 import {
   activeSightings,
   berlinWallClock,

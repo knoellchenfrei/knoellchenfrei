@@ -8,7 +8,7 @@ import { installVectorBasemap, TILES_URL } from './map-style.js'
 // MapLibre's stylesheet must come first: it sets `.maplibregl-map { position:
 // relative }`, which has the same specificity as our `.map` rule and would
 // otherwise win on order and collapse the map container to zero height.
-import maplibregl from 'maplibre-gl'
+import * as maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import './styles.css'
 
