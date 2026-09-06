@@ -605,13 +605,19 @@ schritt_telegram() {
   [ "$hat_token" = ja ]  && ok "TELEGRAM_TOKEN liegt im Worker"  || fehlt "TELEGRAM_TOKEN fehlt"
   [ "$hat_secret" = ja ] && ok "TELEGRAM_SECRET liegt im Worker" || fehlt "TELEGRAM_SECRET fehlt"
 
+  # Vorhanden ist nicht dasselbe wie gueltig. Wer den Bot bei BotFather neu
+  # anlegt, hat danach zwei Geheimnisse im Worker, die beide auf einen Bot
+  # zeigen, den es nicht mehr gibt — und der erste Entwurf meldete genau dann
+  # "liegt im Worker" und sprang raus. Ein Einrichtungsskript, das nur anlegen
+  # und nie erneuern kann, laesst einen kaputten Zustand als heil durchgehen.
   if [ "$hat_token" = ja ] && [ "$hat_secret" = ja ]; then
-    hinweis "Ob der Webhook hängt, kann nur prüfen, wer den Token hat — das"
-    hinweis "Skript kennt ihn nicht (es hat ihn gesetzt, nicht gespeichert)."
-    hinweis "Selbst nachsehen: curl \"https://api.telegram.org/bot<TOKEN>/getWebhookInfo\""
-    return 0
+    hinweis "Ob sie zum richtigen Bot gehoeren, weiss nur, wer den Token hat —"
+    hinweis "das Skript hat ihn gesetzt, nicht gespeichert."
+    if [ "$NUR_PRUEFEN" = ja ]; then return 0; fi
+    ja_nein "Neu setzen? (noetig nach /newbot oder /revoke bei BotFather)" || return 0
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    offen_merken; return 0
   fi
-  if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; return 0; fi
 
   hinweis "In Telegram @BotFather anschreiben, /newbot, Namen vergeben."
   adresse "https://t.me/BotFather"
@@ -622,9 +628,26 @@ schritt_telegram() {
   # Das zweite Geheimnis weist Telegram gegenüber dem Worker aus. Die
   # Webhook-Adresse ist sonst nur durch Unkenntnis geschützt, und "niemand
   # kennt sie" ist keine Zugangskontrolle.
+  # Erst fragen, wem der Token gehoert — dann setzen. `getMe` kostet nichts und
+  # haette am 6. September sofort gezeigt, dass der Bot @knoellchen_bot heisst
+  # und nicht @knoellchenfrei_bot, wie ueberall in der Doku stand.
+  local wer
+  wer="$(curl -sS --max-time 20 "https://api.telegram.org/bot$token/getMe" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+r = d.get('result') or {}
+print(('@' + r['username']) if d.get('ok') and r.get('username') else '')" 2>/dev/null)"
+  if [ -z "$wer" ]; then
+    schlimm "Telegram kennt diesen Token nicht — nichts gesetzt."
+    offen_merken
+    return 0
+  fi
+  ok "Der Token gehoert zu $wer"
+
   local geheim; geheim="$(openssl rand -hex 24)"
-  printf '%s' "$token"  | wr secret put TELEGRAM_TOKEN  >/dev/null 2>&1 && ok "TELEGRAM_TOKEN gesetzt"
-  printf '%s' "$geheim" | wr secret put TELEGRAM_SECRET >/dev/null 2>&1 && ok "TELEGRAM_SECRET erzeugt und gesetzt"
+  printf '%s' "$token"  | wr secret put TELEGRAM_TOKEN  >/dev/null 2>&1 && ok "TELEGRAM_TOKEN gesetzt"  || { schlimm "TELEGRAM_TOKEN ging nicht"; offen_merken; }
+  printf '%s' "$geheim" | wr secret put TELEGRAM_SECRET >/dev/null 2>&1 && ok "TELEGRAM_SECRET erzeugt und gesetzt" || { schlimm "TELEGRAM_SECRET ging nicht"; offen_merken; }
 
   local basis
   basis="$(worker_adresse)"
@@ -648,6 +671,20 @@ schritt_telegram() {
     schlimm "Webhook abgelehnt: $antwort"
     offen_merken
   fi
+
+  # Gegenprobe beim Absender statt beim Empfaenger. `getWebhookInfo` nennt auch
+  # den letzten Zustellfehler — das ist die eine Stelle, an der man sieht, dass
+  # Telegram es versucht und der Worker es abweist.
+  curl -sS --max-time 20 "https://api.telegram.org/bot$token/getWebhookInfo" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+r = d.get('result') or {}
+print('      eingetragen: ' + (r.get('url') or '(keine)'))
+if r.get('last_error_message'):
+    print('      letzter Fehler: ' + str(r['last_error_message']))
+print('      wartende Nachrichten: ' + str(r.get('pending_update_count', '?')))
+" 2>/dev/null
 
   # Solange der Token noch in der Hand ist: Profil gleich mitsetzen. Danach ist
   # er weg — das Skript speichert ihn nicht.
