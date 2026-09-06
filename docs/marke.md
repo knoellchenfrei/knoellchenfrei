@@ -53,6 +53,39 @@ sitzen, und die zwei Buchstaben liefen rechts aus ihm heraus.
 schicken. Bei einer Gruppe über *Gruppe → Bearbeiten → Bild*. Beides geht nur
 in der App; die Bot-API kennt für das eigene Profilbild keinen Endpunkt.
 
+## Was am Bot sonst noch eingestellt gehört
+
+Drei Texte, und die **setzt das Skript selbst** — die Bot-API kann sie, also
+tippt sie niemand ab (`./scripts/einrichten.sh botprofil`):
+
+| Feld | Wo es erscheint | Grenze |
+| --- | --- | --- |
+| **About** (`setMyShortDescription`) | im Profil des Bots, unter dem Namen | 120 Zeichen |
+| **Beschreibung** (`setMyDescription`) | auf dem **leeren Chat, vor dem ersten `/start`** — die einzige Chance, jemandem zu erklären, was passiert, *bevor* er etwas schickt | 512 Zeichen |
+| **Befehlsmenü** (`setMyCommands`) | neben dem Eingabefeld | 100 Befehle |
+
+Im Menü steht genau **ein** Befehl: `/hilfe`. Mehr beantwortet der Worker
+nicht. Ein Menü, das einen Befehl anbietet, den der Bot nicht kennt, ist
+schlimmer als keines — es verspricht etwas, und die Antwort ist eine höfliche
+Absage.
+
+Der Beschreibungstext nennt zuerst, was der Bot **nicht** speichert. Das ist
+kein Beiwerk: Wer einem fremden Bot seinen Standort schickt, hat genau diese
+Frage, und sie beantwortet sich hier vor dem ersten Klick statt in einer
+Datenschutzerklärung, die niemand aufmacht.
+
+### Zwei Bilder und zwei Schalter, die nur der BotFather kann
+
+- **Profilbild** — `/setuserpic`, `brand/telegram-bot-512.png`.
+- **Beschreibungsbild** — *BotFather → Edit Bot → Edit Description Picture*.
+  Es steht über dem Beschreibungstext auf dem leeren Chat. Die Vorschaukarte
+  taugt dafür, oder das Dach-Bild.
+- **`/setjoingroups` → Disable.** Der Bot ist auf Einzelchats gebaut; Gruppen
+  mitzulesen ist Stufe 2 und braucht erst einen Missbrauchsfilter. Ein Bot, den
+  man in Gruppen ziehen kann, der dort aber schweigt, erzeugt nur Rückfragen.
+- **`/setprivacy` → Enable** (ist die Vorgabe). Falls Gruppen je dazukommen,
+  sieht er dann nur, was an ihn gerichtet ist.
+
 ## Warum das Motiv ein P bleibt
 
 Das **P** ist das internationale Parkzeichen: Es sagt in einem Zeichen, worum

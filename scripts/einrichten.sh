@@ -443,6 +443,96 @@ schritt_ci() {
 
 # ------------------------------------------------------------- 3. Telegram
 
+# Was am Bot ausser dem Webhook eingestellt gehoert — und was davon eine
+# Schnittstelle kann.
+#
+# Die Bot-API setzt drei Dinge selbst, also tut das Skript es auch:
+#
+#   setMyShortDescription   das "About" im Profil, hoechstens 120 Zeichen
+#   setMyDescription        der Text auf dem leeren Chat, VOR dem ersten
+#                           /start, hoechstens 512 Zeichen
+#   setMyCommands           das Befehlsmenue neben dem Eingabefeld
+#
+# Nicht ueber die API gehen: das **Profilbild** und das **Beschreibungsbild**
+# (das Bild ueber dem Text auf dem leeren Chat). Beides kennt nur der
+# BotFather. Deshalb stehen sie unten als Hinweis und nicht als Pruefung, die
+# ohnehin nichts messen koennte.
+BOT_ABOUT="Wo Parken gerade etwas kostet — und wo zuletzt das Ordnungsamt gesehen wurde. Standort schicken genügt."
+
+BOT_BESCHREIBUNG="Schick mir deinen Standort, und die Sichtung steht für alle auf der Karte — 90 Minuten lang, danach verfällt sie.
+
+Was ich nicht speichere: deine Chat-Kennung. Was ich unscharf mache: die Position auf rund 10 Meter, die Zeit auf ein Fünf-Minuten-Raster. Deine Telegram-Kennung wird gehasht wie eine IP-Adresse und nur benutzt, um die Meldegrenze durchzusetzen.
+
+Berlin und Hamburg. Verbindlich ist immer die Beschilderung vor Ort.
+
+/hilfe erklärt es nochmal."
+
+tg_api() {
+  # tg_api <token> <methode> <json>
+  curl -sS -X POST "https://api.telegram.org/bot$1/$2" \
+    -H 'Content-Type: application/json' -d "$3"
+}
+
+tg_ok() { printf '%s' "$1" | grep -q '"ok":true'; }
+
+bot_profil_setzen() {
+  local token="$1" antwort
+
+  antwort="$(tg_api "$token" setMyShortDescription \
+    "$(printf '{"short_description":%s}' "$(json_text "$BOT_ABOUT")")")"
+  tg_ok "$antwort" && ok "About gesetzt (${#BOT_ABOUT} von 120 Zeichen)" \
+    || { schlimm "About abgelehnt: $antwort"; offen_merken; }
+
+  antwort="$(tg_api "$token" setMyDescription \
+    "$(printf '{"description":%s}' "$(json_text "$BOT_BESCHREIBUNG")")")"
+  tg_ok "$antwort" && ok "Beschreibung gesetzt (${#BOT_BESCHREIBUNG} von 512 Zeichen)" \
+    || { schlimm "Beschreibung abgelehnt: $antwort"; offen_merken; }
+
+  # Nur was der Worker wirklich beantwortet. Ein Menue, das einen Befehl
+  # anbietet, den der Bot nicht kennt, ist schlimmer als keines: Es verspricht
+  # etwas und die Antwort ist eine hoefliche Absage.
+  antwort="$(tg_api "$token" setMyCommands \
+    '{"commands":[{"command":"hilfe","description":"Wie das Melden geht, und was gespeichert wird"}]}')"
+  tg_ok "$antwort" && ok "Befehlsmenü gesetzt (/hilfe)" \
+    || { schlimm "Befehlsmenü abgelehnt: $antwort"; offen_merken; }
+
+  hinweis ""
+  hinweis "Zwei Bilder kann die Bot-API nicht, nur der BotFather:"
+  hinweis "  Profilbild        /setuserpic   → docs/brand/telegram-bot-512.png"
+  hinweis "  Beschreibungsbild BotFather → Edit Bot → Edit Description Picture"
+  hinweis "  (steht über dem Text auf dem leeren Chat; docs/brand/social-preview-1280x640.png"
+  hinweis "   taugt dafür, oder das Dach-Bild)"
+  hinweis ""
+  hinweis "Und zwei Schalter, die zur Bauart gehören:"
+  hinweis "  /setjoingroups  → **Disable**. Der Bot ist auf Einzelchats gebaut;"
+  hinweis "     Gruppen mitzulesen ist Stufe 2 und braucht erst einen"
+  hinweis "     Missbrauchsfilter. Ein Bot, den man in Gruppen ziehen kann, der"
+  hinweis "     dort aber schweigt, erzeugt nur Rückfragen."
+  hinweis "  /setprivacy     → **Enable** (Vorgabe). Falls Gruppen je dazukommen,"
+  hinweis "     sieht er dann nur, was an ihn gerichtet ist."
+}
+
+# JSON-Zeichenkette aus beliebigem Text — Umbrueche und Anfuehrungszeichen
+# inklusive. `printf '%s'` wuerde beides roh durchreichen und ungueltiges JSON
+# erzeugen.
+json_text() {
+  printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+}
+
+schritt_botprofil() {
+  ueberschrift "3b. Bot-Profil (Beschreibung, About, Befehle)"
+  if [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "nicht prüfbar ohne Token — das Skript speichert ihn nicht"
+    hinweis "Einzeln setzen: ./scripts/einrichten.sh botprofil"
+    return 0
+  fi
+  hinweis "Das Skript kennt den Token nicht — es hat ihn gesetzt, nicht behalten."
+  local token
+  token="$(geheim_fragen 'Bot-Token (leer = überspringen, Eingabe unsichtbar):')"
+  if [ -z "$token" ]; then fehlt "übersprungen"; offen_merken; return 0; fi
+  bot_profil_setzen "$token"
+}
+
 schritt_telegram() {
   ueberschrift "3. Telegram"
   braucht_cf || return 0
@@ -499,6 +589,10 @@ schritt_telegram() {
     schlimm "Webhook abgelehnt: $antwort"
     offen_merken
   fi
+
+  # Solange der Token noch in der Hand ist: Profil gleich mitsetzen. Danach ist
+  # er weg — das Skript speichert ihn nicht.
+  bot_profil_setzen "$token"
 
   hinweis "Namen sichern, solange sie frei sind — und nicht als leere Hülle:"
   hinweis "Telegram holt Namen ungenutzter Kanäle zurück. Anlegen, benennen,"
@@ -856,7 +950,7 @@ schritt_bericht() {
 
 # ------------------------------------------------------------------ Ablauf
 
-SCHRITTE="werkzeuge cloudflare ci telegram kacheln dns github"
+SCHRITTE="werkzeuge cloudflare ci telegram botprofil kacheln dns github"
 
 usage() {
   cat <<'ENDE'
