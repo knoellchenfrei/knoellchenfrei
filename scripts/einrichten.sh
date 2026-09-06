@@ -1098,6 +1098,57 @@ print(json.dumps({
     fi
   done
 
+  # --- DNS-Eintraege der Weiterleitungsdomains ---------------------------
+  #
+  # Eine Redirect Rule feuert nur, wenn die Anfrage Cloudflare ueberhaupt
+  # erreicht — und dafuer braucht die Zone einen **proxied** Eintrag. Ohne den
+  # antwortet sie mit NXDOMAIN, und die Weiterleitung laeuft ins Leere. Am
+  # 6. September standen die vier Regeln fertig da und haetten nie gegriffen;
+  # aufgefallen ist es an Cloudflares eigener Warnung "Visitors cannot reach…".
+  #
+  # 192.0.2.1 stammt aus dem Dokumentationsbereich (RFC 5737) und wird nie
+  # kontaktiert: Cloudflare beantwortet die Anfrage selbst. Das ist der Weg,
+  # den Cloudflares Doku fuer reine Weiterleitungsdomains nennt.
+  #
+  # Dazu drei Eintraege gegen Spoofing. Diese Domains empfangen nie Mail — dann
+  # gehoert das auch gesagt, sonst kann jeder in ihrem Namen schreiben:
+  # Null-MX nach RFC 7505, SPF mit hartem `-all`, DMARC auf `reject`.
+  # **Nur fuer die Weiterleitungsdomains**: knoellchenfrei.de soll spaeter eine
+  # Vereinsadresse tragen, und ein Null-MX dort wuerde sie blockieren.
+  for d in $DOMAINS; do
+    [ "$d" = "$HAUPTDOMAIN" ] && continue
+    local id; id="$(zonen_id "$d")"
+    [ -z "$id" ] && continue
+    local anzahl
+    anzahl="$(cf_api GET "/zones/$id/dns_records?per_page=50" | python3 -c "
+import sys, json
+try: print(len((json.load(sys.stdin).get('result') or [])))
+except Exception: print(0)
+" 2>/dev/null)"
+    if [ "${anzahl:-0}" -gt 0 ]; then
+      ok "$d hat DNS-Einträge ($anzahl)"
+      continue
+    fi
+    fehlt "$d ohne DNS-Eintrag — die Weiterleitung würde ins Leere laufen"
+    if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
+    local fehler=0
+    for satz in \
+      "{\"type\":\"A\",\"name\":\"$d\",\"content\":\"192.0.2.1\",\"ttl\":1,\"proxied\":true}" \
+      "{\"type\":\"A\",\"name\":\"www.$d\",\"content\":\"192.0.2.1\",\"ttl\":1,\"proxied\":true}" \
+      "{\"type\":\"MX\",\"name\":\"$d\",\"content\":\".\",\"priority\":0,\"ttl\":1}" \
+      "{\"type\":\"TXT\",\"name\":\"$d\",\"content\":\"v=spf1 -all\",\"ttl\":1}" \
+      "{\"type\":\"TXT\",\"name\":\"_dmarc.$d\",\"content\":\"v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s\",\"ttl\":1}"
+    do
+      cf_geklappt "$(cf_api POST "/zones/$id/dns_records" "$satz")" || fehler=$((fehler + 1))
+    done
+    if [ "$fehler" -eq 0 ]; then
+      ok "$d: A für @ und www (proxied), dazu Null-MX, SPF und DMARC"
+    else
+      schlimm "$d: $fehler von 5 Einträgen ließen sich nicht setzen"
+      offen_merken
+    fi
+  done
+
   fehlt "Auto-Renew für alle fünf prüfen — das kann nur der Registrar"
   hinweis "Der einzige Punkt dieser Liste, an dem ein Versäumnis nicht"
   hinweis "reparierbar ist: Eine abgelaufene Hauptdomain wird binnen Stunden"
