@@ -1,0 +1,19 @@
+# Das Projekt liegt unter `app/` und hat dort seine eigene `.gitignore`. Diese
+# hier ist für das, was daneben im Wurzelverzeichnis anfällt.
+
+# Kachelarchive. `build-tiles.sh` legt `berlin.pmtiles` in das Verzeichnis, aus
+# dem es aufgerufen wurde — beim ersten echten Lauf waren das 89 MB im
+# Wurzelverzeichnis. Zuhause ist die Datei in R2, nicht in git: Sie wird aus
+# einer öffentlichen Quelle erzeugt und ist jederzeit reproduzierbar, GitHub
+# warnt ab 50 MB je Datei, und eine einmal committete Binärdatei bleibt für
+# immer in der Historie, auch wenn man sie später löscht.
+*.pmtiles
+
+# Lokaler Zustand von wrangler: Zwischenspeicher, Kennungen, D1-Kopien für
+# `--local`. Gehört auf den Rechner, nicht ins Repository.
+.wrangler/
+
+# Fällt an, wenn jemand `npm install` im Wurzelverzeichnis ausführt (etwa um
+# pnpm zu installieren). Das Projekt selbst hat hier keine Abhängigkeiten.
+node_modules/
+package-lock.json
