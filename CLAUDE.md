@@ -125,6 +125,14 @@ wiederholt.
   Sicherheitsupdates — deshalb dürfen die Wartezeiten großzügig sein. Und ohne
   gesetzten `cooldown` wartet Dependabot trotzdem drei Tage; die Werte dort
   sind eine gesetzte statt einer geerbten Voreinstellung.
+- **Kein `cooldown` am npm-Eintrag von Dependabot.** Er wird in pnpms
+  `minimumReleaseAge` übersetzt und über den ganzen Auflösungslauf gelegt;
+  pnpm prüft aber erst nach dem Auflösen und **fällt nicht auf eine ältere
+  passende Version zurück**, sondern bricht ab. Ein einziges Paket im Baum,
+  das jünger ist als das Fenster, lässt damit jedes Update scheitern — beim
+  ersten Lauf war es `@playwright/test`, 41 Stunden alt und im Lockfile längst
+  festgeschrieben. Offener Konflikt: `dependabot-core#13165`. Der Eintrag für
+  GitHub Actions behält seinen Cooldown, dort gibt es kein pnpm.
 - **In einem `on: push` nie `branches` und `branches-ignore` zusammen.**
   GitHub Actions lehnt das ab, und der Workflow läuft dann gar nicht — ohne
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.

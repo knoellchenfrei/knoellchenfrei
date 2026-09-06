@@ -217,16 +217,23 @@ den Lärm begrenzen, ohne die Sicherheit zu senken:
   Laufzeitabhängigkeiten zusammen. Hauptversionen bleiben einzeln: MapLibre,
   React, Vite und Playwright springen nicht folgenlos, und in einem Sammel-PR
   mit zwölf anderen Zeilen liest die niemand.
-- **Cooldown** von sieben Tagen (Patches drei, Hauptversionen 21). Der Grund
-  ist die npm-Lieferkette: Der häufigste Angriff ist eine übernommene
-  Paketpflegerschaft, die eine bösartige Version veröffentlicht — und die wird
-  meist binnen ein bis zwei Tagen zurückgezogen. Wer nicht sofort zugreift,
-  sieht sie nie.
-- **Das kostet keine Sicherheit**, und das ist der Punkt, an dem die
-  Entscheidung hängt: Laut GitHub-Doku ist `cooldown` „only available for
-  version updates, not security updates". Eine gemeldete Lücke kommt weiter
-  sofort. Ohne diese Eigenschaft wäre eine Woche Wartezeit fahrlässig statt
-  vorsichtig.
+- **Cooldown — geplant, am ersten Lauf gescheitert, und deshalb nur noch bei
+  GitHub Actions.** Die Absicht war eine Woche Wartezeit gegen die
+  npm-Lieferkette: Der häufigste Angriff ist eine übernommene
+  Paketpflegerschaft, deren bösartige Version binnen ein bis zwei Tagen
+  zurückgezogen wird. Und sie hätte nichts gekostet, denn laut GitHub-Doku ist
+  `cooldown` „only available for version updates, not security updates".
+
+  **Nur funktioniert er mit pnpm nicht.** Dependabot übersetzt ihn in pnpms
+  `minimumReleaseAge` und legt es über den ganzen Auflösungslauf; pnpm prüft
+  erst nach dem Auflösen und bricht ab, statt auf eine ältere passende Version
+  zurückzufallen. Ein einziges zu junges Paket im Baum — beim ersten Lauf
+  `@playwright/test`, 41 Stunden alt und im Lockfile längst festgeschrieben —
+  lässt jedes Update scheitern. Offener Konflikt, `dependabot-core#13165`.
+
+  Also: kein Cooldown am npm-Eintrag, Dependabots serverseitige
+  Drei-Tage-Voreinstellung greift trotzdem. Bei GitHub Actions bleibt er, dort
+  gibt es kein pnpm. Wiedervorlage, sobald pnpm zurückfällt statt abzubrechen.
 
 **Ein Eintrag für den ganzen pnpm-Workspace.** `directory: /app` ist die Wurzel
 mit `pnpm-workspace.yaml`; von dort erfasst Dependabot die vier Pakete darunter

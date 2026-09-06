@@ -321,7 +321,12 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
       `.github/dependabot.yml` steuert nur die **Versions**updates; die
       Sicherheitsseite hängt an diesen beiden Schaltern und lässt sich nicht
       aus dem Repository heraus setzen. Ohne sie fehlt genau der Teil, der
-      dringend ist — und der als einziger nicht vom Cooldown gebremst wird.
+      dringend ist.
+- [ ] **GitHub Pages einschalten**, wenn die App dort liegen soll.
+      `Settings → Pages`, Quelle *GitHub Actions*. Der Workflow baut sauber
+      durch und scheitert erst beim Ausliefern mit `404 … Ensure GitHub Pages
+      has been enabled`. Falls die App stattdessen über Cloudflare Pages
+      laufen soll: `pages.yml` löschen, statt sie rot stehen zu lassen.
 
 ## 8. Kleinkram — **ich**
 
