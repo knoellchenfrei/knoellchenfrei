@@ -246,7 +246,7 @@
     ist <strong>geschlossener Testbetrieb</strong>: nicht öffentlich, für Suchmaschinen
     gesperrt, weil das Impressum bis zur Vereinseintragung auf eine Privatperson läuft.</p>
     <p>Der Code des Originals von 2012 wurde nicht angefasst — er liegt unverändert
-    unter <code>ParkingZone/</code> und zieht nicht mit ins neue Repository um.
+    im alten Repository und ist beim Umzug am 6. September dort geblieben.
     Geteilt wird nur die Domäne. Die Ideenliste
     von damals (<code>doc/Ideen.txt</code>) ist erstaunlich gut gealtert und war
     die Vorlage für den Funktionsumfang.</p>
@@ -543,11 +543,103 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 </section>
 
 <section>
+  <h2>Nachtrag</h2>
+  <div class="col">
+    <h3>Zweite Sitzung, 6. September nachmittags: Umzug und zweite Stadt</h3>
+    <p>Der Bericht oben beschreibt die Nacht und den Vormittag. Was danach kam,
+    steht hier — getrennt, damit die Zahlen dort weiter das beschreiben, was sie
+    beschrieben haben.</p>
+    <p><strong>Der Umzug ist durch.</strong> <code>scripts/umzug.sh</code> hat aus
+    dem alten Klon einen verwaisten Commit gemacht — 144 Dateien, keine
+    Vorgeschichte, das Projekt von 2012 nicht dabei — und der liegt jetzt als
+    <code>f733c36</code> auf <code>main</code> in
+    <code>knoellchenfrei/knoellchenfrei</code>. Das Passwort aus den Commits von
+    2012 ist damit nicht umgeschrieben, sondern zurückgelassen.</p>
+    <p><strong>Berlin steckte an sechs Stellen im Code, nicht an dreien.</strong>
+    So stand es in der Doku, und so stimmte es nicht: Die Grenzprüfung lag als
+    Zahlenpaar zweimal im Browser-Speicher, einmal beim Merken des Parkplatzes,
+    einmal im Worker und einmal im Telegram-Parser. Sechs Boxen, die
+    auseinanderlaufen können — und der Fehler, den das erzeugt, ist der stillste
+    von allen: Der Server verwirft eine Meldung, die die App gerade angenommen
+    hat, und im Log steht nur <code>position outside</code>. Jetzt steht die
+    Grenze einmal in <code>core/city.ts</code>, und Browser, Worker und Bot lesen
+    dieselbe.</p>
+    <p><strong>Hamburg ist geprüft, soweit es von hier aus geht.</strong> Zwei
+    Datensätze mit Adresse und Typname, Tarif und Zeiten laut Metadaten im Feed.
+    Drei Funde hängen daran, und die ersten beiden sind unangenehmer als „noch
+    nicht angeschlossen“:</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Fund</th><th>Warum das zählt</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Die Lizenz ist eine andere</td><td>Hamburg gibt unter Datenlizenz Deutschland <strong>Namensnennung</strong> 2.0 heraus, Berlin unter <strong>Zero</strong>. Die Quellenangabe ist damit Lizenzbedingung, nicht Höflichkeit — eine Hamburg-Ansicht, die sie weglässt, verletzt sie. <code>City.attribution</code> trägt den Unterschied bis in die Oberfläche.</td></tr>
+        <tr><td class="k">Die Beschreibung des Dienstes nennt falsche Preise</td><td>Sie spricht von drei Zonen zu 3, 2 und 1 Euro je Stunde. Seit dem 1. Juli 2026 sind es <strong>vier Zonen zu 4,00 / 3,50 / 3,00 / 2,00 Euro</strong>. Wer den Tarif aus dem Metadatentext liest statt aus dem Feature, liefert falsche Preise aus — derselbe Fehler wie ein Datensatz von 2019, nur eine Ebene höher.</td></tr>
+        <tr><td class="k">Der Abruf selbst geht von hier aus nicht</td><td><code>geodienste.hamburg.de</code> und <code>suche.transparenz.hamburg.de</code> beantworten den CONNECT des Egress-Proxys mit 403. Die Adressen stammen aus Metadaten, die erwarteten Feature-Zahlen sind geschätzt. Die Stufe bleibt <em>belegt</em>, nicht <em>geprüft</em>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Korrektur</span>
+    <p>Dieser Bericht hat die End-to-End-Tests an drei Stellen verschieden gezählt
+    — 91, 92 und 92. Nachgemessen auf dem Stand, den er beschreibt: <strong>93
+    laufen und bestehen, ein 94. ist der Handy-Variante vorbehalten.</strong> Die
+    Badges lagen richtig, der Fließtext nicht. <code>CLAUDE.md</code> nannte
+    ebenfalls 91; beides ist korrigiert.</p>
+  </div>
+
+  <div class="col">
+    <h3>Ein Fehler, der sich beim Aufräumen zeigte</h3>
+    <p>Drei E2E-Tests klickten auf eine Karte, an der noch gar keine
+    Klick-Handler hingen. Mit gesperrtem Kachelserver kommt MapLibres
+    <code>styledata</code> nie, und der Rückfall in <code>withMapReady</code>
+    greift erst nach zehn Sekunden — wer vorher klickt, klickt ins Leere. Auf
+    einem kalten Lauf war die App langsam genug, dass die Tests durchgingen; auf
+    jedem warmen fielen sie. Das sah nach einer Regression meiner Änderung aus,
+    war aber auf dem unveränderten Vorgängerstand genauso reproduzierbar. Der
+    Test-Helfer wartet jetzt darauf, dass der Ladehinweis verschwindet.</p>
+    <p>Der Befund geht über den Test hinaus: Zehn Sekunden ohne Kartenklick
+    treffen auch echte Nutzer, überall dort, wo die Kacheln nicht laden — im
+    veröffentlichten Artifact grundsätzlich.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>vorher</th><th>jetzt</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Unit-Tests</td><td class="n">129</td><td class="n">151</td></tr>
+        <tr><td class="k">End-to-End</td><td class="n">93</td><td class="n">93</td></tr>
+        <tr><td class="k">Coverage, Zeilen</td><td class="n">96,3 %</td><td class="n">96,6 %</td></tr>
+        <tr><td class="k">Berlin-Konstanten im Code</td><td class="n">6</td><td class="n">1</td></tr>
+        <tr><td class="k">Bundesländer im Feiertagskalender</td><td class="n">1</td><td class="n">2</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Der Feiertagskalender kennt jetzt Berlin und Hamburg. Die zwölf übrigen
+    Bundesländer fehlen <em>mit Absicht</em>: Sie gehören nur mit Beleg hinein,
+    und die amtlichen Seiten sind aus dieser Umgebung gesperrt. Ein Land ohne
+    hinterlegte Tabelle wirft deshalb, statt eine leere Menge zu liefern — sonst
+    forderte die App an Karfreitag zum Zahlen auf, und nichts daran sähe nach
+    einem Fehler aus. Dieselbe Regel gilt für einen unbekannten Stadtschlüssel:
+    kein stiller Rückfall auf Berlin.</p>
+    <p>Zwei Fallstricke stehen im Quelltext, weil sie sonst untergehen: Mariä
+    Himmelfahrt in Bayern und Fronleichnam in Sachsen und Thüringen gelten
+    <strong>gemeindeweise</strong>. Eine Tabelle je Bundesland kann das nicht
+    ausdrücken — für München gehört der Eintrag an die Stadt, nicht ans Land.</p>
+  </div>
+</section>
+
+
+<section>
   <h2>Offen</h2>
   <div class="col">
     <h3>Was noch aussteht</h3>
-    <p>Kein Punkt davon ist Code. Was übrig ist, sind Konten, Unterschriften und
-    sieben Menschen.</p>
+    <p>Fast kein Punkt davon ist Code. Was übrig ist, sind Konten, Unterschriften
+    und sieben Menschen — und zwei Aufgaben, die an gesperrten Adressen hängen,
+    nicht an fehlender Zeit.</p>
   </div>
   <div class="scroll">
     <table>
@@ -557,12 +649,12 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
         <tr><td class="k">Auto-Renew für alle fünf Domains</td><td><span class="chip user">du</span></td><td>—</td></tr>
         <tr><td class="k">Cloudflare-Konto, fünf Zonen, Nameserver umstellen</td><td><span class="chip user">du</span></td><td>Hosting, Worker, Kacheln</td></tr>
         <tr><td class="k">Impressum-Dienstleister buchen</td><td><span class="chip user">du</span></td><td>Veröffentlichung</td></tr>
-        <tr><td class="k">Organisation anlegen, Zugriff freigeben</td><td><span class="chip user">du</span></td><td>Umzug</td></tr>
         <tr><td class="k">Telegram-Token, Webhook anmelden</td><td><span class="chip user">du</span></td><td>Telegram-Meldungen</td></tr>
         <tr><td class="k">R2-Eimer, Archiv hochladen, CORS und Range-Requests</td><td><span class="chip user">du</span></td><td>eigene Kacheln</td></tr>
-        <tr><td class="k">Umzug ins neue Repository ausführen</td><td><span class="chip agent">ich</span></td><td>wartet auf die Organisation</td></tr>
+        <tr><td class="k">CI-Geheimnisse im neuen Repository hinterlegen</td><td><span class="chip user">du</span></td><td>Deploy-Workflows</td></tr>
         <tr><td class="k">Impressum und Datenschutz ausformulieren</td><td><span class="chip agent">ich</span></td><td>wartet auf Verein und Dienstleister</td></tr>
-        <tr><td class="k">Zweite Stadt: Feiertage, Datenquelle, Ausschnitt</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
+        <tr><td class="k">Zweite Stadt: Hamburger Feed abrufen und parsen</td><td><span class="chip agent">ich</span></td><td>Portale vom Egress-Proxy gesperrt</td></tr>
+        <tr><td class="k">Produktname entberlinern (Titel, Manifest, Überschrift)</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
         <tr><td class="k">Telegram Stufe 2: Gruppen mitlesen</td><td><span class="chip agent">ich</span></td><td>braucht einen Missbrauchsfilter</td></tr>
       </tbody>
     </table>
@@ -620,9 +712,13 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 </section>
 
 <footer>
-  <p>Stand 6. September 2026, 12:11 Uhr. Alles Genannte ist committet und auf
-  <span class="mono">claude/github-repo-integration-cqhab3</span> gepusht; die Prüfläufe
-  stammen aus dem Abschlusslauf gegen genau diesen Stand.</p>
+  <p>Stand 6. September 2026. Der Hauptteil beschreibt die Nacht und den Tag bis
+  12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>; der Nachtrag den
+  Nachmittag danach. Seither liegt alles in
+  <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
+  beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
+  Repository geblieben. Die Prüfläufe im Nachtrag stammen aus dem Abschlusslauf
+  gegen den neuen Stand: 151 Unit-Tests, 93 End-to-End, 96,6 % Coverage.</p>
   <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
   <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
   die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die
