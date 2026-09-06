@@ -25,5 +25,21 @@ enabled = true
 [vars]
 # Comma-separated. Unset means same-origin only — the worker fails closed
 # rather than defaulting to a wildcard.
-ALLOWED_ORIGINS = ""
+#
+# Abgeglichen wird der `Origin`-Kopf **wörtlich**, nicht als Muster. Das hat
+# zwei Folgen, die man kennen muss:
+#
+# 1. Die Vorschau-Adressen von Cloudflare Pages (`<hash>.knoellchenfrei.pages.dev`)
+#    stehen hier bewusst **nicht** drin. Sie ändern sich bei jedem Deploy und
+#    ließen sich nur mit einem Platzhalter erfassen — dann stünde die API aber
+#    jeder Vorschau offen, auch einer aus einem fremden Fork. Wer eine Vorschau
+#    gegen den echten Worker testen will, trägt ihre Adresse hier für die Dauer
+#    des Tests ein.
+# 2. Die eigenen Domains stehen schon drin, obwohl sie noch nicht ausliefern.
+#    Das ist folgenlos: Auf einer Adresse antworten kann nur, wer sie
+#    kontrolliert. Es erspart die Änderung an dem Tag, an dem die DNS umzieht.
+#
+# `knoellchenfrei.github.io` fehlt mit Absicht: Die Pages-Fassung wird ohne
+# `VITE_API_BASE` gebaut und spricht den Worker gar nicht an.
+ALLOWED_ORIGINS = "https://knoellchenfrei.pages.dev,https://knoellchenfrei.de,https://www.knoellchenfrei.de"
 
