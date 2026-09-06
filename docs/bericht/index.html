@@ -240,11 +240,13 @@
     <p>Sie beantwortet vier Fragen: <em>Wo stehe ich, kostet das gerade etwas, wie
     viel, und wo war zuletzt das Ordnungsamt.</em> Alles läuft im Browser, ohne
     Server, offlinefähig, auf dem Homescreen installierbar.</p>
-    <p><strong>Kein Code blockiert die Veröffentlichung mehr.</strong> Es fehlen ein
-    Cloudflare-Konto, eine GitHub-Organisation, ein Trägerverein und ein
-    Impressum-Dienstleister — alle vier nur von einem Menschen zu erledigen. Der Stand
-    ist <strong>geschlossener Testbetrieb</strong>: nicht öffentlich, für Suchmaschinen
-    gesperrt, weil das Impressum bis zur Vereinseintragung auf eine Privatperson läuft.</p>
+    <p><strong>Kein Code blockiert die Veröffentlichung mehr.</strong> Am Abend des
+    6. September steht auch die Infrastruktur: Organisation, Cloudflare-Konto, Worker,
+    Datenbank, Pages, eigene Kacheln, Telegram-Bot. <strong>Was jetzt noch fehlt, ist
+    kein technischer Punkt mehr, sondern ein Trägerverein und ein
+    Impressum-Dienstleister.</strong> Der Stand ist <strong>geschlossener
+    Testbetrieb</strong>: nicht öffentlich, für Suchmaschinen gesperrt, weil das
+    Impressum bis zur Vereinseintragung auf eine Privatperson läuft.</p>
     <p>Der Code des Originals von 2012 wurde nicht angefasst — er liegt unverändert
     im alten Repository und ist beim Umzug am 6. September dort geblieben.
     Geteilt wird nur die Domäne. Die Ideenliste
@@ -298,15 +300,15 @@
       <thead><tr><th>Frage</th><th>Entscheidung</th><th>Stand</th></tr></thead>
       <tbody>
         <tr><td class="k">Name</td><td><span class="mono">knoellchenfrei</span> — gegen <span class="mono">freiparken</span> und <span class="mono">kiezparken</span></td><td>entschieden</td></tr>
-        <tr><td class="k">Domains</td><td>Fünf: alle vier Schreibweisen unter <span class="mono">.de</span>, dazu <span class="mono">knoellchenfrei.org</span></td><td>bestellt, vier live</td></tr>
+        <tr><td class="k">Domains</td><td>Fünf: alle vier Schreibweisen unter <span class="mono">.de</span>, dazu <span class="mono">knoellchenfrei.org</span></td><td>fünf Zonen bei Cloudflare, Nameserver offen</td></tr>
         <tr><td class="k">Trägerschaft</td><td>e.V. nach dem Vorbild von FreiFahren e.V., spendenfinanziert, ohne Werbung</td><td>offen — braucht sieben Menschen</td></tr>
-        <tr><td class="k">Repository</td><td><span class="mono">knoellchenfrei/knoellchenfrei</span>, neue Historie mit einem einzigen Commit</td><td>Umzugsskript liegt bereit</td></tr>
+        <tr><td class="k">Repository</td><td><span class="mono">knoellchenfrei/knoellchenfrei</span>, neue Historie mit einem einzigen Commit</td><td>umgezogen</td></tr>
         <tr><td class="k">Lizenz</td><td>MIT, öffentlich, kein finanzielles Interesse</td><td>umgesetzt</td></tr>
-        <tr><td class="k">Hosting</td><td>Cloudflare — Pages, Worker, D1, R2. Derselbe Aufbau wie FreiFahren.</td><td>vorbereitet, Konto fehlt</td></tr>
-        <tr><td class="k">Veröffentlichung</td><td>Geschlossene Beta bis zur Vereinseintragung; Impressum über einen Dienstleister</td><td>Riegel eingebaut</td></tr>
+        <tr><td class="k">Hosting</td><td>Cloudflare — Pages, Worker, D1, R2. Derselbe Aufbau wie FreiFahren.</td><td>läuft</td></tr>
+        <tr><td class="k">Veröffentlichung</td><td>Geschlossene Beta bis zur Vereinseintragung; Impressum über einen Dienstleister</td><td>Riegel steht, Verein offen</td></tr>
         <tr><td class="k">Oberfläche</td><td>Layout nach FreiFahrens Vorbild; Farbe nur noch dort, wo sie etwas aussagt</td><td>umgesetzt</td></tr>
-        <tr><td class="k">Kartenkacheln</td><td>Eigenes PMTiles-Archiv in R2 statt Rasterkacheln von OpenStreetMap</td><td>Client fertig, Archiv fehlt</td></tr>
-        <tr><td class="k">Telegram</td><td>Bot am bestehenden Worker. Gruppen mitlesen ausdrücklich <em>nicht</em>.</td><td>Stufe 1 gebaut</td></tr>
+        <tr><td class="k">Kartenkacheln</td><td>Eigenes PMTiles-Archiv in R2 statt Rasterkacheln von OpenStreetMap</td><td>läuft, eigene Adresse</td></tr>
+        <tr><td class="k">Telegram</td><td>Bot am bestehenden Worker. Gruppen mitlesen ausdrücklich <em>nicht</em>.</td><td>Bot läuft</td></tr>
         <tr><td class="k">Behindertenparkplätze</td><td>Bleiben — 923 von 1.499 Orten —, aber gedämpft statt in Signalfarbe</td><td>umgesetzt</td></tr>
         <tr><td class="k">Art der Sichtung</td><td>Wird nicht erfasst. Es soll kein Abschleppwagen meldbar sein.</td><td>entschieden</td></tr>
         <tr><td class="k">Zweite Stadt</td><td>Hamburg, umschaltbar in den Einstellungen — eine Stadt zur Zeit, wie bei FreiFahren</td><td>läuft</td></tr>
@@ -477,6 +479,12 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 <section>
   <h2>Qualität</h2>
+  <div class="col">
+    <p>Die Zahlen dieses Abschnitts sind der <strong>Stand vom 6. September,
+    12:11 Uhr</strong> — dem Ende des Hauptteils. Was daraus bis zum Abend
+    wurde, steht in den Nachträgen und im Fuß: 190 Unit-Tests und 107
+    End-to-End.</p>
+  </div>
   <div class="scroll">
     <table>
       <thead><tr><th>Prüfung</th><th>Ergebnis</th><th>Umfang</th></tr></thead>
@@ -854,6 +862,262 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 
 <section>
+  <h2>Vierter Nachtrag</h2>
+  <div class="col">
+    <h3>Der Abend: es läuft — und ein Skript, das nie gelaufen war</h3>
+    <p>Bis hierher war alles Vorbereitung auf ein Konto, das es nicht gab. An
+    diesem Abend gibt es das Konto, und damit wechselt die Art der Fehler:
+    Nicht mehr, ob der Code stimmt, sondern ob er das tut, was er behauptet,
+    wenn er zum ersten Mal auf etwas Echtes trifft.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Läuft seit dem Abend</th><th>Adresse</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Worker</td><td class="mono">knoellchenfrei-api.k-tommy.workers.dev</td></tr>
+        <tr><td class="k">Web-App</td><td class="mono">knoellchenfrei.pages.dev</td></tr>
+        <tr><td class="k">Datenbank</td><td>D1 <span class="mono">knoellchenfrei</span>, EU-gebunden, Schema und Migration eingespielt</td></tr>
+        <tr><td class="k">Kartenkacheln</td><td class="mono">tiles.knoellchenfrei.de</td></tr>
+        <tr><td class="k">GitHub Pages</td><td class="mono">knoellchenfrei.github.io/knoellchenfrei</td></tr>
+        <tr><td class="k">Telegram</td><td>Bot samt Webhook, Profiltexte und Befehlsmenü</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p><strong>Der Worker kannte nur eine Stadt.</strong> Aufgefallen beim
+    Durchsehen der Hosting-Doku, und zwar rechtzeitig: Die App schaltet seit
+    dem Nachmittag zwischen Berlin und Hamburg um, der Worker wählte über eine
+    Umgebungsvariable <em>eine</em> und wies alles andere ab. Eine Hamburger
+    Meldung hätte <code>422 position outside Berlin</code> bekommen — in der App
+    sieht das aus, als sei das Melden kaputt. Die Stadt kommt jetzt aus der
+    Position, nicht aus der Konfiguration; <code>sightings</code> und
+    <code>marks</code> tragen eine Spalte dafür, und die Lesepfade filtern
+    danach. <code>visits</code> bewusst nicht: Ein Anwesenheits-Ping trägt keine
+    Position, die Stadt wäre also vom Client <em>behauptet</em> statt
+    abgeleitet — der einzige Wert, den der Worker nicht prüfen könnte.</p>
+
+    <p><strong>Und der Arbeitstitel verschwand.</strong> <code>parkingzone</code>
+    steckte im npm-Namensraum, im Worker-Namen, in der Datenbank, im
+    Pages-Projekt, im Cache-Namen des Service Workers und in sieben Schlüsseln
+    im Browser-Speicher. Alles umbenannt, ohne Übernahmecode — die App lief
+    noch bei niemandem. Stehen bleiben durfte der alte Name nur da, wo er eine
+    <em>historische Tatsache</em> ist: die Adresse des alten Repositories und
+    die JDBC-Zeile von 2012.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Entweder — oder</span>
+    <p>„Entweder Setup per CLI vom lokalen Rechner oder alles als GitHub
+    Actions." Der Einwand traf genau das, was ich gebaut hatte: ein Skript, das
+    Workflows anstößt, die Ressourcen anlegen. Zwei halbe Wahrheiten über
+    denselben Zustand.</p>
+    <p>Entschieden wurde die CLI, und das ist auch die verbreitete Aufteilung:
+    <strong>Bootstrap ist nicht Deployment.</strong> Einmalige
+    Ressourcenerzeugung läuft von einem Arbeitsplatz, an dem jemand sitzt —
+    ihr Zweck ist, CI/CD überhaupt zu ermöglichen. <code>setup-cloudflare.yml</code>
+    ist gelöscht; die Workflows machen nur noch Prüfen und Ausrollen.</p>
+    <p>Dabei fiel auf, dass ich etwas nachgebaut hatte, das es schon gab:
+    <strong>D1 bringt ein Migrationswerkzeug mit.</strong>
+    <code>wrangler d1 migrations apply</code> führt eine Tabelle mit und
+    überspringt, was schon eingespielt ist. Mein Nachbau erriet den Zustand aus
+    Fehlermeldungen — und lag prompt einmal daneben.</p>
+  </div>
+
+  <div class="col">
+    <h3>Der teuerste Abschnitt: ein Skript, das nie gelaufen war</h3>
+    <p>Ich habe ein Einrichtungsskript geschrieben, das prüft statt anzuweisen,
+    knapp neunhundert Zeilen, mit Begründungen an jeder Stelle — und es
+    <strong>nie gegen ein echtes Konto ausgeführt</strong>. Es gab hier keines.
+    Der erste echte Lauf hat das nachgeholt, und die Ausbeute ist die längste
+    Fehlerliste dieses Tages. Sie steht hier vollständig, weil jeder einzelne
+    Punkt dieselbe Ursache hat.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Was das Skript tat</th><th>Was daran falsch war</th></tr></thead>
+      <tbody>
+        <tr><td class="k">meldete viermal „ließ sich nicht anlegen"</td><td>Es hatte alle vier Weiterleitungen <strong>angelegt</strong>. <code>grep -q '"success":true'</code> trifft nicht — die Cloudflare-API antwortet mit einem Leerzeichen nach dem Doppelpunkt. Die schlimmste Sorte Fehlmeldung: Wer sie glaubt, sucht den Fehler dort, wo keiner ist.</td></tr>
+        <tr><td class="k">zeigte eine leere Begründung</td><td>Dieselbe Annahme in der Fehler-Auslese — <code>"message":"</code> traf ebenso wenig. Ausgerechnet an der Stelle, die dafür da ist, die echte Meldung zu zeigen. Sie lautete <code>request is not authorized</code>, und daraus ergab sich das fehlende Recht.</td></tr>
+        <tr><td class="k">meldete vier vorhandene Dinge als fehlend</td><td>Das Skript riet selbst dazu, <code>CLOUDFLARE_API_TOKEN</code> zu exportieren (Zonen kennt <code>wrangler</code> nicht) — und genau dieser Export übersteuerte die <code>wrangler</code>-Anmeldung. Ein Token mit Zonen-Rechten hat keine für Workers, also scheiterte jeder Worker-Aufruf still.</td></tr>
+        <tr><td class="k">hielt zwei bestehende Zonen für fehlend</td><td>Cloudflare liefert Umlautdomains <em>unicodiert</em> zurück, das Skript suchte nach Punycode.</td></tr>
+        <tr><td class="k">setzte kein CORS</td><td>Die Regeldatei war im S3-Stil geschrieben und nie ausprobiert. R2 will ein anderes Format.</td></tr>
+        <tr><td class="k">übersprang Telegram als „steht schon"</td><td>Es prüfte, <em>ob</em> die Geheimnisse existieren, nicht ob sie <em>gelten</em>. Nach einem neuen Bot zeigten beide auf einen, den es nicht mehr gab.</td></tr>
+        <tr><td class="k">legte Weiterleitungen an, die nie gegriffen hätten</td><td>Eine Regel feuert nur, wenn die Anfrage Cloudflare erreicht — dafür braucht die Zone einen DNS-Eintrag. Ohne den antwortet sie mit <code>NXDOMAIN</code>.</td></tr>
+        <tr><td class="k">hätte die Hauptdomain auf eine Parkseite zeigen lassen</td><td>Cloudflare übernimmt beim Anlegen einer Zone die vorhandenen Einträge — hier drei auf die Parkseite des Registrars, darunter ein Wildcard, der auch <span class="mono">tiles.</span> und <span class="mono">api.</span> abgefangen hätte.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p><strong>Die Ursache ist eine einzige</strong>, und sie ist unangenehmer
+    als jeder einzelne Punkt: Ein Skript, das prüft statt anzuweisen, ist nur so
+    gut wie seine Prüfungen — und <em>ungeprüfte Prüfungen sind schlimmer als
+    keine</em>, weil sie Vertrauen erzeugen. Genau diese Falle hatte ich an
+    anderer Stelle schon zweimal beschrieben: der Service Worker, der nichts
+    vorhielt und dabei gesund aussah. Ich habe sie in ein Werkzeug eingebaut,
+    dessen Zweck es ist, sie zu verhindern.</p>
+    <p>Die eine Änderung, aus der jede Diagnose des Abends kam, war klein:
+    <strong>die echte Fehlermeldung anzeigen, statt sie nach
+    <code>/dev/null</code> zu schicken.</strong> Alles andere folgte daraus.
+    Und die zweite Lehre steht im selben Commit: JSON gehört von einem
+    JSON-Leser gelesen, nicht von einem regulären Ausdruck — beide falschen
+    Muster waren dasselbe Missverständnis.</p>
+
+    <h3>Und noch ein Fund derselben Art</h3>
+    <p>Der Service Worker hielt <strong>in Produktion erneut nichts vor</strong>.
+    Diesmal nicht wegen falscher Pfade, sondern weil Cloudflare Pages auf
+    <code>/index.html</code> mit einem <strong>308</strong> antwortet.
+    <code>cache.addAll</code> ist atomar: Eine Weiterleitung unter den
+    Vorratspfaden ist so tödlich wie eine 404. Der lokale Vorschauserver
+    liefert dort 200 — die End-to-End-Suite konnte das prinzipiell nicht sehen,
+    sie misst gegen genau diesen Server. Gefunden wurde es an der
+    ausgelieferten Adresse.</p>
+    <p>Die Reparatur ist diesmal die richtige Ebene: einzeln ablegen statt
+    atomar, ein kaputter Eintrag kostet diesen einen, und was scheitert, steht
+    in der Konsole. <strong>Das hätte beide Vorfälle verhindert</strong> — meine
+    erste Reparatur hatte nur die Liste in Ordnung gebracht, nicht die Bauart.</p>
+
+    <h3>Kleinere Dinge</h3>
+    <p>Vier Telegram-Bilder, aus demselben Skript wie die übrigen. Telegram
+    schneidet in Chatlisten <em>rund</em> zu und zeigt im Profil das
+    <em>Quadrat</em> — Fläche randlos bis in die Ecken, Motiv innerhalb des
+    Kreises. Die Städte tragen ihr <strong>Kfz-Kennzeichen</strong>, <code>B</code>
+    und <code>HH</code>: Die App handelt von Autos, und ein
+    Unterscheidungszeichen ist das, was auf jedem davon steht. Nicht zu
+    verwechseln mit dem Ländercode <code>BE</code> im Feiertagskalender — zwei
+    Kürzel für dieselbe Stadt, die Verschiedenes meinen.</p>
+    <p>Die Profiltexte des Bots setzt das Skript selbst, weil die Bot-API es
+    kann. Der wichtigste ist die <strong>Beschreibung</strong>: Sie steht auf dem
+    leeren Chat, <em>bevor</em> jemand etwas schickt — die einzige Gelegenheit
+    zu erklären, was mit einem Standort passiert. Sie nennt deshalb zuerst, was
+    der Bot <em>nicht</em> speichert.</p>
+    <p><strong>Startseite und Merch: nein, noch nicht.</strong> Beim Vorbild
+    angesehen: <span class="mono">freifahren.org</span> ist eine Seite für den
+    Verein, nicht für die App, und sie trägt sich über Mission, Spenden und eine
+    Presse-Wand mit über fünfzehn Medien. Genau das haben wir nicht. Heute
+    gebaut wäre sie eine Überschrift mit nichts dahinter. Merch braucht
+    obendrein einen Verkäufer mit Impressum und Steuernummer — heute eine
+    Privatanschrift, also genau das, wogegen der Beta-Riegel existiert.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Vier Endlosschleifen, die ich selbst gestartet habe</span>
+    <p>Auf die Frage, warum fünf Hintergrundaufgaben so lange laufen: Ich hatte
+    Warteschleifen auf die Testläufe gebaut, in der Form
+    <code>until ! pgrep -f "…/cli.js test"; do sleep 20; done</code>.
+    <code>pgrep -f</code> durchsucht die ganze Kommandozeile — und die der
+    Schleife enthält genau die Zeichenkette, nach der sie sucht. Jede hat sich
+    selbst gefunden, die Bedingung wurde nie wahr, und sie liefen nach dem Ende
+    der Tests weiter. Kein Schaden am Projekt, nur Rechenzeit; überflüssig waren
+    sie ohnehin, weil die Läufe sich selbst zurückmelden.</p>
+  </div>
+</section>
+
+
+<section>
+  <h2>Fünfter Nachtrag</h2>
+  <div class="col">
+    <h3>Die Nacht: die Domains kommen an, und die Karte gehört uns</h3>
+    <p>Der vierte Nachtrag endete mit „Nameserver beim Registrar umstellen" als
+    offenem Punkt. Um 01:01 waren alle fünf Zonen <strong>aktiv</strong>, und
+    kurz darauf lieferte <code>tiles.knoellchenfrei.de</code> die erste Kachel
+    aus. Damit fällt der letzte Produktionsblocker, den die Doku seit zwei Tagen
+    führte: <strong>Die IP-Adressen der Nutzer gehen nicht mehr an
+    OpenStreetMap.</strong></p>
+    <p>Die entscheidende Zahl dabei ist eine <strong>206</strong>. Genau darauf
+    beruht PMTiles: Der Browser holt per Range-Request die Bytes für den
+    sichtbaren Ausschnitt, statt 88,8 MB zu laden. Zertifikat, CORS und
+    Range-Unterstützung stimmen damit alle drei — eine einzelne Messung, die
+    drei Dinge gleichzeitig beweist.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Warum Klicken nicht half</span>
+    <p>Cloudflare zeigte fünfmal <em>pending</em>, und der Knopf
+    <em>Check nameservers</em> änderte nichts. Naheliegend wäre gewesen, es für
+    Trägheit zu halten und zu warten. Die Messung sagte etwas anderes: Der
+    eigene Resolver meldete längst Cloudflare, die <strong>Registry</strong>
+    aber weiter <code>ns.inwx.de</code> — und Cloudflare prüft die Registry.
+    Beim Registrar stand die Ursache im Klartext: <em>Invalid nameservers</em>.
+    Die Änderung war dort abgelehnt und nie abgeschickt worden.</p>
+    <p>Nachgemessen, ob es an uns lag: beide Nameserver autoritativ, SOA
+    identisch, NS-Satz konsistent — also genau das, was DENIC bei der
+    Vorabprüfung verlangt. Damit war klar, dass das Ergebnis beim Registrar
+    veraltet war, und ein erneutes Speichern genügte. Ohne diese Messung wäre
+    die nächste Handlung „nochmal klicken" gewesen, und die hätte nie geholfen.</p>
+  </div>
+
+  <div class="col">
+    <p><strong>Ein Wert, den niemand gesetzt hatte.</strong> Der Eimer stand,
+    das Archiv lag darin, die Domain war verbunden — und die Karten wären
+    trotzdem bei OpenStreetMap geblieben. Die App liest
+    <code>VITE_TILES_URL</code> zur Bauzeit, aber der Deploy-Workflow reichte
+    den Wert nie durch. Ein Secret zu setzen hätte nichts bewirkt. Er ist jetzt
+    eine Repository-<em>Variable</em>, kein Secret: Die Adresse steht ohnehin in
+    jedem Netzwerk-Request, und als Secret wäre sie im Protokoll maskiert — man
+    suchte dann im Dunkeln nach einem Wert, der öffentlich ist.</p>
+
+    <h3>Zwei Zugangsdaten-Vorfälle, beide von mir</h3>
+    <p>Sie gehören hierher, ungeschönt.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Was passierte</th><th>Wie</th><th>Folge</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="k">Telegram-Token an Cloudflare geschickt</td>
+          <td>In der Datei für das Cloudflare-Token lag der Bot-Token. Ich habe den Inhalt als <code>Authorization: Bearer</code> verschickt, <em>bevor</em> ich die Form geprüft habe.</td>
+          <td>Cloudflare wies ihn ab; übertragen war er trotzdem. Neu ausgestellt.</td>
+        </tr>
+        <tr>
+          <td class="k">Cloudflare-Token ins Protokoll geschrieben</td>
+          <td><code>${VAR:+ja}${VAR:-nein}</code> als Maskierung. Bei gesetzter Variable gibt der zweite Teil <strong>den Wert</strong> aus, nicht „nein".</td>
+          <td>Stand im Klartext im Verlauf. Token gerollt.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Dasselbe Muster zweimal: <strong>erst ausgeben, dann nachdenken.</strong>
+    Die Regel daraus ist eng — Geheimnisse werden über Längen und Musterprüfungen
+    angefasst, nie über direkte Ausgabe.</p>
+
+    <div class="note">
+      <span class="lbl">Und eine Regel, die ich erfunden hatte</span>
+      <p>Zweimal habe ich ein gültiges Token zurückgewiesen mit der Begründung,
+      ein Cloudflare-Token habe 40 Zeichen. Das stimmt nicht — das hier hat 53
+      und beginnt mit <code>cfat_</code>. Die Regel stammte aus dem Gedächtnis,
+      war nie nachgemessen, und ich habe den Nutzer damit zwei Runden lang zum
+      falschen Feld geschickt. Aufgelöst hat es seine Frage: „Hast du mal
+      geprüft, ob es doch geht?" Prüfen ist richtig — aber gegen die
+      Wirklichkeit, nicht gegen eine Erinnerung. Der Prüf-Endpunkt existierte
+      die ganze Zeit.</p>
+    </div>
+
+    <h3>Was die Zonen noch brauchten</h3>
+    <p>Beim Anlegen übernimmt Cloudflare die Einträge des alten Nameservers. Bei
+    der Hauptdomain kamen so drei A-Einträge auf die Parkseite des Registrars
+    mit, darunter ein <strong>Wildcard</strong> — der hätte jede Subdomain
+    abgefangen, auch <code>tiles.</code> und <code>api.</code>. Aufgefallen ist
+    es nur, weil Cloudflare eine ganz andere Warnung anzeigte und der Nutzer
+    nachfragte.</p>
+    <p>Die vier Weiterleitungsdomains bekamen außerdem drei Einträge, die keine
+    Warnung verlangt, aber die Sache verlangt: <strong>Null-MX</strong> nach
+    RFC 7505, <strong>SPF</strong> mit hartem <code>-all</code> und
+    <strong>DMARC</strong> auf <code>reject</code>. Sie empfangen nie Mail — dann
+    gehört das auch gesagt, sonst schreibt jeder in ihrem Namen. Die Hauptdomain
+    bewusst <em>ohne</em>: Dort soll später eine Vereinsadresse liegen, und ein
+    Null-MX würde sie blockieren.</p>
+  </div>
+</section>
+
+
+<section>
   <h2>Offen</h2>
   <div class="col">
     <h3>Was noch aussteht</h3>
@@ -866,17 +1130,12 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
       <thead><tr><th>Aufgabe</th><th>Wer</th><th>Blockiert</th></tr></thead>
       <tbody>
         <tr><td class="k">Sieben Vereinsmitglieder finden</td><td><span class="chip user">du</span></td><td>Impressum, Veröffentlichung</td></tr>
-        <tr><td class="k">Auto-Renew für alle fünf Domains</td><td><span class="chip user">du</span></td><td>—</td></tr>
-        <tr><td class="k">Cloudflare-Konto, fünf Zonen, Nameserver umstellen</td><td><span class="chip user">du</span></td><td>Hosting, Worker, Kacheln</td></tr>
+        <tr><td class="k">Auto-Renew für alle fünf Domains</td><td><span class="chip user">du</span></td><td>— <em>der einzige nicht reparierbare Punkt</em></td></tr>
         <tr><td class="k">Impressum-Dienstleister buchen</td><td><span class="chip user">du</span></td><td>Veröffentlichung</td></tr>
-        <tr><td class="k">Telegram-Token, Webhook anmelden</td><td><span class="chip user">du</span></td><td>Telegram-Meldungen</td></tr>
-        <tr><td class="k">R2-Eimer, Archiv hochladen, CORS und Range-Requests</td><td><span class="chip user">du</span></td><td>eigene Kacheln</td></tr>
-        <tr><td class="k">CI-Geheimnisse im neuen Repository hinterlegen</td><td><span class="chip user">du</span></td><td>Deploy-Workflows</td></tr>
-        <tr><td class="k">Dependabot-Warnungen und Sicherheitsupdates einschalten</td><td><span class="chip user">du</span></td><td>zwei Schalter, nicht konfigurierbar</td></tr>
-        <tr><td class="k">GitHub Pages einschalten — oder <code>pages.yml</code> löschen</td><td><span class="chip user">du</span></td><td>ein roter Haken</td></tr>
-        <tr><td class="k">Organisationsbild, Vorschaubild, Beschreibung, Themen</td><td><span class="chip user">du</span></td><td>Auftritt</td></tr>
-        <tr><td class="k">Vier Telegram-Namen sichern, bevor sie vergeben sind</td><td><span class="chip user">du</span></td><td>Marke</td></tr>
+        <tr><td class="k">Bot- und Gruppenbilder in Telegram setzen</td><td><span class="chip user">du</span></td><td>nur in der App, keine API</td></tr>
+        <tr><td class="k">Organisationsbild und Vorschaubild hochladen</td><td><span class="chip user">du</span></td><td>für beide kennt die GitHub-API keinen Endpunkt</td></tr>
         <tr><td class="k">Impressum und Datenschutz ausformulieren</td><td><span class="chip agent">ich</span></td><td>wartet auf Verein und Dienstleister</td></tr>
+        <tr><td class="k">Startseite nach dem Vorbild von <span class="mono">freifahren.org</span></td><td><span class="chip agent">ich</span></td><td>wartet auf den Verein — vorher trägt sie nichts</td></tr>
         <tr><td class="k">München als dritte Stadt prüfen</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
         <tr><td class="k">Produktname entberlinern (Titel, Manifest, Überschrift)</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
         <tr><td class="k">Telegram Stufe 2: Gruppen mitlesen</td><td><span class="chip agent">ich</span></td><td>braucht einen Missbrauchsfilter</td></tr>
@@ -945,6 +1204,38 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
   </div>
 
   <div class="col">
+    <h3>Die dritte Sitzung, 6. September, 13:21 bis 23:25</h3>
+    <p>Dieselbe Buchhaltung, damit die Zahlen vergleichbar bleiben. Sie
+    beschreibt den ganzen Tag: Umzug, Hamburg, Abhängigkeiten, Umbenennung,
+    Einrichtung und die vier Nachträge oben.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>Wert</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="k">Laufzeit</td><td class="n">10 h 04 min</td><td>13:21 bis 23:25 am 6. September</td></tr>
+        <tr><td class="k">Commits</td><td class="n">80</td><td>seit dem Umzugs-Commit; 176 versionierte Dateien</td></tr>
+        <tr><td class="k">Unit-Tests</td><td class="n">190</td><td>waren 129 zu Beginn des Tages</td></tr>
+        <tr><td class="k">End-to-End</td><td class="n">107</td><td>waren 93</td></tr>
+        <tr><td class="k">Modell</td><td class="n">claude-opus-5</td><td>kein Wechsel, kein Rückfall; Aufwandsstufe <code>high</code></td></tr>
+        <tr><td class="k">Agenten</td><td class="n">1</td><td>für den mehrstädtigen Worker. Die Arbeit war sonst eine Kette, in der jeder Schritt vom vorigen abhängt — da nützt Fächern nichts.</td></tr>
+        <tr><td class="k">Tokens</td><td class="n">268.840.002</td><td>davon <strong>98,9 % Cache-Lesevorgänge</strong>: 265,8 Mio. gelesen gegen 2,5 Mio. geschrieben — ein Verhältnis von 107 : 1</td></tr>
+        <tr><td class="k">Kosten</td><td class="n">169,05 $</td><td>2,11 $ je Commit</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Was die Zahlen nicht sagen</span>
+    <p>Die teuerste Stunde dieses Tages steht in keiner Spalte: ein
+    Einrichtungsskript, das nie gelaufen war, und acht Fehlbefunde beim ersten
+    echten Lauf. Gekostet hat das nicht Tokens, sondern <strong>fremde
+    Zeit</strong> — die des Menschen, der es ausgeführt und jeden einzelnen
+    Punkt gemeldet hat. Das ist die Währung, in der schlecht geprüfte Arbeit
+    abgerechnet wird, und sie taucht in keiner Abrechnung auf.</p>
+  </div>
+
+  <div class="col">
     <p>Zu den Agenten eine ehrliche Bilanz: Sie haben Dinge gefunden, die ich allein
     nicht gefunden hätte — die überversprochene Höchstparkdauer, die Advents-Samstage,
     das wirkungslose Rate-Limit, die widerlegte CORS-Behauptung. Mehrere andere hingen
@@ -955,13 +1246,15 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 </section>
 
 <footer>
-  <p>Stand 6. September 2026. Der Hauptteil beschreibt die Nacht und den Tag bis
-  12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>; die drei
-  Nachträge den Nachmittag, den Abend und die Nacht danach. Alles liegt jetzt in
+  <p>Stand 7. September 2026, kurz nach eins. Der Hauptteil beschreibt die Nacht
+  und den Tag bis 12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>;
+  die fünf Nachträge alles danach — Umzug, zweite Stadt, Abhängigkeiten, den
+  Abend, an dem das Ganze zum ersten Mal wirklich lief, und die Nacht, in der
+  die Domains ankamen und die Karte uns gehörte. Alles liegt jetzt in
   <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
   beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
   Repository geblieben. Die Prüfläufe stammen aus dem Abschlusslauf gegen den
-  neuen Stand: 179 Unit-Tests, 105 End-to-End, 96,1 % Coverage.</p>
+  Endstand: 190 Unit-Tests, 107 End-to-End, 96,1 % Coverage.</p>
   <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
   <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
   die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die
