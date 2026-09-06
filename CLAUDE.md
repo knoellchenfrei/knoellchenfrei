@@ -144,4 +144,6 @@ wiederholt.
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
 | [docs/staedte.md](docs/staedte.md) | Zweite Stadt: Datenlage, Prüfliste, Hamburg im Einzelnen |
+| [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
+| [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |
 | [SECURITY.md](SECURITY.md) | Bedrohungsmodell und Maßnahmen |

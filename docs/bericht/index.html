@@ -714,6 +714,9 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
         <tr><td class="k">End-to-End</td><td class="n">93</td><td class="n">101</td></tr>
         <tr><td class="k">Coverage, Zeilen</td><td class="n">96,6 %</td><td class="n">96,1 %</td></tr>
         <tr><td class="k">Artifact</td><td class="n">1,92 MB</td><td class="n">2,25 MB</td></tr>
+        <tr><td class="k">Werkzeugaufrufe der Sitzung</td><td class="n">—</td><td class="n">331</td></tr>
+        <tr><td class="k">davon Bash</td><td class="n">—</td><td class="n">83 %</td></tr>
+        <tr><td class="k">Agenten</td><td class="n">—</td><td class="n">0</td></tr>
       </tbody>
     </table>
   </div>
@@ -723,6 +726,15 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
     als der Gegenteilbericht: Es kam mehr Code dazu, als die 28 neuen Tests
     abdecken — vor allem Zweige für Fälle, die Hamburgs Feed heute nicht
     enthält, aber morgen enthalten könnte.</p>
+    <p><strong>Kein einziger Agent</strong> in dieser Sitzung — die
+    Vorgängersitzung rief fünfzehn. Der Grund ist die Art der Arbeit: Umzug,
+    Datenanalyse und Doku sind Ketten, in denen jeder Schritt vom vorigen
+    abhängt. Da nützt Fächern nichts. Die vollständigen Messwerte beider
+    Sitzungen stehen im Repository unter
+    <code>docs/sitzungsstatistik.md</code>; für diese hier führt die
+    Abrechnung anders als bei der Vorgängerin <em>keinen</em> Kostenblock, also
+    steht dort auch keine Zahl — eine Obergrenze aus dem Verlauf ist keine
+    Rechnung.</p>
     <p>Nicht mitgekommen ist Hamburgs <strong>öffentlicher Parkraum</strong>:
     203.283 Polygone, je Stellplatz eines, ohne Tarif und mit leerem Zeitfeld.
     Dieselbe Begründung, aus der Berlins 214.173 Abschnitte außerhalb des Rings
@@ -785,7 +797,7 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
     <table>
       <thead><tr><th>Kennzahl</th><th>Wert</th><th></th></tr></thead>
       <tbody>
-        <tr><td class="k">Laufzeit</td><td class="n">12 h 52 min</td><td>23:19 am 5. bis 12:11 am 6. September</td></tr>
+        <tr><td class="k">Laufzeit</td><td class="n">16 h 25 min</td><td>23:19 am 5. bis 15:44 am 6. September. Der Hauptteil dieses Berichts beschreibt die ersten 12 h 52 min, bis 12:11.</td></tr>
         <tr><td class="k">Commits</td><td class="n">47</td><td>auf <code>claude/github-repo-integration-cqhab3</code>; 18 in der Nacht, 6 am Morgen, 23 am Tag</td></tr>
         <tr><td class="k">Versionierte Dateien</td><td class="n">141</td><td>ohne das unangetastete Original von 2012</td></tr>
         <tr><td class="k">TypeScript</td><td class="n">9.758 Zeilen</td><td>core, ingest, web, api — plus Tests</td></tr>
@@ -796,10 +808,29 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
         <tr><td class="k">Bündel</td><td class="n">266 kB</td><td>plus 1,05 MB MapLibre, getrennt geladen; PMTiles-Leser und Vektor-Theme nur bei Bedarf</td></tr>
         <tr><td class="k">Abhängigkeiten</td><td class="n">keine Lücken</td><td><code>pnpm audit</code>, plus Secret-Scan im CI</td></tr>
         <tr><td class="k">Datenbestand</td><td class="n">103 Zonen</td><td>45.917 Abschnitte, 210.527 Stellplätze, 1.499 Orte, 97 Ortsteile</td></tr>
-        <tr><td class="k">Agenten</td><td class="n">über 20</td><td>Recherche, Domänenprüfung, Sicherheit, Mobile, UI/UX, Barrierefreiheit, E2E</td></tr>
+        <tr><td class="k">Agenten</td><td class="n">15</td><td>alle vom Typ <code>general-purpose</code>: Recherche, Domänenprüfung, Sicherheit, Mobile, UI/UX, Barrierefreiheit, E2E. <strong>Hier stand „über 20“ — das war geschätzt.</strong></td></tr>
+        <tr><td class="k">Modell</td><td class="n">claude-opus-5</td><td>alle 2.067 Antworten, kein Wechsel, kein Fallback; Aufwandsstufe <code>xhigh</code></td></tr>
+        <tr><td class="k">Werkzeugaufrufe</td><td class="n">1.108</td><td>in 21 verschiedenen Werkzeugen, davon <strong>884 Bash</strong> — die Umgebung verlangt Shell statt Editor-Werkzeugen, daher nur 2 <code>Edit</code> bei 38 <code>Write</code></td></tr>
+        <tr><td class="k">Tokens</td><td class="n">497.194.453</td><td>davon <strong>97 % Cache-Lesevorgänge</strong>: 483 Mio. gelesen gegen 2,1 Mio. geschrieben</td></tr>
+        <tr><td class="k">Kosten</td><td class="n">415,88 $</td><td>8,85 $ je Commit, über das Kontingent des Abos abgerechnet</td></tr>
       </tbody>
     </table>
   </div>
+  <div class="note">
+    <span class="lbl">Nachgemessen statt geschätzt</span>
+    <p>Die fünf Zeilen oben stammen aus der Buchhaltung der Sitzung, nicht aus
+    einer Schätzung; die vollständige Auswertung liegt im Repository unter
+    <code>docs/sitzungsstatistik.md</code>. Zwei Quellen widersprachen sich beim
+    Cache-Lesen — 777 Mio. im Sitzungsverlauf gegen 483 Mio. in der Abrechnung,
+    weil der Verlauf Streaming-Zwischenstände mehrfach zählt. Es gilt die
+    Abrechnung.</p>
+    <p><strong>97 % der Tokens sind Wiederlesen.</strong> Das ist die
+    Erkenntnis, die über dieses Projekt hinausgeht: Nicht das Schreiben kostet,
+    sondern dass bei jeder der 2.067 Anfragen der bisherige Verlauf erneut
+    mitgeht. 2,1 Millionen geschriebene Tokens gegen eine halbe Milliarde
+    gelesene — ein Verhältnis von rund 230 : 1.</p>
+  </div>
+
   <div class="col">
     <p>Zu den Agenten eine ehrliche Bilanz: Sie haben Dinge gefunden, die ich allein
     nicht gefunden hätte — die überversprochene Höchstparkdauer, die Advents-Samstage,
