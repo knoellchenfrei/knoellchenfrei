@@ -11,8 +11,10 @@
 Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
-Eine PWA auf Basis der amtlichen Berliner Geodaten. Läuft im Browser, auf dem
-Homescreen installierbar, ohne Server.
+Eine PWA auf den amtlichen Geodaten der Städte. **Berlin und Hamburg**,
+umschaltbar in den Einstellungen — eine Stadt zur Zeit, die Daten der anderen
+werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
+installierbar, ohne Server.
 
 ![Übersicht über Berlin mit Parkzonen, Umweltzone und Ladepunkten](docs/images/overview.png)
 
@@ -20,10 +22,11 @@ Homescreen installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort oder Tippen auf die Karte. 103 amtliche Zonen. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
-| **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit. |
+| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Bewohnerparkgebiete in Hamburg. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". |
+| **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
-| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone. |
+| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. Hamburg liefert diese Ebenen nicht mit; die App blendet sie dort aus, statt eine leere Karte als Ergebnis auszugeben. |
 | **Ordnungsamt** | Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. |
 | **Live-Zahlen** | Wie viele die App gerade offen haben, wie viele heute, wie viele Meldungen aktiv sind. Nur was zählbar ist — sonst gar nichts. |
 | **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
@@ -60,24 +63,33 @@ den Funktionsumfang — sie zieht als kommentiertes Dokument mit um:
 
 ## Daten
 
-Alles von der [Geodateninfrastruktur Berlin](https://gdi.berlin.de), WFS 2.0.0,
-Lizenz [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0)
-— keine Namensnennung erforderlich. **210.527 bewirtschaftete Stellplätze** in
-103 Zonen.
+Zwei Länder, zwei Dienste, zwei Lizenzen — und der Unterschied ist keine
+Formalie:
+
+| | Quelle | Lizenz | Bestand |
+| --- | --- | --- | --- |
+| **Berlin** | [GDI Berlin](https://gdi.berlin.de), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 103 Zonen, 45.917 Abschnitte, **210.527 bewirtschaftete Stellplätze**, 1.499 Orte, 97 Ortsteile |
+| **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Bewohnerparkgebiete, 104 Stadtteile |
+
+Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
+Oberfläche: Eine Hamburg-Ansicht ohne Quellenangabe verletzt die Lizenz, eine
+Berlin-Ansicht ohne sie nicht.
 
 Vollständige Liste mit Endpunkten, Lizenzen und geprüften Negativbefunden:
 [docs/data-sources.md](docs/data-sources.md).
 
-Daten werden zur Buildzeit eingefroren, nicht zur Laufzeit geladen: Der
-Segment-Layer ist ~49 MB, ein Snapshot macht die App offlinefähig, und
+Daten werden zur Buildzeit eingefroren, nicht zur Laufzeit aus dem WFS geladen:
+Berlins Segment-Layer ist ~49 MB, ein Snapshot macht die App offlinefähig, und
 Zonendaten ändern sich über Monate — ein täglicher Rebuild ist frischer als die
 Quelle sich bewegt. CORS wäre kein Hinderungsgrund, `gdi.berlin.de` sendet
-`Access-Control-Allow-Origin: *`.
+`Access-Control-Allow-Origin: *`. Die eingefrorenen Dateien liegen je Stadt
+unter `public/data/<stadt>/` und werden vom Browser geholt — ein Stadtwechsel
+braucht deshalb keinen zweiten Build.
 
 ## Was an den Daten schwierig ist
 
-Zeiten und Gebühren kommen als **Freitext** — 28 Schreibweisen über beide
-Berliner Feeds für rund zehn tatsächliche Fahrpläne:
+Zeiten und Gebühren kommen als **Freitext**. Allein in den beiden Berliner
+Feeds sind es 28 Schreibweisen für rund zehn tatsächliche Fahrpläne:
 
 ```
 Mo-Fr 9-20 Uhr / Sa 9-18 Uhr      Mo-Sa, 9-22 Uhr
@@ -101,6 +113,32 @@ Fallstricke im Detail stehen in [docs/architecture.md](docs/architecture.md).
 - **„Keine Gebühr" heißt nicht „Parken erlaubt"**: Halteverbote und
   Bewohnerplätze gelten unabhängig davon weiter, und die App sagt das.
 
+### Hamburg ist an der Oberfläche einfacher und im Detail anders
+
+Zehn Schreibweisen statt achtzehn, die Höchstparkdauer als Zahl statt als Prosa
+— und trotzdem vier Dinge, die Berlin nicht kennt. Sie stehen hier, weil jedes
+davon still falsch geht:
+
+- **Die Achsenreihenfolge ist vertauscht.** Auf dieselbe Anfrage
+  (`urn:ogc:def:crs:EPSG::4326`) antwortet Berlin `[lon, lat]` und Hamburg
+  `[lat, lon]`. Ungedreht landen Hamburgs Gebiete im Golf von Guinea, und die
+  Karte sieht dabei nur leer aus, nicht kaputt. Die Reihenfolge steht deshalb
+  in der Konfiguration, nie in einer Heuristik: In Hamburg sind beide Zahlen
+  zweistellig und plausibel.
+- **„werktags" schließt den Samstag ein** — Mo–Sa, nach § 3 Abs. 2 BUrlG und
+  ständiger Rechtsprechung. Andersherum gelesen meldete die App an 31 Gebieten
+  samstags „gebührenfrei".
+- **Fenster laufen über Mitternacht** (`täglich 9-2 Uhr`). Ein einzelnes
+  Zeitfenster kann das nicht — Anfang nach Ende heißt in der Prüfung „nie".
+  Wird in zwei Fenster zerlegt, das zweite am Folgetag.
+- **Platzhalter in der Höchstparkdauer:** `0` und `9999` heißen beide
+  „unbegrenzt". Ungeprüft übernommen stünde in der App „6 Tage 22 Stunden".
+
+Beide Feeds haben deshalb **eigene Parser**, keinen gemeinsamen:
+`parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg. Sie
+teilen sich außer der Domäne nichts, und ein Parser für beide wäre bei jeder
+Änderung an einer Stadt für die andere gefährlich.
+
 ## Ordnungsamt-Meldungen
 
 Nach dem Vorbild von [blitzer.de](https://www.blitzer.de/article/blitzer-und-gefahren-melden/):
@@ -121,12 +159,20 @@ anwaltlich geprüft.
 app/
   packages/core      Domänenlogik, framework-frei — Tarife, Feiertage, Parser, Geo, Sichtungen
   packages/ingest    WFS → eingefrorene Web-Assets, Geometrie-Vereinfachung, Artifact-Bundle
-  apps/web           PWA: React 19, Vite 7, MapLibre GL 5
+  apps/web           PWA: React 19, Vite 7, MapLibre GL 6
   apps/api           Cloudflare Worker: WFS-Cache + geteilte Meldungen (optional)
 ```
 
-`core` hängt von keinem Framework ab. Ein späterer nativer Client wäre ein
-zusätzliches Frontend, kein Rewrite.
+`core` hängt von keinem Framework ab und hat keine Laufzeit-Abhängigkeiten. Ein
+späterer nativer Client wäre ein zusätzliches Frontend, kein Rewrite.
+
+Zwei Dateien darin tragen die Mehrstädtigkeit: `core/city.ts` hält jede
+Stadtgrenze **genau einmal** — vorher stand sie an sechs Stellen als Zahlenpaar,
+und laufen zwei davon auseinander, nimmt die App eine Meldung an, die der Server
+danach verwirft, ohne dass im Log etwas nach einem Fehler aussieht.
+`core/holidays.ts` kennt Berlin und Hamburg; ein Bundesland ohne hinterlegte
+Tabelle wirft, statt eine leere Menge zu liefern — sonst forderte die App an
+Karfreitag zum Zahlen auf.
 
 ## Entwickeln
 
@@ -137,7 +183,7 @@ pnpm test                              # 179 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @parkingzone/web dev
-cd apps/web && npx playwright test     # 94 End-to-End-Tests
+cd apps/web && npx playwright test     # 101 End-to-End-Tests
 ```
 
 Bringt die Umgebung einen Chromium mit, den Playwright nicht selbst
@@ -151,9 +197,14 @@ pnpm --filter @parkingzone/ingest build-data
 ```
 
 `gdi.berlin.de` wird von der *Telekom Security TLS RSA Root 2023* signiert, die
-in manchen Container-Images fehlt. Bei einem Zertifikatsfehler ein aktuelles
-Mozilla-Bundle anhängen (`python -c 'import certifi; print(certifi.where())'`)
-und per `--cacert` übergeben — nicht die Verifikation abschalten.
+in manchen Container-Images fehlt. Node bringt seinen eigenen Wurzelspeicher mit
+und ist davon nicht betroffen; **curl** dagegen schon — dort ein aktuelles
+Mozilla-Bundle per `--cacert` übergeben
+(`python3 -c 'import certifi; print(certifi.where())'`), nicht die Verifikation
+abschalten. Hinter einem Proxy braucht Node umgekehrt `NODE_USE_ENV_PROXY=1`:
+Sein `fetch` ignoriert `HTTPS_PROXY`, und direkt hinaus antwortet
+`geodienste.hamburg.de` mit einem 403, das nach einer Sperre der Behörde
+aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 ## Qualität
 
@@ -163,7 +214,7 @@ und per `--cacert` übergeben — nicht die Verifikation abschalten.
 | End-to-End | 101 bestanden über Desktop und Handy, gegen den Produktions-Build (ein 102. läuft nur in der Handy-Variante) |
 | Coverage | 96,1 % Zeilen, 90,3 % Zweige, 98,4 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
-| Abhängigkeiten | `pnpm audit`: keine bekannten Lücken |
+| Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |
 
 Die Badges oben werden vom CI aus den echten Messwerten generiert — kein
 externer Dienst, damit sie auch in einem privaten Repository funktionieren.
@@ -176,6 +227,13 @@ Drei Wege, alle kostenlos: als Claude Artifact (läuft bereits), statisch auf
 GitHub Pages oder Cloudflare Pages, oder mit eigenem Worker für geteilte
 Meldungen und Live-Daten. Details, Kostenrahmen und Einrichtung:
 [docs/hosting.md](docs/hosting.md).
+
+Vorgesehen ist **Cloudflare** — Pages fürs Frontend, Worker plus D1 für die
+Meldungen, R2 für die Kartenkacheln; derselbe Aufbau wie bei FreiFahren. Die
+eigenen Domains gehören dorthin und nicht zu GitHub Pages: Ein Hostname kann
+nur an einer Stelle liegen. `setup-cloudflare.yml` legt KV, D1 und Schema an,
+sobald zwei Secrets hinterlegt sind — die Reihenfolge steht in
+[docs/todo.md](docs/todo.md).
 
 ## Grenzen
 
@@ -213,15 +271,19 @@ zuerst beantwortet.
 ## Lizenz
 
 Code: [MIT](LICENSE). Berliner Geodaten: DL-DE/Zero-2.0, keine Namensnennung
-erforderlich. Kartenkacheln: © OpenStreetMap-Mitwirkende, ODbL — die
-Namensnennung in der App ist Lizenzbedingung.
+erforderlich. Hamburger Geodaten: DL-DE/Namensnennung-2.0 — dort ist die
+Quellenangabe Bedingung, nicht Höflichkeit. Kartenkacheln:
+© OpenStreetMap-Mitwirkende, ODbL — auch deren Namensnennung in der App ist
+Lizenzbedingung.
 
 Mitmachen: [CONTRIBUTING.md](CONTRIBUTING.md) ·
 [Verhaltensregeln](CODE_OF_CONDUCT.md).
 
-Welche weiteren Städte in Frage kämen und woran es jeweils hängt:
-[docs/staedte.md](docs/staedte.md). Die Ideensammlung von 2012, mit dem was
-daraus wurde: [docs/ideen-2012.md](docs/ideen-2012.md).
+Welche weiteren Städte in Frage kämen und woran es jeweils hängt, samt der
+Prüfliste für die nächste: [docs/staedte.md](docs/staedte.md). Bilder,
+Beschreibungstexte und Namensschema: [docs/marke.md](docs/marke.md). Die
+Ideensammlung von 2012, mit dem was daraus wurde:
+[docs/ideen-2012.md](docs/ideen-2012.md).
 
 Der Werkbericht zum Umbau — was entschieden, gebaut und wieder repariert wurde:
 [docs/bericht/index.html](docs/bericht/index.html) (im Browser öffnen).
