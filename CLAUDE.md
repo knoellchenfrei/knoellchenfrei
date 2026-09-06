@@ -112,6 +112,13 @@ wiederholt.
   nichts und verlangen trotzdem etwas; wer ohne Scheibe steht, zahlt.
   `Fee` hat dafür `disc` und `unknown`, und `CostEstimate.priced` zwingt die
   Oberfläche, etwas anderes zu sagen als „0,00 €".
+- **Ein fehlendes Feld ist kein Beweis, dass es das Feld nicht gibt.**
+  `get_session` → `external_metadata.usage` (Tokens und Kosten der Sitzung)
+  wird **mit Verzug** geschrieben: um 16:02 fehlte der Block, um 16:21 war er
+  da. Ich hatte daraus geschlossen und aufgeschrieben, für diese Sitzung gebe
+  es keine Abrechnung. Vor „gibt es nicht" also noch einmal fragen. Für eine
+  *fremde* Sitzung desselben Kontos geht derselbe Aufruf mit `session_id` —
+  so lässt sich eine Vorgängersitzung nachprüfen, statt ihre Zahlen zu glauben.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

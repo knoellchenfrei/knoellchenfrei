@@ -56,6 +56,22 @@ Alle 2.067 Antworten kamen von demselben Modell.
 
 **Kosten laut Plattform: 415,88 $** (`cost_usd: 415.87815175`).
 
+> **Nachtrag vom 6. September, 16:20 Uhr.** Die Sitzung ist inzwischen beendet
+> (`SESSION_STATUS_IDLE`), und dasselbe Feld noch einmal abgefragt liefert die
+> Endabrechnung. Die Zahlen oben waren, wie angekündigt, eine Momentaufnahme:
+>
+> | | 15:45 (Momentaufnahme) | 16:20 (Endstand) |
+> | --- | ---: | ---: |
+> | Eingabe | 1.426.716 | 1.427.256 |
+> | Ausgabe | 2.083.289 | 2.105.393 |
+> | Cache geschrieben | 10.564.148 | 11.195.853 |
+> | Cache gelesen | 483.120.300 | 494.218.840 |
+> | **Kosten** | **415,88 $** | **428,30 $** |
+>
+> Der Abstand zum Sitzungsverlauf (777 Mio. Cache-Lesevorgänge) bleibt auch
+> gegen den Endstand groß — die Erklärung mit den doppelt gezählten
+> Streaming-Zwischenständen hält.
+
 **97 % der Tokens sind Cache-Lesevorgänge.** Das ist die eigentliche Erkenntnis
 und gilt für jede lange Sitzung: Nicht das Schreiben kostet, sondern das
 Wiederlesen. Bei jeder Anfrage geht der bisherige Verlauf erneut mit; über 2.067
@@ -179,8 +195,15 @@ Wer dieses Protokoll fortschreibt, kommt an dieselben Zahlen so heran:
 ```bash
 # Buchhaltung der eigenen Sitzung — maßgeblich
 #   get_session ohne session_id → external_metadata.usage
+#   Fehlt der Block: SPÄTER NOCH EINMAL FRAGEN. Er wird mit Verzug
+#   geschrieben; einmal nichts zu finden beweist nichts.
 
-# Verlauf der eigenen Sitzung
+# Buchhaltung einer FREMDEN Sitzung — geht genauso, sofern sie demselben
+# Konto gehört. So lässt sich die Vorgängersitzung nachprüfen, statt ihre
+# Zahlen zu glauben:
+#   get_session mit session_id → external_metadata.usage
+
+# Verlauf der eigenen Sitzung — nur als Gegenprobe, nie als Ersatz
 ls ~/.claude/projects/*/*.jsonl
 ```
 
@@ -198,12 +221,34 @@ Sitzung `session_019V7Wkw6LxEt3Lq3ocaDrHe`, gestartet vom iPhone am
 dieselbe Umgebung, aber mit **beiden** Repositories als Quelle, wie
 [neue-sitzung.md](neue-sitzung.md) es verlangt hatte.
 
-**Wichtige Einschränkung, die es bei der Vorgängersitzung nicht gab:** Die
-Buchhaltung (`get_session` → `external_metadata`) führt für diese Sitzung
-**keinen `usage`- und keinen `cost_usd`-Block**. Es gibt also keine maßgebliche
-Quelle, nur den Sitzungsverlauf — und der zählt Streaming-Zwischenstände
-mehrfach, wie oben festgestellt. **Die Tokenzahlen unten sind deshalb eine
-Obergrenze, keine Abrechnung.** Kosten lassen sich gar nicht angeben.
+> **Korrektur.** Hier stand zuerst, die Buchhaltung führe für diese Sitzung
+> **keinen** `usage`- und `cost_usd`-Block, es gebe also nur den
+> Sitzungsverlauf. Das war falsch — und zwar auf eine Art, die einen eigenen
+> Eintrag verdient: Der Block **fehlte um 16:02 und war um 16:21 da**. Er wird
+> offensichtlich mit Verzug geschrieben, nicht bei jeder Anfrage. Wer einmal
+> nachsieht und nichts findet, hat nicht bewiesen, dass es nichts gibt.
+>
+> Für die Nachfolgesitzung heißt das: **noch einmal fragen, bevor man „gibt es
+> nicht" schreibt.** Genau das hatte ich unterlassen.
+
+**Maßgeblich, Stand 6. September 16:21 Uhr** (die Sitzung lief da noch, es ist
+also wieder eine Momentaufnahme):
+
+| Art | Tokens |
+| --- | ---: |
+| Eingabe | 25.476 |
+| Ausgabe | 130.100 |
+| Cache geschrieben | 564.644 |
+| Cache gelesen | 69.052.843 |
+| **Summe** | **69.773.063** |
+
+**Kosten: 43,45 $** (`cost_usd: 43.4531535`).
+
+**Der Sitzungsverlauf liegt weit darüber** — 173,5 Mio. gegen 69,8 Mio.,
+Faktor 2,5, bei der Ausgabe sogar Faktor 3,3 (427.456 gegen 130.100). Bei der
+Vorgängersitzung war der Abstand kleiner (777 gegen 494 Mio., Faktor 1,6).
+Beide Male in dieselbe Richtung: **Der Verlauf taugt nicht als Ersatz für die
+Abrechnung**, nur als Obergrenze.
 
 | | |
 | --- | ---: |
@@ -242,7 +287,7 @@ in der Organisation keine Repositories anlegen. Das ist der Grund, warum die
 Profilseite in [marke.md](marke.md) als Klickliste steht statt als erledigter
 Haken.
 
-### Tokens (Obergrenze aus dem Verlauf)
+### Dieselben Zahlen aus dem Verlauf — als Gegenprobe
 
 | Art | Tokens |
 | --- | ---: |
@@ -252,10 +297,15 @@ Haken.
 | Cache gelesen | 170.865.142 |
 | **Summe** | **173.481.607** |
 
-Wieder **98 % Cache-Lesevorgänge** — das Verhältnis von Wiederlesen zu
-Schreiben ist mit rund 400 : 1 sogar noch ungünstiger als die 230 : 1 des
-Umbaus. Der Grund liegt auf der Hand: Diese Sitzung startete mit einem
-fertigen, großen Projekt, dessen Kontext ab der ersten Anfrage mitging.
+Nach der Abrechnung sind es **99 % Cache-Lesevorgänge** (69,05 von 69,77
+Mio.) — das Verhältnis von Wiederlesen zu Schreiben liegt bei rund 122 : 1
+gegen 230 : 1 beim Umbau. Dass es hier *günstiger* ausfällt als dort, hat einen
+einfachen Grund: weniger Anfragen. Über 542 Antworten summiert sich der
+mitlaufende Kontext seltener auf als über 2.067.
+
+Die Verlaufszahlen oben nennen 98 % und ein Verhältnis von 78 : 1. Sie sind in
+der Größenordnung richtig und in der Zahl falsch — genau der Grund, warum die
+Abrechnung gilt.
 
 ### Verlauf
 
