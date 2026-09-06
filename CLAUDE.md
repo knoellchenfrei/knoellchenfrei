@@ -122,9 +122,8 @@ wiederholt.
 - **Abhängigkeiten aktualisiert Dependabot, nicht Renovate.** Begründung und
   Konfiguration in `.github/dependabot.yml`. Zwei Dinge daraus, die man leicht
   falsch annimmt: `cooldown` gilt **nur für Versionsupdates**, nie für
-  Sicherheitsupdates — deshalb dürfen die Wartezeiten großzügig sein. Und ohne
-  gesetzten `cooldown` wartet Dependabot trotzdem drei Tage; die Werte dort
-  sind eine gesetzte statt einer geerbten Voreinstellung.
+  Sicherheitsupdates. Und ohne gesetzten `cooldown` wartet Dependabot trotzdem
+  drei Tage — serverseitig, ohne pnpm zu behelligen.
 - **Kein `cooldown` am npm-Eintrag von Dependabot.** Er wird in pnpms
   `minimumReleaseAge` übersetzt und über den ganzen Auflösungslauf gelegt;
   pnpm prüft aber erst nach dem Auflösen und **fällt nicht auf eine ältere
