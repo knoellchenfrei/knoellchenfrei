@@ -175,7 +175,53 @@ TOML="$APP/apps/api/wrangler.toml"
 # Verweis auf @knoellchenfrei/core — der Build bricht dann mit
 # `Could not resolve` ab, was nach einem kaputten Import aussieht und ein
 # fehlender Symlink ist.
-wr() { (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler "$@"); }
+# Zwei Zugangsdaten, zwei Zwecke — und sie duerfen sich nicht vermischen.
+#
+# Am 6. September hat genau das eine Stunde gekostet: Das Skript riet dazu,
+# CLOUDFLARE_API_TOKEN zu exportieren (die Zonen-API kennt wrangler nicht), und
+# dieser Export uebersteuerte die wrangler-Anmeldung. Das Token hatte Zone- und
+# R2-Rechte, aber keine fuer Workers — also scheiterte jeder Worker-Aufruf
+# still, und das Skript meldete "Pages-Projekt fehlt" und "CLIENT_SALT fehlt"
+# fuer Dinge, die beide existierten. Im Nicht-Pruefmodus haette es angefangen,
+# sie neu anzulegen.
+#
+# Deshalb: `wr` laeuft grundsaetzlich OHNE das DNS-Token. Nur wenn nachweislich
+# dasselbe Token auch Workers darf (WRANGLER_NUTZT_TOKEN=ja, unten gemessen),
+# wird es durchgereicht.
+WRANGLER_NUTZT_TOKEN=nein
+
+wr() {
+  if [ "$WRANGLER_NUTZT_TOKEN" = ja ]; then
+    (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler "$@")
+  else
+    (cd "$APP/apps/api" && env -u CLOUDFLARE_API_TOKEN \
+       pnpm --filter @knoellchenfrei/api exec wrangler "$@")
+  fi
+}
+
+# Das DNS-Token kommt aus der Umgebung oder aus einer Datei — Letzteres, damit
+# es nicht in der Shell-History und nicht im Sitzungsprotokoll landet.
+CF_TOKEN_DATEI="${CF_TOKEN_DATEI:-$HOME/.knoellchenfrei-cf-token}"
+dns_token() {
+  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then printf '%s' "$CLOUDFLARE_API_TOKEN"; return; fi
+  [ -r "$CF_TOKEN_DATEI" ] || return 1
+  tr -d '\n\r "'"'"'' < "$CF_TOKEN_DATEI"
+}
+
+# Ausfuehren und im Fehlerfall die Meldung ZEIGEN. `>/dev/null 2>&1` ueberall
+# war der zweite Konstruktionsfehler: Jede Diagnose dieses Tages kam daraus,
+# die echte Fehlermeldung zu lesen — ein Skript, das sie wegwirft, kann nur
+# "ging nicht" sagen.
+tun() {
+  # tun "<Beschreibung>" <befehl…>
+  local was="$1"; shift
+  local ausgabe status
+  ausgabe="$("$@" 2>&1)"; status=$?
+  if [ "$status" -eq 0 ]; then ok "$was"; return 0; fi
+  schlimm "$was — ging nicht:"
+  printf '%s\n' "$ausgabe" | grep -v '^$' | tail -6 | sed 's/^/      /'
+  return 1
+}
 
 NUR_PRUEFEN=nein
 HAT_GH=nein
@@ -249,6 +295,19 @@ schritt_werkzeuge() {
 
   # Cloudflare: entweder ein Token in der Umgebung oder eine angemeldete
   # Sitzung. Beides ist recht; nichts davon ist es nicht.
+  # Reihenfolge zaehlt: erst pruefen, ob das DNS-Token auch Workers darf,
+  # dann erst `cf_angemeldet` — sonst misst man mit dem falschen Zugang.
+  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+    if (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler secret list >/dev/null 2>&1); then
+      WRANGLER_NUTZT_TOKEN=ja
+      ok "Das Token darf auch Workers — wrangler benutzt es"
+    else
+      ok "Token nur fuer Zonen/R2 — wrangler benutzt deine Anmeldung"
+      hinweis "Beides nebeneinander ist Absicht: Ein Token mit Zone-Rechten hat"
+      hinweis "meist keine fuer Workers, und andersherum genauso."
+    fi
+  fi
+
   if cf_angemeldet; then
     HAT_CF=ja
     if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
@@ -667,17 +726,31 @@ schritt_kacheln() {
     ok "$TILES_DOMAIN zeigt auf den Eimer"
   else
     local zid=''
-    [ -n "${CLOUDFLARE_API_TOKEN:-}" ] && zid="$(zonen_id "$HAUPTDOMAIN")"
+    # Nach dem *Token* fragen, nicht nach der Umgebungsvariable: Es darf auch
+    # aus der Datei kommen. Der erste Entwurf prüfte nur die Variable und
+    # meldete deshalb "die Zone fehlt", während Schritt 5 sie fand.
+    dns_token >/dev/null 2>&1 && zid="$(zonen_id "$HAUPTDOMAIN")"
     if [ -z "$zid" ]; then
       fehlt "$TILES_DOMAIN noch nicht verbunden — die Zone $HAUPTDOMAIN fehlt (Schritt 5)"
       offen_merken
     elif [ "$NUR_PRUEFEN" = ja ]; then
       fehlt "$TILES_DOMAIN noch nicht verbunden"; offen_merken
     else
-      if wr r2 bucket domain add "$R2_EIMER" --domain "$TILES_DOMAIN" --zone-id "$zid" --min-tls 1.2 --force >/dev/null 2>&1; then
-        ok "$TILES_DOMAIN mit dem Eimer verbunden"
+      # `pending` heißt: Cloudflare hat die Delegierung noch nicht bestätigt.
+      # R2 antwortet dann mit `The specified zone id is not valid` — was nach
+      # einer falschen Kennung aussieht und Warten bedeutet. Das gehört
+      # unterschieden, sonst sucht jemand eine Stunde nach der richtigen ID.
+      local zstatus; zstatus="$(zonen_status "$HAUPTDOMAIN")"
+      if [ "$zstatus" != active ]; then
+        fehlt "$TILES_DOMAIN wartet — die Zone $HAUPTDOMAIN steht auf '$zstatus'"
+        hinweis "R2 verlangt eine aktive Zone. Aktiv wird sie, sobald die Registry"
+        hinweis "die neuen Nameserver meldet; im Dashboard beschleunigt das"
+        hinweis "*Check nameservers*."
+        offen_merken
       else
-        schlimm "ließ sich nicht verbinden"; offen_merken
+        tun "$TILES_DOMAIN mit dem Eimer verbunden" \
+          wr r2 bucket domain add "$R2_EIMER" --domain "$TILES_DOMAIN" \
+             --zone-id "$zid" --min-tls 1.2 --force || offen_merken
       fi
     fi
   fi
@@ -722,29 +795,90 @@ schritt_kacheln() {
 cf_api() {
   # cf_api <METHODE> <pfad> [daten]
   local methode="$1" pfad="$2" daten="${3:-}"
+  local t; t="$(dns_token)" || return 1
   if [ -n "$daten" ]; then
-    curl -sS -X "$methode" -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN:-}" \
+    curl -sS -X "$methode" -H "Authorization: Bearer $t" \
       -H 'Content-Type: application/json' -d "$daten" \
       "https://api.cloudflare.com/client/v4$pfad"
   else
-    curl -sS -X "$methode" -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN:-}" \
+    curl -sS -X "$methode" -H "Authorization: Bearer $t" \
       "https://api.cloudflare.com/client/v4$pfad"
   fi
 }
 
+# Cloudflare liefert Umlautdomains als `knölchenfrei.de` zurueck, waehrend
+# Registrare und Werkzeuge die Punycode-Form `xn--knlchenfrei-sfb.de` verlangen.
+# Der erste Entwurf verglich stur die Zeichenketten und meldete zwei
+# existierende Zonen als fehlend. Verglichen wird jetzt in einer Form.
 zonen_id() {
-  cf_api GET "/zones?name=$1" \
-    | tr '{' '\n' | grep -m1 "\"name\":\"$1\"" | grep -oE '"id":"[0-9a-f]{32}"' | head -1 | cut -d'"' -f4
+  local gesucht="$1"
+  cf_api GET "/zones?per_page=50" | python3 -c "
+import sys, json
+gesucht = sys.argv[1]
+def ascii_form(name):
+    try:
+        return name.encode('idna').decode('ascii')
+    except Exception:
+        return name.lower()
+ziel = ascii_form(gesucht)
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    raise SystemExit
+for z in (d.get('result') or []):
+    if ascii_form(z['name']) == ziel:
+        print(z['id']); break
+" "$gesucht" 2>/dev/null
+}
+
+# Zonenstatus — `pending` heisst: Cloudflare hat die Delegierung noch nicht
+# bestaetigt. Manches (eine eigene Domain am R2-Eimer) geht dann noch nicht,
+# und die Fehlermeldung dafuer lautet `The specified zone id is not valid` —
+# was nach einer falschen Kennung aussieht und Warten bedeutet.
+zonen_status() {
+  cf_api GET "/zones?per_page=50" | python3 -c "
+import sys, json
+gesucht = sys.argv[1]
+def ascii_form(name):
+    try:
+        return name.encode('idna').decode('ascii')
+    except Exception:
+        return name.lower()
+ziel = ascii_form(gesucht)
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    raise SystemExit
+for z in (d.get('result') or []):
+    if ascii_form(z['name']) == ziel:
+        print(z['status']); break
+" "$gesucht" 2>/dev/null
 }
 
 schritt_dns() {
   ueberschrift "5. Domains und DNS"
 
-  if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
-    fehlt "nicht möglich — Zonen verwaltet nur die REST-API, dafür braucht es"
-    hinweis "CLOUDFLARE_API_TOKEN in der Umgebung (eine wrangler-Anmeldung reicht nicht)."
-    hinweis "  export CLOUDFLARE_API_TOKEN=…"
-    hinweis "Das Token braucht dafür zusätzlich *Zone:Edit* und *DNS:Edit*."
+  if ! dns_token >/dev/null 2>&1; then
+    fehlt "nicht möglich — Zonen verwaltet nur die REST-API, und die braucht ein Token"
+    hinweis "(eine wrangler-Anmeldung reicht dafür nicht — sie kennt keine Zonen)."
+    hinweis "Entweder in die Umgebung:  export CLOUDFLARE_API_TOKEN=…"
+    hinweis "oder in eine Datei, dann steht es nicht in der Shell-History:"
+    hinweis "  pbpaste | tr -d '\\n\\r ' > $CF_TOKEN_DATEI && chmod 600 $CF_TOKEN_DATEI"
+    hinweis "Rechte: Zone:Read, DNS:Edit — und Zone:Config:Edit für die Weiterleitungen."
+    offen_merken
+    return 0
+  fi
+
+  # Erst pruefen, ob das Token ueberhaupt angenommen wird. Sonst meldet jeder
+  # folgende Schritt "fehlt als Zone" — und das waere erfunden, nicht gemessen.
+  if ! cf_api GET "/user/tokens/verify" | grep -q '"success":true'; then
+    schlimm "Cloudflare nimmt das Token nicht an:"
+    cf_api GET "/user/tokens/verify" | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: raise SystemExit
+for e in d.get('errors', []): print('      ' + str(e.get('message')))
+" 2>/dev/null
     offen_merken
     return 0
   fi
