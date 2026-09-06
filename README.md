@@ -162,7 +162,7 @@ und per `--cacert` übergeben — nicht die Verifikation abschalten.
 | | |
 | --- | --- |
 | Unit-Tests | 129, davon 24 Regressionstests für konkrete gefundene Fehler |
-| End-to-End | 94 über Desktop und Handy, gegen den Produktions-Build |
+| End-to-End | 93 bestanden über Desktop und Handy, gegen den Produktions-Build (ein 94. läuft nur in der Handy-Variante) |
 | Coverage | 96,3 % Zeilen, 89,8 % Zweige, 98,0 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken |

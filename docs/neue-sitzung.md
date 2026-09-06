@@ -1,5 +1,17 @@
 # Die erste Nachricht in der neuen Sitzung
 
+> **Erledigt.** Der Umzug lief am 6. September 2026 genau so ab; dieses
+> Dokument beschreibt ihn nur noch. Es hat sich dabei eines bestätigt und eines
+> widerlegt: Beide Repositories als Quelle anzugeben hat funktioniert — die
+> Sitzung konnte das alte lesen und ins neue pushen. Der Rat, den Umzug im
+> Zweifel auf dem Laptop zu fahren, war also nicht nötig. Widerlegt hat sich
+> die Annahme, `scripts/umzug.sh` bekomme den Zielnamen groß geschrieben:
+> Die Adresse ist durchgehend klein, `knoellchenfrei/knoellchenfrei`, und der
+> Name landet unverändert in vier Dateien.
+>
+> Was danach in einer frischen Sitzung ansteht, steht in
+> [todo.md](todo.md) — nicht mehr hier.
+
 Beim Anlegen der Sitzung **beide Repositories** als Quelle angeben — das alte
 zum Kopieren, das neue zum Pushen. Nachträglich eins dazuzuladen geht nicht:
 Ein Repository unter einem anderen Eigentümer lehnt die Sitzung ab

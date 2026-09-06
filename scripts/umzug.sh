@@ -23,7 +23,7 @@
 #
 # Aufruf aus dem Wurzelverzeichnis des alten Klons:
 #
-#   ./scripts/umzug.sh Knoellchenfrei/Knoellchenfrei
+#   ./scripts/umzug.sh knoellchenfrei/knoellchenfrei
 #
 # Das Skript pusht nicht von selbst. Es legt einen Branch an, zeigt, was
 # entstanden ist, und nennt den Push-Befehl. Ein Umzug, den man nicht vorher
@@ -33,7 +33,7 @@ set -euo pipefail
 
 ZIEL="${1:-}"
 if [[ -z "$ZIEL" ]]; then
-  echo "Aufruf: $0 <eigner>/<repository>   (z. B. Knoellchenfrei/Knoellchenfrei)" >&2
+  echo "Aufruf: $0 <eigner>/<repository>   (z. B. knoellchenfrei/knoellchenfrei)" >&2
   exit 2
 fi
 

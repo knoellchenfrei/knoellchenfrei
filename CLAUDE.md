@@ -23,7 +23,7 @@ pnpm --filter @parkingzone/core test                # 129 Unit-Tests
 pnpm --filter @parkingzone/core test:coverage       # Coverage-Bericht
 pnpm --filter @parkingzone/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 91 End-to-End-Tests
+cd apps/web && npx playwright test                  # 93 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -38,7 +38,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=129 E2E_COUNT=91 npx tsx src/build-badges.ts
+TEST_COUNT=129 E2E_COUNT=93 npx tsx src/build-badges.ts
 scripts/build-tiles.sh 20260730                     # PMTiles-Ausschnitt Berlin
 ```
 

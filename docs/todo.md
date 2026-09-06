@@ -134,10 +134,10 @@ Umlautdomains so verlangen.
       Bestätigungsmail offen ist. Bei gTLDs ist eine unbestätigte
       E-Mail-Adresse der häufigste Grund für ein stehendes „pending".
 
-## 3. Umzug ins neue Repository — **du**, danach **ich**
+## 3. Umzug ins neue Repository — erledigt am 6. September 2026
 
-Entschieden: **`github.com/knoellchenfrei/knoellchenfrei`** — Organisation und
-Repository gleich benannt, klein geschrieben, wie bei
+Entschieden und umgesetzt: **`github.com/knoellchenfrei/knoellchenfrei`** —
+Organisation und Repository gleich benannt, klein geschrieben, wie bei
 `github.com/FreiFahren/FreiFahren`.
 
 Warum nicht `knoellchenfrei/app`: Repository-Namen wandern in Verzeichnisse, in
@@ -148,29 +148,37 @@ noch trägt, wo er allein steht. Getrennte Repositories brauchen wir absehbar
 nicht: Der Kachel-Bau und der Telegram-Worker teilen sich Typen und
 Deploy-Werkzeug mit dem Rest und gehören als Pakete in dasselbe Monorepo.
 
-- [ ] Organisation `knoellchenfrei` auf GitHub anlegen. Ob der Name frei ist,
-      zeigt verlässlich erst das Formular — die Suche, die mir zur Verfügung
-      steht, findet nur Nutzerkonten, keine Organisationen.
-- [ ] Repository `knoellchenfrei` darin anlegen, leer, öffentlich.
-- [ ] **Zugriff freigeben — keine Einladung.** Es gibt kein GitHub-Konto
-      „Claude", das man in die Organisation aufnehmen könnte; der Zugriff läuft
-      über die Claude-GitHub-App. Auf claude.ai unter *Einstellungen →
-      Connectors → GitHub* neu verbinden und dabei die Organisation auswählen;
-      als Inhaber zusätzlich unter `claude.ai/admin-settings/claude-tag`
-      festlegen, welche Repositories erreichbar sind.
-- [ ] **Neue Claude-Sitzung mit dem neuen Repository als Quelle starten.** Die
-      laufende Sitzung ist an den Eigentümer `herbeus` gebunden und kann ein
-      Repository unter einem anderen Eigentümer nicht nachladen — sie antwortet
-      darauf mit „cross-tier adds are not supported".
-- [ ] **Umzug ausführen:** `./scripts/umzug.sh Knoellchenfrei/Knoellchenfrei`
-      im alten Klon. Das Skript schreibt die vier Stellen mit der alten
-      Repository-Adresse um, legt einen Branch mit genau einem Commit an und
-      pusht **nicht** von selbst — es nennt den Befehl, damit du vorher
-      hineinsehen kannst. Der alte Klon bleibt unangetastet.
+- [x] Organisation `knoellchenfrei` auf GitHub angelegt.
+- [x] Repository `knoellchenfrei` darin angelegt, öffentlich.
+- [x] **Zugriff freigegeben** über die Claude-GitHub-App — es gibt kein
+      GitHub-Konto „Claude", das man in eine Organisation aufnehmen könnte.
+- [x] **Neue Sitzung mit beiden Repositories als Quelle gestartet.** Nur so
+      geht es: Eine laufende Sitzung kann ein Repository unter einem anderen
+      Eigentümer nicht nachladen („cross-tier adds are not supported").
+- [x] **Umzug ausgeführt:** `./scripts/umzug.sh knoellchenfrei/knoellchenfrei`
+      im alten Klon, dann `git push neu umzug-…:main`. Ergebnis: ein einziger
+      Commit `f733c36`, 144 Dateien, ohne Vorgeschichte. Das Altprojekt von
+      2012 ist nicht mitgezogen; es bleibt in `herbeus/parkingzone` erhalten.
+
 Grund für die saubere Historie: In den alten Commits steht ein Passwort von
 2012. Es ist längst wertlos, aber es steht dort, und ein neues Repository ist
 der einzige Weg, es loszuwerden, ohne die Historie eines bestehenden zu
 zerschreiben.
+
+Zwei Dinge, die der Umzug **nicht** mitgenommen hat und die auch nicht fehlen:
+`scripts/umzug.sh` behält die alte Adresse als Quellkonstante, und
+[neue-sitzung.md](neue-sitzung.md) beschreibt den Start, der einmalig war.
+Beide sind ab hier Dokumentation eines abgeschlossenen Vorgangs.
+
+Was am neuen Repository noch offen ist — **du**:
+
+- [ ] **CI-Geheimnisse hinterlegen.** Die Workflows aus `.github/workflows/`
+      sind mitgezogen, aber ihre Secrets nicht: `deploy.yml` und
+      `setup-cloudflare.yml` brauchen `CLOUDFLARE_API_TOKEN` und
+      `CLOUDFLARE_ACCOUNT_ID`, `VITE_API_BASE`. Ohne sie läuft nur
+      `ci.yml` durch.
+- [ ] **Branch-Schutz für `main`** einschalten, wenn außer dir jemand pusht.
+      Solange nicht, ist es Aufwand ohne Gegenwert.
 
 ## 4. Eigene Kartenkacheln — **du** (R2), der Rest ist fertig
 
