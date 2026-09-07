@@ -935,6 +935,46 @@ Was noch offen ist:
       sechs Meldungen pro Stunde einen Kanal unlesbar machen, in dem sonst
       Wochen nichts steht.
 
+- [ ] **421 Abschnitte kosten Geld und liegen in keiner Zone — die App nennt
+      sie gebührenfrei.** Am 7. September beim Nachgehen der „Löcher" in der
+      Zonenkarte gemessen; der Befund ist grösser als die Frage, die dazu
+      geführt hat.
+
+      Die Zonenpolygone (`parkraumbewirtschaftung:parkzonen`, 103 Stück) und
+      die Strassenabschnitte (`parkplaetze:parkplaetze`, 45.917) sind zwei
+      Ebenen desselben Anbieters, und sie widersprechen sich:
+
+      | Gemessen | |
+      | --- | --- |
+      | Abschnitte mit `parkgebuehr` oder `bewirtschaftungszeit`, aber in **keinem** Zonenpolygon | **421** |
+      | Stellplätze darauf | **2.363** |
+      | Davon tragen zugleich `zone = "nicht bewirtschaftet"` | 354 |
+      | Schwerpunkte | Reinickendorf 138, Steglitz-Zehlendorf 106, Tempelhof-Schöneberg 83, Mitte 52 |
+
+      Beispiele zum Antippen: Provinzstrasse und Ritterlandweg (Reinickendorf,
+      44 + 32 Abschnitte), Gritznerstrasse und Filandastrasse (Steglitz),
+      Friedrich-Wilhelm-Platz (`13.32905,52.47190`, 2,00 Euro,
+      Mo-Fr 9-20 / Sa 9-18), Hohenstaufenstrasse (`13.34782,52.49442`,
+      **3,00 Euro**).
+
+      **Was die App dort heute sagt:** „Außerhalb der Parkraumbewirtschaftung —
+      hier ist Parken gebührenfrei." (`App.tsx`, im Zweig für „keine Zone
+      getroffen"). Das ist genau die Sorte Satz, die dieses Projekt sonst
+      streicht: Er behauptet etwas über den Ort und weiss etwas über die
+      geladene Ebene. Wer danach ohne Ticket steht, zahlt.
+
+      **Der Satz gehört als Erstes weg** — er kostet nichts und ist die
+      einzige Stelle, an der der Widerspruch teuer wird. Die Frage, ob die
+      Abschnittsebene als zweite Quelle dazukommt (sie hat Gebühr, Zeiten und
+      Höchstparkdauer je Abschnitt), ist die grössere und braucht eine eigene
+      Runde: 45.917 Abschnitte sind 50 MB roh.
+
+      Nicht verwechseln mit den Löchern im **Innenstadtring**: Die sind
+      geprüft und richtig. Tiergarten mit Zoo (rund 6 km²), Gleisdreieck,
+      Humboldthain, Volkspark Wilmersdorf — jedes umschlossene Loch ist ein
+      Park oder Bahngelände, und die Abschnitte darin sagen zu 94 %
+      `nicht bewirtschaftet`.
+
 - [ ] **Herauszoomen bis ins Schwarze.** Die Karte kennt keine untere
       Zoomgrenze und keinen Rahmen: Wer weit genug herauszieht, sitzt vor einer
       schwarzen Fläche mit einem kleinen Stadtfleck darin. Das eigene

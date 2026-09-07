@@ -60,11 +60,35 @@ for (const source of SOURCES) {
     const count = parsed.features?.length ?? 0
     // A service that answers 200 with an empty or truncated collection would
     // otherwise silently shrink the app's data.
-    if (count < source.expectedFeatures * 0.5) {
-      throw new Error(`only ${count} features, expected around ${source.expectedFeatures}`)
+    //
+    // Die Schwelle stand bei **50 %**, und das war zu grosszügig: Von 103
+    // Parkzonen auf 90 wäre stillschweigend durchgegangen. Die Beobachtung,
+    // die das ausgelöst hat, stammt vom Betreiber und stimmt: Eine
+    // Parkzone verschwindet nicht. Sie kann umbenannt oder zusammengelegt
+    // werden, aber ein Rückgang um mehr als ein paar Promille ist kein
+    // Datenpflege-Ereignis, sondern ein kaputter Abruf — ein abgeschnittenes
+    // Ergebnis, eine geänderte Ebene, ein Dienst, der die Hälfte liefert.
+    //
+    // 5 % Toleranz nach unten, weil Kataster-Ebenen neu geschnitten werden:
+    // Bei 45.917 Strassenabschnitten sind ein paar Dutzend mehr oder weniger
+    // Alltag, bei 103 Zonen nicht.
+    if (count < Math.floor(source.expectedFeatures * 0.95)) {
+      throw new Error(
+        `nur ${count} statt ${source.expectedFeatures} Features — das ist ein Rückgang, ` +
+          'und der ist bei dieser Ebene kein normaler Vorgang. Von Hand nachsehen, ' +
+          'bevor die Zahl in sources.ts angepasst wird.'
+      )
     }
     writeFileSync(join(RAW, `${source.key}.json`), body)
-    console.log(`${count} features`)
+    // Wachstum ist der Normalfall und trotzdem eine Meldung wert: Die Zahl in
+    // `sources.ts` ist die Messlatte, und eine, die nie nachgezogen wird,
+    // verliert ihren Sinn.
+    const abweichung = count - source.expectedFeatures
+    const notiz =
+      abweichung === 0
+        ? ''
+        : ` (${abweichung > 0 ? '+' : ''}${abweichung} gegenüber sources.ts — Zahl dort nachziehen)`
+    console.log(`${count} features${notiz}`)
   } catch (error) {
     failed += 1
     console.log(`FAILED: ${(error as Error).message}`)

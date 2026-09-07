@@ -265,6 +265,15 @@ export function App() {
         setSightingsSeeded(false)
       })
       unsubscribeMarks = backend.subscribeMarks?.((rows) => {
+        // Dieselbe Regel wie bei den Sichtungen darüber, und sie fehlte hier:
+        // Ein **leerer** gemeinsamer Speicher löscht das Beispielmuster nicht.
+        // Solange in D1 keine Striche stehen — am 7. September gemessen,
+        // `/marks` antwortet `{"marks":[]}` —, ersetzte diese Zeile die
+        // erzeugte Verteilung durch nichts und setzte mit `setSeeded(false)`
+        // auch noch den Hinweis zurück, der erklärt hätte, warum da nichts
+        // ist. Auf der ausgelieferten Seite war die Kontrolldichte damit eine
+        // leere Ebene ohne Begründung; lokal, ohne API, sah sie richtig aus.
+        if (rows.length === 0) return
         setMarks(rows)
         setSeeded(false)
       })
