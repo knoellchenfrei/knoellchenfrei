@@ -2,17 +2,17 @@ name: Kacheln
 
 # Warum das überhaupt ein Workflow ist: Protomaps hält seine Tagesarchive nur
 # ein knappes Fenster vor — gemessen am 6. September 2026 antworteten 20260904
-# und 20260901, alles ab 20260828 abwaerts nicht mehr. Ein Kachelbau, der von
+# und 20260901, alles ab 20260828 abwärts nicht mehr. Ein Kachelbau, der von
 # Hand läuft, fällt genau dann aus, wenn niemand hinsieht, und die Karte
 # zeigt Monate alte Straßen. Der Bau selbst dauert Minuten und lädt nicht das
 # globale Archiv, sondern nur die Kacheln im Rahmen jeder Stadt.
 #
-# Wöchentlich und nicht taeglich: Die Archive sind zusammen rund 220 MB, und
+# Wöchentlich und nicht täglich: Die Archive sind zusammen rund 220 MB, und
 # OSM-Daten ändern sich in einer Woche nicht so, dass es jemandem auffiele.
 on:
   schedule:
     # Sonntags um 03:41 UTC. Krumme Minute mit Absicht — zur vollen Stunde
-    # steht GitHubs Warteschlange am laengsten.
+    # steht GitHubs Warteschlange am längsten.
     - cron: '41 3 * * 0'
   workflow_dispatch:
     inputs:
@@ -25,7 +25,7 @@ permissions:
   contents: read
 
 concurrency:
-  # Zwei Laeufe, die dieselben Objekte schreiben, sind kein Gewinn.
+  # Zwei Läufe, die dieselben Objekte schreiben, sind kein Gewinn.
   group: kacheln
   cancel-in-progress: false
 
@@ -73,9 +73,10 @@ jobs:
             echo "::error::CLOUDFLARE_R2_TOKEN fehlt. Der Deploy-Token kann absichtlich kein R2 — dieser Workflow braucht einen eigenen mit 'Workers R2 Storage:Edit'."
             exit 1
           fi
-          # Über die Umgebung und nicht als ${{ }} direkt in die Zeile: Eine
-          # Eingabe, die die Shell zu sehen bekommt, ist eine Eingabe, die die
-          # Shell ausfuehren kann. Und sie wird geprüft, statt geglaubt.
+          # Die Stadt kommt über die Umgebung und nicht als
+          # Ausdruck-Einsetzung direkt in die Zeile: Eine Eingabe, die die
+          # Shell zu sehen bekommt, ist eine Eingabe, die die Shell ausführen
+          # kann. Und sie wird geprüft, statt geglaubt.
           for stadt in $STAEDTE; do
             case "$stadt" in
               berlin|hamburg|frankfurt|muenchen) ;;

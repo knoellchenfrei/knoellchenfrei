@@ -83,6 +83,15 @@ wiederholt.
   einer eingebetteten Datei löst dieser Import nicht auf, und die Seite bleibt
   schwarz. `assertSelfContained` in `packages/ingest/src/build-artifact.ts`
   bricht seitdem ab, statt das auszuliefern.
+- **Ein leeres `${{ }}` in einer Workflow-Datei ist ein Syntaxfehler — auch im
+  Kommentar.** GitHub wertet die Ausdruck-Klammern an *jeder* Stelle der Datei
+  aus, und ein `run: |`-Block schützt nicht davor. Am 7. September stand die
+  leere Form in einem Kommentar als Beispiel („nicht als `${…}` direkt in die
+  Zeile"), und der Lauf scheiterte nach **null Sekunden** mit *„This run likely
+  failed because of a workflow file issue"* — ohne Zeilennummer, ohne Log, ohne
+  Job, und im Lauf steht statt des Workflow-Namens der Dateipfad. `js-yaml`
+  findet das nicht, die Datei ist gültiges YAML. `lint-workflows.yml` sucht
+  seitdem danach.
 - **Keine mehrzeiligen Commit-Nachrichten in einem `run: |`-Block einer
   Workflow-Datei.** Das bricht zweimal aus dem YAML-Blockskalar aus und hat
   zweimal kaputte Workflows gepusht. Zwei `-m`-Flags benutzen.
