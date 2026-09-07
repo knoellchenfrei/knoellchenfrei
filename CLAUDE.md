@@ -439,6 +439,13 @@ wiederholt.
   einer Adresse aus `?worker&url` (`apps/web/src/main.tsx`); das Artifact
   bekommt denselben Worker als eingebettete Zeichenkette, weil es keine zweite
   Datei hat. Ein E2E-Test prüft seitdem den `content-type`, nicht den Status.
+- **Ein Pages-Secret gilt erst für den nächsten Deploy.** `wrangler pages
+  secret put` oder das Dashboard ändern den Wert, aber **nicht** die laufende
+  Auslieferung — die trägt den Stand von ihrem Deploy. Am 7. September abends
+  war `BETA_PASSWORD` geändert, und die Seite nahm weiter nur das alte an; das
+  sah nach einem kaputten Riegel aus und war keiner. `gh workflow run Deploy
+  --ref main` ist die ganze Behebung, rund zwei Minuten. Dasselbe gilt für
+  jedes andere Secret der Pages-Funktion.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

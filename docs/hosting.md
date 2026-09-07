@@ -165,10 +165,19 @@ pnpm --filter @knoellchenfrei/api exec wrangler pages secret put BETA_PASSWORD \
   --project-name=knoellchenfrei
 ```
 
-Danach ein neuer Deploy — Pages liest Secrets beim Start der Funktion, nicht
-zur Laufzeit. Ein Passwortwechsel entwertet alle ausgegebenen Zugänge sofort:
-Die Cookies sind mit dem alten Passwort signiert und werden nicht mehr
-angenommen. Das ist zugleich der Weg, jemanden wieder auszusperren.
+**Danach ein neuer Deploy — sonst passiert gar nichts.** Ein Secret gilt für
+die Auslieferungen, die **nach** dem Setzen entstehen; die laufende kennt
+weiter den alten Wert. Am 7. September abends hat genau das eine halbe Stunde
+gekostet: Das Passwort war im Dashboard geändert, die Seite nahm trotzdem nur
+das alte an, und das sah nach einem Fehler im Riegel aus. Es war keiner.
+
+```bash
+gh workflow run Deploy --ref main     # eine Zeile, rund zwei Minuten
+```
+
+Ein Passwortwechsel entwertet dann alle ausgegebenen Zugänge sofort: Die
+Cookies sind mit dem alten Passwort signiert und werden nicht mehr angenommen.
+Das ist zugleich der Weg, jemanden wieder auszusperren.
 
 Zwei Wege hinein, beide enden im selben Cookie:
 
