@@ -48,6 +48,38 @@ async function openPanel(page: Page): Promise<void> {
   await expect(body).toBeVisible()
 }
 
+test.describe('was ausserhalb der Zonen steht', () => {
+  /**
+   * Regression: Die App behauptete „hier ist Parken gebührenfrei", sobald
+   * keine Zone getroffen war — und das ist **falsch**, nicht nur unscharf.
+   *
+   * Nachgemessen an Berlins eigenen Daten am 7. September: 421
+   * Straßenabschnitte mit 2.363 Stellplätzen liegen in keinem Zonenpolygon
+   * und tragen trotzdem eine Gebühr und Bewirtschaftungszeiten, bis zu
+   * 3,00 Euro je Stunde. Die Zonenebene und die Abschnittsebene desselben
+   * Anbieters widersprechen sich; 354 dieser Abschnitte behaupten sogar
+   * zugleich `zone = "nicht bewirtschaftet"`. Wer nach dem alten Satz ohne
+   * Ticket stehen blieb, zahlte.
+   *
+   * Geprüft wird deshalb das Wort, nicht die Formulierung: Wo keine Zone
+   * liegt, darf nirgends „gebührenfrei" oder „Gebühren fallen nicht an"
+   * stehen.
+   */
+  test('verspricht nirgends, dass Parken ohne Zone nichts kostet', async ({ page }) => {
+    await ready(page)
+    const box = await page.locator('.map').boundingBox()
+    expect(box).not.toBeNull()
+    // Weit oben links: ausserhalb der bewirtschafteten Flaeche, aber noch in
+    // der Stadt — genau der Fall, um den es geht.
+    await page.mouse.click(box!.x + 30, box!.y + 30)
+    await page.waitForTimeout(1200)
+    await openPanel(page)
+    const text = await page.locator('#root').innerText()
+    expect(text).not.toContain('hier ist Parken gebührenfrei')
+    expect(text).not.toContain('Gebühren fallen nicht an')
+  })
+})
+
 test.describe('MapLibres Worker', () => {
   /**
    * Regression: **Die Karte hat nie etwas gezeichnet, und niemand sah warum.**

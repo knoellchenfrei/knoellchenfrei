@@ -316,6 +316,45 @@ export function App() {
       },
     })
     mapRef.current = map
+
+    // Nicht weiter hinaus als die Stadt, und nicht daneben.
+    //
+    // Ohne diese Grenzen liess sich die Karte beliebig weit herauszoomen und
+    // wegschieben: Ab einem gewissen Punkt sass man vor einer schwarzen Fläche
+    // mit einem kleinen bunten Fleck darin. Das eigene Kachelarchiv deckt nur
+    // den Ausschnitt der geladenen Stadt ab (dieselben `reportBounds`, aus
+    // denen `build-tiles.sh` den Ausschnitt schneidet) — draussen gibt es
+    // schlicht keine Kacheln, und die Karte sieht dabei kaputt aus statt
+    // begrenzt.
+    //
+    // Der Rahmen ist `reportBounds` und nicht die weitere `sessionBounds`,
+    // und das ist keine Geschmacksfrage: `build-tiles.sh` schneidet den
+    // PMTiles-Ausschnitt aus **genau diesen** Zahlen (über `city-bbox.ts`).
+    // Hinter `reportBounds` gibt es also keine Kachel mehr. Mit der weiteren
+    // Box liesse sich bis Brandenburg schieben — und genau dort fängt das
+    // Schwarz wieder an, das diese Grenze verhindern soll.
+    const rahmen = new maplibregl.LngLatBounds(
+      [CITY.reportBounds.minLon, CITY.reportBounds.minLat],
+      [CITY.reportBounds.maxLon, CITY.reportBounds.maxLat]
+    )
+    map.setMaxBounds(rahmen)
+
+    // Die kleinste Zoomstufe wird **gerechnet, nicht gesetzt**: Sie hängt an
+    // der Grösse des Behälters und ist auf einem Handy eine andere als auf
+    // einem Monitor. Eine feste Zahl wäre auf einem von beiden falsch — zu
+    // klein, dann bleibt der schwarze Rand, oder zu gross, dann sieht man die
+    // Stadt nicht mehr ganz.
+    const kleinsteStufe = (): void => {
+      const kamera = map.cameraForBounds(rahmen, { padding: 0 })
+      if (kamera?.zoom === undefined) return
+      // Nie über die aktuelle Stufe hinaus: Wäre der Behälter kurzzeitig
+      // winzig (ein Panel klappt auf, das Fenster wird schmal), spränge die
+      // Karte sonst mitten in einer Geste weiter hinein.
+      map.setMinZoom(Math.min(kamera.zoom, map.getZoom()))
+    }
+    kleinsteStufe()
+    map.on('resize', kleinsteStufe)
+
     // Top-left: top-right sat under the search field and the sidebar's toggle.
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left')
 
@@ -800,16 +839,26 @@ export function App() {
         // Hinweis wäre eine Berechtigungsfrage ohne Gegenwert.
         const suggestion = suggestionAt(point[0], point[1])
         setCitySuggestion(suggestion)
-        // Outside the ring nothing is metered, so "no zone" is a useful answer,
-        // not a failure.
+        // „Keine Zone getroffen" ist eine nützliche Antwort — aber sie sagt
+        // etwas über die geladene Ebene, nicht über den Ort.
         //
-        // Außer die Position liegt in einer anderen Stadt, die diese App
-        // kennt: Dann träfe der Satz keine Aussage über den Ort, sondern über
-        // die geladenen Daten. In München stünde sonst „hier ist Parken
-        // gebührenfrei" über 82 bewirtschafteten Gebieten — falsch, teuer, und
-        // die Meldung überdeckte ausgerechnet den Hinweis, der sie erklärt.
+        // Erstens: Liegt die Position in einer anderen Stadt, die diese App
+        // kennt, träfe ein Satz über Gebühren gar keine Aussage. In München
+        // stünde sonst „hier ist Parken gebührenfrei" über 82 bewirtschafteten
+        // Gebieten — falsch, teuer, und die Meldung überdeckte ausgerechnet
+        // den Hinweis, der sie erklärt.
+        //
+        // Zweitens, und deshalb steht hier seit dem 7. September nicht mehr
+        // „gebührenfrei": **Es stimmt auch in der geladenen Stadt nicht.**
+        // Nachgemessen an Berlins eigenen Daten liegen 421 Straßenabschnitte
+        // mit 2.363 Stellplätzen in keinem Zonenpolygon und tragen trotzdem
+        // eine Gebühr und Bewirtschaftungszeiten — bis zu 3,00 Euro je Stunde,
+        // Schwerpunkte in Reinickendorf, Steglitz-Zehlendorf und
+        // Tempelhof-Schöneberg. Wer dort nach diesem Satz ohne Ticket stehen
+        // bleibt, zahlt. Die Zonenebene ist die Auskunft, die wir haben, und
+        // nicht die Wahrheit über die Straße.
         if (hit === null && suggestion === null) {
-          setError('Außerhalb der Parkraumbewirtschaftung — hier ist Parken gebührenfrei.')
+          setError('Für diesen Ort führt die Quelle keine Parkzone — ob hier etwas kostet, sagt sie nicht.')
         }
         mapRef.current?.easeTo({ center: point, zoom: Math.max(15, mapRef.current.getZoom()) })
       },
@@ -1423,7 +1472,7 @@ export function App() {
             <p className="hours">
               {anchor === null
                 ? 'Tippe auf die Karte, wo du stehst. Orange bedeutet: diese Zone kassiert gerade, Türkis heißt gebührenfrei.'
-                : 'Hier gilt keine Parkraumbewirtschaftung — Gebühren fallen nicht an. Halteverbote und Bewohnerplätze können trotzdem gelten.'}
+                : 'Für diesen Ort führt die Quelle keine Parkzone. Das heißt nicht sicher, dass Parken frei ist: Es gibt Straßen mit Gebühr, die in keiner Zone liegen. Was gilt, steht am Automaten oder am Schild.'}
             </p>
             {/* Parking outside a zone is the common case in most of Berlin, so
                 the button belongs here too, not only in the zone panel. */}

@@ -935,7 +935,7 @@ Was noch offen ist:
       sechs Meldungen pro Stunde einen Kanal unlesbar machen, in dem sonst
       Wochen nichts steht.
 
-- [ ] **421 Abschnitte kosten Geld und liegen in keiner Zone — die App nennt
+- [~] **421 Abschnitte kosten Geld und liegen in keiner Zone — die App nennt
       sie gebührenfrei.** Am 7. September beim Nachgehen der „Löcher" in der
       Zonenkarte gemessen; der Befund ist grösser als die Frage, die dazu
       geführt hat.
@@ -963,11 +963,20 @@ Was noch offen ist:
       streicht: Er behauptet etwas über den Ort und weiss etwas über die
       geladene Ebene. Wer danach ohne Ticket steht, zahlt.
 
-      **Der Satz gehört als Erstes weg** — er kostet nichts und ist die
-      einzige Stelle, an der der Widerspruch teuer wird. Die Frage, ob die
-      Abschnittsebene als zweite Quelle dazukommt (sie hat Gebühr, Zeiten und
-      Höchstparkdauer je Abschnitt), ist die grössere und braucht eine eigene
-      Runde: 45.917 Abschnitte sind 50 MB roh.
+      **Der Satz ist weg** — am 7. September, an beiden Stellen. Statt „hier
+      ist Parken gebührenfrei" steht jetzt „Für diesen Ort führt die Quelle
+      keine Parkzone — ob hier etwas kostet, sagt sie nicht", und in der Tafel
+      der Nachsatz, dass es Strassen mit Gebühr ohne Zone gibt und das Schild
+      gilt. Ein E2E-Test prüft, dass nirgends „gebührenfrei" oder „Gebühren
+      fallen nicht an" steht, wo keine Zone liegt.
+
+      **Offen bleibt die grössere Hälfte:** ob die Abschnittsebene als zweite
+      Quelle dazukommt. Sie hat Gebühr, Zeiten und Höchstparkdauer je
+      Abschnitt und wüsste an diesen 421 Stellen die Antwort — aber 45.917
+      Abschnitte sind 50 MB roh, und sie widerspricht sich selbst (354 tragen
+      `zone = "nicht bewirtschaftet"` und trotzdem eine Gebühr). Das braucht
+      eine eigene Runde und eine Entscheidung, welche Ebene bei Widerspruch
+      gewinnt.
 
       Nicht verwechseln mit den Löchern im **Innenstadtring**: Die sind
       geprüft und richtig. Tiergarten mit Zoo (rund 6 km²), Gleisdreieck,
@@ -975,28 +984,25 @@ Was noch offen ist:
       Park oder Bahngelände, und die Abschnitte darin sagen zu 94 %
       `nicht bewirtschaftet`.
 
-- [ ] **Herauszoomen bis ins Schwarze.** Die Karte kennt keine untere
-      Zoomgrenze und keinen Rahmen: Wer weit genug herauszieht, sitzt vor einer
-      schwarzen Fläche mit einem kleinen Stadtfleck darin. Das eigene
-      Kachelarchiv deckt nur den Ausschnitt der jeweiligen Stadt ab
-      (`reportBounds` aus `core/city.ts`, siehe `build-tiles.sh`) — außerhalb
-      gibt es schlicht keine Kacheln, und die Karte sieht dabei kaputt aus
-      statt begrenzt.
+- [x] **Herauszoomen ins Schwarze — begrenzt** am 7. September. Die Karte
+      kannte keine untere Zoomstufe und keinen Rahmen; wer weit genug herauszog,
+      sass vor einer schwarzen Fläche mit einem kleinen Stadtfleck darin.
 
-      Zwei Zeilen in `new maplibregl.Map({…})` in `App.tsx`:
+      Zwei Zeilen in `App.tsx`, und die Zahlen kommen beide aus `core/city.ts`:
+      `setMaxBounds` auf `reportBounds` — **genau den Rahmen**, aus dem
+      `build-tiles.sh` über `city-bbox.ts` den PMTiles-Ausschnitt schneidet,
+      dahinter gibt es also keine Kachel mehr —, und `setMinZoom` aus
+      `cameraForBounds` auf denselben Rahmen.
 
-      - `maxBounds` auf den Rahmen der Stadt, etwas großzügiger als
-        `reportBounds` — sonst stößt man beim Schieben am Rand an, wo noch
-        Kacheln lägen.
-      - `minZoom` so, dass der Rahmen den Behälter gerade noch füllt. **Nicht
-        als feste Zahl:** Das hängt von der Fenstergröße ab, ist auf einem
-        Handy anders als auf einem Monitor, und eine geratene Zahl wäre auf
-        einem der beiden falsch. `map.setMinZoom(map.getZoom())` nach einem
-        `fitBounds` auf den Stadtrahmen liefert sie, und ein `resize`-Zuhörer
-        rechnet sie neu.
+      Die Zoomstufe wird **gerechnet, nicht gesetzt**: Sie hängt an der Grösse
+      des Behälters, ist auf dem Handy eine andere als auf dem Monitor, und
+      eine geratene Zahl wäre auf einem von beiden falsch. Ein
+      `resize`-Zuhörer rechnet sie neu, und sie geht nie über die aktuelle
+      Stufe hinaus — sonst spränge die Karte mitten in einer Geste weiter
+      hinein, wenn ein Panel aufklappt.
 
-      Zu prüfen ist dabei, ob das dem Städte-Umschalter in die Quere kommt: Der
-      wechselt `CITY` zur Laufzeit, also müssen Rahmen und Grenze mitwandern.
+      Dem Städte-Umschalter kommt das nicht in die Quere: Der lädt die Seite
+      neu, `CITY` steht also beim Erzeugen der Karte fest.
 
 - [ ] **„Auto weg?" nennt immer Berlin — auch in Hamburg, Frankfurt und
       München.** `components/TowInfo.tsx` hat die Auskunftsstelle der Polizei
