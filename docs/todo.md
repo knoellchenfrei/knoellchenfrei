@@ -505,6 +505,36 @@ warten, bis der Worker steht.
 
 ## 7. Auftritt — **du**, vorbereitet ist alles
 
+- [ ] **Zwei DNS-Einträge für `knoellchenfrei.de`** — der letzte Handgriff,
+      bis die App unter ihrer eigenen Adresse liegt. Am 7. September sind die
+      Custom Domains am Pages-Projekt angelegt; Cloudflare meldet zu beiden
+      `CNAME record not set`, und die Zone hat **keine** Einträge:
+      `knoellchenfrei.de` und `www.` lösen heute auf nichts auf. Das ist
+      Audit-Punkt M-038 — es war nie ein Fehler im Skript, der Schritt hat
+      schlicht nie stattgefunden.
+
+      Der Weg über die Weboberfläche macht beides in einem:
+      *Workers & Pages → knoellchenfrei → Custom domains* — dort steht zu jeder
+      der beiden Adressen ein Knopf, der den Eintrag selbst setzt. Von Hand
+      wären es unter *DNS → Records*:
+
+      | Typ | Name | Ziel | Proxy |
+      | --- | --- | --- | --- |
+      | CNAME | `knoellchenfrei.de` (Wurzel, `@`) | `knoellchenfrei.pages.dev` | an |
+      | CNAME | `www` | `knoellchenfrei.pages.dev` | an |
+
+      **Warum das nicht das Skript erledigt hat:** Der API-Token dieser
+      Einrichtung darf Pages lesen und schreiben, aber kein DNS — nachgemessen,
+      `zones/…/dns_records` antwortet mit `Authentication error`. Den Token
+      dafür zu erweitern wäre die falsche Richtung (Audit-Punkt M-012 nennt ihn
+      ohnehin schon zu breit); zwei Klicks einmalig sind billiger als ein
+      dauerhaft weiterer Schlüssel.
+
+      Die vier übrigen Domains leiten bereits hierher um — nachgemessen:
+      `knoellchenfrei.org` antwortet `301` auf `https://knoellchenfrei.de/`.
+      Sie zeigen also ab dem Moment auf die App, in dem diese zwei Einträge
+      stehen.
+
 Bilder, Beschreibungstexte und Namensschema stehen in
 [marke.md](marke.md); der Text der Org-Profilseite in
 [org-profil.md](org-profil.md). Nichts davon geht über die GitHub-App: Sie darf
