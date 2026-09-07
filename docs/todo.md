@@ -547,6 +547,29 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       dem Rechner Schlüssel und Sicherung im selben Moment, und die Sicherung
       ist dann Rauschen.
 
+- [ ] **`D1:Edit` für den Deploy-Token.** Seit dem 7. September wendet der
+      Deploy die D1-Migrationen an, bevor er den Worker ausrollt — vorher
+      wurde eine neue Migration im Repository **nie** angewendet, und der
+      Worker traf auf eine Tabelle, die es nicht gab. Das fällt erst zur
+      Laufzeit auf, im Log, bei der ersten Anfrage.
+
+      Der Deploy-Token kann absichtlich nur *Workers Scripts* und *Cloudflare
+      Pages*. Der Schritt läuft deshalb mit `continue-on-error` und setzt einen
+      gelben Haken mit dem Befehl darunter, statt still zu überspringen — aber
+      solange das Recht fehlt, bleibt das Schema stehen.
+
+      Zwei Wege: *D1:Edit* zum vorhandenen `CLOUDFLARE_API_TOKEN` dazugeben
+      (ein Recht mehr an einem Token, der bei jedem Push läuft), oder von Hand
+      einspielen:
+
+      ```bash
+      cd app/apps/api && pnpm --filter @knoellchenfrei/api exec wrangler d1 migrations apply knoellchenfrei --remote
+      ```
+
+      **Bis das passiert ist, zählt die Nutzungsstatistik nichts** — die
+      Tabellen aus `0002_events.sql` gibt es in der Produktivdatenbank noch
+      nicht.
+
 - [ ] **Ein eigener R2-Token für den Kachel-Workflow** —
       `CLOUDFLARE_R2_TOKEN` als Repository-Secret, mit **einem** Recht:
       *Workers R2 Storage: Edit*. Ohne ihn bricht der Workflow in der ersten

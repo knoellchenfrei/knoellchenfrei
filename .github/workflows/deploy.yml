@@ -76,6 +76,37 @@ jobs:
           fi
           echo "KV und D1 sind eingetragen."
 
+      # **Migrationen vor dem Worker, nicht danach.**
+      #
+      # Bis zum 7. September rollte der Deploy Code aus und liess das Schema
+      # liegen: Eine neue Migration im Repository wurde nie angewendet, und der
+      # Worker traf auf eine Tabelle, die es nicht gab. Das fällt erst zur
+      # Laufzeit auf, im Log, bei der ersten Anfrage — die schlechteste Stelle.
+      #
+      # `wrangler d1 migrations apply` führt selbst Buch (`d1_migrations`) und
+      # überspringt, was schon eingespielt ist. Der Schritt ist damit auf einem
+      # aktuellen Stand folgenlos.
+      #
+      # `continue-on-error`, weil der Deploy-Token absichtlich eng ist: Ohne
+      # `D1:Edit` scheitert der Schritt, und dann soll trotzdem ausgerollt
+      # werden — nur eben mit einem gelben Haken und dem Satz darunter, statt
+      # mit einem stillen Überspringen.
+      - name: D1-Migrationen anwenden
+        id: migrationen
+        if: steps.gate.outputs.ready == 'true'
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: app/apps/api
+          command: d1 migrations apply knoellchenfrei --remote
+
+      - name: Sagen, wenn das Schema nicht mitgezogen ist
+        if: steps.migrationen.outcome == 'failure'
+        run: |
+          echo "::warning::D1-Migrationen konnten nicht angewendet werden — fehlt dem Token 'D1:Edit'? Der Worker läuft dann gegen ein älteres Schema. Von Hand: cd app/apps/api && pnpm --filter @knoellchenfrei/api exec wrangler d1 migrations apply knoellchenfrei --remote"
+
       - name: Worker ausrollen
         id: worker
         if: steps.gate.outputs.ready == 'true'
