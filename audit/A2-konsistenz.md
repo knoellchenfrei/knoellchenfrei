@@ -1,5 +1,11 @@
 # A2 — Konsistenz
 
+> **Eine Redaktion am 7. September 2026:** Die Worker-Adresse enthielt den
+> Konto-Slug des Betreibers und stand damit im öffentlichen Repository.
+> Sie ist durch `<konto>` ersetzt. Das ist die einzige Änderung an diesem
+> Bericht — sonst wird er nicht redigiert, auch nicht orthografisch.
+
+
 Repository `knoellchenfrei/knoellchenfrei`, Commit `fceadca` (identisch mit
 `origin/main`; die Arbeitskopie steht auf `claude/parkingzone-migration-18g8fo`).
 Grundgesamtheit: `audit/inventory.json`, 176 Dateien. Read-only; einzige
@@ -381,7 +387,7 @@ Titel: Worker-Adresse mit Konto-Slug im Bericht, mit Platzhalter in hosting.md
 Severity: info
 Confidence: confirmed
 Evidenz:
-  docs/bericht/index.html:878   knoellchenfrei-api.k-tommy.workers.dev
+  docs/bericht/index.html:878   knoellchenfrei-api.<konto>.workers.dev
   docs/hosting.md:379           https://knoellchenfrei-api.<konto>.workers.dev
 Bewertung: Kein Konsistenzproblem — der Bericht dokumentiert einen Ist-Zustand, die Doku ein Muster. Der Slug ist ein Kontoname; ob er im öffentlichen Repository stehen soll, ist eine Frage für den Sicherheits-Agenten, nicht für diesen Report. Zur Weitergabe.
 Empfehlung: an A-Sicherheit.

@@ -13,15 +13,15 @@
 import { CITIES } from '@knoellchenfrei/core'
 
 const nur = process.argv.slice(2)
-const gewaehlt = nur.length === 0 ? CITIES : CITIES.filter((city) => nur.includes(city.key))
+const auswahl = nur.length === 0 ? CITIES : CITIES.filter((city) => nur.includes(city.key))
 
-if (gewaehlt.length === 0) {
+if (auswahl.length === 0) {
   console.error(`Keine bekannte Stadt in: ${nur.join(', ')}`)
   console.error(`Bekannt sind: ${CITIES.map((city) => city.key).join(', ')}`)
   process.exit(2)
 }
 
-for (const city of gewaehlt) {
+for (const city of auswahl) {
   const b = city.reportBounds
   console.log(`${city.key} ${b.minLon},${b.minLat},${b.maxLon},${b.maxLat}`)
 }

@@ -79,8 +79,8 @@ echo "→ Verwaiste Wurzel anlegen (ein Commit, keine Vorgeschichte)"
 git checkout --orphan "$BRANCH" >/dev/null
 git add -A
 git commit -q -m "knoellchenfrei - Neuanfang mit sauberer Historie" -m "Der Stand aus dem alten Repository, ohne dessen Commits. Die Historie von 2012
-enthielt ein Passwort; sie umzuschreiben haette jeden bestehenden Klon
-zerrissen, also faengt dieses Repository neu an.
+enthielt ein Passwort; sie umzuschreiben hätte jeden bestehenden Klon
+zerrissen, also fängt dieses Repository neu an.
 
 Das Projekt von 2012 kommt nicht mit - weder Code noch Daten. Von 2,8 MB waren
 nur 256 KB eigener Quelltext; der Rest waren Bezirksgrenzen in doppelter

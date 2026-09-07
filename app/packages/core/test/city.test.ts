@@ -14,7 +14,7 @@ import {
 } from '../src/city.js'
 
 describe('cityByKey', () => {
-  it('finds a city by its key', () => {
+  it('findet eine Stadt an ihrem Schlüssel', () => {
     expect(cityByKey('berlin')).toBe(BERLIN)
     expect(cityByKey('hamburg')).toBe(HAMBURG)
     expect(cityByKey('frankfurt')).toBe(FRANKFURT)
@@ -25,49 +25,49 @@ describe('cityByKey', () => {
   // machen darf: Eine Hamburger Instanz mit einem Tippfehler in der
   // Konfiguration würde dann jede Hamburger Meldung mit "position outside"
   // abweisen, und im Log stünde nichts, was danach aussieht.
-  it('throws on an unknown key instead of falling back', () => {
+  it('wirft bei einem unbekannten Schlüssel, statt zurückzufallen', () => {
     expect(() => cityByKey('münchen')).toThrow(/münchen/)
     expect(() => cityByKey('')).toThrow()
   })
 
-  it('names the keys it does know, so the error is actionable', () => {
+  it('nennt die Schlüssel, die es kennt, damit der Fehler weiterhilft', () => {
     expect(() => cityByKey('kiel')).toThrow(/berlin, hamburg/)
   })
 })
 
-describe('city keys', () => {
-  it('keeps keys unique — a duplicate would shadow a city silently', () => {
+describe('Stadtschlüssel', () => {
+  it('hält die Schlüssel eindeutig — ein doppelter verdeckte eine Stadt lautlos', () => {
     expect(new Set(CITIES.map((city) => city.key)).size).toBe(CITIES.length)
   })
 
-  it('uses keys that survive a URL and a file name', () => {
+  it('nimmt Schlüssel, die eine Adresse und einen Dateinamen überleben', () => {
     for (const city of CITIES) expect(city.key).toMatch(/^[a-z][a-z0-9-]*$/)
   })
 })
 
 describe('withinCity', () => {
-  it('accepts the Brandenburger Tor for Berlin and refuses it for Hamburg', () => {
+  it('nimmt das Brandenburger Tor für Berlin an und weist es für Hamburg ab', () => {
     expect(withinCity(BERLIN, 13.3777, 52.5163)).toBe(true)
     expect(withinCity(HAMBURG, 13.3777, 52.5163)).toBe(false)
   })
 
-  it('accepts the Hamburger Rathausmarkt for Hamburg and refuses it for Berlin', () => {
+  it('nimmt den Hamburger Rathausmarkt für Hamburg an und weist ihn für Berlin ab', () => {
     expect(withinCity(HAMBURG, 9.9924, 53.5503)).toBe(true)
     expect(withinCity(BERLIN, 9.9924, 53.5503)).toBe(false)
   })
 
-  // Der Roemer. Frankfurt liegt westlich von Hamburg und suedlich davon --
+  // Der Roemer. Frankfurt liegt westlich von Hamburg und südlich davon --
   // beide Achsen trennen, aber nur eine muss es tun.
-  it('accepts the Frankfurter Roemer for Frankfurt and refuses it for the other two', () => {
+  it('nimmt den Frankfurter Römer für Frankfurt an und weist ihn für die anderen beiden ab', () => {
     expect(withinCity(FRANKFURT, 8.6821, 50.1109)).toBe(true)
     expect(withinCity(BERLIN, 8.6821, 50.1109)).toBe(false)
     expect(withinCity(HAMBURG, 8.6821, 50.1109)).toBe(false)
   })
 
   // Der Grund, warum die Box aus dem Stadtteil-Umriss kommt und nicht aus der
-  // amtlichen Ausdehnung um den Roemer: Die haette 8,52 als Westrand ergeben,
-  // und Hoechst laege draussen. Wer dort meldet, bekaeme "ausserhalb".
-  it('reaches Hoechst in the west and Nieder-Erlenbach in the north', () => {
+  // amtlichen Ausdehnung um den Roemer: Die hätte 8,52 als Westrand ergeben,
+  // und Hoechst läge draussen. Wer dort meldet, bekäme "ausserhalb".
+  it('reicht bis Höchst im Westen und Nieder-Erlenbach im Norden', () => {
     expect(withinCity(FRANKFURT, 8.5432, 50.0975)).toBe(true) // Hoechst, Bolongaropalast
     expect(withinCity(FRANKFURT, 8.7053, 50.2189)).toBe(true) // Nieder-Erlenbach
   })
@@ -86,7 +86,7 @@ describe('withinCity', () => {
   // Parkebene: Im Westen und Norden wird nicht bewirtschaftet, und wer die
   // Grenze von dort nähme, wiese eine Meldung aus Lochhausen als „außerhalb"
   // ab, obwohl sie mitten in München liegt.
-  it('reaches Lochhausen in the west and Feldmoching in the north', () => {
+  it('reicht bis Lochhausen im Westen und Feldmoching im Norden', () => {
     expect(withinCity(MUENCHEN, 11.375, 48.185)).toBe(true) // Aubing-Lochhausen
     expect(withinCity(MUENCHEN, 11.545, 48.235)).toBe(true) // Feldmoching
   })
@@ -99,7 +99,7 @@ describe('withinCity', () => {
    * Städten sind es sechs Paare, und eine Kette aus drei Vergleichen ließe drei
    * davon ungeprüft.
    */
-  it('keeps the boxes apart', () => {
+  it('hält die Rahmen auseinander', () => {
     const overlaps = (a: typeof BERLIN, b: typeof BERLIN): boolean =>
       a.reportBounds.minLon <= b.reportBounds.maxLon &&
       b.reportBounds.minLon <= a.reportBounds.maxLon &&
@@ -113,7 +113,7 @@ describe('withinCity', () => {
     }
   })
 
-  it('refuses NaN and Infinity rather than letting them through a comparison', () => {
+  it('weist NaN und Unendlich ab, statt sie durch einen Vergleich rutschen zu lassen', () => {
     // `NaN > x` ist false, `NaN < x` auch — eine Prüfung aus zwei negierten
     // Vergleichen liesse NaN durch. Diese hier nicht.
     expect(withinCity(BERLIN, Number.NaN, 52.5)).toBe(false)
@@ -122,7 +122,7 @@ describe('withinCity', () => {
     expect(withinCity(BERLIN, 13.4, -Infinity)).toBe(false)
   })
 
-  it('treats the edges as inside', () => {
+  it('zählt die Ränder als innen', () => {
     const { minLon, minLat, maxLon, maxLat } = BERLIN.reportBounds
     expect(withinCity(BERLIN, minLon, minLat)).toBe(true)
     expect(withinCity(BERLIN, maxLon, maxLat)).toBe(true)
@@ -130,7 +130,7 @@ describe('withinCity', () => {
 })
 
 describe('withinCitySession', () => {
-  it('is wider than the report box in every direction', () => {
+  it('ist in jede Richtung weiter als der Melderahmen', () => {
     for (const city of CITIES) {
       expect(city.sessionBounds.minLon).toBeLessThan(city.reportBounds.minLon)
       expect(city.sessionBounds.minLat).toBeLessThan(city.reportBounds.minLat)
@@ -140,19 +140,19 @@ describe('withinCitySession', () => {
   })
 
   // Wer am Stadtrand parkt und über die Grenze läuft, soll seine Uhr behalten.
-  it('accepts a spot just outside the report box', () => {
+  it('nimmt einen Platz knapp außerhalb des Melderahmens an', () => {
     const justOutside = BERLIN.reportBounds.maxLon + 0.05
     expect(withinCity(BERLIN, justOutside, 52.5)).toBe(false)
     expect(withinCitySession(BERLIN, justOutside, 52.5)).toBe(true)
   })
 
-  it('still refuses a spot in another city', () => {
+  it('weist einen Platz in einer anderen Stadt weiterhin ab', () => {
     expect(withinCitySession(BERLIN, 9.9924, 53.5503)).toBe(false)
   })
 })
 
 describe('Kartenmittelpunkt', () => {
-  it('lies inside the city it belongs to', () => {
+  it('liegt in der Stadt, zu der er gehört', () => {
     for (const city of CITIES) {
       expect(withinCity(city, city.center[0], city.center[1])).toBe(true)
     }
@@ -163,24 +163,24 @@ describe('Quellenangabe', () => {
   // Der Unterschied ist Lizenzbedingung, keine Kosmetik: Berlin gibt unter
   // DL-DE/Zero heraus, Hamburg unter DL-DE/Namensnennung. Eine Oberfläche,
   // die die Hamburger Quelle verschweigt, verletzt die Lizenz.
-  it('marks Hamburg and Frankfurt as requiring attribution and Berlin as not', () => {
+  it('markiert Hamburg und Frankfurt als namensnennungspflichtig und Berlin als nicht', () => {
     expect(BERLIN.attribution.attributionRequired).toBe(false)
     expect(HAMBURG.attribution.attributionRequired).toBe(true)
     expect(FRANKFURT.attribution.attributionRequired).toBe(true)
   })
 
-  // Woertlich der Quellenvermerk des ISO-Metadatensatzes. Bei
-  // DL-DE/Namensnennung ist er Lizenzbedingung -- eine Umformulierung erfuellt
+  // Wörtlich der Quellenvermerk des ISO-Metadatensatzes. Bei
+  // DL-DE/Namensnennung ist er Lizenzbedingung -- eine Umformulierung erfüllt
   // sie nicht mehr sicher, und genau deshalb steht der Wortlaut in einem Test.
-  it('keeps the Frankfurt source note verbatim', () => {
+  it('gibt den Frankfurter Quellenvermerk wörtlich wieder', () => {
     expect(FRANKFURT.attribution.source).toBe('Stadt Frankfurt am Main, www.frankfurt.de')
     expect(FRANKFURT.attribution.licenceUrl).toBe('https://www.govdata.de/dl-de/by-2-0')
   })
 
   it('keeps the München source note verbatim', () => {
-    // Woertlich aus den ISO-Metadatensaetzen beider Parkebenen, samt
-    // fuehrendem "Datenquelle:" und Halbgeviertstrich. Die Stadt schreibt den
-    // Vermerk so vor; ihn zu kuerzen waere schoener und nicht mehr derselbe.
+    // Wörtlich aus den ISO-Metadatensaetzen beider Parkebenen, samt
+    // führendem "Datenquelle:" und Halbgeviertstrich. Die Stadt schreibt den
+    // Vermerk so vor; ihn zu kürzen wäre schöner und nicht mehr derselbe.
     expect(MUENCHEN.attribution.source).toBe(
       'Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de'
     )
@@ -188,7 +188,7 @@ describe('Quellenangabe', () => {
     expect(MUENCHEN.attribution.licenceUrl).toBe('https://www.govdata.de/dl-de/by-2-0')
   })
 
-  it('names a licence and a link for every city', () => {
+  it('nennt für jede Stadt eine Lizenz und einen Verweis', () => {
     for (const city of CITIES) {
       expect(city.attribution.licence.length).toBeGreaterThan(0)
       expect(city.attribution.licenceUrl).toMatch(/^https:\/\//)
@@ -213,7 +213,7 @@ describe('Feiertage der Stadt', () => {
     expect(FRANKFURT.holidays).toBeUndefined()
   })
 
-  it('writes every city holiday as MM-TT, the form holidaysFor accepts', () => {
+  it('schreibt jeden Stadtfeiertag als MM-TT, die Form, die holidaysFor annimmt', () => {
     for (const city of CITIES) {
       for (const date of city.holidays ?? []) expect(date, city.key).toMatch(/^\d{2}-\d{2}$/)
     }
@@ -228,23 +228,23 @@ describe('cityAt', () => {
     expect(cityAt(11.5755, 48.1372)).toBe(MUENCHEN)
   })
 
-  it('resolves a Hamburg position to Hamburg instead of refusing it', () => {
+  it('löst eine Hamburger Position nach Hamburg auf, statt sie abzuweisen', () => {
     expect(cityAt(9.9924, 53.5503)).toBe(HAMBURG)
     expect(cityAt(13.3777, 52.5163)).toBe(BERLIN)
   })
 
   // Der Telegram-Parser und der Worker leiten die Stadt allein aus dem Punkt
-  // ab. Ohne diesen Treffer bekaeme eine Frankfurter Meldung
+  // ab. Ohne diesen Treffer bekäme eine Frankfurter Meldung
   // `422 position outside` -- in der App sieht das aus, als sei das Melden
   // kaputt, und im Log steht nichts, was nach einem Fehler aussieht.
-  it('resolves a Frankfurt position to Frankfurt', () => {
+  it('löst eine Frankfurter Position nach Frankfurt auf', () => {
     expect(cityAt(8.6821, 50.1109)).toBe(FRANKFURT) // Roemer
     expect(cityAt(8.6638, 50.1188)).toBe(FRANKFURT) // Hauptwache
   })
 
-  // Mainz und Offenbach liegen gleich nebenan und gehoeren nicht dazu. Ein
-  // Rueckfall wuerde eine Mainzer Meldung als Frankfurter Zeile speichern.
-  it('does not swallow the neighbouring cities', () => {
+  // Mainz und Offenbach liegen gleich nebenan und gehören nicht dazu. Ein
+  // Rückfall würde eine Mainzer Meldung als Frankfurter Zeile speichern.
+  it('verschluckt die Nachbarstädte nicht', () => {
     expect(cityAt(8.2473, 49.9929)).toBeUndefined() // Mainz
     expect(cityAt(8.9167, 50.0956)).toBeUndefined() // Offenbach, Rathaus
   })
@@ -252,7 +252,7 @@ describe('cityAt', () => {
   // Kein Rückfall auf Berlin: Zwischen den beiden Städten liegt keine, und
   // genau das muss die Antwort sein. Eine Meldung von hier als Berliner Zeile
   // zu speichern wäre falsch und nirgends zu sehen.
-  it('returns undefined between the cities', () => {
+  it('liefert zwischen den Städten undefined', () => {
     // Lüneburger Heide, ungefähr auf halbem Weg.
     expect(cityAt(10.4, 53.0)).toBeUndefined()
     // Nürnberg — eine echte Stadt, nur keine, die wir kennen. Und die
@@ -265,7 +265,7 @@ describe('cityAt', () => {
     expect(cityAt(10.8978, 48.3705)).toBeUndefined()
   })
 
-  it('accepts a point just inside each city and refuses one just outside', () => {
+  it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
     for (const city of CITIES) {
       const { minLon, minLat, maxLon, maxLat } = city.reportBounds
       expect(cityAt(minLon + 0.001, minLat + 0.001)).toBe(city)
@@ -275,25 +275,25 @@ describe('cityAt', () => {
     }
   })
 
-  it('treats the edges as inside, like withinCity does', () => {
+  it('zählt die Ränder als innen, so wie withinCity', () => {
     const { minLon, minLat } = HAMBURG.reportBounds
     expect(cityAt(minLon, minLat)).toBe(HAMBURG)
   })
 
-  it('refuses NaN and Infinity rather than picking whichever city compares first', () => {
+  it('weist NaN und Unendlich ab, statt die Stadt zu nehmen, die zuerst verglichen wird', () => {
     expect(cityAt(Number.NaN, 52.5)).toBeUndefined()
     expect(cityAt(13.4, Number.NaN)).toBeUndefined()
     expect(cityAt(Infinity, Infinity)).toBeUndefined()
   })
 
-  it('finds every city by its own centre', () => {
+  it('findet jede Stadt an ihrem eigenen Mittelpunkt', () => {
     for (const city of CITIES) expect(cityAt(city.center[0], city.center[1])).toBe(city)
   })
 
   // "Die erste passende Stadt gewinnt" ist nur dann eine Antwort und keine
   // Auslosung, wenn kein Punkt in zwei Boxen liegt. Der Test hält das für
   // jedes künftige Paar fest, nicht nur für Berlin und Hamburg.
-  it('has no point that belongs to two cities', () => {
+  it('hat keinen Punkt, der zu zwei Städten gehört', () => {
     for (const a of CITIES) {
       for (const b of CITIES) {
         if (a === b) continue
@@ -309,7 +309,7 @@ describe('cityAt', () => {
 
   // Eine Instanz darf die Auswahl einschränken; dann ist derselbe Punkt keine
   // Meldung mehr, statt der falschen Stadt zugeschlagen zu werden.
-  it('honours a restricted list of cities', () => {
+  it('achtet eine eingeschränkte Städteliste', () => {
     expect(cityAt(9.9924, 53.5503, [BERLIN])).toBeUndefined()
     expect(cityAt(9.9924, 53.5503, [HAMBURG])).toBe(HAMBURG)
     expect(cityAt(8.6821, 50.1109, [BERLIN, HAMBURG])).toBeUndefined()
@@ -329,14 +329,14 @@ describe('suggestCity', () => {
   const MARIENPLATZ: [number, number] = [11.5755, 48.1372]
   const BRANDENBURGER_TOR: [number, number] = [13.3777, 52.5163]
 
-  it('suggests the city the position is in', () => {
+  it('schlägt die Stadt vor, in der die Position liegt', () => {
     expect(suggestCity(BERLIN, ...MARIENPLATZ)).toBe(MUENCHEN)
     expect(suggestCity(MUENCHEN, ...BRANDENBURGER_TOR)).toBe(BERLIN)
   })
 
   // Der häufigste Fall überhaupt: Wer in der Stadt steht, die die App zeigt,
   // soll nichts davon merken, dass es diesen Hinweis gibt.
-  it('stays silent in the city that is already loaded', () => {
+  it('schweigt in der Stadt, die schon geladen ist', () => {
     expect(suggestCity(BERLIN, ...BRANDENBURGER_TOR)).toBeNull()
     expect(suggestCity(MUENCHEN, ...MARIENPLATZ)).toBeNull()
   })
@@ -344,33 +344,33 @@ describe('suggestCity', () => {
   // Kiel kennt die App nicht. Die nächstgelegene Stadt anzubieten wäre
   // geraten; hier bleibt es bei der bestehenden Antwort "ausserhalb der
   // Parkraumbewirtschaftung".
-  it('stays silent outside every city', () => {
+  it('schweigt außerhalb jeder Stadt', () => {
     expect(suggestCity(BERLIN, 10.1228, 54.3233)).toBeNull()
     expect(suggestCity(MUENCHEN, 0, 0)).toBeNull()
   })
 
-  it('stays silent for a suggestion that was already declined', () => {
+  it('schweigt bei einem Vorschlag, der schon abgelehnt wurde', () => {
     expect(suggestCity(BERLIN, ...MARIENPLATZ, ['muenchen'])).toBeNull()
   })
 
   // Die Ablehnung gilt der abgelehnten Stadt, nicht dem Hinweis als solchem:
   // Wer in München "hier bleiben" gesagt hat, soll in Hamburg trotzdem gefragt
   // werden.
-  it('declines only the city that was declined', () => {
+  it('lehnt nur die Stadt ab, die abgelehnt wurde', () => {
     expect(suggestCity(BERLIN, ...MARIENPLATZ, ['hamburg', 'frankfurt'])).toBe(MUENCHEN)
     expect(suggestCity(BERLIN, 9.9924, 53.5503, ['muenchen'])).toBe(HAMBURG)
   })
 
   // Müll im Speicher darf nicht wirken wie eine Ablehnung — und auch nicht wie
   // ihr Gegenteil. Ein Schlüssel, den es nicht gibt, ist schlicht folgenlos.
-  it('ignores keys in the dismissed list that name no city', () => {
+  it('übergeht Schlüssel in der Abgelehnt-Liste, die keine Stadt benennen', () => {
     expect(suggestCity(BERLIN, ...MARIENPLATZ, ['', 'köln', 'muenchen '])).toBe(MUENCHEN)
   })
 
   // Im Artifact ist umschaltbar nur, was eingebettet ist. Ein Vorschlag, dessen
   // Annahme in "Diese Fassung enthält muenchen nicht" endet, wäre schlimmer
   // als keiner.
-  it('suggests only cities this deployment can switch to', () => {
+  it('schlägt nur Städte vor, auf die diese Auslieferung umschalten kann', () => {
     expect(suggestCity(BERLIN, ...MARIENPLATZ, [], [BERLIN, HAMBURG])).toBeNull()
     expect(suggestCity(BERLIN, ...MARIENPLATZ, [], [BERLIN, MUENCHEN])).toBe(MUENCHEN)
   })
@@ -378,19 +378,19 @@ describe('suggestCity', () => {
   // Verglichen wird über den Schlüssel. Eine eingeschränkte Liste kann Kopien
   // enthalten; ein Identitätsvergleich schlüge dort die laufende Stadt sich
   // selbst vor — der Hinweis stünde dann dauerhaft und ohne Ausweg da.
-  it('compares by key, not by object identity', () => {
+  it('vergleicht über den Schlüssel, nicht über die Objektidentität', () => {
     const copy = { ...BERLIN }
     expect(suggestCity(copy, ...BRANDENBURGER_TOR)).toBeNull()
   })
 
-  it('rejects coordinates that are not numbers', () => {
+  it('weist Koordinaten ab, die keine Zahlen sind', () => {
     expect(suggestCity(BERLIN, Number.NaN, 48.1372)).toBeNull()
     expect(suggestCity(BERLIN, 11.5755, Number.POSITIVE_INFINITY)).toBeNull()
   })
 
   // Über alle Städte statt über ein Paar: Käme eine fünfte dazu, deren Box eine
   // bestehende schneidet, fiele es hier auf und nicht erst im Betrieb.
-  it('suggests each city at its own centre, and only to the others', () => {
+  it('schlägt jede Stadt an ihrem eigenen Mittelpunkt vor, und nur den anderen', () => {
     for (const from of CITIES) {
       for (const to of CITIES) {
         const suggestion = suggestCity(from, to.center[0], to.center[1])

@@ -2,18 +2,18 @@ name: CI
 
 on:
   push:
-    # Ohne den Ausschluss laeuft die Suite bei jedem Dependabot-PR zweimal:
-    # einmal fuer den Push auf den dependabot/-Branch, einmal fuer den PR
+    # Ohne den Ausschluss läuft die Suite bei jedem Dependabot-PR zweimal:
+    # einmal für den Push auf den dependabot/-Branch, einmal für den PR
     # selbst. Bei rund neun Minuten E2E ist das keine Kleinigkeit.
-    # Negativmuster IN der Liste, nicht als zweiter Schluessel: `branches` und
+    # Negativmuster IN der Liste, nicht als zweiter Schlüssel: `branches` und
     # `branches-ignore` zusammen im selben Ereignis lehnt GitHub Actions ab.
     branches: ['**', '!dependabot/**']
   pull_request:
 
 # Ohne diesen Block bekommt `GITHUB_TOKEN` die Voreinstellung des Repositories
 # — und die ist einstellbar, steht also nicht hier, sondern irgendwo im
-# Dashboard. Dieser Workflow prueft nur; er braucht Lesen und sonst nichts.
-# Die drei uebrigen Workflows hatten den Block seit jeher (Audit-Punkt M-044).
+# Dashboard. Dieser Workflow prüft nur; er braucht Lesen und sonst nichts.
+# Die drei übrigen Workflows hatten den Block seit jeher (Audit-Punkt M-044).
 permissions:
   contents: read
 
@@ -78,9 +78,9 @@ jobs:
 
   # Die Skripte richten Produktivsysteme ein und sichern die Datenbank — sie
   # sind kein Beiwerk. shellcheck fand beim ersten Lauf 15 Hinweise, darunter
-  # 13× `A && B || C`: Das ist kein if-then-else, C laeuft auch, wenn A wahr
+  # 13× `A && B || C`: Das ist kein if-then-else, C läuft auch, wenn A wahr
   # war und B scheiterte. Genau diese Sorte Kette hat in diesem Projekt schon
-  # einmal einen Commit rausgehen lassen, der nichts geaendert hatte
+  # einmal einen Commit rausgehen lassen, der nichts geändert hatte
   # (Audit-Punkt M-036).
   shell:
     name: Shell-Skripte
@@ -92,9 +92,15 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
           shellcheck scripts/*.sh app/packages/ingest/scripts/*.sh
       # Eine Umbenennung muss alle Stellen treffen. Die Namen stehen in vier
-      # Sprachen; diese Pruefung sagt es laut, wenn zwei auseinanderlaufen.
-      - name: Namen der Ressourcen stimmen ueberein
+      # Sprachen; diese Prüfung sagt es laut, wenn zwei auseinanderlaufen.
+      - name: Namen der Ressourcen stimmen überein
         run: ./scripts/namen-pruefen.sh
+
+      # Prosa mit Umlauten, Bezeichner ohne. Die Regel steht in
+      # CONTRIBUTING.md; ohne Prüfung zerfällt sie beim nächsten Beitrag
+      # wieder (Audit-Punkte M-063 bis M-067).
+      - name: Sprache ist einheitlich
+        run: ./scripts/sprache-pruefen.sh
 
   security:
     name: Sicherheit
@@ -117,9 +123,9 @@ jobs:
       - name: Bekannte Schwachstellen in Abhängigkeiten
         run: pnpm audit --audit-level moderate
 
-      # Das Skript prueft sich vor jedem Lauf selbst: Es legt erfundene
+      # Das Skript prüft sich vor jedem Lauf selbst: Es legt erfundene
       # Geheimnisse an und bricht ab, wenn seine eigenen Muster die nicht
-      # finden. Eine Pruefung, die nie anschlaegt, ist von einer kaputten
+      # finden. Eine Prüfung, die nie anschlägt, ist von einer kaputten
       # nicht zu unterscheiden — Audit-Punkt M-091.
       - name: Keine Secrets im ausgelieferten Bundle
         run: |

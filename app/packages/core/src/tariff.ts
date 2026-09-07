@@ -28,8 +28,8 @@ export interface ParkingZone {
    * Bundesland der Stadt, in der die Zone liegt — entscheidet den
    * Feiertagskalender.
    *
-   * Pflichtfeld ohne Vorgabewert. Ein Vorgabewert waere hier immer "BE", und
-   * damit haette die erste Hamburger Zone am 8. Maerz stillschweigend
+   * Pflichtfeld ohne Vorgabewert. Ein Vorgabewert wäre hier immer "BE", und
+   * damit hätte die erste Hamburger Zone am 8. März stillschweigend
    * Berliner Feiertage benutzt: gebuehrenfrei gemeldet an einem Tag, an dem
    * Hamburg kassiert.
    */
@@ -232,7 +232,7 @@ export function estimateCost(
   const fee = zone.fee
   // Ohne Betrag wird nicht gerechnet. Ein Parkscheibengebiet mit 0 Cent zu
   // beziffern hiesse: "kostet nichts" — und wer dort ohne Scheibe steht, zahlt
-  // trotzdem. `priced: false` zwingt die Oberflaeche, etwas anderes zu sagen.
+  // trotzdem. `priced: false` zwingt die Oberfläche, etwas anderes zu sagen.
   const [minCents, maxCents] =
     fee.kind === 'exact'
       ? [bill(fee.centsPerHour), bill(fee.centsPerHour)]

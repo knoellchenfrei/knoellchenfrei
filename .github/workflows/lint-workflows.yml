@@ -30,10 +30,10 @@ jobs:
           python3 - <<'PY'
           import pathlib, sys, yaml
           bad = []
-          # Alles unter .github, nicht nur die Workflows: Der Ausloeser oben
-          # heisst `.github/**.yml`, geprueft wurden aber nur `workflows/*.yml`
+          # Alles unter .github, nicht nur die Workflows: Der Auslöser oben
+          # heisst `.github/**.yml`, geprüft wurden aber nur `workflows/*.yml`
           # und `dependabot.yml`. Die Issue-Formulare unter ISSUE_TEMPLATE/
-          # blieben damit ungeprueft und der Lauf trotzdem gruen — GitHub
+          # blieben damit ungeprüft und der Lauf trotzdem grün — GitHub
           # ignoriert ein kaputtes Formular stillschweigend, und dann fehlt
           # schlicht die Vorlage (Audit-Punkt M-070).
           root = pathlib.Path('.github')

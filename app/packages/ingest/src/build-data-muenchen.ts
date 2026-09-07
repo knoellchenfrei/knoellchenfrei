@@ -226,9 +226,9 @@ for (const feature of readFeatures<Record<string, unknown>>('districts')) {
   const raw = feature.properties['sb_name']
   const name = typeof raw === 'string' ? raw.trim() : ''
 
-  // Die Zuordnung laeuft gegen die UNvereinfachte Geometrie. Vereinfachte
+  // Die Zuordnung läuft gegen die UNvereinfachte Geometrie. Vereinfachte
   // Grenzen wandern um bis zu ein paar Dutzend Meter, und ein Gebiet direkt an
-  // der Bezirksgrenze bekaeme sonst den Nachbarn zugeschrieben.
+  // der Bezirksgrenze bekäme sonst den Nachbarn zugeschrieben.
   districtIndex.push({ name, rings: toPolygons(geometry) })
 
   const simplified = simplifyGeometry(geometry, 1e-4, 5)
@@ -721,9 +721,9 @@ write('meta.json', {
   absent: ['fee'],
 })
 
-// Die Zahlen gehoeren ins Log, nicht in einen Kommentar: Sie sind das, was
-// beim naechsten Abzug anders sein kann, und ein Sprung darin ist das erste,
-// was auffaellt.
+// Die Zahlen gehören ins Log, nicht in einen Kommentar: Sie sind das, was
+// beim nächsten Abzug anders sein kann, und ein Sprung darin ist das erste,
+// was auffällt.
 console.log(
   `\n${zoneFeatures.length} von ${zones.length + skippedInactive} Gebieten übernommen` +
     ` — ${skippedInactive} nicht in Betrieb, ${skippedWithoutRule} ohne Abschnitt mit Parkbezug` +

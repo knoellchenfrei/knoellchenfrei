@@ -20,9 +20,24 @@ etwas ungeprüft ist, steht das dabei.
 
 ## Was läuft
 
-Alles unter einem Cloudflare-Konto (`K.tommy@gmail.com`,
-`feb7167e0ddb59557a38ece3be5a7009`) und einer GitHub-Organisation
-(`knoellchenfrei`).
+Alles unter **einem** Cloudflare-Konto und der GitHub-Organisation
+`knoellchenfrei`.
+
+Die Anmeldeadresse und die Kontokennung stehen hier bewusst **nicht** — dieses
+Repository ist öffentlich, und bis zum 7. September standen beide in genau
+diesem Absatz. Keines von beiden ist ein Geheimnis im engeren Sinn: Die
+Kontokennung ist ein Bezeichner, die Adresse ein Postfach. Zusammen mit dieser
+Datei sind sie aber eine Anleitung — sie sagt, was auf dem Konto liegt, was
+davon unwiederbringlich ist und wer allein darankommt. Genau das ist der
+Halbsatz, der eine Kontoübernahme von einer Vermutung zu einem Plan macht.
+
+Wer die Werte im Ernstfall braucht, holt sie da, wo sie hingehören:
+
+```bash
+cd app && pnpm --filter @knoellchenfrei/api exec wrangler whoami   # Konto und Kennung
+```
+
+Die Anmeldedaten liegen im Passwortmanager des Betreibers.
 
 | Was | Wo | Aus dem Repository wieder herstellbar? |
 | --- | --- | --- |

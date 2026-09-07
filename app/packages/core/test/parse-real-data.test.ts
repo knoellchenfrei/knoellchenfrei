@@ -19,13 +19,13 @@ interface RawZone {
 
 const ZONES = zones as RawZone[]
 
-describe('real WFS data', () => {
-  it('carries the 103 zones the service reported', () => {
+describe('echte WFS-Daten', () => {
+  it('trägt die 103 Zonen, die der Dienst gemeldet hat', () => {
     expect(ZONES).toHaveLength(103)
     expect(new Set(ZONES.map((z) => z.parkzone)).size).toBe(103)
   })
 
-  it('parses every zeiten value without exception', () => {
+  it('liest jeden zeiten-Wert ohne Ausnahme', () => {
     const failures: string[] = []
     for (const zone of ZONES) {
       try {
@@ -37,7 +37,7 @@ describe('real WFS data', () => {
     expect(failures).toEqual([])
   })
 
-  it('parses every gebuehr value without exception', () => {
+  it('liest jeden gebuehr-Wert ohne Ausnahme', () => {
     const failures: string[] = []
     for (const zone of ZONES) {
       try {
@@ -49,37 +49,37 @@ describe('real WFS data', () => {
     expect(failures).toEqual([])
   })
 
-  it('pins the distinct spellings so a feed change fails CI', () => {
+  it('nagelt die verschiedenen Schreibweisen fest, damit eine Feed-Änderung die CI rot macht', () => {
     expect(new Set(ZONES.map((z) => z.zeiten)).size).toBe(18)
     expect(new Set(ZONES.map((z) => z.gebuehr)).size).toBe(5)
   })
 
-  it('finds exactly one zone that charges on Sunday', () => {
+  it('findet genau eine Zone, die sonntags kassiert', () => {
     const sunday = ZONES.filter((z) => parseSchedule(z.zeiten).windows.some((w) => w.weekdays.includes(0)))
     expect(sunday.map((z) => z.parkzone)).toEqual(['29'])
   })
 
-  it('flags the Advent zones as carrying rules the model cannot express', () => {
+  it('markiert die Advents-Zonen als Träger von Regeln, die das Modell nicht ausdrücken kann', () => {
     const flagged = ZONES.filter((z) => parseSchedule(z.zeiten).unmodelledRules.length > 0)
     expect(flagged.map((z) => z.parkzone).sort()).toEqual(['10', '11', '12', '13'])
   })
 
-  it('records the doubled source string as a defect rather than mis-parsing it', () => {
+  it('hält die verdoppelte Quellzeile als Mangel fest, statt sie falsch zu lesen', () => {
     const zone54 = ZONES.find((z) => z.parkzone === '54')
     const parsed = parseSchedule(zone54?.zeiten ?? '')
     expect(parsed.sourceDefect).toBeDefined()
     expect(parsed.windows).toEqual([{ weekdays: [1, 2, 3, 4, 5, 6], fromMinute: 540, toMinute: 1320 }])
   })
 
-  it('keeps fee ranges as ranges', () => {
+  it('behält Gebührenspannen als Spannen', () => {
     const ranged = ZONES.filter((z) => parseFee(z.gebuehr).kind === 'range')
     expect(ranged).toHaveLength(3)
   })
 
-  it('reports the real rate span as 2.00 to 4.00 EUR', () => {
+  it('nennt die echte Tarifspanne 2,00 bis 4,00 Euro', () => {
     const cents = ZONES.flatMap((z) => {
       const fee = parseFee(z.gebuehr)
-      // `parseFee` liefert fuer den Berliner Feed nur 'exact' und 'range' —
+      // `parseFee` liefert für den Berliner Feed nur 'exact' und 'range' —
       // 'disc' und 'unknown' gibt es nur in Hamburg. Der Zweig steht trotzdem
       // hier, weil der Typ sie kennt und ein stiller Durchfall sonst als
       // fehlender Betrag durchginge.

@@ -37,32 +37,32 @@ const spandau: ParkingZone = (() => {
   }
 })()
 
-describe('estimateCost bounds', () => {
-  it('refuses a non-finite duration instead of looping forever', () => {
+describe('estimateCost an den Grenzen', () => {
+  it('weist eine nicht endliche Dauer ab, statt ewig zu kreisen', () => {
     expect(() => estimateCost(zone, Date.UTC(2026, 8, 7, 8), Infinity)).toThrow(RangeError)
     expect(() => estimateCost(zone, Date.UTC(2026, 8, 7, 8), Number.NaN)).toThrow(RangeError)
   })
 
-  it('refuses a negative duration instead of quoting zero as fact', () => {
+  it('weist eine negative Dauer ab, statt null als Tatsache zu nennen', () => {
     expect(() => estimateCost(zone, Date.UTC(2026, 8, 7, 8), -60)).toThrow(RangeError)
   })
 
-  it('caps an absurd duration at a week rather than blocking the thread', () => {
+  it('deckelt eine absurde Dauer bei einer Woche, statt den Thread zu blockieren', () => {
     const result = estimateCost(zone, Date.UTC(2026, 8, 7, 8), 10_000_000)
     expect(result.chargedMinutes).toBeLessThanOrEqual(MAX_PRICED_MINUTES)
   })
 })
 
-describe('confidence with hostile counters', () => {
+describe('Konfidenz mit feindseligen Zählern', () => {
   const base = { id: 'x', lat: 52.5, lon: 13.4, reportedAt: 0 }
 
-  it('never scores above 1, even with negative disputes', () => {
+  it('bleibt nie über 1, auch nicht bei negativen Widersprüchen', () => {
     const result = confidenceOf({ ...base, confirmations: 0, disputes: -5 }, { now: 0 })
     expect(result.score).toBeLessThanOrEqual(1)
     expect(result.status).not.toBe('confirmed')
   })
 
-  it('does not produce NaN from non-finite counters', () => {
+  it('macht aus nicht endlichen Zählern kein NaN', () => {
     const result = confidenceOf(
       { ...base, confirmations: Number.POSITIVE_INFINITY, disputes: 0 },
       { now: 0 }
@@ -71,21 +71,21 @@ describe('confidence with hostile counters', () => {
   })
 })
 
-describe('parseSchedule input hardening', () => {
-  it('rejects a long whitespace run quickly instead of backtracking', () => {
+describe('parseSchedule gegen feindselige Eingabe', () => {
+  it('weist eine lange Leerraumkette schnell ab, statt zurückzusetzen', () => {
     const hostile = `Mo 9${' '.repeat(50_000)}-${' '.repeat(50_000)}x`
     const started = performance.now()
     expect(() => parseSchedule(hostile)).toThrow()
     expect(performance.now() - started).toBeLessThan(1000)
   })
 
-  it('rejects impossible minutes rather than rolling them over', () => {
+  it('weist unmögliche Minuten ab, statt sie überlaufen zu lassen', () => {
     expect(() => parseSchedule('Mo-Fr 9:75-20:00 Uhr')).toThrow()
   })
 })
 
-describe('Advent Saturdays', () => {
-  it('finds the four shopping Saturdays of 2026', () => {
+describe('Adventssamstage', () => {
+  it('findet die vier Einkaufssamstage von 2026', () => {
     // First Advent 2026 is 29 November, so the Saturdays are 28 Nov, 5, 12, 19 Dec.
     expect([...adventSaturdays(2026)].sort()).toEqual([
       '2026-11-28',
@@ -95,7 +95,7 @@ describe('Advent Saturdays', () => {
     ])
   })
 
-  it('always yields Saturdays', () => {
+  it('liefert immer Samstage', () => {
     for (let year = 2020; year <= 2040; year += 1) {
       for (const date of adventSaturdays(year)) {
         expect(new Date(`${date}T12:00:00Z`).getUTCDay()).toBe(6)
@@ -103,7 +103,7 @@ describe('Advent Saturdays', () => {
     }
   })
 
-  it('marks a Spandau zone uncertain on an Advent Saturday, not on an ordinary one', () => {
+  it('markiert eine Spandauer Zone am Adventssamstag als unsicher, an einem gewöhnlichen nicht', () => {
     const adventSaturday = Date.UTC(2026, 11, 5, 15) // 5 Dec 2026, 16:00 local
     const plainSaturday = Date.UTC(2026, 8, 5, 14)
     expect(isAdventSaturday(berlinWallClock(adventSaturday))).toBe(true)
@@ -111,7 +111,7 @@ describe('Advent Saturdays', () => {
     expect(isUncertainAt(spandau, plainSaturday)).toBe(false)
   })
 
-  it('leaves zones without an unmodelled rule certain', () => {
+  it('lässt Zonen ohne unmodellierte Regel sicher', () => {
     expect(isUncertainAt(zone, Date.UTC(2026, 11, 5, 15))).toBe(false)
   })
 
@@ -127,7 +127,7 @@ describe('Advent Saturdays', () => {
    * Projekts; die Regel bleibt deshalb dauerhaft ein Hinweis und wird nie zu
    * einer Tagesaussage.
    */
-  it('stays certain for an unmodelled rule that has nothing to do with Advent', () => {
+  it('bleibt sicher bei einer unmodellierten Regel, die mit Advent nichts zu tun hat', () => {
     const muenchen: ParkingZone = {
       ...zone,
       unmodelledRules: ['Regelung nur an Schultagen', 'Zeit laut Quelle unbekannt'],
@@ -142,7 +142,7 @@ describe('Advent Saturdays', () => {
  * Zweite Runde, gefunden beim Beschuss mit Zufallswerten (`fuzz.test.ts`).
  * Wieder gilt: Jeder Test hier ist einmal fehlgeschlagen.
  */
-describe('confidence with a broken timestamp', () => {
+describe('Konfidenz mit kaputtem Zeitstempel', () => {
   const base = { id: 'x', lat: 52.5, lon: 13.4, confirmations: 2, disputes: 0 }
 
   /**

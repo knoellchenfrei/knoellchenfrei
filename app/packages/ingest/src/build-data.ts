@@ -19,20 +19,20 @@ import { CITY_KEY } from './sources.js'
 import { roundPoint, simplifyGeometry } from './simplify.js'
 
 // Dieses Skript ist der BERLINER Zweig. Hamburg hat einen eigenen
-// (`build-data-hamburg.ts`), weil die beiden Feeds ausser der Domaene nichts
+// (`build-data-hamburg.ts`), weil die beiden Feeds ausser der Domäne nichts
 // teilen: andere Felder, andere Schreibweisen, andere Achsenreihenfolge. Ein
-// gemeinsames Skript mit zwei Zweigen waere bei jeder Aenderung an einer Stadt
-// fuer die andere gefaehrlich.
+// gemeinsames Skript mit zwei Zweigen wäre bei jeder Änderung an einer Stadt
+// für die andere gefährlich.
 if (CITY_KEY !== BERLIN.key) {
   console.error(
-    `CITY=${CITY_KEY}: Dieses Skript baut nur Berlin. Fuer Hamburg: pnpm --filter @knoellchenfrei/ingest build-data-hamburg`
+    `CITY=${CITY_KEY}: Dieses Skript baut nur Berlin. Für Hamburg: pnpm --filter @knoellchenfrei/ingest build-data-hamburg`
   )
   process.exit(2)
 }
 
 // Je Stadt ein Verzeichnis, auf beiden Seiten. Vorher lagen die Dateien flach
-// unter `public/data/`; mit einer zweiten Stadt haetten sie sich gegenseitig
-// ueberschrieben, ohne dass irgendetwas fehlgeschlagen waere.
+// unter `public/data/`; mit einer zweiten Stadt hätten sie sich gegenseitig
+// überschrieben, ohne dass irgendetwas fehlgeschlagen wäre.
 const RAW = join(process.env.RAW_DIR ?? join(process.cwd(), '../../.raw'), BERLIN.key)
 const OUT = join(
   process.env.OUT_DIR ?? join(process.cwd(), '../../apps/web/public/data'),
@@ -336,7 +336,7 @@ write('meta.json', {
   city: BERLIN.key,
   cityName: BERLIN.name,
   // Aus der Stadt-Konfiguration statt als Zeichenkette hier: Die
-  // Quellenangabe ist bei Hamburg Lizenzbedingung, und zwei Orte fuer
+  // Quellenangabe ist bei Hamburg Lizenzbedingung, und zwei Orte für
   // dieselbe Aussage laufen auseinander.
   source: `${BERLIN.attribution.source}, WFS 2.0.0`,
   licence: BERLIN.attribution.licence,

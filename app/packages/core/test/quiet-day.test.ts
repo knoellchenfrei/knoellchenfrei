@@ -29,11 +29,11 @@ const TUESDAY_MIDDAY = Date.UTC(2026, 8, 8, 10, 0)
 const TUESDAY_2300 = Date.UTC(2026, 8, 8, 21, 0)
 
 describe('quietDayNote', () => {
-  it('says nothing when a normal share of zones is charging', () => {
+  it('sagt nichts, wenn ein normaler Anteil der Zonen kassiert', () => {
     expect(quietDayNote(CITY, { now: TUESDAY_MIDDAY })).toBeNull()
   })
 
-  it('explains a rest day, and names the exceptions when there are few', () => {
+  it('erklärt einen Ruhetag und nennt die Ausnahmen, wenn es wenige sind', () => {
     const note = quietDayNote(CITY, { now: SUNDAY_NOON })
     expect(note?.reason).toBe('restDay')
     expect(note?.chargeable).toBe(1)
@@ -41,19 +41,19 @@ describe('quietDayNote', () => {
     expect(note?.exceptions).toEqual(['rund-um-die-uhr'])
   })
 
-  it('explains the hours before they start', () => {
+  it('erklärt die Zeiten, bevor sie anfangen', () => {
     const note = quietDayNote(CITY, { now: TUESDAY_0830 })
     expect(note?.reason).toBe('beforeHours')
     expect(note?.usualStartHour).toBe(9)
   })
 
-  it('explains the hours after they end', () => {
+  it('erklärt die Zeiten, nachdem sie vorbei sind', () => {
     const note = quietDayNote(CITY, { now: TUESDAY_2300 })
     expect(note?.reason).toBe('afterHours')
     expect(note?.usualEndHour).toBe(20)
   })
 
-  it('derives the usual days from the data, not from a hardcoded weekend', () => {
+  it('leitet die üblichen Tage aus den Daten ab, nicht aus einem fest verdrahteten Wochenende', () => {
     // Eine Stadt, die sonntags kassiert und montags ruht. Nichts am Code weiß
     // davon; die Antwort muss trotzdem stimmen.
     const elsewhere = Array.from({ length: 10 }, (_, i) => zone(`e${i}`, [0, 2, 3, 4, 5, 6]))
@@ -63,14 +63,14 @@ describe('quietDayNote', () => {
     expect(quietDayNote(elsewhere, { now: monday })?.reason).toBe('restDay')
   })
 
-  it('derives the usual hours from the data too', () => {
+  it('leitet auch die üblichen Stunden aus den Daten ab', () => {
     const late = Array.from({ length: 10 }, (_, i) => zone(`l${i}`, MO_TO_SA, 11 * 60, 23 * 60))
     const note = quietDayNote(late, { now: TUESDAY_0830 })
     expect(note?.reason).toBe('beforeHours')
     expect(note?.usualStartHour).toBe(11)
   })
 
-  it('drops the list when too many zones are exceptions', () => {
+  it('lässt die Liste weg, wenn zu viele Zonen Ausnahmen sind', () => {
     const many = [
       ...Array.from({ length: 40 }, (_, i) => zone(`q${i}`, MO_TO_SA)),
       ...Array.from({ length: 5 }, (_, i) => zone(`always${i}`, ALL_DAYS, 0, 1440)),
@@ -81,7 +81,7 @@ describe('quietDayNote', () => {
     expect(note?.exceptions).toEqual([])
   })
 
-  it('stays silent when it cannot explain the number', () => {
+  it('schweigt, wenn es die Zahl nicht erklären kann', () => {
     // Mitten in der üblichen Zeit und trotzdem fast alles ruhig: dafür gibt es
     // keine Erklärung aus den Daten, und eine zu erfinden wäre schlechter.
     const odd = Array.from({ length: 10 }, (_, i) => zone(`o${i}`, MO_TO_SA, 9 * 60, 20 * 60))
@@ -95,7 +95,7 @@ describe('quietDayNote', () => {
     expect(quietDayNote(noTuesday, { now: TUESDAY_MIDDAY })?.reason).toBe('restDay')
   })
 
-  it('says nothing for an empty city', () => {
+  it('sagt nichts für eine leere Stadt', () => {
     expect(quietDayNote([], { now: SUNDAY_NOON })).toBeNull()
   })
 })

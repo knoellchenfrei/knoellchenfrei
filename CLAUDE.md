@@ -448,6 +448,16 @@ wiederholt.
   geschrieben; deutsche Kommentare bei neuem Code, die englischen im Bestand
   bleiben stehen. Wo ein Kommentar einen konkreten Fehler festhält, gehört der
   Fehler hinein — er ist die Begründung.
+- **Prosa mit Umlauten, Bezeichner ohne.** Die Regel steht ausführlich in
+  [CONTRIBUTING.md](CONTRIBUTING.md) und wird von
+  `./scripts/sprache-pruefen.sh` gehalten: Kommentare, Doku, Testtitel und
+  Ausgabetexte schreiben `ä ö ü ß`; Bezeichner, Dateinamen, Schlüssel,
+  Feldnamen, Schalter und Commit-Betreffs bleiben ASCII (`muenchen`,
+  `staedte.md`, `--pruefen`). Zwei Fallen aus dem Lauf vom 7. September:
+  `taeglich` und `ueberwachung` sind **Feed-Werte** aus München und Frankfurt
+  — als Umlaut geschrieben brechen zwei Parser lautlos. Und was in
+  Grave-Akzenten steht, ist ein Zitat, kein Befund; sonst schlägt die Prüfung
+  auf der Regel an, die sie durchsetzt.
 - **Für jeden gefundenen Fehler ein Test.** 30 der Unit-Tests sind genau das.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

@@ -66,7 +66,7 @@ describe('verifyBetaToken', () => {
 
   // Der Grenzfall gehört festgehalten: Genau auf der Sekunde ist der Zutritt
   // vorbei, nicht eine Millisekunde später.
-  it('weist ein Token ab, das genau jetzt ablaeuft', async () => {
+  it('weist ein Token ab, das genau jetzt abläuft', async () => {
     const token = await signBetaToken(SECRET, NOW)
     expect(await verifyBetaToken(SECRET, token, NOW)).toBe(false)
     expect(await verifyBetaToken(SECRET, token, NOW - 1)).toBe(true)
@@ -88,7 +88,7 @@ describe('verifyBetaToken', () => {
     expect(await verifyBetaToken(SECRET, verlaengert, NOW)).toBe(false)
   })
 
-  it('weist ein Token mit veraenderter Signatur ab', async () => {
+  it('weist ein Token mit veränderter Signatur ab', async () => {
     const token = await signBetaToken(SECRET, NOW + BETA_TOKEN_TTL_MS)
     const [expiry, signature] = token.split('.') as [string, string]
     const gedreht = signature[0] === 'a' ? `b${signature.slice(1)}` : `a${signature.slice(1)}`
@@ -143,7 +143,7 @@ describe('verifyBetaToken', () => {
     expect(await verifyBetaToken(SECRET, token, Number.POSITIVE_INFINITY)).toBe(false)
   })
 
-  it('haelt beliebigem Beschuss stand und wirft nie', async () => {
+  it('hält beliebigem Beschuss stand und wirft nie', async () => {
     const next = lcg(20260907)
     const alphabet = '0123456789abcdef.-=; \t\n%$"\'\\äöü€'
     for (let round = 0; round < 400; round += 1) {
@@ -182,7 +182,7 @@ describe('readCookie', () => {
     expect(readCookie(`${BETA_COOKIE}_alt=abc`, BETA_COOKIE)).toBe(null)
   })
 
-  it('behaelt Gleichheitszeichen im Wert', () => {
+  it('behält Gleichheitszeichen im Wert', () => {
     expect(readCookie(`${BETA_COOKIE}=a=b=c`, BETA_COOKIE)).toBe('a=b=c')
   })
 
@@ -191,7 +191,7 @@ describe('readCookie', () => {
     expect(readCookie(`${BETA_COOKIE}=   `, BETA_COOKIE)).toBe(null)
   })
 
-  it('gibt null zurueck, wenn es keinen Header gibt', () => {
+  it('gibt null zurück, wenn es keinen Header gibt', () => {
     expect(readCookie(null, BETA_COOKIE)).toBe(null)
     expect(readCookie(undefined, BETA_COOKIE)).toBe(null)
     expect(readCookie('', BETA_COOKIE)).toBe(null)
@@ -199,13 +199,13 @@ describe('readCookie', () => {
     expect(readCookie(';;;', BETA_COOKIE)).toBe(null)
   })
 
-  it('bricht einen ueberlangen Header ab, statt ihn zu durchsuchen', () => {
+  it('bricht einen überlangen Header ab, statt ihn zu durchsuchen', () => {
     const header = `${'a=1; '.repeat(3000)}${BETA_COOKIE}=abc`
     expect(header.length).toBeGreaterThan(8192)
     expect(readCookie(header, BETA_COOKIE)).toBe(null)
   })
 
-  it('haelt beliebigem Beschuss stand und wirft nie', () => {
+  it('hält beliebigem Beschuss stand und wirft nie', () => {
     const next = lcg(7092026)
     const alphabet = `=;, \t"'\\%${BETA_COOKIE}äöü`
     for (let round = 0; round < 400; round += 1) {
@@ -236,7 +236,7 @@ describe('constantTimeEqual', () => {
 })
 
 describe('das Zusammenspiel', () => {
-  it('traegt einen Zutritt vom Cookie bis zur Pruefung', async () => {
+  it('trägt einen Zutritt vom Cookie bis zur Prüfung', async () => {
     const token = await signBetaToken(SECRET, NOW + BETA_TOKEN_TTL_MS)
     const header = `theme=dark; ${BETA_COOKIE}=${token}; sonst=1`
     const gelesen = readCookie(header, BETA_COOKIE)

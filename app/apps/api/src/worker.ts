@@ -231,18 +231,18 @@ const RATE_COLUMNS = {
 } as const
 
 /**
- * Ab wann gezaehlt wird — und warum das nicht ueberall dasselbe ist.
+ * Ab wann gezählt wird — und warum das nicht überall dasselbe ist.
  *
  * `feedback` speichert `created_at` **auf die Stunde abgerundet**: Die genaue
- * Minute sagt ueber einen Vorschlag nichts und grenzt ein, wer ihn geschrieben
- * haben kann. Ein rollendes Ein-Stunden-Fenster ueber gerundete Werte zaehlt am
- * Stundenwechsel aber falsch — eine um 10:59 geschriebene Zeile traegt den
- * Stempel 10:00 und faellt um 11:01 aus dem Fenster. Vier Rueckmeldungen um
+ * Minute sagt über einen Vorschlag nichts und grenzt ein, wer ihn geschrieben
+ * haben kann. Ein rollendes Ein-Stunden-Fenster über gerundete Werte zählt am
+ * Stundenwechsel aber falsch — eine um 10:59 geschriebene Zeile trägt den
+ * Stempel 10:00 und fällt um 11:01 aus dem Fenster. Vier Rückmeldungen um
  * 10:59 und vier um 11:01 waren acht in zwei Minuten (Audit-Punkt M-045).
  *
- * Das Fenster reicht deshalb bei `feedback` eine Stunde weiter zurueck. Die
+ * Das Fenster reicht deshalb bei `feedback` eine Stunde weiter zurück. Die
  * Grenze ist damit eher zu streng als zu locker, und das ist die richtige
- * Richtung: Eine Rueckmeldung ist eine seltene Handlung.
+ * Richtung: Eine Rückmeldung ist eine seltene Handlung.
  */
 const RATE_WINDOW_MS = 3_600_000
 
@@ -251,7 +251,7 @@ async function countRecent(
   table: keyof typeof RATE_COLUMNS,
   hash: string
 ): Promise<number> {
-  // `feedback` speichert auf die Stunde gerundet, die uebrigen Tabellen auf die
+  // `feedback` speichert auf die Stunde gerundet, die übrigen Tabellen auf die
   // Millisekunde — `countingWindowStart` in `core` kennt den Unterschied und
   // ist dort auf genau diesen Stundenwechsel getestet.
   const since = countingWindowStart(
@@ -666,13 +666,13 @@ async function voteOnSighting(
   if (target === null) return json({ error: 'not found' }, { status: 404 }, cors)
 
   // Der Schema-Kommentar zu `sightings.client_hash` versprach seit jeher, die
-  // Spalte halte "one client confirming its own report" auf — geprueft wurde
-  // es nie (Audit-Punkt M-047). Eine selbst bestaetigte Meldung sieht fuer
-  // jeden anderen aus wie eine von zwei Leuten bestaetigte, und genau diese
-  // Zahl traegt die Konfidenz.
+  // Spalte halte "one client confirming its own report" auf — geprüft wurde
+  // es nie (Audit-Punkt M-047). Eine selbst bestätigte Meldung sieht für
+  // jeden anderen aus wie eine von zwei Leuten bestätigte, und genau diese
+  // Zahl trägt die Konfidenz.
   //
   // `client_hash` darf NULL sein — bei Meldungen aus Telegram steht dort
-  // nichts. Ein NULL ist keine Uebereinstimmung, sondern eine fehlende Angabe,
+  // nichts. Ein NULL ist keine Übereinstimmung, sondern eine fehlende Angabe,
   // und die verbietet nichts.
   if (target.client_hash !== null && target.client_hash === hash) {
     return json({ error: 'cannot vote on your own report' }, { status: 403 }, cors)

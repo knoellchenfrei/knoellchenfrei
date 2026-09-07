@@ -78,15 +78,15 @@ test.describe('MapLibres Worker', () => {
   })
 })
 
-test.describe('map and zones', () => {
-  test('renders the map container at full height', async ({ page }) => {
+test.describe('Karte und Zonen', () => {
+  test('zeichnet den Kartenbehälter in voller Höhe', async ({ page }) => {
     await ready(page)
     // Regression: maplibre-gl.css once won the cascade and collapsed this to 0.
     const height = await page.evaluate(() => document.querySelector('.map')?.clientHeight ?? 0)
     expect(height).toBeGreaterThan(300)
   })
 
-  test('selecting a zone from the map shows its details without crashing', async ({ page }) => {
+  test('eine Zone von der Karte zu wählen zeigt ihre Einzelheiten, ohne abzustürzen', async ({ page }) => {
     await ready(page)
     const box = await page.locator('.map').boundingBox()
     expect(box).not.toBeNull()
@@ -99,7 +99,7 @@ test.describe('map and zones', () => {
     await expect(page.locator('.crash')).toHaveCount(0)
   })
 
-  test('search finds a zone and opens its panel', async ({ page }) => {
+  test('die Suche findet eine Zone und öffnet ihre Tafel', async ({ page }) => {
     await ready(page)
     await page.locator('.search__input').fill('29')
     const first = page.locator('.search__results button').first()
@@ -111,7 +111,7 @@ test.describe('map and zones', () => {
     await expect(page.locator('.hours code').first()).toContainText('Mo-So')
   })
 
-  test('states the tariff and the source hours', async ({ page }) => {
+  test('nennt den Tarif und die Zeiten laut Quelle', async ({ page }) => {
     await ready(page)
     await page.locator('.search__input').fill('1')
     await page.locator('.search__results button').first().click()
@@ -121,8 +121,8 @@ test.describe('map and zones', () => {
   })
 })
 
-test.describe('parking session', () => {
-  test('records a spot without geolocation and remembers it across a reload', async ({ page }) => {
+test.describe('Parkvorgang', () => {
+  test('merkt sich einen Platz ohne Ortung und behält ihn über ein Neuladen', async ({ page }) => {
     await ready(page)
     const box = await page.locator('.map').boundingBox()
     await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
@@ -139,7 +139,7 @@ test.describe('parking session', () => {
     await expect(page.locator('.timer')).toBeVisible({ timeout: 15_000 })
   })
 
-  test('sets a reminder and offers to cancel it', async ({ page }) => {
+  test('setzt eine Erinnerung und bietet an, sie abzubrechen', async ({ page }) => {
     await ready(page)
     const box = await page.locator('.map').boundingBox()
     await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
@@ -160,8 +160,8 @@ test.describe('parking session', () => {
   })
 })
 
-test.describe('layers and points of interest', () => {
-  test('toggles a layer on and off', async ({ page }) => {
+test.describe('Ebenen und Sonderziele', () => {
+  test('schaltet eine Ebene ein und wieder aus', async ({ page }) => {
     await ready(page)
     await page.locator('.chip--toggle').click()
     const charging = page.locator('.chip', { hasText: 'Ladepunkte' })
@@ -176,7 +176,7 @@ test.describe('layers and points of interest', () => {
     await expect(charging).not.toHaveClass(/chip--on/)
   })
 
-  test('shows the low emission zone as a separate layer', async ({ page }) => {
+  test('zeigt die Umweltzone als eigene Ebene', async ({ page }) => {
     await ready(page)
     await page.locator('.chip--toggle').click()
     const lez = page.locator('.chip', { hasText: 'Umweltzone' })
@@ -186,8 +186,8 @@ test.describe('layers and points of interest', () => {
   })
 })
 
-test.describe('enforcement sightings', () => {
-  test('reports a sighting anchored to a map tap', async ({ page }) => {
+test.describe('gemeldete Sichtungen', () => {
+  test('meldet eine Sichtung, verankert an einem Tippen auf die Karte', async ({ page }) => {
     await ready(page)
     const box = await page.locator('.map').boundingBox()
     await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
@@ -210,7 +210,7 @@ test.describe('enforcement sightings', () => {
     await expect(sightings.locator('.demo-note')).not.toContainText('erzeugt')
   })
 
-  test('labels seeded reports as demo data', async ({ page }) => {
+  test('kennzeichnet erzeugte Meldungen als Demodaten', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     // Scoped to the sightings panel: the heatmap carries its own demo note, and
@@ -221,10 +221,10 @@ test.describe('enforcement sightings', () => {
   })
 })
 
-test.describe('reporting never fails silently', () => {
+test.describe('Melden scheitert nie still', () => {
   const sightings = 'section[aria-label="Ordnungsamt-Sichtungen"]'
 
-  test('offers a place to report from without any map gesture', async ({ page }) => {
+  test('bietet einen Ort zum Melden auch ohne jede Geste auf der Karte', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     // Pressed cold, with nothing tapped on the map — the case that was broken
@@ -245,7 +245,7 @@ test.describe('reporting never fails silently', () => {
     await expect(page.locator('.sheet__submit')).toContainText('Melden')
   })
 
-  test('frees the map when the report sheet opens on a phone', async ({ page }, testInfo) => {
+  test('gibt die Karte frei, wenn das Meldeblatt auf dem Handy aufgeht', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'phone', 'nur auf dem Handy relevant')
     await ready(page)
     await openPanel(page)
@@ -258,7 +258,7 @@ test.describe('reporting never fails silently', () => {
     await expect(page.locator('.sidebar')).toHaveClass(/sidebar--collapsed/)
   })
 
-  test('takes the report back and says so when the shared store refuses it', async ({ page }) => {
+  test('nimmt die Meldung zurück und sagt es, wenn der gemeinsame Speicher sie abweist', async ({ page }) => {
     // Stands in for the artifact runtime with a store that rejects writes. The
     // shipped app once swallowed exactly this: the click did nothing at all, no
     // entry, no message, and only an invisible unhandled rejection.
@@ -295,8 +295,8 @@ test.describe('reporting never fails silently', () => {
   })
 })
 
-test.describe('explaining a quiet day', () => {
-  test('says why so few zones are charging, and goes away when told', async ({ page }) => {
+test.describe('einen ruhigen Tag erklären', () => {
+  test('sagt, warum so wenige Zonen kassieren, und verschwindet auf Wunsch', async ({ page }) => {
     // Die Uhr steht, sonst prüft dieser Test je nach Tageszeit etwas anderes.
     // Am 7. September liefen zwei Läufe gegen denselben Stand: um 08:38 war der
     // Hinweis da (Montag vor Beginn der Bewirtschaftung), um 10:04 nicht mehr —
@@ -319,7 +319,7 @@ test.describe('explaining a quiet day', () => {
     await expect(note).toHaveCount(0)
   })
 
-  test('names no city and no weekday in the shipped code', async ({ page }) => {
+  test('nennt im ausgelieferten Code weder Stadt noch Wochentag', async ({ page }) => {
     // Sonntag, 10:00 — derselbe feste Zeitpunkt wie im Test darüber, damit der
     // Hinweis sicher da ist statt nur meistens.
     await page.clock.setFixedTime(new Date('2026-09-06T10:00:00+02:00'))
@@ -333,8 +333,8 @@ test.describe('explaining a quiet day', () => {
   })
 })
 
-test.describe('asking for the location', () => {
-  test('explains itself before the browser dialog, and can be deferred', async ({ page }) => {
+test.describe('nach dem Standort fragen', () => {
+  test('erklärt sich vor dem Browser-Dialog und lässt sich vertagen', async ({ page }) => {
     await ready(page, { keepPrompt: true })
     const prompt = page.locator('.prompt')
     await expect(prompt).toBeVisible()
@@ -346,7 +346,7 @@ test.describe('asking for the location', () => {
     await expect(prompt).toHaveCount(0)
   })
 
-  test('does not ask again after it has been answered', async ({ page }) => {
+  test('fragt nicht noch einmal, nachdem geantwortet wurde', async ({ page }) => {
     await ready(page, { keepPrompt: true })
     await page.locator('.prompt').getByRole('button', { name: 'Später' }).click()
     await page.reload()
@@ -356,8 +356,8 @@ test.describe('asking for the location', () => {
   })
 })
 
-test.describe('settings', () => {
-  test('carries the standing caveat and answers what the data raises', async ({ page }) => {
+test.describe('Einstellungen', () => {
+  test('trägt den stehenden Vorbehalt und beantwortet, was die Daten aufwerfen', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: 'Einstellungen' }).click()
 
@@ -381,7 +381,7 @@ test.describe('settings', () => {
   // Die Zahlen in der FAQ sind Befunde aus je einem Feed. In der falschen Stadt
   // gelesen sind sie nicht ungenau, sondern falsch — und zwar zuversichtlich
   // falsch, was die schlechteste Sorte Hilfe ist.
-  test('answers only what holds in the loaded city', async ({ page }) => {
+  test('beantwortet nur, was in der geladenen Stadt gilt', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: 'Einstellungen' }).click()
     const sheet = page.getByRole('dialog', { name: 'Einstellungen' })
@@ -394,7 +394,7 @@ test.describe('settings', () => {
     await expect(sheet).not.toContainText('Warum steht kein Preis da?')
   })
 
-  test('offers no donation button', async ({ page }) => {
+  test('bietet keinen Spendenknopf an', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: 'Einstellungen' }).click()
     // There is no association and no account behind it; a "support us" that
@@ -405,8 +405,8 @@ test.describe('settings', () => {
   })
 })
 
-test.describe('feedback', () => {
-  test('is offered only where the promise it makes can be kept', async ({ page }) => {
+test.describe('Rückmeldungen', () => {
+  test('wird nur dort angeboten, wo das Versprechen zu halten ist', async ({ page }) => {
     // The form promises nobody but the owner reads what is written. Only the
     // self-hosted worker can keep that — it has no read endpoint — so without
     // VITE_API_BASE the entry point is absent rather than decorative.
@@ -419,8 +419,8 @@ test.describe('feedback', () => {
   })
 })
 
-test.describe('live figures', () => {
-  test('always states the reports, and only claims the rest when it can count them', async ({
+test.describe('Zahlen im Betrieb', () => {
+  test('nennt immer die Meldungen und behauptet den Rest nur, wenn es ihn zählen kann', async ({
     page,
   }) => {
     await ready(page)
@@ -432,7 +432,7 @@ test.describe('live figures', () => {
     await expect(live).not.toContainText('gerade offen')
   })
 
-  test('does not swallow map taps', async ({ page }) => {
+  test('verschluckt keine Tipper auf die Karte', async ({ page }) => {
     await ready(page)
     // The legend once covered the map across its full width without
     // pointer-events: none; the strip must not repeat it.
@@ -440,17 +440,17 @@ test.describe('live figures', () => {
   })
 })
 
-test.describe('enforcement density', () => {
+test.describe('Kontrolldichte', () => {
   const heatPanel = 'section[aria-label="Kontrolldichte"]'
 
-  test('says what the picture is built on, and that it is generated', async ({ page }) => {
+  test('sagt, worauf das Bild beruht, und dass es erzeugt ist', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     await expect(page.locator(heatPanel)).toContainText('Meldungen')
     await expect(page.locator(`${heatPanel} .demo-note`)).toContainText('Beispielmuster')
   })
 
-  test('draws the layer only once it is switched on', async ({ page }) => {
+  test('zeichnet die Ebene erst, wenn sie eingeschaltet ist', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     const visible = async (): Promise<string> =>
@@ -468,7 +468,7 @@ test.describe('enforcement density', () => {
     expect(['visible', 'none', 'missing']).toContain(await visible())
   })
 
-  test('reports the numbers the colour cannot carry', async ({ page }) => {
+  test('nennt die Zahlen, die die Farbe nicht tragen kann', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
@@ -478,7 +478,7 @@ test.describe('enforcement density', () => {
     await expect(panel.locator('.heat-top strong').first()).toContainText(/Zone|Außerhalb/)
   })
 
-  test('always draws the per-day histogram, which needs no time of day', async ({ page }) => {
+  test('zeichnet das Tagesdiagramm immer — es braucht keine Uhrzeit', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
@@ -490,7 +490,7 @@ test.describe('enforcement density', () => {
     await expect(panel.locator('.chart__bar--today')).toHaveCount(1)
   })
 
-  test('draws an hourly profile with a marker for the current hour', async ({ page }) => {
+  test('zeichnet ein Stundenprofil mit einer Marke für die laufende Stunde', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
@@ -500,15 +500,15 @@ test.describe('enforcement density', () => {
     await expect(panel.locator('.chart__now')).toHaveCount(1)
   })
 
-  test('offers the layer chip alongside the others', async ({ page }) => {
+  test('bietet den Ebenen-Chip neben den anderen an', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: /Ebenen/ }).click()
     await expect(page.getByRole('button', { name: 'Kontrolldichte' })).toBeVisible()
   })
 })
 
-test.describe('resilience', () => {
-  test('survives corrupt stored state', async ({ page }) => {
+test.describe('Widerstandsfähigkeit', () => {
+  test('übersteht kaputten gespeicherten Zustand', async ({ page }) => {
     await page.addInitScript(() => {
       try {
         localStorage.setItem('knoellchenfrei.session', '{kaputt')
@@ -531,7 +531,7 @@ test.describe('resilience', () => {
     await expect(page.locator('.crash')).toHaveCount(0)
   })
 
-  test('reports no console errors during a normal session', async ({ page }) => {
+  test('meldet in einer gewöhnlichen Sitzung keine Konsolenfehler', async ({ page }) => {
     const errors: string[] = []
     const failedOwnRequests: string[] = []
 
@@ -561,7 +561,7 @@ test.describe('resilience', () => {
     expect(failedOwnRequests).toEqual([])
   })
 
-  test('never scrolls horizontally', async ({ page }) => {
+  test('scrollt nie waagerecht', async ({ page }) => {
     await ready(page)
     // Polled: layout settles over a frame or two after the map attaches, and a
     // single sample caught a transient state rather than the real one.
@@ -575,15 +575,15 @@ test.describe('resilience', () => {
   })
 })
 
-test.describe('provenance', () => {
-  test('names the source and licence', async ({ page }) => {
+test.describe('Herkunft', () => {
+  test('nennt Quelle und Lizenz', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     await expect(page.locator('.provenance')).toContainText('gdi.berlin.de')
     await expect(page.locator('.provenance')).toContainText('Datenlizenz Deutschland Zero 2.0')
   })
 
-  test('warns that the posted sign governs', async ({ page }) => {
+  test('warnt, dass das aufgestellte Schild gilt', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     await expect(page.locator('.provenance__warn')).toContainText('Beschilderung', {
@@ -601,7 +601,7 @@ test.describe('die weiteren Städte', () => {
     return sheet
   }
 
-  test('offers every city and marks the current one', async ({ page }) => {
+  test('bietet jede Stadt an und markiert die aktuelle', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
     await expect(sheet.getByRole('button', { name: 'Berlin' })).toBeDisabled()
@@ -612,7 +612,7 @@ test.describe('die weiteren Städte', () => {
 
   // Der eigentliche Punkt: Nach dem Wechsel stehen ANDERE Daten auf der Karte.
   // Ein Umschalter, der nur eine Beschriftung ändert, wäre schlimmer als keiner.
-  test('switches to Hamburg and loads Hamburg zones', async ({ page }) => {
+  test('schaltet auf Hamburg um und lädt Hamburger Zonen', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
     await sheet.getByRole('button', { name: 'Hamburg' }).click()
@@ -630,7 +630,7 @@ test.describe('die weiteren Städte', () => {
     await expect(page.locator('.provenance')).toContainText('Hamburg')
   })
 
-  test('names the Hamburg licence as a condition, not as a footnote', async ({ page }) => {
+  test('nennt die Hamburger Lizenz als Bedingung, nicht als Fußnote', async ({ page }) => {
     await ready(page)
     let sheet = await openSettings(page)
     await sheet.getByRole('button', { name: 'Hamburg' }).click()
@@ -643,9 +643,9 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet).toContainText('verlangt')
   })
 
-  // Dasselbe fuer die dritte Stadt, und aus demselben Grund: Ein Umschalter,
-  // der nur eine Beschriftung aendert, waere schlimmer als keiner.
-  test('switches to Frankfurt and loads Frankfurt zones', async ({ page }) => {
+  // Dasselbe für die dritte Stadt, und aus demselben Grund: Ein Umschalter,
+  // der nur eine Beschriftung ändert, wäre schlimmer als keiner.
+  test('schaltet auf Frankfurt um und lädt Frankfurter Zonen', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
     await sheet.getByRole('button', { name: 'Frankfurt am Main' }).click()
@@ -654,7 +654,7 @@ test.describe('die weiteren Städte', () => {
     await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
 
-    // Ueber den Stadtteil, nicht ueber die Zonennummer: Frankfurts Bereiche
+    // Über den Stadtteil, nicht über die Zonennummer: Frankfurts Bereiche
     // heissen wie Berlins Zonen schlicht "19" -- ein Zahlentreffer bewiese
     // also nicht, dass wirklich andere Daten geladen sind. "Sachsenhausen"
     // gibt es in Berlin nicht.
@@ -668,9 +668,9 @@ test.describe('die weiteren Städte', () => {
   })
 
   // Die Quellenangabe ist bei DL-DE/Namensnennung Lizenzbedingung. Sie steht
-  // woertlich in `city.ts`; dieser Test haelt fest, dass sie auch woertlich
+  // wörtlich in `city.ts`; dieser Test hält fest, dass sie auch wörtlich
   // ankommt und nicht unterwegs umformuliert wird.
-  test('names the Frankfurt licence as a condition and the source verbatim', async ({ page }) => {
+  test('nennt die Frankfurter Lizenz als Bedingung und den Quellenvermerk wörtlich', async ({ page }) => {
     await ready(page)
     let sheet = await openSettings(page)
     await sheet.getByRole('button', { name: 'Frankfurt am Main' }).click()
@@ -683,10 +683,10 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet).toContainText('Stadt Frankfurt am Main, www.frankfurt.de')
   })
 
-  // Und dasselbe fuer die vierte Stadt. Muenchen ist der interessanteste der
-  // vier Faelle: Seine Gebiete heissen nicht "19" oder "N10", sondern
+  // Und dasselbe für die vierte Stadt. Muenchen ist der interessanteste der
+  // vier Fälle: Seine Gebiete heissen nicht "19" oder "N10", sondern
   // "Glockenbachviertel" -- ein Treffer darauf beweist andere Daten, ohne dass
-  // man den Stadtteil dazunehmen muesste.
+  // man den Stadtteil dazunehmen müsste.
   test('switches to München and loads München zones', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
@@ -701,7 +701,7 @@ test.describe('die weiteren Städte', () => {
     await page.locator('.search__results button').first().click()
 
     await openPanel(page)
-    // Ueber die Kennung, nicht ueber die Klasse: `.panel__title` tragen auch
+    // Über die Kennung, nicht über die Klasse: `.panel__title` tragen auch
     // die Sichtungs- und die Heatmap-Karte, und Playwrights Strict Mode bricht
     // bei drei Treffern ab.
     await expect(page.locator('#zone-panel-title')).toContainText('Glockenbachviertel')
@@ -711,8 +711,8 @@ test.describe('die weiteren Städte', () => {
     await expect(page.locator('.provenance')).toContainText('München')
   })
 
-  // Der eine Satz, den nur Muenchen ausloest: Die Quelle nennt fuer kein
-  // einziges der 82 Gebiete einen Betrag. „0,00 €" waere dort die falscheste
+  // Der eine Satz, den nur Muenchen auslöst: Die Quelle nennt für kein
+  // einziges der 82 Gebiete einen Betrag. „0,00 €" wäre dort die falscheste
   // aller Antworten -- sie hiesse „hier ist nichts zu beachten", und wer ohne
   // Ticket steht, zahlt trotzdem.
   test('says that München states no tariff, instead of quoting nothing', async ({ page }) => {
@@ -767,7 +767,7 @@ test.describe('die weiteren Städte', () => {
 
   // Berlin darf nicht als Nebenwirkung verlorengehen: Der Wechsel muss in
   // beide Richtungen gehen, sonst ist die Voreinstellung eine Sackgasse.
-  test('switches back to Berlin', async ({ page }) => {
+  test('schaltet zurück nach Berlin', async ({ page }) => {
     await ready(page)
     let sheet = await openSettings(page)
     await sheet.getByRole('button', { name: 'Hamburg' }).click()
@@ -834,7 +834,7 @@ test.describe('der Standort-Vorschlag', () => {
     await expect(page.locator('.city-hint')).toHaveCount(0)
   })
 
-  test('remembers "Hier bleiben" across a reload', async ({ page }) => {
+  test('merkt sich „Hier bleiben“ über ein Neuladen', async ({ page }) => {
     await standAt(page, MUENCHEN)
     await ready(page)
     await locate(page)
@@ -855,7 +855,7 @@ test.describe('der Standort-Vorschlag', () => {
     await expect(page.locator('.city-hint')).toHaveCount(0)
   })
 
-  test('says nothing when the position is in the loaded city', async ({ page }) => {
+  test('sagt nichts, wenn die Position in der geladenen Stadt liegt', async ({ page }) => {
     await standAt(page, BERLIN)
     await ready(page)
     await locate(page)
@@ -864,8 +864,8 @@ test.describe('der Standort-Vorschlag', () => {
   })
 })
 
-test.describe('acknowledgement', () => {
-  test('names FreiFahren where users can see it, and links there', async ({ page }) => {
+test.describe('Danksagung', () => {
+  test('nennt FreiFahren sichtbar für Nutzende und verweist dorthin', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: 'Einstellungen' }).click()
     const sheet = page.getByRole('dialog', { name: 'Einstellungen' })

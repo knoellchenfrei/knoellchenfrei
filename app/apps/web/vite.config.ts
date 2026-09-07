@@ -234,10 +234,10 @@ function pruefeKachelAdresse(): void {
   if (/\.pmtiles$/i.test(wert)) {
     throw new Error(
       `VITE_TILES_URL zeigt auf eine Datei: ${wert}\n` +
-        'Seit vier Staedten muss die Variable auf das VERZEICHNIS zeigen, in dem\n' +
-        'die Archive liegen — die App haengt <stadt>.pmtiles selbst an. Also z. B.\n' +
+        'Seit vier Städten muss die Variable auf das VERZEICHNIS zeigen, in dem\n' +
+        'die Archive liegen — die App hängt <stadt>.pmtiles selbst an. Also z. B.\n' +
         '  https://tiles.knoellchenfrei.de/v20260904/\n' +
-        'Mit dem alten Wert bliebe die Karte in drei von vier Staedten leer.',
+        'Mit dem alten Wert bliebe die Karte in drei von vier Städten leer.',
     )
   }
 }

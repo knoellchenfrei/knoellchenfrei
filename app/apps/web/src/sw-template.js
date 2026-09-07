@@ -23,8 +23,8 @@ const SHELL = [
   './',
   // Bewusst **ohne** './index.html'. Cloudflare Pages beantwortet den Pfad mit
   // einem 308 auf './' — und eine Weiterleitung im Vorrat ist toedlich, weil
-  // `cache.addAll` atomar ist: Eine einzige 3xx-Antwort laesst den ganzen Aufruf
-  // scheitern. Lokal faellt das nicht auf, `vite preview` liefert dort 200;
+  // `cache.addAll` atomar ist: Eine einzige 3xx-Antwort lässt den ganzen Aufruf
+  // scheitern. Lokal fällt das nicht auf, `vite preview` liefert dort 200;
   // gemessen wurde es erst an der ausgelieferten Adresse. './' ist ohnehin
   // dasselbe Dokument.
   './manifest.webmanifest',

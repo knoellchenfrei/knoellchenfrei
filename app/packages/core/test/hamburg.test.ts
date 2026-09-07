@@ -28,7 +28,7 @@ const ROWS = JSON.parse(
 ) as HamburgZoneProperties[]
 
 describe('parseHamburgSchedule', () => {
-  it('reads the plain daily window', () => {
+  it('liest das schlichte Tagesfenster', () => {
     expect(parseHamburgSchedule('täglich 9-20 Uhr')).toEqual([
       { weekdays: [0, 1, 2, 3, 4, 5, 6], fromMinute: 540, toMinute: 1200 },
     ])
@@ -37,13 +37,13 @@ describe('parseHamburgSchedule', () => {
   // Der teuerste mögliche Fehler in dieser Datei: "werktags" schließt den
   // Samstag EIN. Läse man es als Mo-Fr, meldete die App an 31 Gebieten
   // samstags "gebührenfrei".
-  it('counts Saturday as a Werktag', () => {
+  it('zählt Samstag als Werktag', () => {
     const [window] = parseHamburgSchedule('werktags 9-20 Uhr')
     expect(window?.weekdays).toEqual([1, 2, 3, 4, 5, 6])
     expect(window?.weekdays).not.toContain(0)
   })
 
-  it('maps an end hour of 24 to minute 1440, not to 0', () => {
+  it('bildet die Endstunde 24 auf Minute 1440 ab, nicht auf 0', () => {
     expect(parseHamburgSchedule('täglich 9-24 Uhr')).toEqual([
       { weekdays: [0, 1, 2, 3, 4, 5, 6], fromMinute: 540, toMinute: 1440 },
     ])
@@ -51,7 +51,7 @@ describe('parseHamburgSchedule', () => {
 
   // "täglich 9-2 Uhr" — fünf Gebiete. Ein einzelnes ChargeWindow kann das
   // nicht: fromMinute > toMinute hiesse in `windowCovers` schlicht "nie".
-  it('splits a window that runs past midnight', () => {
+  it('teilt ein Fenster, das über Mitternacht läuft', () => {
     expect(parseHamburgSchedule('täglich 9-2 Uhr')).toEqual([
       { weekdays: [0, 1, 2, 3, 4, 5, 6], fromMinute: 540, toMinute: 1440 },
       { weekdays: [1, 2, 3, 4, 5, 6, 0], fromMinute: 0, toMinute: 120 },
@@ -61,24 +61,24 @@ describe('parseHamburgSchedule', () => {
   // Kommt im Feed nicht vor, wäre aber die Falle: Der Samstagabend läuft in
   // den Sonntag, der Sonntag ist aber kein Werktag. Die Tage des zweiten
   // Fensters müssen deshalb mitwandern.
-  it('shifts the after-midnight days by one for a werktags window', () => {
+  it('verschiebt die Tage nach Mitternacht bei einem werktags-Fenster um eins', () => {
     expect(parseHamburgSchedule('werktags 22-1 Uhr')).toEqual([
       { weekdays: [1, 2, 3, 4, 5, 6], fromMinute: 1320, toMinute: 1440 },
       { weekdays: [2, 3, 4, 5, 6, 0], fromMinute: 0, toMinute: 60 },
     ])
   })
 
-  it('rejects anything it does not recognise instead of guessing', () => {
+  it('weist alles ab, was es nicht kennt, statt zu raten', () => {
     for (const raw of ['', 'Mo-Sa 9-20 Uhr', 'täglich 9-20', 'immer', 'täglich 9-20 Uhr extra']) {
       expect(() => parseHamburgSchedule(raw)).toThrow(HamburgParseError)
     }
   })
 
-  it('refuses an identical start and end rather than emitting an empty day', () => {
+  it('weist gleichen Anfang und gleiches Ende ab, statt einen leeren Tag auszugeben', () => {
     expect(() => parseHamburgSchedule('täglich 9-9 Uhr')).toThrow(/gleich/)
   })
 
-  it('bounds its input, like the Berlin parsers', () => {
+  it('begrenzt seine Eingabe, wie die Berliner Parser', () => {
     expect(() => parseHamburgSchedule('täglich 9-20 Uhr'.padEnd(500, ' '))).toThrow(/Zeichen/)
   })
 
@@ -94,23 +94,23 @@ describe('parseHamburgSchedule', () => {
 })
 
 describe('parseHamburgFee', () => {
-  it('reads an amount with the € sign and the stated period', () => {
+  it('liest einen Betrag mit €-Zeichen und der genannten Zeitspanne', () => {
     expect(parseHamburgFee('3,50 € je Stunde')).toEqual({ kind: 'exact', centsPerHour: 350 })
     expect(parseHamburgFee('4,00 € je Stunde')).toEqual({ kind: 'exact', centsPerHour: 400 })
   })
 
   // Nicht als 0 Cent: Wer im Parkscheibengebiet ohne Scheibe steht, zahlt.
-  it('treats Parkscheibe as its own kind, not as a price of zero', () => {
+  it('behandelt die Parkscheibe als eigene Art, nicht als Preis von null', () => {
     expect(parseHamburgFee('Parkscheibe')).toEqual({ kind: 'disc' })
   })
 
-  it('treats a dash, an empty string and null as "not stated"', () => {
+  it('behandelt Strich, leere Zeichenkette und null als „nicht genannt"', () => {
     for (const raw of ['-', '', '   ', null, undefined]) {
       expect(parseHamburgFee(raw)).toEqual({ kind: 'unknown' })
     }
   })
 
-  it('refuses an amount without a period, which Berlin writes and Hamburg does not', () => {
+  it('weist einen Betrag ohne Zeitspanne ab — Berlin schreibt sie, Hamburg nicht', () => {
     expect(() => parseHamburgFee('3,50 €')).toThrow(HamburgParseError)
     expect(() => parseHamburgFee('4,00 Euro')).toThrow(HamburgParseError)
   })
@@ -125,7 +125,7 @@ describe('parseHamburgFee', () => {
   // Der Feed selbst ist aktuell — veraltet ist nur die Beschreibung des
   // Dienstes in den Metadaten (drei Zonen zu 3/2/1 €). Dieser Test hält fest,
   // welche Sätze wirklich drinstehen, damit eine Gebührenänderung auffällt.
-  it('carries the rates in force since 1 July 2026', () => {
+  it('trägt die seit dem 1. Juli 2026 geltenden Tarife', () => {
     const rates = new Set(
       ROWS.map((row) => parseHamburgFee(row.gebuehrenzone))
         .filter((fee) => fee.kind === 'exact')
@@ -136,24 +136,24 @@ describe('parseHamburgFee', () => {
 })
 
 describe('parseHamburgMaxStay', () => {
-  it('reads minutes', () => {
+  it('liest Minuten', () => {
     expect(parseHamburgMaxStay('180')).toBe(180)
     expect(parseHamburgMaxStay('660')).toBe(660)
   })
 
   // 9999 ist der Platzhalter des Feeds. Ungeprüft übernommen stünde in der
   // App "6 Tage 22 Stunden" — eine Zahl, die aussieht, als wäre sie gemeint.
-  it('treats 9999 and 0 as "no limit", not as real values', () => {
+  it('behandelt 9999 und 0 als „keine Grenze", nicht als echte Werte', () => {
     expect(parseHamburgMaxStay('9999')).toBeUndefined()
     expect(parseHamburgMaxStay('0')).toBeUndefined()
   })
 
-  it('treats an empty field as no limit', () => {
+  it('behandelt ein leeres Feld als keine Grenze', () => {
     expect(parseHamburgMaxStay('')).toBeUndefined()
     expect(parseHamburgMaxStay(null)).toBeUndefined()
   })
 
-  it('refuses anything that is not a plain minute count', () => {
+  it('weist alles ab, was keine schlichte Minutenzahl ist', () => {
     for (const raw of ['180 Min.', '3h', '-1', '1e3']) {
       expect(() => parseHamburgMaxStay(raw)).toThrow(HamburgParseError)
     }
@@ -167,18 +167,18 @@ describe('parseHamburgMaxStay', () => {
 })
 
 describe('isActiveHamburgZone', () => {
-  it('accepts only the value the feed uses for the zones that exist', () => {
+  it('nimmt nur den Wert an, den der Feed für die vorhandenen Zonen benutzt', () => {
     expect(isActiveHamburgZone({ geplant_aktiv: 2 })).toBe(true)
     expect(isActiveHamburgZone({ geplant_aktiv: 3 })).toBe(false)
     expect(isActiveHamburgZone({})).toBe(false)
   })
 
-  it('drops exactly one of the 146 areas in the current feed', () => {
+  it('wirft genau eines der 146 Gebiete im aktuellen Feed weg', () => {
     expect(ROWS.filter(isActiveHamburgZone)).toHaveLength(ROWS.length - 1)
   })
 })
 
-describe('a Hamburg zone in the shared tariff model', () => {
+describe('eine Hamburger Zone im gemeinsamen Tarifmodell', () => {
   function zoneFrom(row: HamburgZoneProperties): ParkingZone {
     const maxStay = parseHamburgMaxStay(row.hoechstparkdauer)
     return {
@@ -206,7 +206,7 @@ describe('a Hamburg zone in the shared tariff model', () => {
     expect(isChargeable(zone, sundayNoon)).toBe(true)
   })
 
-  it('charges on a Saturday where the source says werktags, and not on a Sunday', () => {
+  it('kassiert an einem Samstag, wo die Quelle werktags sagt, und sonntags nicht', () => {
     const zone = zoneFrom({
       bwp_code: 'Y',
       bewirtschaftungszeit: 'werktags 9-20 Uhr',
@@ -219,7 +219,7 @@ describe('a Hamburg zone in the shared tariff model', () => {
 
   // Reformationstag ist in Hamburg gesetzlicher Feiertag und in Berlin nicht.
   // Genau dafür hängt der Kalender am Bundesland.
-  it('is free on 31 October, which Berlin charges', () => {
+  it('ist am 31. Oktober frei, an dem Berlin kassiert', () => {
     const reformationstag = Date.UTC(2026, 9, 31, 10)
     const hh = zoneFrom({
       bwp_code: 'Z',
@@ -230,7 +230,7 @@ describe('a Hamburg zone in the shared tariff model', () => {
     expect(isChargeable({ ...hh, land: 'BE' }, reformationstag)).toBe(true)
   })
 
-  it('still charges at 01:00 where the window runs to 2 Uhr', () => {
+  it('kassiert um 01:00 noch, wo das Fenster bis 2 Uhr läuft', () => {
     const zone = zoneFrom({
       bwp_code: 'N',
       bewirtschaftungszeit: 'täglich 9-2 Uhr',
@@ -242,7 +242,7 @@ describe('a Hamburg zone in the shared tariff model', () => {
     expect(isChargeable(zone, Date.UTC(2026, 8, 7, 1))).toBe(false)
   })
 
-  it('builds every active area of the feed without throwing', () => {
+  it('baut jedes aktive Gebiet des Feeds, ohne zu werfen', () => {
     const active = ROWS.filter(isActiveHamburgZone).filter(
       (row) => typeof row.bewirtschaftungszeit === 'string'
     )
@@ -252,7 +252,7 @@ describe('a Hamburg zone in the shared tariff model', () => {
     }
   })
 
-  it('checks the wall clock in Berlin time for Hamburg too', () => {
+  it('prüft die Ortszeit auch für Hamburg in Berliner Zeit', () => {
     // Beide Städte liegen in Europe/Berlin; der Name der Funktion ist historisch.
     expect(berlinWallClock(sundayNoon).minuteOfDay).toBe(12 * 60)
   })

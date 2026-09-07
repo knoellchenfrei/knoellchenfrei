@@ -130,7 +130,7 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
       {/*
         „Abschnitte" hiess das hier, solange nur Berlin diesen Weg ging. Mit
         Frankfurt sind es Parkscheinautomaten — dieselbe Aussage, anderes
-        gezaehltes Ding. „Stellen" deckt beides, ohne einer Stadt ein Wort
+        gezähltes Ding. „Stellen" deckt beides, ohne einer Stadt ein Wort
         aufzudraengen, das ihre Quelle nicht benutzt.
       */}
       {properties.maxStayMinutes == null && properties.maxStay !== null && (
@@ -147,8 +147,8 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
             </>
           ) : properties.maxStayValues.length === 1 ? (
             /*
-              Jede erfasste Stelle nennt denselben Wert. Das ist die staerkste
-              Aussage, die diese Datenlage traegt — und trotzdem keine
+              Jede erfasste Stelle nennt denselben Wert. Das ist die stärkste
+              Aussage, die diese Datenlage trägt — und trotzdem keine
               Gebietsregel wie in Hamburg, wo sie als Feld am Gebiet steht.
             */
             <>

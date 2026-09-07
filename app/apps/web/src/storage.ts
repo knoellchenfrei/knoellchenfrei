@@ -61,7 +61,7 @@ export function loadSession(): ParkingSession | null {
   const lat = Number(value.lat)
   const startedAt = Number(value.startedAt)
   if (!Number.isFinite(lon) || !Number.isFinite(lat) || !Number.isFinite(startedAt)) return null
-  // Die Stadt, grosszuegig gefasst. Alles andere ist kein Parkplatz dieser App.
+  // Die Stadt, großzügig gefasst. Alles andere ist kein Parkplatz dieser App.
   if (!withinCitySession(CITY, lon, lat)) return null
   // A start in the future, or before this rewrite existed, is corrupt. The
   // lower bound matters: startedAt=1 rendered as "496850 Std." on the timer.

@@ -47,21 +47,21 @@ Telegram-Bot-Token|[0-9]{8,10}:AA[A-Za-z0-9_-]{30,}
 GitHub-Token|gh[pousr]_[A-Za-z0-9]{36}
 GitHub-PAT|github_pat_[A-Za-z0-9_]{60,}
 AWS-Schluessel|AKIA[0-9A-Z]{16}
-Privater Schluessel|-----BEGIN [A-Z ]*PRIVATE KEY-----
+Privater Schlüssel|-----BEGIN [A-Z ]*PRIVATE KEY-----
 Slack-Token|xox[baprs]-[A-Za-z0-9-]{10,}
 Zuweisung mit langem Wert|(api[_-]?key|secret|password|passwort)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"'][A-Za-z0-9_/+-]{20,}
 '
 
-# Durchsucht ein Verzeichnis. Gibt 0 zurueck, wenn nichts gefunden wurde.
+# Durchsucht ein Verzeichnis. Gibt 0 zurück, wenn nichts gefunden wurde.
 durchsuchen() {
   local ziel="$1" name regex treffer gefunden=0
   [ -d "$ziel" ] || { schlimm "Kein Verzeichnis: $ziel"; return 2; }
   while IFS='|' read -r name regex; do
     [ -n "$name" ] || continue
-    # `-I` laesst Binaerdateien aus, `-r` geht in die Tiefe, und `-e` ist
-    # Pflicht: Das Muster fuer private Schluessel faengt mit `-----` an, und
-    # ohne `-e` haelt grep das fuer Optionen. Der Selbsttest hat genau das
-    # beim ersten Lauf gefunden — zusammen mit einem Muster, fuer das der
+    # `-I` lässt Binärdateien aus, `-r` geht in die Tiefe, und `-e` ist
+    # Pflicht: Das Muster für private Schlüssel fängt mit `-----` an, und
+    # ohne `-e` hält grep das für Optionen. Der Selbsttest hat genau das
+    # beim ersten Lauf gefunden — zusammen mit einem Muster, für das der
     # Koeder fehlte.
     treffer="$(grep -rIoE -e "$regex" "$ziel" 2>/dev/null | head -5)"
     if [ -n "$treffer" ]; then
@@ -76,7 +76,7 @@ EOF
 }
 
 # Ein Verzeichnis mit erfundenen Geheimnissen, gegen das die Muster anschlagen
-# muessen. Die Werte sind ausgedacht und gehoeren zu nichts.
+# müssen. Die Werte sind ausgedacht und gehören zu nichts.
 selbsttest() {
   local tmp
   tmp="$(mktemp -d)" || return 1

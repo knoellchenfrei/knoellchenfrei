@@ -207,9 +207,9 @@ for (const feature of readFeatures<Record<string, unknown>>('districts')) {
   const raw = feature.properties['STT_NAME']
   const name = typeof raw === 'string' ? raw.trim() : ''
 
-  // Die Zuordnung laeuft gegen die UNvereinfachte Geometrie. Vereinfachte
+  // Die Zuordnung läuft gegen die UNvereinfachte Geometrie. Vereinfachte
   // Grenzen wandern um bis zu ein paar Dutzend Meter, und ein Bereich direkt
-  // an der Stadtteilgrenze bekaeme sonst den Nachbarn zugeschrieben.
+  // an der Stadtteilgrenze bekäme sonst den Nachbarn zugeschrieben.
   districtIndex.push({ name, rings: toPolygons(geometry) })
 
   const simplified = simplifyGeometry(geometry, 1e-4, 5)
@@ -362,8 +362,8 @@ for (const zone of zones) {
   if (district === null) withoutDistrict += 1
 
   // Rohtexte: alle verschiedenen, in der Reihenfolge ihres ersten Auftretens,
-  // mit `; ` verbunden. Das Panel zeigt sie woertlich unter „Zeiten laut
-  // Quelle" — dort gehoert hin, was wirklich an den Automaten steht, nicht
+  // mit `; ` verbunden. Das Panel zeigt sie wörtlich unter „Zeiten laut
+  // Quelle" — dort gehört hin, was wirklich an den Automaten steht, nicht
   // eine Zusammenfassung davon.
   const distinct = (values: (string | null | undefined)[]): string[] => [
     ...new Set(values.map((value) => (value ?? '').trim()).filter((value) => value !== '')),
@@ -379,9 +379,9 @@ for (const zone of zones) {
    * nebeneinander — oft „1 h" neben „-", also neben „keine". Sie trotzdem als
    * `maxStayMinutes` auszuliefern hiesse zu behaupten, die Quelle nenne sie
    * für das ganze Gebiet; das Panel sagt bei diesem Feld genau das, und es
-   * waere gelogen. Genau dieser Fehler ist in Berlin schon einmal passiert
+   * wäre gelogen. Genau dieser Fehler ist in Berlin schon einmal passiert
    * (dort mit den Strassenabschnitten) und hat `maxStayShare` hervorgebracht.
-   * Frankfurt benutzt denselben Weg: Wert, Anteil und alle Auspraegungen.
+   * Frankfurt benutzt denselben Weg: Wert, Anteil und alle Ausprägungen.
    */
   const stayCounts = new Map<string, number>()
   for (const automat of zone.automats) {
@@ -408,7 +408,7 @@ for (const zone of zones) {
         zone.automats.map((automat) => parseFrankfurtFee(automat.gebuehrenzone))
       ),
       // Frankfurts Feed kennt nichts, was ChargeWindow nicht ausdruecken kann.
-      // Das Feld bleibt, damit alle drei Staedte dieselbe Form haben.
+      // Das Feld bleibt, damit alle drei Städte dieselbe Form haben.
       unmodelledRules: [],
       sourceDefect: null,
       spaces: null,
@@ -455,7 +455,7 @@ for (const feature of readFeatures<Record<string, unknown>>('accessible')) {
   const count = typeof spaces === 'number' ? spaces : Number.NaN
 
   const detail = [
-    // Singular fuer einen: "1 Plaetze" ist in Berlin schon einmal in die
+    // Singular für einen: "1 Plätze" ist in Berlin schon einmal in die
     // Sprechblase gelaufen.
     Number.isFinite(count) && count > 0 ? `${count} ${count === 1 ? 'Platz' : 'Plätze'}` : null,
     text('vti_oeffnungszeiten') || null,
@@ -511,9 +511,9 @@ write('meta.json', {
   absent: ['umweltzone', 'segments'],
 })
 
-// Die Zahlen gehoeren ins Log, nicht in einen Kommentar: Sie sind das, was
-// beim naechsten Abzug anders sein kann, und ein Sprung darin ist das erste,
-// was auffaellt.
+// Die Zahlen gehören ins Log, nicht in einen Kommentar: Sie sind das, was
+// beim nächsten Abzug anders sein kann, und ein Sprung darin ist das erste,
+// was auffällt.
 console.log(
   `\n${zoneFeatures.length} von ${zones.length} Bereichen übernommen` +
     ` — ${skippedWithoutAutomats} ohne Parkscheinautomaten ausgelassen` +

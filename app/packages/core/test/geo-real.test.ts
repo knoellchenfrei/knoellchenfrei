@@ -29,22 +29,22 @@ function zoneAt(point: Position): string | null {
   return null
 }
 
-describe('real zone geometry', () => {
-  it('places Gendarmenmarkt in a Mitte zone', () => {
+describe('echte Zonengeometrie', () => {
+  it('legt den Gendarmenmarkt in eine Zone in Mitte', () => {
     // [lon, lat] — GeoJSON order. Reversing these is the exact bug the 2012
     // codebase shipped, so an assertion on the real data is worth keeping.
     expect(zoneAt([13.3925, 52.5138])).toBe('2')
   })
 
-  it('places Spandau Altstadt in zone 10', () => {
+  it('legt die Spandauer Altstadt in Zone 10', () => {
     expect(zoneAt([13.2005, 52.5355])).toBe('10')
   })
 
-  it('returns nothing far outside the managed area', () => {
+  it('liefert weit außerhalb des bewirtschafteten Gebiets nichts', () => {
     expect(zoneAt([13.65, 52.42])).toBeNull()
   })
 
-  it('rejects the lat/lon-swapped coordinate, catching an axis-order regression', () => {
+  it('weist die vertauschte Koordinate ab und fängt damit einen Achsendreher', () => {
     expect(zoneAt([52.5138, 13.3925])).toBeNull()
   })
 })

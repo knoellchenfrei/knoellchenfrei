@@ -144,7 +144,7 @@ async function issueCookie(secret: string, now: number): Promise<string> {
   const maxAge = Math.floor(BETA_TOKEN_TTL_MS / 1000)
   // `HttpOnly`, damit kein Skript im Dokument das Token lesen kann; `Secure`,
   // weil Pages ohnehin nur über TLS ausliefert; `SameSite=Lax`, damit ein
-  // Klick von aussen (Telegram, Mail) noch mitzaehlt, eine fremde Seite aber
+  // Klick von aussen (Telegram, Mail) noch mitzählt, eine fremde Seite aber
   // keine Anfragen in unserem Namen stellen kann.
   return `${BETA_COOKIE}=${token}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
 }
@@ -157,7 +157,7 @@ async function passwordFromForm(request: Request): Promise<string | null> {
     const form = await request.formData()
     const value = form.get(FIELD)
     // `formData` liefert bei einem hochgeladenen Feld ein `File`. Das ist kein
-    // Passwort, und `String(file)` daraus zu machen waere geraten.
+    // Passwort, und `String(file)` daraus zu machen wäre geraten.
     return typeof value === 'string' ? value : null
   } catch {
     // Kaputter oder falsch ausgezeichneter Körper. Das ist kein Programmfehler,
@@ -176,7 +176,7 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
   const secret = (env.BETA_PASSWORD ?? '').trim()
   const url = new URL(request.url)
 
-  // Fehlt das Passwort, faellt der Riegel zu statt auf. Die Alternative waere
+  // Fehlt das Passwort, fällt der Riegel zu statt auf. Die Alternative wäre
   // bequemer und genau der Fehler, den dieses Projekt schon zweimal gemacht
   // hat: etwas meldet Erfolg und tut nichts.
   if (secret === '') {
@@ -189,15 +189,15 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
     return context.next()
   }
 
-  // Ein Cookie war da, taugte aber nicht: fast immer abgelaufen. Das gehoert
+  // Ein Cookie war da, taugte aber nicht: fast immer abgelaufen. Das gehört
   // gesagt — sonst tippt jemand dasselbe richtige Passwort dreimal ein und
-  // haelt den Riegel fuer kaputt.
+  // hält den Riegel für kaputt.
   const notice: LoginNotice = cookie === null ? 'none' : 'expired'
 
   if (request.method === 'POST') {
     if (accepts(secret, await passwordFromForm(request))) {
       // Nur der Pfad, nie etwas aus der Anfrage: Eine Umleitung, die ein Ziel
-      // aus fremder Eingabe uebernimmt, ist eine offene Weiterleitung.
+      // aus fremder Eingabe übernimmt, ist eine offene Weiterleitung.
       return redirect(url.pathname, await issueCookie(secret, now))
     }
     return htmlResponse(loginPage('wrong-password'), 401)
@@ -208,7 +208,7 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
     if (accepts(secret, invite)) {
       const clean = new URL(url)
       // Das Passwort raus aus der Adresse, der Rest bleibt: `?start=melden`
-      // soll einen Einladungslink ueberleben.
+      // soll einen Einladungslink überleben.
       clean.searchParams.delete(INVITE_PARAM)
       return redirect(`${clean.pathname}${clean.search}${clean.hash}`, await issueCookie(secret, now))
     }

@@ -37,50 +37,50 @@ const summerSun = (h: number, m = 0) => Date.UTC(2026, 8, 6, h - 2, m) // Sun 6 
 const winterMon = (h: number, m = 0) => Date.UTC(2026, 11, 7, h - 1, m) // Mon 7 Dec 2026
 
 describe('isChargeable', () => {
-  it('charges inside the window on a working day', () => {
+  it('kassiert im Fenster an einem Werktag', () => {
     expect(isChargeable(zone1, summerMon(10))).toBe(true)
   })
 
-  it('is free before it opens and once it closes', () => {
+  it('ist frei davor und wieder, sobald geschlossen ist', () => {
     expect(isChargeable(zone1, summerMon(8, 59))).toBe(false)
     expect(isChargeable(zone1, summerMon(22))).toBe(false)
   })
 
-  it('is free on Sunday for a Mo-Sa zone', () => {
+  it('ist sonntags frei bei einer Mo-Sa-Zone', () => {
     expect(isChargeable(zone1, summerSun(10))).toBe(false)
   })
 
-  it('CHARGES on Sunday for zone 29, which is Mo-So', () => {
+  it('KASSIERT sonntags bei Zone 29, die Mo-So läuft', () => {
     // Regression guard: a blanket Sunday rule reported this free and quoted
     // 0 EUR for a stay that really costs 4.00 EUR/h.
     expect(isChargeable(zone29, summerSun(10))).toBe(true)
     expect(isChargeable(zone29, summerSun(23, 59))).toBe(true)
   })
 
-  it('treats a weekday holiday as free', () => {
+  it('behandelt einen Feiertag unter der Woche als frei', () => {
     // Fri 1 May 2026, 10:00 local — Tag der Arbeit.
     expect(isChargeable(zone1, Date.UTC(2026, 4, 1, 8))).toBe(false)
   })
 
-  it('reads wall-clock time correctly under winter time', () => {
+  it('liest die Ortszeit unter Winterzeit richtig', () => {
     expect(isChargeable(zone1, winterMon(10))).toBe(true)
     expect(isChargeable(zone1, winterMon(8, 59))).toBe(false)
   })
 
-  it('covers 23:59 for a zone closing at hour 24', () => {
+  it('deckt 23:59 ab bei einer Zone, die um 24 Uhr schließt', () => {
     // An end hour of 24 must map to minute 1440, not 0.
     expect(isChargeable(zoneRanged, summerMon(23, 59))).toBe(true)
   })
 })
 
 describe('chargeableAt', () => {
-  it('reports when the current free period ends', () => {
+  it('meldet, wann die laufende freie Zeit endet', () => {
     const result = chargeableAt(zone1, summerMon(7))
     expect(result.chargeable).toBe(false)
     expect(result.changesAt?.getTime()).toBe(summerMon(9))
   })
 
-  it('skips a holiday when looking for the next chargeable minute', () => {
+  it('überspringt einen Feiertag bei der Suche nach der nächsten kostenpflichtigen Minute', () => {
     // Thu 30 Apr 2026 22:00 local; Friday is a holiday, so the next charged
     // minute is Saturday 09:00, not Friday 09:00.
     const result = chargeableAt(zone1, Date.UTC(2026, 3, 30, 20))
@@ -90,32 +90,32 @@ describe('chargeableAt', () => {
 })
 
 describe('estimateCost', () => {
-  it('bills a full chargeable hour', () => {
+  it('rechnet eine volle kostenpflichtige Stunde ab', () => {
     const result = estimateCost(zone1, summerMon(10), 60)
     expect(result.minCents).toBe(400)
     expect(result.maxCents).toBe(400)
     expect(result.exact).toBe(true)
   })
 
-  it('bills only the chargeable part of a stay running past closing', () => {
+  it('rechnet nur den kostenpflichtigen Teil eines Aufenthalts ab, der über den Schluss hinausgeht', () => {
     // 21:00 + 120 min: only 60 min fall before 22:00.
     const result = estimateCost(zone1, summerMon(21), 120)
     expect(result.chargedMinutes).toBe(60)
     expect(result.maxCents).toBe(400)
   })
 
-  it('costs nothing when the whole stay is free', () => {
+  it('kostet nichts, wenn der ganze Aufenthalt frei ist', () => {
     expect(estimateCost(zone1, summerMon(23), 120).maxCents).toBe(0)
   })
 
-  it('returns a span, not one figure, when the source states a range', () => {
+  it('liefert eine Spanne statt einer Zahl, wenn die Quelle eine Spanne nennt', () => {
     const result = estimateCost(zoneRanged, summerMon(10), 60)
     expect(result.exact).toBe(false)
     expect(result.minCents).toBe(200)
     expect(result.maxCents).toBe(300)
   })
 
-  it('flags a stay beyond the zone maximum', () => {
+  it('markiert einen Aufenthalt über der Höchstparkdauer der Zone', () => {
     expect(estimateCost(SYNTHETIC_MAX_STAY, summerMon(10), 121).exceedsMaxStay).toBe(true)
     expect(estimateCost(SYNTHETIC_MAX_STAY, summerMon(10), 120).exceedsMaxStay).toBe(false)
   })

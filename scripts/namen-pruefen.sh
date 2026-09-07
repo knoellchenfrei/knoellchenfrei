@@ -63,9 +63,9 @@ fi
 
 # Der alte Arbeitstitel darf nur noch dort stehen, wo er eine **historische
 # Tatsache** ist: die Adresse des alten Repositories `herbeus/parkingzone` und
-# die JDBC-Zeile von 2012. Alles andere waere ein Ueberbleibsel der
+# die JDBC-Zeile von 2012. Alles andere wäre ein Überbleibsel der
 # Umbenennung. Diese Datei selbst ist ausgenommen — sie muss den Namen nennen,
-# um nach ihm suchen zu koennen.
+# um nach ihm suchen zu können.
 alt="$(grep -rn 'parkingzone' --include='*.ts' --include='*.tsx' --include='*.toml' \
   --include='*.sh' --include='*.yml' --include='*.json' app scripts .github 2>/dev/null \
   | grep -v node_modules \

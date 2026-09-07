@@ -4,7 +4,7 @@ Offene Punkte in der Reihenfolge, in der sie sinnvoll sind. Getroffene
 Entscheidungen mit Begründung stehen in [entscheidungen.md](entscheidungen.md);
 Eigenheiten der Arbeitsumgebung in [../CLAUDE.md](../CLAUDE.md). Was hier steht, ist
 entschieden; was noch zur Debatte steht, steht in
-[oeffentlich-machen.md](oeffentlich-machen.md).
+[öffentlich-machen.md](öffentlich-machen.md).
 
 Zeichen: **du** = geht nur mit deinem Konto, deiner Unterschrift oder deinem
 Geld. **ich** = kann ich übernehmen, sobald der Vorlauf steht.
@@ -226,7 +226,7 @@ Umlautdomains so verlangen.
       also mit. Wer das nachprüfen will, braucht das INWX-Konto:
 
       ```bash
-      whois knoellchenfrei.org | grep 'Registry Expiry'   # das einzige oeffentliche Datum
+      whois knoellchenfrei.org | grep 'Registry Expiry'   # das einzige öffentliche Datum
       ```
 - [ ] **Cloudflare-Konto anlegen, alle fünf als eigene Zone hinzufügen**, dann
       beim Registrar die Nameserver umstellen. Eigene Zone auch für die reinen
@@ -853,6 +853,54 @@ Was noch offen ist:
 
       Die CORS-Regel selbst bleibt eng — sie für die Bilder aufzumachen wäre
       der falsche Weg herum.
+- [x] **Sprachkonsistenz, M-063 bis M-067** — am 7. September. Der eigentliche
+      Befund war nicht „gemischt", sondern **„ohne erkennbare Regel"**: Es gab
+      keine, an der sich ein Beitrag hätte ausrichten können.
+
+      Die Regel steht jetzt in `CONTRIBUTING.md` und trennt nicht
+      deutsch/englisch, sondern **Prosa/Bezeichner**: Prosa bekommt echte
+      Umlaute, Bezeichner, Dateinamen, Schlüssel und Commit-Betreffs bleiben
+      ASCII. Deshalb heißt der Stadtschlüssel weiter `muenchen` und der
+      Schalter `--pruefen`.
+
+      | Befund | Erledigt durch |
+      | --- | --- |
+      | M-063 Umlaute gemischt | 355 Stellen in 43 Dateien vereinheitlicht; `scripts/sprache-pruefen.sh` hält den Stand und läuft in der CI |
+      | M-064 Testtitel gemischt | 268 Titel übersetzt, alle 24 Testdateien jetzt durchgehend deutsch; `describe`-Gruppen, die eine Funktion benennen, tragen weiter ihren Namen |
+      | M-065 Bezeichner gemischt | Regel geschrieben; drei, die den Umlaut-Lauf mitgenommen hatte, zurück auf ASCII und dabei eindeutiger benannt (`auswahl`, `juengste_sicherung`, `zurueckspielen`) |
+      | M-066 Dateinamen zweisprachig | Bewusst **nicht** umbenannt: Jeder Verweis müsste mit, jeder gesetzte Link bräche, und der Gegenwert wäre Ästhetik. Neue Dateien bekommen deutsche Namen in ASCII — steht in `CONTRIBUTING.md` |
+      | M-067 Commit-Nachrichten | Regel geschrieben; die Ausnahmen (Dependabot, `git merge`) bleiben, weil sie von Werkzeugen kommen |
+
+      Zwei Dinge, die der Lauf selbst gefunden hat und die zeigen, warum das
+      nicht rein mechanisch geht: `taeglich` und `ueberwachung` sind
+      **Feed-Werte** aus München und Frankfurt — ersetzt hätten sie zwei Parser
+      stillschweigend gebrochen. Und die Prüfung schlug beim ersten Lauf auf
+      `CONTRIBUTING.md` an, also auf die Regel, die sie durchsetzt; was in
+      Grave-Akzenten steht, ist seitdem ein Zitat und kein Befund.
+
+- [ ] **Herauszoomen bis ins Schwarze.** Die Karte kennt keine untere
+      Zoomgrenze und keinen Rahmen: Wer weit genug herauszieht, sitzt vor einer
+      schwarzen Fläche mit einem kleinen Stadtfleck darin. Das eigene
+      Kachelarchiv deckt nur den Ausschnitt der jeweiligen Stadt ab
+      (`reportBounds` aus `core/city.ts`, siehe `build-tiles.sh`) — außerhalb
+      gibt es schlicht keine Kacheln, und die Karte sieht dabei kaputt aus
+      statt begrenzt.
+
+      Zwei Zeilen in `new maplibregl.Map({…})` in `App.tsx`:
+
+      - `maxBounds` auf den Rahmen der Stadt, etwas großzügiger als
+        `reportBounds` — sonst stößt man beim Schieben am Rand an, wo noch
+        Kacheln lägen.
+      - `minZoom` so, dass der Rahmen den Behälter gerade noch füllt. **Nicht
+        als feste Zahl:** Das hängt von der Fenstergröße ab, ist auf einem
+        Handy anders als auf einem Monitor, und eine geratene Zahl wäre auf
+        einem der beiden falsch. `map.setMinZoom(map.getZoom())` nach einem
+        `fitBounds` auf den Stadtrahmen liefert sie, und ein `resize`-Zuhörer
+        rechnet sie neu.
+
+      Zu prüfen ist dabei, ob das dem Städte-Umschalter in die Quere kommt: Der
+      wechselt `CITY` zur Laufzeit, also müssen Rahmen und Grenze mitwandern.
+
 - [ ] **„Auto weg?" nennt immer Berlin — auch in Hamburg, Frankfurt und
       München.** `components/TowInfo.tsx` hat die Auskunftsstelle der Polizei
       Berlin fest verdrahtet: Link, Nummer und den Satz „Auskunfts- und

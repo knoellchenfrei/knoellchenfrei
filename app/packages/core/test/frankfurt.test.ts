@@ -142,7 +142,7 @@ describe('parseFrankfurtSchedule', () => {
 
   // Der Gegentest zur Tabelle: Sie muss den Feed vollständig abdecken, sonst
   // prüft sie nur, was jemand zufällig abgeschrieben hat.
-  it('covers every spelling the feed carries, with the right counts', () => {
+  it('deckt jede Schreibweise des Feeds ab, mit den richtigen Zahlen', () => {
     const counts = new Map<string, number>()
     for (const row of AUTOMATS) {
       const raw = row.gebuehrenzeit ?? ''
@@ -156,29 +156,29 @@ describe('parseFrankfurtSchedule', () => {
     expect(new Set(SCHEDULES.map((entry) => entry.raw)).size).toBe(counts.size)
   })
 
-  it('maps an end hour of 24 to minute 1440, not to 0', () => {
+  it('bildet die Endstunde 24 auf Minute 1440 ab, nicht auf 0', () => {
     // `Mo-So 0-24` steht sechsmal im Feed. Auf 0 abgebildet hiesse das "nie".
     expect(parseFrankfurtSchedule('Mo-So 0-24')[0]?.toMinute).toBe(1440)
   })
 
-  it('gives Mo-So and Tgl. the same seven days', () => {
+  it('gibt Mo-So und Tgl. dieselben sieben Tage', () => {
     expect(parseFrankfurtSchedule('Mo-So 9-18')).toEqual(parseFrankfurtSchedule('Tgl. 9-18'))
   })
 
-  it('reads a single weekday', () => {
+  it('liest einen einzelnen Wochentag', () => {
     expect(parseFrankfurtSchedule('Sa 9-14')).toEqual([
       { weekdays: [6], fromMinute: 540, toMinute: 840 },
     ])
     expect(parseFrankfurtSchedule('So 9-14')[0]?.weekdays).toEqual([0])
   })
 
-  // Kommt im Feed nicht vor. Eine leere Wochentagsliste waere aber "nie
+  // Kommt im Feed nicht vor. Eine leere Wochentagsliste wäre aber "nie
   // gebuehrenpflichtig" — die teuerste stille Antwort dieses Parsers.
-  it('wraps a day range that runs across Sunday', () => {
+  it('schlägt eine Tagesspanne um, die über den Sonntag läuft', () => {
     expect(parseFrankfurtSchedule('Sa-Mo 9-14')[0]?.weekdays).toEqual([0, 1, 6])
   })
 
-  it('rejects anything it does not recognise instead of guessing', () => {
+  it('weist alles ab, was es nicht kennt, statt zu raten', () => {
     for (const raw of [
       '',
       '   ',
@@ -195,43 +195,43 @@ describe('parseFrankfurtSchedule', () => {
     }
   })
 
-  // Ueber Mitternacht kommt im Feed nicht vor. Zu raten, wie es gemeint ist,
-  // waere schlimmer als anzuhalten: Ein Fenster mit from > to heisst in
+  // Über Mitternacht kommt im Feed nicht vor. Zu raten, wie es gemeint ist,
+  // wäre schlimmer als anzuhalten: Ein Fenster mit from > to heisst in
   // `windowCovers` schlicht "nie".
-  it('refuses a span that does not end after it starts', () => {
+  it('weist eine Spanne ab, die nicht nach ihrem Anfang endet', () => {
     expect(() => parseFrankfurtSchedule('Mo-Fr 22-2')).toThrow(/endet nicht/)
     expect(() => parseFrankfurtSchedule('Mo-Fr 9-9')).toThrow(/endet nicht/)
   })
 
-  it('bounds its input, like the Berlin and Hamburg parsers', () => {
+  it('begrenzt seine Eingabe, wie die Berliner und Hamburger Parser', () => {
     expect(() => parseFrankfurtSchedule('Mo-Fr 7-19'.padEnd(500, ' '))).toThrow(/Zeichen/)
   })
 })
 
 describe('parseFrankfurtFee', () => {
-  it('reads the two rates the feed uses', () => {
+  it('liest die zwei Tarife, die der Feed benutzt', () => {
     expect(parseFrankfurtFee('2 €/h')).toEqual({ kind: 'exact', centsPerHour: 200 })
     expect(parseFrankfurtFee('4 €/h')).toEqual({ kind: 'exact', centsPerHour: 400 })
   })
 
-  it('accepts the same notation with cents, so a rate change does not stop the build', () => {
+  it('nimmt dieselbe Schreibweise mit Cent an, damit eine Tarifänderung den Bau nicht anhält', () => {
     expect(parseFrankfurtFee('2,50 €/h')).toEqual({ kind: 'exact', centsPerHour: 250 })
   })
 
-  // Kein Betrag ist NICHT null Euro. Genau ein Automat laesst das Feld leer.
-  it('treats an empty field, a dash and null as "not stated"', () => {
+  // Kein Betrag ist NICHT null Euro. Genau ein Automat lässt das Feld leer.
+  it('behandelt leeres Feld, Strich und null als „nicht genannt"', () => {
     for (const raw of ['', '   ', '-', null, undefined]) {
       expect(parseFrankfurtFee(raw)).toEqual({ kind: 'unknown' })
     }
   })
 
-  it('refuses the Berlin and Hamburg spellings, which mean the same and parse differently', () => {
+  it('weist die Berliner und Hamburger Schreibweisen ab, die dasselbe bedeuten und anders gelesen werden', () => {
     expect(() => parseFrankfurtFee('2,00 Euro')).toThrow(FrankfurtParseError)
     expect(() => parseFrankfurtFee('3,50 € je Stunde')).toThrow(FrankfurtParseError)
     expect(() => parseFrankfurtFee('2 €')).toThrow(FrankfurtParseError)
   })
 
-  it('bounds its input', () => {
+  it('begrenzt seine Eingabe', () => {
     expect(() => parseFrankfurtFee('2 €/h'.padEnd(500, '0'))).toThrow(/Zeichen/)
   })
 
@@ -243,7 +243,7 @@ describe('parseFrankfurtFee', () => {
     }
   })
 
-  it('pins the two rates in force, so a fee change fails the build', () => {
+  it('nagelt die zwei geltenden Tarife fest, damit eine Gebührenänderung den Bau anhält', () => {
     const rates = new Set(
       AUTOMATS.map((row) => parseFrankfurtFee(row.gebuehrenzone))
         .filter((fee) => fee.kind === 'exact')
@@ -254,27 +254,27 @@ describe('parseFrankfurtFee', () => {
 })
 
 describe('parseFrankfurtMaxStay', () => {
-  it('reads hours as minutes', () => {
+  it('liest Stunden als Minuten', () => {
     expect(parseFrankfurtMaxStay('1 h')).toBe(60)
     expect(parseFrankfurtMaxStay('5 h')).toBe(300)
   })
 
   // 579 der 921 Automaten tragen den Strich. Als 0 gelesen hiesse das
   // "Hoechstparkdauer null Minuten", also Parken verboten.
-  it('treats a dash as "no limit", not as zero minutes', () => {
+  it('behandelt einen Strich als „keine Grenze", nicht als null Minuten', () => {
     expect(parseFrankfurtMaxStay('-')).toBeUndefined()
     expect(parseFrankfurtMaxStay('')).toBeUndefined()
     expect(parseFrankfurtMaxStay(null)).toBeUndefined()
     expect(parseFrankfurtMaxStay(undefined)).toBeUndefined()
   })
 
-  it('refuses anything that is not an hour count', () => {
+  it('weist alles ab, was keine Stundenzahl ist', () => {
     for (const raw of ['60', '1h30', '1 Std.', '90 min', 'eine Stunde', '0 h']) {
       expect(() => parseFrankfurtMaxStay(raw), raw).toThrow(FrankfurtParseError)
     }
   })
 
-  it('bounds its input', () => {
+  it('begrenzt seine Eingabe', () => {
     expect(() => parseFrankfurtMaxStay('1 h'.padEnd(500, ' '))).toThrow(/Zeichen/)
   })
 
@@ -288,7 +288,7 @@ describe('parseFrankfurtMaxStay', () => {
 })
 
 describe('frankfurtMaxStayCode', () => {
-  it('writes the code the web label understands', () => {
+  it('schreibt den Code, den die Beschriftung im Web versteht', () => {
     expect(frankfurtMaxStayCode(60)).toBe('1h')
     expect(frankfurtMaxStayCode(300)).toBe('5h')
     expect(frankfurtMaxStayCode(30)).toBe('30min')
@@ -296,16 +296,16 @@ describe('frankfurtMaxStayCode', () => {
 })
 
 describe('mergeFrankfurtFees', () => {
-  it('collapses one rate to exact', () => {
+  it('zieht einen einzelnen Tarif auf genau zusammen', () => {
     expect(mergeFrankfurtFees([{ kind: 'exact', centsPerHour: 200 }, { kind: 'exact', centsPerHour: 200 }])).toEqual({
       kind: 'exact',
       centsPerHour: 200,
     })
   })
 
-  // Bereiche 15 und 18 tragen beide Saetze. Auf einen zu reduzieren
-  // verschaetzte jemanden dort um 100 %.
-  it('keeps two rates as a range, like Berlins zones 41-43', () => {
+  // Bereiche 15 und 18 tragen beide Sätze. Auf einen zu reduzieren
+  // verschätzte jemanden dort um 100 %.
+  it('behält zwei Tarife als Spanne, wie Berlins Zonen 41-43', () => {
     expect(
       mergeFrankfurtFees([
         { kind: 'exact', centsPerHour: 200 },
@@ -314,15 +314,15 @@ describe('mergeFrankfurtFees', () => {
     ).toEqual({ kind: 'range', minCentsPerHour: 200, maxCentsPerHour: 400 })
   })
 
-  it('flattens a range that is already one', () => {
+  it('flacht eine Spanne ab, die schon eine ist', () => {
     expect(
       mergeFrankfurtFees([{ kind: 'range', minCentsPerHour: 200, maxCentsPerHour: 400 }])
     ).toEqual({ kind: 'range', minCentsPerHour: 200, maxCentsPerHour: 400 })
   })
 
   // "Die Quelle sagt hier nichts" darf die Spanne nicht nach unten ziehen —
-  // sonst stuende bei einem Bereich mit einem stummen Automaten "0,00-4,00 €".
-  it('ignores machines that state no rate at all', () => {
+  // sonst stünde bei einem Bereich mit einem stummen Automaten "0,00-4,00 €".
+  it('übergeht Automaten, die gar keinen Tarif nennen', () => {
     expect(mergeFrankfurtFees([{ kind: 'unknown' }, { kind: 'exact', centsPerHour: 400 }])).toEqual({
       kind: 'exact',
       centsPerHour: 400,
@@ -330,18 +330,18 @@ describe('mergeFrankfurtFees', () => {
     expect(mergeFrankfurtFees([{ kind: 'disc' }, { kind: 'unknown' }])).toEqual({ kind: 'unknown' })
   })
 
-  it('says unknown for an empty area rather than zero', () => {
+  it('sagt unbekannt für ein leeres Gebiet, nicht null', () => {
     expect(mergeFrankfurtFees([])).toEqual({ kind: 'unknown' })
   })
 })
 
 describe('mergeFrankfurtWindows', () => {
-  it('drops duplicates so 92 identical machines leave one window', () => {
+  it('wirft Doppelte weg, damit von 92 gleichen Automaten ein Fenster bleibt', () => {
     const windows = parseFrankfurtSchedule('Mo-Fr 7-19')
     expect(mergeFrankfurtWindows([...windows, ...windows, ...windows])).toHaveLength(1)
   })
 
-  it('keeps genuinely different windows side by side', () => {
+  it('behält wirklich verschiedene Fenster nebeneinander', () => {
     const merged = mergeFrankfurtWindows([
       ...parseFrankfurtSchedule('Mo-Fr 7-19'),
       ...parseFrankfurtSchedule('Mo-Fr 7-22'),
@@ -349,9 +349,9 @@ describe('mergeFrankfurtWindows', () => {
     expect(merged).toHaveLength(2)
   })
 
-  // Verschmelzen waere falsch: Wer 7-19 zu 7-22 zieht, dichtet dem halben
+  // Verschmelzen wäre falsch: Wer 7-19 zu 7-22 zieht, dichtet dem halben
   // Bereich drei Stunden Gebuehrenpflicht an.
-  it('does not widen one window into another', () => {
+  it('weitet ein Fenster nicht in ein anderes hinein', () => {
     const merged = mergeFrankfurtWindows([
       ...parseFrankfurtSchedule('Mo-Fr 7-19'),
       ...parseFrankfurtSchedule('Mo-Fr 7-22'),
@@ -359,48 +359,48 @@ describe('mergeFrankfurtWindows', () => {
     expect(merged.map((window) => window.toMinute).sort((a, b) => a - b)).toEqual([1140, 1320])
   })
 
-  it('returns an empty list unchanged', () => {
+  it('gibt eine leere Liste unverändert zurück', () => {
     expect(mergeFrankfurtWindows([])).toEqual([])
   })
 })
 
 describe('stripHtml', () => {
-  // `vti_url` traegt in allen 42 Bereichen Markup in einem Datenfeld. Das ist
+  // `vti_url` trägt in allen 42 Bereichen Markup in einem Datenfeld. Das ist
   // die Form fremder Eingabe, die am ehesten irgendwo als Markup landet.
-  it('turns the feeds anchor into its text', () => {
+  it('macht aus dem Anker des Feeds seinen Text', () => {
     expect(
       stripHtml('<a href="/wir-fuer-sie/bewohnerparken/regelungsbereich-0" target="_blank" class="regelbereiche">weitere Informationen</a>')
     ).toBe('weitere Informationen')
   })
 
-  it('leaves nothing executable behind', () => {
+  it('lässt nichts Ausführbares zurück', () => {
     expect(stripHtml('<script>alert(1)</script>Text')).toBe('alert(1) Text')
     expect(stripHtml('<img src=x onerror=alert(1)>')).toBe('')
     expect(stripHtml('a<b>c</b>d')).toBe('a c d')
   })
 
-  it('decodes the entities the feed could carry', () => {
+  it('löst die Entitäten auf, die der Feed tragen könnte', () => {
     expect(stripHtml('Stra&amp;szlig; &lt;x&gt; &quot;y&quot; &#39;z&#39;')).toBe(
       'Stra&szlig; <x> "y" \'z\''
     )
     expect(stripHtml('a&nbsp;b')).toBe('a b')
   })
 
-  it('treats null, undefined and an oversized value as nothing', () => {
+  it('behandelt null, undefined und einen übergroßen Wert als nichts', () => {
     expect(stripHtml(null)).toBe('')
     expect(stripHtml(undefined)).toBe('')
     expect(stripHtml('<b>x</b>'.padEnd(5000, 'y'))).toBe('')
   })
 })
 
-// Gefundener Fehler, deshalb ein Test: Das Feld traegt eine **Zahl**, nicht
+// Gefundener Fehler, deshalb ein Test: Das Feld trägt eine **Zahl**, nicht
 // eine Zeichenkette. Das Interface behauptete zuerst das Gegenteil, und
-// TypeScript prueft eine JSON-Datei nicht -- der Datenbau brach mit
-// `claimed.trim is not a function` ab. Waere stattdessen nur verglichen
-// worden, haette der Vergleich stillschweigend nie gepasst, und alle 921
-// Automaten waeren "ohne Bereich" gewesen.
+// TypeScript prüft eine JSON-Datei nicht -- der Datenbau brach mit
+// `claimed.trim is not a function` ab. Wäre stattdessen nur verglichen
+// worden, hätte der Vergleich stillschweigend nie gepasst, und alle 921
+// Automaten wären "ohne Bereich" gewesen.
 describe('bewohnerparkzone im Feed', () => {
-  it('is a number, never a string', () => {
+  it('ist eine Zahl, nie eine Zeichenkette', () => {
     for (const row of AUTOMATS) {
       const zone = row.bewohnerparkzone
       if (zone === null || zone === undefined) continue
@@ -408,7 +408,7 @@ describe('bewohnerparkzone im Feed', () => {
     }
   })
 
-  it('points at numbers the area layer actually has', () => {
+  it('zeigt auf Nummern, die die Gebietsebene wirklich hat', () => {
     const known = new Set(ZONES.map(frankfurtZoneLabel))
     const claimed = new Set(
       AUTOMATS.map((row) => row.bewohnerparkzone).filter((zone): zone is number => zone !== null && zone !== undefined)
@@ -417,7 +417,7 @@ describe('bewohnerparkzone im Feed', () => {
     for (const zone of claimed) expect(known.has(String(zone)), String(zone)).toBe(true)
   })
 
-  it('is absent on 418 of the 921 machines', () => {
+  it('fehlt bei 418 der 921 Automaten', () => {
     const without = AUTOMATS.filter(
       (row) => row.bewohnerparkzone === null || row.bewohnerparkzone === undefined
     )
@@ -426,17 +426,17 @@ describe('bewohnerparkzone im Feed', () => {
 })
 
 describe('frankfurtZoneLabel', () => {
-  it('uses the number, the only identity the feed gives', () => {
+  it('nimmt die Nummer, die einzige Identität, die der Feed hergibt', () => {
     expect(frankfurtZoneLabel({ nummer: 0 })).toBe('0')
     expect(frankfurtZoneLabel({ nummer: 41 })).toBe('41')
   })
 
-  it('does not invent one when the number is missing', () => {
+  it('erfindet keine, wenn die Nummer fehlt', () => {
     expect(frankfurtZoneLabel({})).toBe('?')
     expect(frankfurtZoneLabel({ nummer: null })).toBe('?')
   })
 
-  it('labels all 42 areas of the feed distinctly', () => {
+  it('beschriftet alle 42 Gebiete des Feeds unterscheidbar', () => {
     const labels = ZONES.map(frankfurtZoneLabel)
     expect(labels).toHaveLength(42)
     expect(new Set(labels).size).toBe(42)
@@ -448,27 +448,27 @@ describe('frankfurtZoneNote', () => {
   // Alle 42 Bereiche tragen dieselbe Linkbeschriftung und sonst nichts. Sie
   // als "Hinweis" auszuliefern hiesse, dem Leser Boilerplate als Auskunft zu
   // verkaufen.
-  it('says nothing where the feed says nothing', () => {
+  it('sagt nichts, wo der Feed nichts sagt', () => {
     for (const row of ZONES) expect(frankfurtZoneNote(row), frankfurtZoneLabel(row)).toBeNull()
   })
 
-  it('passes on a name or description as soon as the city fills one in', () => {
+  it('reicht Namen oder Beschreibung durch, sobald die Stadt eine einträgt', () => {
     expect(frankfurtZoneNote({ nummer: 3, name: 'Nordend-West' })).toBe('Nordend-West')
     expect(frankfurtZoneNote({ nummer: 3, name: 'A', description: 'B' })).toBe('A — B')
   })
 
-  it('strips markup out of whatever it passes on', () => {
+  it('entfernt Auszeichnung aus allem, was es durchreicht', () => {
     expect(frankfurtZoneNote({ description: '<b>Bockenheim</b>' })).toBe('Bockenheim')
   })
 
-  it('keeps a link text that is not boilerplate', () => {
+  it('behält einen Verweistext, der keine Floskel ist', () => {
     expect(frankfurtZoneNote({ vti_url: '<a href="/x">Bewohnerparken Nordend</a>' })).toBe(
       'Bewohnerparken Nordend'
     )
   })
 })
 
-describe('a Frankfurt area in the shared tariff model', () => {
+describe('ein Frankfurter Gebiet im gemeinsamen Tarifmodell', () => {
   function zoneFrom(rows: FrankfurtAutomatProperties[]): ParkingZone {
     return {
       id: '19',
@@ -491,24 +491,24 @@ describe('a Frankfurt area in the shared tariff model', () => {
   const saturdayNoon = Date.UTC(2026, 8, 5, 10)
   const sundayNoon = Date.UTC(2026, 8, 6, 10)
 
-  it('charges on the Saturday named in the second clause', () => {
+  it('kassiert an dem Samstag, den die zweite Klausel nennt', () => {
     expect(isChargeable(zoneFrom([machine]), saturdayNoon)).toBe(true)
   })
 
   // Der Fehler, den die zweite Klausel verhindert: Wer nur `Mo-Fr 8-18` liest,
   // sagt samstags um 12 "keine Gebuehr" — und das kostet ein Knoellchen.
-  it('would say free on that Saturday without the second clause', () => {
+  it('würde ohne die zweite Klausel an diesem Samstag frei sagen', () => {
     const truncated = zoneFrom([{ ...machine, gebuehrenzeit: 'Mo-Fr 8-18' }])
     expect(isChargeable(truncated, saturdayNoon)).toBe(false)
   })
 
-  it('is free on Sunday where no clause names it', () => {
+  it('ist sonntags frei, wo keine Klausel ihn nennt', () => {
     expect(isChargeable(zoneFrom([machine]), sundayNoon)).toBe(false)
   })
 
   // Fronleichnam ist in Hessen gesetzlicher Feiertag, in Berlin und Hamburg
-  // nicht. Genau dafuer haengt der Kalender am Bundesland.
-  it('is free on Fronleichnam, which Berlin and Hamburg charge', () => {
+  // nicht. Genau dafür hängt der Kalender am Bundesland.
+  it('ist an Fronleichnam frei, an dem Berlin und Hamburg kassieren', () => {
     // Donnerstag, 4. Juni 2026, 12:00 Berliner Zeit.
     const fronleichnam = Date.UTC(2026, 5, 4, 10)
     const he = zoneFrom([machine])
@@ -517,12 +517,12 @@ describe('a Frankfurt area in the shared tariff model', () => {
     expect(isChargeable({ ...he, land: 'HH' }, fronleichnam)).toBe(true)
   })
 
-  it('takes the range where two machines in one area disagree on the rate', () => {
+  it('nimmt die Spanne, wo zwei Automaten eines Gebiets beim Tarif uneins sind', () => {
     const zone = zoneFrom([machine, { ...machine, gebuehrenzone: '4 €/h' }])
     expect(zone.fee).toEqual({ kind: 'range', minCentsPerHour: 200, maxCentsPerHour: 400 })
   })
 
-  it('builds every machine of the feed without throwing', () => {
+  it('baut jeden Automaten des Feeds, ohne zu werfen', () => {
     for (const row of AUTOMATS) {
       expect(() => zoneFrom([row]), row.strassenname ?? '?').not.toThrow()
     }

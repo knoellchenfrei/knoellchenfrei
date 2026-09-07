@@ -66,12 +66,12 @@ export class ScheduleParseError extends Error {
 }
 
 /**
- * `raw` nur, um im Fehlerfall die richtige Klasse werfen zu koennen.
+ * `raw` nur, um im Fehlerfall die richtige Klasse werfen zu können.
  *
  * Gefunden beim Beschuss mit Zufallszeichenketten: `Fr-Mo 9-20 Uhr` warf ein
  * blankes `Error`, kein `ScheduleParseError` — und eine umgedrehte Tagesspanne
  * ist Feed-Inhalt, kein Fehler des Parsers. Wer `catch (e) { if (e instanceof
- * ScheduleParseError) ... }` schreibt, haette genau diese eine Feed-Schreibweise
+ * ScheduleParseError) ... }` schreibt, hätte genau diese eine Feed-Schreibweise
  * als Absturz statt als unlesbare Zeile behandelt, und `raw` fehlte im Fehler
  * obendrein.
  */

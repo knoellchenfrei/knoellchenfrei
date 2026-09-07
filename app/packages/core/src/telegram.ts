@@ -22,7 +22,7 @@ export type TelegramIntent =
    * Die Stadt gehört dazu, weil sie hier schon feststeht: Der Parser hat den
    * Punkt gegen die Boxen gehalten, um überhaupt zu entscheiden, ob es eine
    * Meldung ist. Sie ein zweites Mal im Worker abzuleiten hiesse, dieselbe
-   * Frage zweimal zu beantworten — und zwei Antworten koennen auseinanderlaufen.
+   * Frage zweimal zu beantworten — und zwei Antworten können auseinanderlaufen.
    */
   | { kind: 'report'; lon: number; lat: number; city: City }
   /** Verstanden, aber nichts zu tun: Text ohne Standort. */
@@ -58,7 +58,7 @@ function asId(value: unknown): number | null {
  * `cities` steckt die Grenzen, innerhalb derer ein Standort als Meldung gilt.
  * Als Parameter und nicht als Konstante: Der Parser ist die einzige Stelle,
  * an der fremder Text auf eine Stadtgrenze trifft, und eine fest verdrahtete
- * Grenze waere genau hier am teuersten.
+ * Grenze wäre genau hier am teuersten.
  *
  * Eine **Liste**, seit der Worker mehr als eine Stadt bedient: Ein gesendeter
  * Standort bringt keine Stadt mit, die Stadt steht nur im Punkt. Vorher nahm

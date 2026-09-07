@@ -77,10 +77,10 @@ function parseDays(raw: string, spec: string): readonly Weekday[] {
     return ALL_DAYS
   }
 
-  // Ein Kuerzel oder zwei, durch einen Bindestrich getrennt. Als eigener
-  // regulaerer Ausdruck statt als `split('-')`: Der Split kann nicht sagen,
-  // dass es hoechstens zwei Teile gibt, und liesse `Mo-Fr-Sa` bis zu einer
-  // Laengenpruefung durchlaufen, die man vergessen kann.
+  // Ein Kürzel oder zwei, durch einen Bindestrich getrennt. Als eigener
+  // regulärer Ausdruck statt als `split('-')`: Der Split kann nicht sagen,
+  // dass es höchstens zwei Teile gibt, und liesse `Mo-Fr-Sa` bis zu einer
+  // Längenprüfung durchlaufen, die man vergessen kann.
   const range = DAY_RANGE.exec(text)
   if (range === null) {
     throw new FrankfurtParseError(raw, `unbekannte Tagesangabe ${JSON.stringify(spec)}`)
@@ -96,7 +96,7 @@ function parseDays(raw: string, spec: string): readonly Weekday[] {
   // Sinnvolles ergibt statt still leer zu bleiben. Im Feed vom 7.9.2026 kommt
   // keine solche Spanne vor; eine leere Wochentagsliste hiesse aber „nie
   // gebuehrenpflichtig", und das ist die teuerste stille Antwort, die dieser
-  // Parser geben koennte. Die Spannweite wird gerechnet statt erlaufen — so
+  // Parser geben könnte. Die Spannweite wird gerechnet statt erlaufen — so
   // kann die Schleife nicht endlos werden und braucht keine Notbremse, die
   // nie greift.
   const span = (to - from + 7) % 7
@@ -110,7 +110,7 @@ function parseDays(raw: string, spec: string): readonly Weekday[] {
  *
  * Der Feed schreibt nirgends Minuten. Sie trotzdem stillschweigend zu
  * akzeptieren hiesse, eine Schreibweise zu erfinden, deren Bedeutung niemand
- * geprueft hat — `9.30-17` etwa waere in Deutschland genauso gut als „9 Uhr 30"
+ * geprüft hat — `9.30-17` etwa wäre in Deutschland genauso gut als „9 Uhr 30"
  * wie als Tippfehler zu lesen. Also: abweisen und den Datenbau abbrechen
  * lassen, sobald die Quelle so etwas anfaengt.
  */
@@ -131,13 +131,13 @@ function parseClause(raw: string, clause: string): ChargeWindow {
   const from = fromHour * 60
   const to = toHour * 60
   if (fromHour > 24 || toHour > 24) {
-    throw new FrankfurtParseError(raw, `Stunde ueber 24 in ${JSON.stringify(clause)}`)
+    throw new FrankfurtParseError(raw, `Stunde über 24 in ${JSON.stringify(clause)}`)
   }
   if (from >= to) {
-    // Ueber Mitternacht kommt im Feed nicht vor. Eine Spanne wie `22-2`
+    // Über Mitternacht kommt im Feed nicht vor. Eine Spanne wie `22-2`
     // stillschweigend als ein Fenster zu speichern hiesse „nie" (siehe
     // `windowCovers`), und sie zu zerlegen hiesse, eine Lesart zu erfinden,
-    // die niemand geprueft hat. Der Datenbau soll hier anhalten.
+    // die niemand geprüft hat. Der Datenbau soll hier anhalten.
     throw new FrankfurtParseError(raw, `Spanne ${fromHour}-${toHour} endet nicht nach ihrem Anfang`)
   }
   return { weekdays, fromMinute: from, toMinute: to }
@@ -196,19 +196,19 @@ export function parseFrankfurtFee(raw: string | null | undefined): Fee {
   const text = raw.trim()
 
   // Ein leeres Feld und ein Strich sind KEINE Gebuehr von null. Genau ein
-  // Automat im Abzug vom 7.9.2026 laesst `gebuehrenzone` leer (Giessener
-  // Strasse); 0,00 € auszuliefern waere eine Behauptung, die der Feed nicht
+  // Automat im Abzug vom 7.9.2026 lässt `gebuehrenzone` leer (Giessener
+  // Strasse); 0,00 € auszuliefern wäre eine Behauptung, die der Feed nicht
   // deckt.
   if (text === '' || text === '-') return { kind: 'unknown' }
 
   const match = FRANKFURT_AMOUNT.exec(text)
   if (match === null) throw new FrankfurtParseError(raw, 'kein erkennbarer Betrag je Stunde')
   const centsPerHour = Number(match[1]) * 100 + Number(match[2] ?? 0)
-  // Dieselbe Begruendung wie in `parse-fee.ts`: `0 €/h` waere ein `exact` mit
+  // Dieselbe Begründung wie in `parse-fee.ts`: `0 €/h` wäre ein `exact` mit
   // 0 Cent, also `priced: true` — und `mergeFrankfurtFees` zoege damit die
   // Spanne eines ganzen Bereichs auf „0,00-4,00 €“ herunter, genau das, was der
   // Test „ignores machines that state no rate at all“ verhindern soll. Ein
-  // stummer Automat traegt den Strich, keine Null.
+  // stummer Automat trägt den Strich, keine Null.
   if (centsPerHour === 0) throw new FrankfurtParseError(raw, 'ein Betrag von 0 € ist kein Tarif')
   return { kind: 'exact', centsPerHour }
 }
@@ -239,9 +239,9 @@ export function parseFrankfurtMaxStay(raw: string | null | undefined): number | 
  * Der Code, unter dem die Oberfläche eine Höchstparkdauer beschriftet.
  *
  * `maxStayLabel` im Web kennt Berlins Form `1h`/`30min` und schreibt daraus
- * „1 Std.". Frankfurts `1 h` faellt dort durch und stuende woertlich in der
- * Anzeige — zwei Staedte, zwei Schreibweisen fuer dieselbe Sache im selben
- * Satz. Deshalb hier die Uebersetzung, an der Stelle, an der die Rohform
+ * „1 Std.". Frankfurts `1 h` fällt dort durch und stünde wörtlich in der
+ * Anzeige — zwei Städte, zwei Schreibweisen für dieselbe Sache im selben
+ * Satz. Deshalb hier die Übersetzung, an der Stelle, an der die Rohform
  * ohnehin gelesen wird.
  */
 export function frankfurtMaxStayCode(minutes: number): string {
@@ -257,8 +257,8 @@ export function frankfurtMaxStayCode(minutes: number): string {
  * Wert zu reduzieren verschätzt jemanden dort um 100 % — also `Fee.range`,
  * genau wie Berlins Zonen 41–43 es aus einer Spanne im Feed machen.
  *
- * Automaten ohne Betrag zaehlen nicht mit: „die Quelle sagt hier nichts" ist
- * keine Aussage ueber den Preis und darf die Spanne nicht nach unten ziehen.
+ * Automaten ohne Betrag zählen nicht mit: „die Quelle sagt hier nichts" ist
+ * keine Aussage über den Preis und darf die Spanne nicht nach unten ziehen.
  * Sagt kein einziger Automat etwas, bleibt es `unknown`.
  */
 export function mergeFrankfurtFees(fees: readonly Fee[]): Fee {
@@ -285,7 +285,7 @@ export function mergeFrankfurtFees(fees: readonly Fee[]): Fee {
  * Ein Bereich kann fünf verschiedene Zeitangaben tragen (Bereich 20 tut es).
  * Die Fenster einfach aneinanderzuhängen wäre richtig — `windowCovers` fragt
  * ohnehin nur, ob *irgendeines* passt —, hinterliesse aber bei 92 Automaten
- * 92 identische Eintraege in der ausgelieferten Datei. Deshalb doppelte
+ * 92 identische Einträge in der ausgelieferten Datei. Deshalb doppelte
  * heraus, Reihenfolge stabil.
  *
  * Was hier bewusst NICHT passiert: benachbarte Fenster verschmelzen. `7-19`
@@ -331,12 +331,12 @@ const ENTITIES: readonly (readonly [RegExp, string])[] = [
  * statt an jeder Stelle, an der sie später auftaucht.
  *
  * React setzt Text ohnehin escaped ein; darauf allein zu bauen hiesse aber,
- * die naechste Ausgabeform (Telegram-Antwort, Log, meta.json, ein CSV-Export)
- * jedes Mal neu zu pruefen. Die Rohform gehoert gar nicht erst weitergereicht.
+ * die nächste Ausgabeform (Telegram-Antwort, Log, meta.json, ein CSV-Export)
+ * jedes Mal neu zu pruefen. Die Rohform gehört gar nicht erst weitergereicht.
  */
 export function stripHtml(raw: string | null | undefined): string {
   if (raw === null || raw === undefined) return ''
-  // Ein Attributwert dieser Groesse ist kein Hinweistext mehr. Wie in den
+  // Ein Attributwert dieser Größe ist kein Hinweistext mehr. Wie in den
   // Parsern: fremde Eingabe wird begrenzt, bevor irgendetwas sie anfasst.
   if (raw.length > 2000) return ''
   const decoded = ENTITIES.reduce(
@@ -365,12 +365,12 @@ export interface FrankfurtAutomatProperties {
    * Nummer eines Bewohnerparkbereichs — als **Zahl**, 418-mal `null`.
    *
    * Gefunden, weil hier zuerst `string | null` stand: Die Zonen-Kennung in der
-   * Ausgabe ist eine Zeichenkette, und ein `claimed === label` haette
+   * Ausgabe ist eine Zeichenkette, und ein `claimed === label` hätte
    * stillschweigend nie gepasst. Der Datenbau ist stattdessen mit
    * `claimed.trim is not a function` abgebrochen, weil er trimmen wollte — ein
    * Glücksfall: Ein Interface ist eine Behauptung über eine JSON-Datei, kein
    * Beweis, und TypeScript prüft sie nicht. Ein Vergleich, der immer falsch
-   * ist, waere hier gar nicht aufgefallen.
+   * ist, wäre hier gar nicht aufgefallen.
    */
   bewohnerparkzone?: number | null
   strassenname?: string | null
@@ -406,7 +406,7 @@ export function frankfurtZoneLabel(properties: FrankfurtZoneProperties): string 
  *
  * Die Adresse aus `vti_url` wird bewusst NICHT zu einem Link ausgebaut: Der
  * Wert ist ein Pfad ohne Host (`/wir-fuer-sie/bewohnerparken/…`), und den Host
- * dazuzudichten hiesse, jemandem eine Adresse anzubieten, die niemand geprueft
+ * dazuzudichten hiesse, jemandem eine Adresse anzubieten, die niemand geprüft
  * hat. Aus dieser Arbeitsumgebung antwortet `www.frankfurt.de` mit 403.
  */
 const NOTE_BOILERPLATE = /^(weitere informationen|mehr informationen|hier klicken)$/i

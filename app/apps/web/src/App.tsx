@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // MapLibre 6 hat den Default-Export abgeschafft und exportiert nur noch
-// benannt. Ein Namensraum-Import laesst `maplibregl.Marker` als Typ *und* als
-// Konstruktor stehen, also bleibt der Rest der Datei unberuehrt.
+// benannt. Ein Namensraum-Import lässt `maplibregl.Marker` als Typ *und* als
+// Konstruktor stehen, also bleibt der Rest der Datei unberührt.
 import * as maplibregl from 'maplibre-gl'
 import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl'
 import {
@@ -855,7 +855,7 @@ export function App() {
     if (point === undefined) return
     // Dieselbe Box, die der Leser in storage.ts benutzt. Vorher standen die
     // Zahlen hier ein zweites Mal: Ein Ort, den diese Prüfung durchliess, den
-    // der Leser aber verwarf, speicherte eine Sitzung, die beim naechsten
+    // der Leser aber verwarf, speicherte eine Sitzung, die beim nächsten
     // Laden verschwand — das Auto war weg, ohne Meldung.
     if (!withinCitySession(CITY, point[0], point[1])) {
       setError(`Dieser Ort liegt außerhalb von ${CITY.name} — hier kann kein Parkplatz gemerkt werden.`)

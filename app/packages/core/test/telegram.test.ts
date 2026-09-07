@@ -15,7 +15,7 @@ function update(message: unknown): unknown {
 }
 
 describe('parseTelegramUpdate', () => {
-  it('reads a location inside Berlin as a report', () => {
+  it('liest eine Position in Berlin als Meldung', () => {
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } }),
       [BERLIN],
@@ -24,7 +24,7 @@ describe('parseTelegramUpdate', () => {
     expect(parsed.sender).toEqual({ userId: 42, chatId: 42 })
   })
 
-  it('refuses a location outside Berlin', () => {
+  it('weist eine Position außerhalb Berlins ab', () => {
     // Hamburg. Eine Meldung von dort ist ein Fehler oder ein Versuch.
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 9.99, latitude: 53.55 } }),
@@ -62,7 +62,7 @@ describe('parseTelegramUpdate', () => {
     expect(parseTelegramUpdate(raw, [BERLIN]).intent.kind).toBe('ignore')
   })
 
-  it('ignores anything without a usable sender', () => {
+  it('übergeht alles ohne brauchbaren Absender', () => {
     // Kanalbeiträge haben kein `from`. Ohne Absender lässt sich weder eine
     // Grenze durchsetzen noch antworten.
     expect(parseTelegramUpdate(update({ chat: { id: 1 }, text: '/start' }), [BERLIN]).intent.kind).toBe(
@@ -73,7 +73,7 @@ describe('parseTelegramUpdate', () => {
     )
   })
 
-  it('refuses an id that is not a safe integer', () => {
+  it('weist eine Kennung ab, die keine sichere Ganzzahl ist', () => {
     // Kommt so nicht von Telegram — aber der Webhook ist eine öffentliche
     // Adresse, und wer sie kennt, schickt, was er will.
     expect(
@@ -86,7 +86,7 @@ describe('parseTelegramUpdate', () => {
     ).toBe('ignore')
   })
 
-  it('treats a location with unusable numbers as unreadable, not as a report', () => {
+  it('behandelt eine Position mit unbrauchbaren Zahlen als unlesbar, nicht als Meldung', () => {
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 'dreizehn', latitude: null } }),
       [BERLIN],
@@ -94,7 +94,7 @@ describe('parseTelegramUpdate', () => {
     expect(parsed.intent.kind).toBe('unknown')
   })
 
-  it('does not read a caption or a forwarded location as a command', () => {
+  it('liest weder Bildunterschrift noch weitergeleitete Position als Befehl', () => {
     // Weiterleitungen tragen `forward_origin`; der Text bleibt derselbe. Wir
     // behandeln sie wie jede andere Nachricht — es gibt keinen Grund, einer
     // weitergeleiteten Nachricht mehr zu glauben.
@@ -107,8 +107,8 @@ describe('parseTelegramUpdate', () => {
 
   // Der Sinn des Stadt-Parameters in einem Test: Derselbe Punkt ist je nach
   // Stadt eine Meldung oder Unfug. Vorher stand die Berliner Box als Konstante
-  // in dieser Datei, und der Bot haette in Hamburg jede Meldung abgewiesen.
-  it('reads the same Hamburg location as a report once the city is Hamburg', () => {
+  // in dieser Datei, und der Bot hätte in Hamburg jede Meldung abgewiesen.
+  it('liest dieselbe Hamburger Position als Meldung, sobald die Stadt Hamburg ist', () => {
     const message = update({ ...SENDER, location: { longitude: 9.99, latitude: 53.55 } })
     expect(parseTelegramUpdate(message, [BERLIN]).intent.kind).toBe('unknown')
     expect(parseTelegramUpdate(message, [HAMBURG]).intent).toEqual({
@@ -119,7 +119,7 @@ describe('parseTelegramUpdate', () => {
     })
   })
 
-  it('refuses a Berlin location once the city is Hamburg', () => {
+  it('weist eine Berliner Position ab, sobald die Stadt Hamburg ist', () => {
     const message = update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } })
     expect(parseTelegramUpdate(message, [HAMBURG]).intent.kind).toBe('unknown')
   })
@@ -128,7 +128,7 @@ describe('parseTelegramUpdate', () => {
   // konfigurierte Stadt. Ein Hamburger Standort war damit „unknown", und der
   // Bot antwortete, er verstehe das nicht. Mit allen Städten ist er eine
   // Meldung — und trägt selbst, zu welcher Stadt er gehört.
-  it('reads all three cities when handed all of them', () => {
+  it('liest alle drei Städte, wenn es alle drei bekommt', () => {
     const hamburg = update({ ...SENDER, location: { longitude: 9.99, latitude: 53.55 } })
     const berlin = update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } })
     expect(parseTelegramUpdate(hamburg, CITIES).intent).toEqual({
@@ -145,10 +145,10 @@ describe('parseTelegramUpdate', () => {
     })
   })
 
-  // Die dritte Stadt braucht keinen Code im Parser -- sie kommt ueber
+  // Die dritte Stadt braucht keinen Code im Parser -- sie kommt über
   // `cityAt`. Der Test steht hier trotzdem, weil "kommt automatisch mit" eine
   // Behauptung ist, solange sie niemand nachgemessen hat.
-  it('reads a Frankfurt location as a Frankfurt report', () => {
+  it('liest eine Frankfurter Position als Frankfurter Meldung', () => {
     const roemer = update({ ...SENDER, location: { longitude: 8.6821, latitude: 50.1109 } })
     expect(parseTelegramUpdate(roemer, CITIES).intent).toEqual({
       kind: 'report',
@@ -157,7 +157,7 @@ describe('parseTelegramUpdate', () => {
       city: FRANKFURT,
     })
     // Und ohne Frankfurt in der Liste bleibt derselbe Punkt Unfug, statt der
-    // naechstbesten Stadt zugeschlagen zu werden.
+    // nächstbesten Stadt zugeschlagen zu werden.
     expect(parseTelegramUpdate(roemer, [BERLIN, HAMBURG]).intent.kind).toBe('unknown')
   })
 
@@ -177,7 +177,7 @@ describe('parseTelegramUpdate', () => {
     )
   })
 
-  it('still refuses a location in no city at all', () => {
+  it('weist eine Position in gar keiner Stadt weiterhin ab', () => {
     // Nürnberg: eine echte Stadt, nur keine, die wir kennen — und in
     // demselben Bundesland wie München, das inzwischen dazugehört. Sie darf
     // weder der ersten Stadt in der Liste noch der nächstgelegenen
@@ -190,7 +190,7 @@ describe('parseTelegramUpdate', () => {
     expect(parsed.sender).not.toBeNull()
   })
 
-  it('reads nothing as a report when the list is empty', () => {
+  it('liest gar nichts als Meldung, wenn die Liste leer ist', () => {
     const parsed = parseTelegramUpdate(
       update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } }),
       [],

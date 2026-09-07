@@ -28,19 +28,19 @@ const withHole: PolygonRings = [
 ]
 
 describe('polygonContains', () => {
-  it('accepts a point inside the outer ring', () => {
+  it('nimmt einen Punkt im äußeren Ring an', () => {
     expect(polygonContains(withHole, [0.5, 0.5])).toBe(true)
   })
 
-  it('rejects a point inside a hole', () => {
+  it('weist einen Punkt in einem Loch ab', () => {
     expect(polygonContains(withHole, [2, 2])).toBe(false)
   })
 
-  it('rejects a point outside entirely', () => {
+  it('weist einen Punkt außerhalb ab', () => {
     expect(polygonContains(withHole, [5, 5])).toBe(false)
   })
 
-  it('counts a ray through a shared vertex once', () => {
+  it('zählt einen Strahl durch einen geteilten Eckpunkt einmal', () => {
     // A ray east from [-1, 4] grazes the top edge; a naive test double-counts.
     expect(polygonContains(withHole, [-1, 4])).toBe(false)
   })
@@ -57,7 +57,7 @@ describe('multiPolygonContains', () => {
     ],
   ]
 
-  it('matches any part of the multipolygon', () => {
+  it('trifft auf jeden Teil des Multipolygons zu', () => {
     const parts = [square(0), square(10)]
     expect(multiPolygonContains(parts, [10.5, 0.5])).toBe(true)
     expect(multiPolygonContains(parts, [5, 0.5])).toBe(false)
@@ -65,7 +65,7 @@ describe('multiPolygonContains', () => {
 })
 
 describe('boundsOf / withinBounds', () => {
-  it('spans every outer ring', () => {
+  it('umspannt jeden äußeren Ring', () => {
     const box = boundsOf([withHole])
     expect(box).toEqual({ minLon: 0, minLat: 0, maxLon: 4, maxLat: 4 })
     expect(withinBounds([2, 2], box)).toBe(true)
@@ -74,14 +74,14 @@ describe('boundsOf / withinBounds', () => {
 })
 
 describe('distanceMetres', () => {
-  it('measures a known Berlin distance', () => {
+  it('misst eine bekannte Berliner Entfernung', () => {
     // Brandenburger Tor -> Alexanderplatz is roughly 2.7 km.
     const distance = distanceMetres([13.3777, 52.5163], [13.4132, 52.5219])
     expect(distance).toBeGreaterThan(2300)
     expect(distance).toBeLessThan(2800)
   })
 
-  it('is zero for identical points', () => {
+  it('ist null für identische Punkte', () => {
     expect(distanceMetres([13.4, 52.5], [13.4, 52.5])).toBe(0)
   })
 })

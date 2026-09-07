@@ -104,7 +104,7 @@ function write(name: string, value: unknown): void {
  *   Regel des Gebiets und steht als Zahl im Feed. In Berlin ist sie eine
  *   Eigenschaft einzelner Strassenabschnitte — sie als Zonenregel auszugeben
  *   war dort ein gefundener Fehler, und `maxStayShare` sagt seitdem, auf wie
- *   wenigen Abschnitten sie ueberhaupt gilt.
+ *   wenigen Abschnitten sie überhaupt gilt.
  * - `spaces` bleibt null. Hamburgs Stellplatzzahl liegt in einer Ebene mit
  *   203.283 Polygonen, die diese App nicht abruft.
  */
@@ -162,9 +162,9 @@ for (const feature of readFeatures<Record<string, string>>('districts')) {
   const name = feature.properties['stadtteil_name'] ?? ''
   const bezirk = feature.properties['bezirk_name'] ?? ''
 
-  // Die Zuordnung laeuft gegen die UNvereinfachte Geometrie. Vereinfachte
+  // Die Zuordnung läuft gegen die UNvereinfachte Geometrie. Vereinfachte
   // Grenzen wandern um bis zu ein paar Dutzend Meter, und ein Gebiet direkt an
-  // der Stadtteilgrenze bekaeme sonst den Nachbarn zugeschrieben.
+  // der Stadtteilgrenze bekäme sonst den Nachbarn zugeschrieben.
   districtIndex.push({ name, bezirk, rings: toPolygons(geometry) })
 
   const simplified = simplifyGeometry(geometry, 1e-4, 5)
@@ -178,7 +178,7 @@ for (const feature of readFeatures<Record<string, string>>('districts')) {
 
 write('districts.geojson', { type: 'FeatureCollection', features: districtFeatures })
 
-/** Mittelpunkt aller Stuetzpunkte — reicht, um einen Stadtteil zu treffen. */
+/** Mittelpunkt aller Stützpunkte — reicht, um einen Stadtteil zu treffen. */
 function centroid(geometry: Geometry): Position | null {
   const points: Position[] = []
   const walk = (node: unknown): void => {
@@ -222,7 +222,7 @@ for (const feature of active) {
   const p = feature.properties
   const zeiten = (p.bewirtschaftungszeit ?? '').trim()
   if (zeiten === '') {
-    // Ohne Zeiten kann die App die eine Frage nicht beantworten, fuer die es
+    // Ohne Zeiten kann die App die eine Frage nicht beantworten, für die es
     // sie gibt. Ein Polygon ohne Antwort ist schlechter als kein Polygon.
     skippedWithoutHours += 1
     continue
@@ -247,14 +247,14 @@ for (const feature of active) {
       rawHours: zeiten,
       rawFee: (p.gebuehrenzone ?? '').trim(),
       // Der Gebietsname und die Bewirtschaftungsart sind das, was die Quelle
-      // ueber dieses Gebiet sonst noch sagt — und „Bewohner mit Ausweis frei"
-      // ist fuer den Leser die halbe Antwort.
+      // über dieses Gebiet sonst noch sagt — und „Bewohner mit Ausweis frei"
+      // ist für den Leser die halbe Antwort.
       note: [name, art].filter((part) => part !== '').join(' — ') || null,
       windows: parseHamburgSchedule(zeiten),
       fee: parseHamburgFee(p.gebuehrenzone),
       // Hamburgs Feed kennt nichts, was ChargeWindow nicht ausdruecken kann —
       // die Advents-Samstage sind eine Berliner Eigenheit. Das Feld bleibt,
-      // damit beide Staedte dieselbe Form haben.
+      // damit beide Städte dieselbe Form haben.
       unmodelledRules: [],
       sourceDefect: null,
       spaces: null,

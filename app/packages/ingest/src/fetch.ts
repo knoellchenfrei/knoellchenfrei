@@ -49,7 +49,7 @@ for (const source of SOURCES) {
     }
     const body = await response.text()
     // Ein falsches `outputFormat` liefert keinen Fehler, sondern GML — also
-    // gueltiges XML, und `JSON.parse` scheitert daran mit einer Meldung, die
+    // gültiges XML, und `JSON.parse` scheitert daran mit einer Meldung, die
     // nach kaputten Daten aussieht statt nach einer falschen Anfrage.
     if (body.trimStart().startsWith('<')) {
       throw new Error(

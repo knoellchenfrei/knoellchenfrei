@@ -79,8 +79,8 @@ geheim_fragen() {
 }
 
 # Ein Einrichtungsskript, das an einem fehlenden Werkzeug abbricht und dich
-# selbst installieren laesst, hat die Haelfte seiner Aufgabe nicht getan.
-# Also: anbieten, installieren, nachpruefen.
+# selbst installieren lässt, hat die Hälfte seiner Aufgabe nicht getan.
+# Also: anbieten, installieren, nachprüfen.
 paketmanager() {
   if command -v brew    >/dev/null 2>&1; then printf 'brew'; return; fi
   if command -v apt-get >/dev/null 2>&1; then printf 'apt';  return; fi
@@ -91,8 +91,8 @@ installieren() {
   local werkzeug="$1" pm; pm="$(paketmanager)"
   case "$werkzeug" in
     pnpm)
-      # Ueber corepack, nicht ueber `npm -g`: package.json legt mit
-      # `packageManager: pnpm@10.33.0` eine Version fest, und corepack haelt
+      # Über corepack, nicht über `npm -g`: package.json legt mit
+      # `packageManager: pnpm@10.33.0` eine Version fest, und corepack hält
       # sich daran. Ein global installiertes pnpm taete das nicht.
       if command -v corepack >/dev/null 2>&1; then
         corepack enable pnpm >/dev/null 2>&1
@@ -116,11 +116,11 @@ installieren() {
 hinweis_installation() {
   case "$1" in
     pnpm)    hinweis "corepack enable pnpm && (cd app && corepack install)"
-             hinweis "corepack liegt bei Node bei und haelt sich an die Version"
+             hinweis "corepack liegt bei Node bei und hält sich an die Version"
              hinweis "aus package.json — anders als ein globales npm -g pnpm." ;;
     gh)      hinweis "brew install gh   —  danach: gh auth login" ;;
     pmtiles) hinweis "brew install protomaps/tap/pmtiles"
-             hinweis "oder eine Binaerdatei von https://github.com/protomaps/go-pmtiles/releases" ;;
+             hinweis "oder eine Binärdatei von https://github.com/protomaps/go-pmtiles/releases" ;;
   esac
 }
 
@@ -175,17 +175,17 @@ TOML="$APP/apps/api/wrangler.toml"
 # Verweis auf @knoellchenfrei/core — der Build bricht dann mit
 # `Could not resolve` ab, was nach einem kaputten Import aussieht und ein
 # fehlender Symlink ist.
-# Zwei Zugangsdaten, zwei Zwecke — und sie duerfen sich nicht vermischen.
+# Zwei Zugangsdaten, zwei Zwecke — und sie dürfen sich nicht vermischen.
 #
 # Am 6. September hat genau das eine Stunde gekostet: Das Skript riet dazu,
 # CLOUDFLARE_API_TOKEN zu exportieren (die Zonen-API kennt wrangler nicht), und
-# dieser Export uebersteuerte die wrangler-Anmeldung. Das Token hatte Zone- und
-# R2-Rechte, aber keine fuer Workers — also scheiterte jeder Worker-Aufruf
+# dieser Export übersteuerte die wrangler-Anmeldung. Das Token hatte Zone- und
+# R2-Rechte, aber keine für Workers — also scheiterte jeder Worker-Aufruf
 # still, und das Skript meldete "Pages-Projekt fehlt" und "CLIENT_SALT fehlt"
-# fuer Dinge, die beide existierten. Im Nicht-Pruefmodus haette es angefangen,
+# für Dinge, die beide existierten. Im Nicht-Pruefmodus hätte es angefangen,
 # sie neu anzulegen.
 #
-# Deshalb: `wr` laeuft grundsaetzlich OHNE das DNS-Token. Nur wenn nachweislich
+# Deshalb: `wr` läuft grundsätzlich OHNE das DNS-Token. Nur wenn nachweislich
 # dasselbe Token auch Workers darf (WRANGLER_NUTZT_TOKEN=ja, unten gemessen),
 # wird es durchgereicht.
 WRANGLER_NUTZT_TOKEN=nein
@@ -208,7 +208,7 @@ dns_token() {
   tr -d '\n\r "'"'"'' < "$CF_TOKEN_DATEI"
 }
 
-# Ausfuehren und im Fehlerfall die Meldung ZEIGEN. `>/dev/null 2>&1` ueberall
+# Ausführen und im Fehlerfall die Meldung ZEIGEN. `>/dev/null 2>&1` überall
 # war der zweite Konstruktionsfehler: Jede Diagnose dieses Tages kam daraus,
 # die echte Fehlermeldung zu lesen — ein Skript, das sie wegwirft, kann nur
 # "ging nicht" sagen.
@@ -224,16 +224,16 @@ tun() {
 }
 
 NUR_PRUEFEN=nein
-# Setzt die Kennungen in wrangler.toml auf Platzhalter zurueck, damit KV und D1
-# neu angelegt werden. Fuer den Wiederaufbau nach einem Kontoverlust.
+# Setzt die Kennungen in wrangler.toml auf Platzhalter zurück, damit KV und D1
+# neu angelegt werden. Für den Wiederaufbau nach einem Kontoverlust.
 NEUAUFBAU=nein
 HAT_GH=nein
 HAT_CF=nein
 
 # `wrangler whoami` liefert **Exit-Code 0, auch wenn niemand angemeldet ist** —
 # es schreibt dann nur "You are not authenticated" auf die Ausgabe. Auf den
-# Rückgabewert zu bauen hiess: Jede folgende Pruefung scheitert leise und meldet
-# "fehlt" statt "nicht pruefbar". Der Unterschied ist der zwischen einem Befund
+# Rückgabewert zu bauen hiess: Jede folgende Prüfung scheitert leise und meldet
+# "fehlt" statt "nicht prüfbar". Der Unterschied ist der zwischen einem Befund
 # und einer Erfindung.
 cf_angemeldet() {
   [ -n "${CLOUDFLARE_API_TOKEN:-}" ] && return 0
@@ -257,11 +257,11 @@ braucht_cf() {
 schritt_werkzeuge() {
   ueberschrift "Werkzeuge"
   # node, curl, openssl und git bringt jedes brauchbare System mit — fehlen
-  # sie, ist das kein Fall fuer ein Projektskript.
+  # sie, ist das kein Fall für ein Projektskript.
   local fehlend=''
-  # python3 steht mit drin, weil das Skript ihn dreizehnmal braucht — fuer
+  # python3 steht mit drin, weil das Skript ihn dreizehnmal braucht — für
   # jede JSON-Auswertung. Er fehlte in dieser Liste, und ohne ihn scheiterten
-  # die Aufrufe einzeln und unverstaendlich statt einmal und deutlich
+  # die Aufrufe einzeln und unverständlich statt einmal und deutlich
   # (Audit-Punkt M-062).
   for werkzeug in node curl openssl git python3; do
     if command -v "$werkzeug" >/dev/null 2>&1; then
@@ -302,16 +302,16 @@ schritt_werkzeuge() {
 
   # Cloudflare: entweder ein Token in der Umgebung oder eine angemeldete
   # Sitzung. Beides ist recht; nichts davon ist es nicht.
-  # Reihenfolge zaehlt: erst pruefen, ob das DNS-Token auch Workers darf,
+  # Reihenfolge zählt: erst pruefen, ob das DNS-Token auch Workers darf,
   # dann erst `cf_angemeldet` — sonst misst man mit dem falschen Zugang.
   if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
     if (cd "$APP/apps/api" && pnpm --filter @knoellchenfrei/api exec wrangler secret list >/dev/null 2>&1); then
       WRANGLER_NUTZT_TOKEN=ja
       ok "Das Token darf auch Workers — wrangler benutzt es"
     else
-      ok "Token nur fuer Zonen/R2 — wrangler benutzt deine Anmeldung"
+      ok "Token nur für Zonen/R2 — wrangler benutzt deine Anmeldung"
       hinweis "Beides nebeneinander ist Absicht: Ein Token mit Zone-Rechten hat"
-      hinweis "meist keine fuer Workers, und andersherum genauso."
+      hinweis "meist keine für Workers, und andersherum genauso."
     fi
   fi
 
@@ -400,14 +400,14 @@ kennung_aus_toml() {
 # Antwortet `ja`, `nein` oder **`unbekannt`** — und die dritte Antwort ist die
 # wichtige.
 #
-# Das Skript hielt bis zum 7. September eine eingetragene Kennung fuer den
+# Das Skript hielt bis zum 7. September eine eingetragene Kennung für den
 # Beweis, dass es die Ressource gibt (`grep -q REPLACE_WITH_`, Audit-Punkt
 # M-009). Nach einem Kontoverlust ist das genau falsch herum: Die Datei
-# ueberlebt im Repository, die Ressourcen nicht — und der Wiederaufbau begann
+# überlebt im Repository, die Ressourcen nicht — und der Wiederaufbau begann
 # mit einem Handgriff, der nirgends stand.
 #
-# `unbekannt` steht fuer "nicht pruefbar", etwa weil die Abfrage selbst
-# scheiterte. Daraus "weg" zu machen waere derselbe Fehler wie der, den das
+# `unbekannt` steht für "nicht prüfbar", etwa weil die Abfrage selbst
+# scheiterte. Daraus "weg" zu machen wäre derselbe Fehler wie der, den das
 # Skript schon einmal gemacht hat: eine fehlende Antwort als Befund melden.
 ressource_lebt() {
   local art="$1" id="$2" ausgabe='' konto=''
@@ -416,7 +416,7 @@ ressource_lebt() {
   # Erster Weg: wrangler. Am 7. September scheiterte er in dieser Werkstatt
   # daran, dass `kv namespace list` und `d1 list` ohne
   # `User -> Memberships -> Read` gar nicht erst bis zur Abfrage kommen —
-  # wrangler zaehlt vorher die Konten auf.
+  # wrangler zählt vorher die Konten auf.
   case "$art" in
     kv) ausgabe="$(wr kv namespace list 2>/dev/null || true)" ;;
     d1) ausgabe="$(wr d1 list --json 2>/dev/null || true)" ;;
@@ -426,7 +426,7 @@ ressource_lebt() {
     *"$id"*) printf 'ja'; return ;;
   esac
 
-  # Zweiter Weg: die REST-API. Sie braucht die Kontokennung, dafuer kein
+  # Zweiter Weg: die REST-API. Sie braucht die Kontokennung, dafür kein
   # Membership-Recht — wohl aber `D1:Read` bzw. `Workers KV Storage:Read`.
   konto="${CLOUDFLARE_ACCOUNT_ID:-}"
   if [ -n "$konto" ]; then
@@ -443,7 +443,7 @@ ressource_lebt() {
     fi
   fi
 
-  # Beide Wege stumm. Daraus "weg" zu machen waere derselbe Fehler, den dieses
+  # Beide Wege stumm. Daraus "weg" zu machen wäre derselbe Fehler, den dieses
   # Skript schon einmal gemacht hat: eine fehlende Antwort als Befund melden.
   printf 'unbekannt'
 }
@@ -455,7 +455,7 @@ schritt_cloudflare() {
   if [ "$NEUAUFBAU" = ja ] && [ "$NUR_PRUEFEN" != ja ]; then
     sed 's|^id = "[0-9a-f]\{32\}"|id = "REPLACE_WITH_KV_ID"|; s|^database_id = "[0-9a-f-]\{36\}"|database_id = "REPLACE_WITH_D1_ID"|' \
       "$TOML" > "$TOML.neu" && mv "$TOML.neu" "$TOML"
-    ok "Kennungen zurueckgesetzt — KV und D1 werden neu angelegt"
+    ok "Kennungen zurückgesetzt — KV und D1 werden neu angelegt"
   fi
 
   if grep -q 'REPLACE_WITH_' "$TOML"; then
@@ -484,14 +484,14 @@ schritt_cloudflare() {
     elif [ "$kv_da" = unbekannt ] || [ "$d1_da" = unbekannt ]; then
       fehlt "Kennungen stehen in wrangler.toml; ob es sie gibt, war nicht zu pruefen"
       hinweis "KV: $kv_da, D1: $d1_da"
-      hinweis "Dem Token fehlen die Leserechte. wrangler braucht dafuer"
+      hinweis "Dem Token fehlen die Leserechte. wrangler braucht dafür"
       hinweis "'User -> Memberships -> Read', die REST-API 'D1:Read' und"
       hinweis "'Workers KV Storage:Read' plus CLOUDFLARE_ACCOUNT_ID in der Umgebung."
     else
       schlimm "wrangler.toml nennt Kennungen, die dieses Konto nicht kennt"
       hinweis "KV $kv_toml: $kv_da"
       hinweis "D1 $d1_toml: $d1_da"
-      hinweis "Nach einem Kontoverlust ist das der Normalfall: Die Datei ueberlebt"
+      hinweis "Nach einem Kontoverlust ist das der Normalfall: Die Datei überlebt"
       hinweis "im Repository, die Ressourcen nicht."
       hinweis "Neu anlegen:  ./scripts/einrichten.sh --neuaufbau cloudflare"
       offen_merken
@@ -605,20 +605,20 @@ schritt_ci() {
 
 # ------------------------------------------------------------- 3. Telegram
 
-# Was am Bot ausser dem Webhook eingestellt gehoert — und was davon eine
+# Was am Bot ausser dem Webhook eingestellt gehört — und was davon eine
 # Schnittstelle kann.
 #
 # Die Bot-API setzt drei Dinge selbst, also tut das Skript es auch:
 #
-#   setMyShortDescription   das "About" im Profil, hoechstens 120 Zeichen
+#   setMyShortDescription   das "About" im Profil, höchstens 120 Zeichen
 #   setMyDescription        der Text auf dem leeren Chat, VOR dem ersten
-#                           /start, hoechstens 512 Zeichen
-#   setMyCommands           das Befehlsmenue neben dem Eingabefeld
+#                           /start, höchstens 512 Zeichen
+#   setMyCommands           das Befehlsmenü neben dem Eingabefeld
 #
-# Nicht ueber die API gehen: das **Profilbild** und das **Beschreibungsbild**
-# (das Bild ueber dem Text auf dem leeren Chat). Beides kennt nur der
-# BotFather. Deshalb stehen sie unten als Hinweis und nicht als Pruefung, die
-# ohnehin nichts messen koennte.
+# Nicht über die API gehen: das **Profilbild** und das **Beschreibungsbild**
+# (das Bild über dem Text auf dem leeren Chat). Beides kennt nur der
+# BotFather. Deshalb stehen sie unten als Hinweis und nicht als Prüfung, die
+# ohnehin nichts messen könnte.
 BOT_ABOUT="Wo Parken gerade etwas kostet — und wo zuletzt das Ordnungsamt gesehen wurde. Standort schicken genügt."
 
 BOT_BESCHREIBUNG="Schick mir deinen Standort, und die Sichtung steht für alle auf der Karte — 90 Minuten lang, danach verfällt sie.
@@ -633,11 +633,11 @@ Berlin und Hamburg. Verbindlich ist immer die Beschilderung vor Ort.
 #
 # Weder Token noch Nutzdaten stehen in der Kommandozeile: `ps` zeigt jedem
 # lokalen Nutzer die Argumente fremder Prozesse, und der Bot-Token ist der
-# Schluessel zum Bot (Audit-Punkt M-051). Die Adresse kommt deshalb ueber eine
-# curl-Konfiguration auf der Standardeingabe, die Nutzdaten ueber eine Datei
+# Schlüssel zum Bot (Audit-Punkt M-051). Die Adresse kommt deshalb über eine
+# curl-Konfiguration auf der Standardeingabe, die Nutzdaten über eine Datei
 # mit Rechten 600.
 #
-# Alle Telegram-Aufrufe laufen hierueber. Vorher stand `getMe` zweimal roh
+# Alle Telegram-Aufrufe laufen hierüber. Vorher stand `getMe` zweimal roh
 # daneben, obwohl es diesen Helfer schon gab (Audit-Punkt M-068).
 tg_api() {
   local token="$1" methode="$2" json="${3:-}" tmp='' ergebnis=''
@@ -677,9 +677,9 @@ bot_profil_setzen() {
     schlimm "Beschreibung abgelehnt: $antwort"; offen_merken
   fi
 
-  # Nur was der Worker wirklich beantwortet. Ein Menue, das einen Befehl
+  # Nur was der Worker wirklich beantwortet. Ein Menü, das einen Befehl
   # anbietet, den der Bot nicht kennt, ist schlimmer als keines: Es verspricht
-  # etwas und die Antwort ist eine hoefliche Absage.
+  # etwas und die Antwort ist eine höfliche Absage.
   antwort="$(tg_api "$token" setMyCommands \
     '{"commands":[{"command":"hilfe","description":"Wie das Melden geht, und was gespeichert wird"}]}')"
   if tg_ok "$antwort"; then
@@ -695,10 +695,10 @@ bot_profil_setzen() {
   hinweis "  (steht über dem Text auf dem leeren Chat; docs/brand/social-preview-1280x640.png"
   hinweis "   taugt dafür, oder das Dach-Bild)"
   # Die beiden Schalter kann die Bot-API nicht setzen — nur der BotFather.
-  # Aber `getMe` *meldet* sie, und damit laesst sich pruefen statt glauben.
+  # Aber `getMe` *meldet* sie, und damit lässt sich pruefen statt glauben.
   #
   # Die Benennung ist verwirrend, und zwar andersherum als man denkt:
-  # `/setprivacy` **Enable** heisst "Privatsphaere an" und ergibt
+  # `/setprivacy` **Enable** heisst "Privatsphäre an" und ergibt
   # `can_read_all_group_messages: false`.
   local zustand
   zustand="$(tg_api "$token" getMe | python3 -c "
@@ -711,7 +711,7 @@ print(f\"{r.get('username','?')}|{r.get('can_join_groups')}|{r.get('can_read_all
   local joins="${rest%%|*}" liest="${rest##*|}"
 
   hinweis ""
-  hinweis "Zwei Schalter, die zur Bauart gehoeren — nur ueber @BotFather:"
+  hinweis "Zwei Schalter, die zur Bauart gehören — nur über @BotFather:"
   if [ "$joins" = "False" ]; then
     ok "  /setjoingroups steht auf Disable"
   else
@@ -720,7 +720,7 @@ print(f\"{r.get('username','?')}|{r.get('can_join_groups')}|{r.get('can_read_all
     hinweis "     Der Bot ist auf Einzelchats gebaut; Gruppen mitzulesen ist"
     hinweis "     Stufe 2 und braucht erst einen Missbrauchsfilter. Ein Bot, den"
     hinweis "     man in Gruppen ziehen kann, der dort aber schweigt, erzeugt"
-    hinweis "     nur Rueckfragen."
+    hinweis "     nur Rückfragen."
     offen_merken
   fi
   if [ "$liest" = "False" ]; then
@@ -728,14 +728,14 @@ print(f\"{r.get('username','?')}|{r.get('can_join_groups')}|{r.get('can_read_all
   else
     fehlt "  /setprivacy → **Enable** (er liest zurzeit alles in Gruppen mit)"
     hinweis "     @BotFather → /setprivacy → @$name → Enable."
-    hinweis "     Enable heisst Privatsphaere AN — die Benennung ist andersherum,"
+    hinweis "     Enable heisst Privatsphäre AN — die Benennung ist andersherum,"
     hinweis "     als man vermutet."
     offen_merken
   fi
 }
 
-# JSON-Zeichenkette aus beliebigem Text — Umbrueche und Anfuehrungszeichen
-# inklusive. `printf '%s'` wuerde beides roh durchreichen und ungueltiges JSON
+# JSON-Zeichenkette aus beliebigem Text — Umbrüche und Anführungszeichen
+# inklusive. `printf '%s'` würde beides roh durchreichen und ungültiges JSON
 # erzeugen.
 json_text() {
   printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
@@ -768,16 +768,16 @@ schritt_telegram() {
   if [ "$hat_token" = ja ];  then ok "TELEGRAM_TOKEN liegt im Worker";  else fehlt "TELEGRAM_TOKEN fehlt";  fi
   if [ "$hat_secret" = ja ]; then ok "TELEGRAM_SECRET liegt im Worker"; else fehlt "TELEGRAM_SECRET fehlt"; fi
 
-  # Vorhanden ist nicht dasselbe wie gueltig. Wer den Bot bei BotFather neu
+  # Vorhanden ist nicht dasselbe wie gültig. Wer den Bot bei BotFather neu
   # anlegt, hat danach zwei Geheimnisse im Worker, die beide auf einen Bot
   # zeigen, den es nicht mehr gibt — und der erste Entwurf meldete genau dann
   # "liegt im Worker" und sprang raus. Ein Einrichtungsskript, das nur anlegen
-  # und nie erneuern kann, laesst einen kaputten Zustand als heil durchgehen.
+  # und nie erneuern kann, lässt einen kaputten Zustand als heil durchgehen.
   if [ "$hat_token" = ja ] && [ "$hat_secret" = ja ]; then
-    hinweis "Ob sie zum richtigen Bot gehoeren, weiss nur, wer den Token hat —"
+    hinweis "Ob sie zum richtigen Bot gehören, weiss nur, wer den Token hat —"
     hinweis "das Skript hat ihn gesetzt, nicht gespeichert."
     if [ "$NUR_PRUEFEN" = ja ]; then return 0; fi
-    ja_nein "Neu setzen? (noetig nach /newbot oder /revoke bei BotFather)" || return 0
+    ja_nein "Neu setzen? (nötig nach /newbot oder /revoke bei BotFather)" || return 0
   elif [ "$NUR_PRUEFEN" = ja ]; then
     offen_merken; return 0
   fi
@@ -791,9 +791,9 @@ schritt_telegram() {
   # Das zweite Geheimnis weist Telegram gegenüber dem Worker aus. Die
   # Webhook-Adresse ist sonst nur durch Unkenntnis geschützt, und "niemand
   # kennt sie" ist keine Zugangskontrolle.
-  # Erst fragen, wem der Token gehoert — dann setzen. `getMe` kostet nichts und
-  # haette am 6. September sofort gezeigt, dass der Bot @knoellchen_bot heisst
-  # und nicht @knoellchenfrei_bot, wie ueberall in der Doku stand.
+  # Erst fragen, wem der Token gehört — dann setzen. `getMe` kostet nichts und
+  # hätte am 6. September sofort gezeigt, dass der Bot @knoellchen_bot heisst
+  # und nicht @knoellchenfrei_bot, wie überall in der Doku stand.
   local wer
   wer="$(tg_api "$token" getMe | python3 -c "
 import sys, json
@@ -806,7 +806,7 @@ print(('@' + r['username']) if d.get('ok') and r.get('username') else '')" 2>/de
     offen_merken
     return 0
   fi
-  ok "Der Token gehoert zu $wer"
+  ok "Der Token gehört zu $wer"
 
   local geheim; geheim="$(openssl rand -hex 24)"
   if printf '%s' "$token" | wr secret put TELEGRAM_TOKEN >/dev/null 2>&1; then
@@ -842,7 +842,7 @@ print(('@' + r['username']) if d.get('ok') and r.get('username') else '')" 2>/de
     offen_merken
   fi
 
-  # Gegenprobe beim Absender statt beim Empfaenger. `getWebhookInfo` nennt auch
+  # Gegenprobe beim Absender statt beim Empfänger. `getWebhookInfo` nennt auch
   # den letzten Zustellfehler — das ist die eine Stelle, an der man sieht, dass
   # Telegram es versucht und der Worker es abweist.
   curl -sS --max-time 20 "https://api.telegram.org/bot$token/getWebhookInfo" | python3 -c "
@@ -875,9 +875,9 @@ print('      wartende Nachrichten: ' + str(r.get('pending_update_count', '?')))
 }
 
 # Die Adresse des Workers steht nicht in `wrangler whoami` — dort steht das
-# Konto, nicht die Unterdomain. Sie aus dem Kontonamen zu bauen waere geraten,
+# Konto, nicht die Unterdomain. Sie aus dem Kontonamen zu bauen wäre geraten,
 # und geraten heisst hier: ein Webhook, der ins Leere zeigt und dessen Fehler
-# erst auffaellt, wenn jemand dem Bot schreibt. Also fragen.
+# erst auffällt, wenn jemand dem Bot schreibt. Also fragen.
 worker_adresse() {
   local aus_log
   aus_log="$(wr deployments list --name "$WORKER_NAME" 2>/dev/null \
@@ -1013,7 +1013,7 @@ cf_api() {
   fi
 }
 
-# Cloudflare liefert Umlautdomains als `knölchenfrei.de` zurueck, waehrend
+# Cloudflare liefert Umlautdomains als `knölchenfrei.de` zurück, während
 # Registrare und Werkzeuge die Punycode-Form `xn--knlchenfrei-sfb.de` verlangen.
 # Der erste Entwurf verglich stur die Zeichenketten und meldete zwei
 # existierende Zonen als fehlend. Verglichen wird jetzt in einer Form.
@@ -1077,8 +1077,8 @@ for z in (d.get('result') or []):
 }
 
 # Zonenstatus — `pending` heisst: Cloudflare hat die Delegierung noch nicht
-# bestaetigt. Manches (eine eigene Domain am R2-Eimer) geht dann noch nicht,
-# und die Fehlermeldung dafuer lautet `The specified zone id is not valid` —
+# bestätigt. Manches (eine eigene Domain am R2-Eimer) geht dann noch nicht,
+# und die Fehlermeldung dafür lautet `The specified zone id is not valid` —
 # was nach einer falschen Kennung aussieht und Warten bedeutet.
 zonen_status() {
   cf_api GET "/zones?per_page=50" | python3 -c "
@@ -1115,8 +1115,8 @@ schritt_dns() {
     return 0
   fi
 
-  # Erst pruefen, ob das Token ueberhaupt angenommen wird. Sonst meldet jeder
-  # folgende Schritt "fehlt als Zone" — und das waere erfunden, nicht gemessen.
+  # Erst pruefen, ob das Token überhaupt angenommen wird. Sonst meldet jeder
+  # folgende Schritt "fehlt als Zone" — und das wäre erfunden, nicht gemessen.
   if ! cf_geklappt "$(cf_api GET "/user/tokens/verify")"; then
     schlimm "Cloudflare nimmt das Token nicht an:"
     cf_api GET "/user/tokens/verify" | python3 -c "
@@ -1187,7 +1187,7 @@ for e in d.get('errors', []): print('      ' + str(e.get('message')))
   #   zone rulesets for phase http_request_dynamic_redirect
   # — was nach einem Fehler im Aufruf aussieht und "gibt es schon" heisst. `PUT`
   # ist idempotent und damit das, was ein Skript braucht, das man zweimal
-  # laufen laesst.
+  # laufen lässt.
   for d in $DOMAINS; do
     [ "$d" = "$HAUPTDOMAIN" ] && continue
     local id; id="$(zonen_id "$d")"
@@ -1240,17 +1240,17 @@ print(json.dumps({
 
   # --- Altlasten aus dem alten DNS ---------------------------------------
   #
-  # Beim Anlegen einer Zone uebernimmt Cloudflare die vorhandenen Eintraege des
+  # Beim Anlegen einer Zone übernimmt Cloudflare die vorhandenen Einträge des
   # bisherigen Nameservers. Am 6. September kamen so drei A-Eintraege auf die
-  # Parkseite des Registrars mit — @, www und ein **Wildcard**. Waere die Zone
-  # aktiv geworden, haette die Hauptdomain die Parkseite ausgeliefert statt der
-  # App, und der Wildcard haette obendrein jede Subdomain abgefangen, auch
+  # Parkseite des Registrars mit — @, www und ein **Wildcard**. Wäre die Zone
+  # aktiv geworden, hätte die Hauptdomain die Parkseite ausgeliefert statt der
+  # App, und der Wildcard hätte obendrein jede Subdomain abgefangen, auch
   # `tiles.` und `api.`. Aufgefallen ist es nur, weil Cloudflare eine ganz
   # andere Warnung anzeigte.
   #
-  # Geloescht wird ausschliesslich, was auf eine bekannte Parkadresse zeigt —
-  # nichts anderes. Ein Skript, das fremde DNS-Eintraege nach Gutduenken
-  # aufraeumt, ist gefaehrlicher als der Zustand, den es behebt.
+  # Gelöscht wird ausschliesslich, was auf eine bekannte Parkadresse zeigt —
+  # nichts anderes. Ein Skript, das fremde DNS-Eintraege nach Gutdünken
+  # aufräumt, ist gefährlicher als der Zustand, den es behebt.
   for d in $DOMAINS; do
     local id; id="$(zonen_id "$d")"
     [ -z "$id" ] && continue
@@ -1265,7 +1265,7 @@ for x in (d.get('result') or []):
         print(x['id'], x['type'], x['name'])
 " 2>/dev/null)"
     [ -z "$treffer" ] && continue
-    fehlt "$d traegt Eintraege der Registrar-Parkseite"
+    fehlt "$d trägt Einträge der Registrar-Parkseite"
     if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
     printf '%s\n' "$treffer" | while read -r rid typ name; do
       if cf_geklappt "$(cf_api DELETE "/zones/$id/dns_records/$rid")"; then
@@ -1278,21 +1278,21 @@ for x in (d.get('result') or []):
 
   # --- DNS-Eintraege der Weiterleitungsdomains ---------------------------
   #
-  # Eine Redirect Rule feuert nur, wenn die Anfrage Cloudflare ueberhaupt
-  # erreicht — und dafuer braucht die Zone einen **proxied** Eintrag. Ohne den
-  # antwortet sie mit NXDOMAIN, und die Weiterleitung laeuft ins Leere. Am
-  # 6. September standen die vier Regeln fertig da und haetten nie gegriffen;
+  # Eine Redirect Rule feuert nur, wenn die Anfrage Cloudflare überhaupt
+  # erreicht — und dafür braucht die Zone einen **proxied** Eintrag. Ohne den
+  # antwortet sie mit NXDOMAIN, und die Weiterleitung läuft ins Leere. Am
+  # 6. September standen die vier Regeln fertig da und hätten nie gegriffen;
   # aufgefallen ist es an Cloudflares eigener Warnung "Visitors cannot reach…".
   #
   # 192.0.2.1 stammt aus dem Dokumentationsbereich (RFC 5737) und wird nie
   # kontaktiert: Cloudflare beantwortet die Anfrage selbst. Das ist der Weg,
-  # den Cloudflares Doku fuer reine Weiterleitungsdomains nennt.
+  # den Cloudflares Doku für reine Weiterleitungsdomains nennt.
   #
-  # Dazu drei Eintraege gegen Spoofing. Diese Domains empfangen nie Mail — dann
-  # gehoert das auch gesagt, sonst kann jeder in ihrem Namen schreiben:
+  # Dazu drei Einträge gegen Spoofing. Diese Domains empfangen nie Mail — dann
+  # gehört das auch gesagt, sonst kann jeder in ihrem Namen schreiben:
   # Null-MX nach RFC 7505, SPF mit hartem `-all`, DMARC auf `reject`.
-  # **Nur fuer die Weiterleitungsdomains**: knoellchenfrei.de soll spaeter eine
-  # Vereinsadresse tragen, und ein Null-MX dort wuerde sie blockieren.
+  # **Nur für die Weiterleitungsdomains**: knoellchenfrei.de soll später eine
+  # Vereinsadresse tragen, und ein Null-MX dort würde sie blockieren.
   for d in $DOMAINS; do
     [ "$d" = "$HAUPTDOMAIN" ] && continue
     local id; id="$(zonen_id "$d")"
@@ -1402,19 +1402,19 @@ schritt_github() {
 
   # --- GitHub Pages -----------------------------------------------------
   #
-  # Umgedreht am 7. September: Pages gehoert AUS. Bis dahin schaltete dieses
-  # Skript es ein und meldete "aus" als Mangel. Der Grund fuer die Kehrtwende
-  # hat nichts mit GitHub zu tun — vor GitHub Pages laesst sich kein
+  # Umgedreht am 7. September: Pages gehört AUS. Bis dahin schaltete dieses
+  # Skript es ein und meldete "aus" als Mangel. Der Grund für die Kehrtwende
+  # hat nichts mit GitHub zu tun — vor GitHub Pages lässt sich kein
   # Zugangsriegel setzen, und eine zweite offene Tuer macht die erste sinnlos
   # (Audit-Punkt M-006). Der Riegel steht vor Cloudflare Pages, und dort liegt
   # auch knoellchenfrei.de.
   #
-  # Wenn die App oeffentlich wird, ist das hier wieder eine Ueberlegung wert —
-  # aber dann als Entscheidung, nicht als Ueberbleibsel.
+  # Wenn die App öffentlich wird, ist das hier wieder eine Überlegung wert —
+  # aber dann als Entscheidung, nicht als Überbleibsel.
   if ! printf '%s' "$json" | grep -q '"has_pages":true'; then
-    ok "GitHub Pages ist aus — so soll es sein, solange die Beta laeuft"
+    ok "GitHub Pages ist aus — so soll es sein, solange die Beta läuft"
   elif [ "$NUR_PRUEFEN" = ja ]; then
-    schlimm "GitHub Pages ist AN: zweiter, ungeschuetzter Zugang zur Beta"
+    schlimm "GitHub Pages ist AN: zweiter, ungeschützter Zugang zur Beta"
     adresse "https://github.com/$REPO_SLUG/settings/pages"
     offen_merken
   else

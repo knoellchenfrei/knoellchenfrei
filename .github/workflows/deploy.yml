@@ -71,7 +71,7 @@ jobs:
         working-directory: app/apps/api
         run: |
           if grep -q 'REPLACE_WITH_' wrangler.toml; then
-            echo "::error::wrangler.toml traegt noch Platzhalter. Die Einrichtung laeuft nicht hier, sondern von deinem Rechner: ./scripts/einrichten.sh -- sie legt KV, D1, Migrationen und das Pages-Projekt an und committet die Kennungen zurueck."
+            echo "::error::wrangler.toml trägt noch Platzhalter. Die Einrichtung läuft nicht hier, sondern von deinem Rechner: ./scripts/einrichten.sh -- sie legt KV, D1, Migrationen und das Pages-Projekt an und committet die Kennungen zurück."
             exit 1
           fi
           echo "KV und D1 sind eingetragen."
@@ -103,7 +103,7 @@ jobs:
             quelle="Ausgabe des Worker-Deploys"
           fi
           if [ -z "$basis" ]; then
-            echo "::warning::Keine Worker-Adresse ermittelt — die App laeuft im lokalen Modus und teilt nichts."
+            echo "::warning::Keine Worker-Adresse ermittelt — die App läuft im lokalen Modus und teilt nichts."
             quelle="nichts gefunden"
           fi
           echo "base=$basis" >> "$GITHUB_OUTPUT"
@@ -137,7 +137,7 @@ jobs:
           done
           if [ -n "$gescheitert" ]; then
             echo "### Daten nicht aufgefrischt:$gescheitert" >> "$GITHUB_STEP_SUMMARY"
-            echo "Ausgeliefert wird der eingecheckte Abzug. Das ist kein Ausfall, aber es gehoert gesehen." >> "$GITHUB_STEP_SUMMARY"
+            echo "Ausgeliefert wird der eingecheckte Abzug. Das ist kein Ausfall, aber es gehört gesehen." >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Web-App bauen
@@ -148,24 +148,24 @@ jobs:
           # lokalen Modus und teilt nichts.
           VITE_API_BASE: ${{ steps.api.outputs.base }}
           # Kein Secret, sondern eine Variable: Die Adresse des Kachelarchivs
-          # ist oeffentlich, sie steht in jedem Netzwerk-Request der App. Als
-          # `vars` steht sie im Lauf-Protokoll und laesst sich nachlesen; als
-          # Secret waere sie maskiert und man suchte im Dunkeln.
+          # ist öffentlich, sie steht in jedem Netzwerk-Request der App. Als
+          # `vars` steht sie im Lauf-Protokoll und lässt sich nachlesen; als
+          # Secret wäre sie maskiert und man suchte im Dunkeln.
           #
           # Ohne den Wert bleibt es bei den Rasterkacheln von OpenStreetMap,
-          # und der Vektor-Teil liegt nicht einmal im Buendel.
+          # und der Vektor-Teil liegt nicht einmal im Bündel.
           VITE_TILES_URL: ${{ vars.VITE_TILES_URL }}
         run: pnpm --filter @knoellchenfrei/web build
 
       # `--cwd` ist hier keine Kosmetik: `wrangler pages deploy` sucht das
       # Verzeichnis `functions/` relativ zum Arbeitsverzeichnis, und darin
-      # liegt der Beta-Riegel (`_middleware.ts`). Ohne den Wechsel faende
-      # wrangler es nicht, ausrollen wuerde trotzdem klappen — und die
-      # geschlossene Beta stuende offen, ohne dass irgendwo ein roter Haken
-      # erschiene. Der Pfad `dist` wird relativ zu `--cwd` aufgeloest.
+      # liegt der Beta-Riegel (`_middleware.ts`). Ohne den Wechsel fände
+      # wrangler es nicht, ausrollen würde trotzdem klappen — und die
+      # geschlossene Beta stünde offen, ohne dass irgendwo ein roter Haken
+      # erschiene. Der Pfad `dist` wird relativ zu `--cwd` aufgelöst.
       #
       # Warum `--cwd` und nicht `workingDirectory:` der Action: Die Action
-      # installiert wrangler im Arbeitsverzeichnis und waehlt das Werkzeug
+      # installiert wrangler im Arbeitsverzeichnis und wählt das Werkzeug
       # anhand einer Sperrdatei. In `app/apps/web` liegt keine, also nimmt sie
       # npm — und npm bricht an `"@knoellchenfrei/core": "workspace:*"` ab:
       # `EUNSUPPORTEDPROTOCOL: Unsupported URL Type "workspace:"`. Gemessen am

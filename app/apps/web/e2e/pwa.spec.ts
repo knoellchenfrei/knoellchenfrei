@@ -45,12 +45,12 @@ test.describe('der Service Worker', () => {
     expect(response.status()).toBe(200)
     const source = await response.text()
 
-    // Beide Anfuehrungsarten: Das Grundgeruest steht als Quelltext in einfachen,
+    // Beide Anführungsarten: Das Grundgeruest steht als Quelltext in einfachen,
     // die eingesetzte Liste kommt als JSON in doppelten. Nur die doppelten zu
-    // nehmen liesse genau die Haelfte ungeprueft — die handgeschriebene.
+    // nehmen liesse genau die Hälfte ungeprüft — die handgeschriebene.
     const paths = [...source.matchAll(/['"](\.\/[^'"]*)['"]/g)].map((match) => match[1] as string)
-    // Acht feste Eintraege plus die gehashten Buendel plus die Daten. Faellt die
-    // Liste unter diese Groesse, ist die Ersetzung schiefgegangen.
+    // Acht feste Einträge plus die gehashten Bündel plus die Daten. Fällt die
+    // Liste unter diese Größe, ist die Ersetzung schiefgegangen.
     expect(paths.length).toBeGreaterThan(14)
     expect(paths.some((path) => path.includes('/assets/'))).toBe(true)
     expect(paths.some((path) => path.includes('/data/'))).toBe(true)
@@ -63,13 +63,13 @@ test.describe('der Service Worker', () => {
 
   // Der lokale Preview-Server liefert /index.html mit 200, Cloudflare Pages mit
   // einem 308 auf /. Der Test oben kann das deshalb nicht sehen — er misst
-  // gegen den Preview-Server. Also wird die Ursache geprueft statt der Wirkung:
-  // Dieser eine Pfad gehoert nicht in den Vorrat, weil `cache.addAll` an einer
+  // gegen den Preview-Server. Also wird die Ursache geprüft statt der Wirkung:
+  // Dieser eine Pfad gehört nicht in den Vorrat, weil `cache.addAll` an einer
   // Weiterleitung scheitert und `cache.add` sie einzeln verliert.
-  test('haelt kein ./index.html vor — Pages leitet den Pfad um', async ({ page }) => {
+  test('hält kein ./index.html vor — Pages leitet den Pfad um', async ({ page }) => {
     const source = await (await page.request.get('/sw.js')).text()
     // Kommentare heraus, bevor gesucht wird. Der erste Anlauf dieses Tests
-    // schlug fehl, weil er den Pfad im *Kommentar* fand, der erklaert, warum er
+    // schlug fehl, weil er den Pfad im *Kommentar* fand, der erklärt, warum er
     // nicht im Vorrat steht — dieselbe Falle, die hier schon einmal einen
     // Platzhalter in einem Kommentar getroffen hat.
     const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
@@ -77,7 +77,7 @@ test.describe('der Service Worker', () => {
     expect(code).not.toMatch(/['"]\.\/index\.html['"]/)
   })
 
-  test('traegt eine ersetzte Build-Kennung, keinen Platzhalter', async ({ page }) => {
+  test('trägt eine ersetzte Build-Kennung, keinen Platzhalter', async ({ page }) => {
     const source = await (await page.request.get('/sw.js')).text()
     expect(source).not.toContain('__BUILD_ID__')
     expect(source).not.toContain('__SHELL_ASSETS__')
@@ -85,8 +85,8 @@ test.describe('der Service Worker', () => {
   })
 })
 
-test.describe('the manifest', () => {
-  test('every file it names actually exists', async ({ page }) => {
+test.describe('das Manifest', () => {
+  test('jede Datei, die es nennt, gibt es auch', async ({ page }) => {
     const data = await manifest(page)
     const referenced = [
       ...data.icons.map((icon) => icon.src),
@@ -111,7 +111,7 @@ test.describe('the manifest', () => {
     }
   })
 
-  test('offers both a plain and a maskable icon, and never one for both', async ({ page }) => {
+  test('bietet ein schlichtes und ein maskierbares Symbol an, nie eines für beides', async ({ page }) => {
     const data = await manifest(page)
     // „any maskable" an einem Symbol ist der übliche Fehler: Android schneidet
     // dann die Ecken der Kachel samt Motiv weg.
@@ -126,7 +126,7 @@ test.describe('the manifest', () => {
     expect(large).toBeDefined()
   })
 
-  test('shows a screenshot for both shapes of screen', async ({ page }) => {
+  test('zeigt für beide Bildschirmformen ein Bild', async ({ page }) => {
     const data = await manifest(page)
     const shapes = data.screenshots.map((shot) => shot.form_factor)
     // Fehlt eines der beiden, fällt Chrome auf dem betroffenen Gerät auf die
@@ -135,7 +135,7 @@ test.describe('the manifest', () => {
     expect(shapes).toContain('wide')
   })
 
-  test('stays inside its own directory', async ({ page }) => {
+  test('bleibt in seinem eigenen Verzeichnis', async ({ page }) => {
     const data = await manifest(page)
     // Alles relativ: Die App liegt je nach Hosting unter einem Unterpfad, und
     // ein führender Schrägstrich würde sie dort ins Leere zeigen lassen.
@@ -148,8 +148,8 @@ test.describe('the manifest', () => {
   })
 })
 
-test.describe('shortcuts from the app icon', () => {
-  test('?start=melden opens the report sheet and cleans the address', async ({ page }) => {
+test.describe('Kurzbefehle vom App-Symbol', () => {
+  test('?start=melden öffnet das Meldeblatt und räumt die Adresse auf', async ({ page }) => {
     await page.goto('/?start=melden')
     await ready(page)
     await expect(page.getByRole('dialog', { name: 'Sichtung melden' })).toBeVisible()
@@ -157,7 +157,7 @@ test.describe('shortcuts from the app icon', () => {
     expect(new URL(page.url()).searchParams.get('start')).toBeNull()
   })
 
-  test('?start=kontrollen switches the heatmap on', async ({ page }) => {
+  test('?start=kontrollen schaltet die Heatmap ein', async ({ page }) => {
     await page.goto('/?start=kontrollen')
     await ready(page)
     if (!(await page.locator('.sidebar__body').isVisible())) await page.locator('.panel-toggle').click()
@@ -168,7 +168,7 @@ test.describe('shortcuts from the app icon', () => {
     await expect(panel.getByRole('button', { name: 'Ausblenden' })).toBeVisible({ timeout: 15_000 })
   })
 
-  test('an unknown value simply does nothing', async ({ page }) => {
+  test('ein unbekannter Wert tut schlicht nichts', async ({ page }) => {
     await page.goto('/?start=unfug')
     await ready(page)
     await expect(page.locator('.sheet')).toHaveCount(0)
@@ -197,8 +197,8 @@ async function fakeInstallOffer(page: Page): Promise<void> {
   })
 }
 
-test.describe('putting it on the home screen', () => {
-  test('settings say how, even before the browser offers anything', async ({ page }) => {
+test.describe('Ablegen auf dem Startbildschirm', () => {
+  test('die Einstellungen sagen wie, auch bevor der Browser etwas anbietet', async ({ page }) => {
     await page.goto('/')
     await ready(page)
     await page.getByRole('button', { name: 'Einstellungen' }).click()
@@ -206,7 +206,7 @@ test.describe('putting it on the home screen', () => {
     await expect(sheet.locator('.install')).toBeVisible()
   })
 
-  test('turns the browser offer into a button that opens the dialog', async ({ page }) => {
+  test('macht aus dem Angebot des Browsers einen Knopf, der den Dialog öffnet', async ({ page }) => {
     await page.goto('/')
     await ready(page)
     await fakeInstallOffer(page)
@@ -219,7 +219,7 @@ test.describe('putting it on the home screen', () => {
     expect(await page.evaluate(() => (window as unknown as { __installPrompted?: boolean }).__installPrompted)).toBe(true)
   })
 
-  test('holds the hint back on the first visit and drops it once dismissed', async ({ page }) => {
+  test('hält den Hinweis beim ersten Besuch zurück und lässt ihn fallen, sobald er weggeklickt ist', async ({ page }) => {
     await page.goto('/')
     await ready(page)
     await fakeInstallOffer(page)
@@ -253,8 +253,8 @@ test.describe('putting it on the home screen', () => {
  * ob diese Anschrift in Suchindizes und Archiven landet. Einmal drin, bleibt sie
  * drin — deshalb wird er geprüft und nicht bloß eingebaut.
  */
-test.describe('the closed beta', () => {
-  test('tells search engines to stay away, in the page and in robots.txt', async ({ page }) => {
+test.describe('die geschlossene Beta', () => {
+  test('sagt Suchmaschinen, dass sie wegbleiben sollen — in der Seite und in robots.txt', async ({ page }) => {
     await page.goto('/')
     const robots = page.locator('meta[name="robots"]')
     await expect(robots).toHaveAttribute('content', /noindex/)
@@ -264,7 +264,7 @@ test.describe('the closed beta', () => {
     expect(await file.text()).toContain('Disallow: /')
   })
 
-  test('says on the page that it is a test run', async ({ page }) => {
+  test('sagt auf der Seite, dass es ein Testbetrieb ist', async ({ page }) => {
     await page.goto('/')
     await ready(page)
     await expect(page.locator('.beta')).toBeVisible()

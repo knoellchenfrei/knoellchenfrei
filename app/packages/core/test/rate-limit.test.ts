@@ -23,9 +23,9 @@ describe('countingWindowStart', () => {
    * Der Vorfall selbst, als Test: Eine um 10:59 geschriebene Zeile trägt den
    * Stempel 10:00. Das alte rollende Fenster liess sie um 11:01 herausfallen.
    */
-  it('haelt eine auf 10:00 gerundete Zeile um 11:01 noch im Fenster', () => {
+  it('hält eine auf 10:00 gerundete Zeile um 11:01 noch im Fenster', () => {
     const gestempelt = Math.floor(KURZ_VOR / HOUR) * HOUR // 10:00
-    const altesFenster = KURZ_NACH - HOUR // 10:01 — zu spaet
+    const altesFenster = KURZ_NACH - HOUR // 10:01 — zu spät
     expect(gestempelt < altesFenster).toBe(true)
 
     const neuesFenster = countingWindowStart(KURZ_NACH, HOUR, HOUR)

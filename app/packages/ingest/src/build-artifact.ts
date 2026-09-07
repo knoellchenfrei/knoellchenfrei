@@ -31,13 +31,13 @@ const styles = assets(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)
 if (scripts.length === 0) throw new Error('no script tags found in built index.html')
 
 /**
- * Alle Staedte, die im Bündel liegen, kommen mit ins Artifact.
+ * Alle Städte, die im Bündel liegen, kommen mit ins Artifact.
  *
- * Nicht nur die voreingestellte: Das Artifact laedt nichts nach — seine
+ * Nicht nur die voreingestellte: Das Artifact lädt nichts nach — seine
  * Sicherheitsrichtlinie blockiert jede fremde Anfrage —, und ein Umschalter,
- * der auf eine Stadt zeigt, die nicht eingebettet ist, waere ein Knopf, der
+ * der auf eine Stadt zeigt, die nicht eingebettet ist, wäre ein Knopf, der
  * die Seite kaputt macht. `availableCities()` im Web liest genau diese
- * Schluessel und blendet den Rest aus.
+ * Schlüssel und blendet den Rest aus.
  */
 const data = Object.fromEntries(
   CITIES.map((city) => [

@@ -51,7 +51,7 @@ wr() {
 # unten aus einem Zeitstempel — es gibt hier keine fremden Namen, und `find`
 # mit Sortierung nach Zeit wäre drei Zeilen für dasselbe Ergebnis.
 # shellcheck disable=SC2012
-juengste() {
+juengste_sicherung() {
   ls -t "$ZIEL"/knoellchenfrei-*.sql.enc 2>/dev/null | head -1
 }
 
@@ -120,7 +120,7 @@ sichern() {
   printf '  abbrennt, nimmt sonst die Sicherung mit.\n'
 }
 
-zurueck() {
+zurueckspielen() {
   local quelle="$1" klartext
   [ -r "$quelle" ] || { schlimm "Nicht lesbar: $quelle"; return 1; }
   schluessel_sicherstellen || return 1
@@ -142,7 +142,7 @@ zurueck() {
 
 pruefen() {
   local letzte alter
-  letzte="$(juengste)"
+  letzte="$(juengste_sicherung)"
   if [ -z "$letzte" ]; then
     fehlt "Es gibt keine Sicherung in $ZIEL"
     return 1
@@ -160,7 +160,7 @@ pruefen() {
 
 case "${1:-}" in
   --pruefen|-p) pruefen ;;
-  --zurueck)    [ $# -ge 2 ] || { schlimm "Welche Datei?"; exit 2; }; zurueck "$2" ;;
+  --zurueck)    [ $# -ge 2 ] || { schlimm "Welche Datei?"; exit 2; }; zurueckspielen "$2" ;;
   --hilfe|-h|--help) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//' ;;
   '')           sichern ;;
   *)            schlimm "Unbekannt: $1"; exit 2 ;;
