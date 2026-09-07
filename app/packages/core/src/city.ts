@@ -100,6 +100,43 @@ export interface City {
    * Regelung.
    */
   holidays?: readonly string[]
+  /**
+   * Wer Auskunft gibt, wenn das Auto weg ist.
+   *
+   * Bis zum 7. September stand in `TowInfo.tsx` fest verdrahtet die
+   * Auskunfts- und Fahndungsstelle der **Polizei Berlin** — mit Link, Nummer
+   * und Namen, in allen vier Städten. Wer in München sein Auto suchte, bekam
+   * eine Berliner Telefonnummer, und das ist schlechter als gar keine Angabe:
+   * Es sieht aus wie eine Auskunft. Derselbe Fehler wie damals bei den
+   * Demodaten, die über Berliner Koordinaten gestreut waren.
+   *
+   * **Fehlt das Feld, wird der Abschnitt nicht angezeigt** — kein Rückfall auf
+   * Berlin. Das ist die Regel dieses Projekts für unbekannte Städte, und sie
+   * gilt hier genauso.
+   */
+  towedVehicles?: TowedVehicles
+}
+
+/**
+ * Die Stelle, die weiß, wohin ein umgesetztes Fahrzeug gebracht wurde.
+ *
+ * Warum die Telefonnummer optional ist und ein Prüfdatum trägt: Eine falsche
+ * Nummer ist schlimmer als keine — sie kostet jemanden Zeit in einer Lage, in
+ * der er ohnehin keine hat. Die amtliche Seite ist deshalb der Hauptweg, die
+ * Nummer ein datierter Hinweis daneben. Wo sie sich am 7. September nicht aus
+ * einer amtlichen Quelle belegen ließ, steht sie nicht da.
+ */
+export interface TowedVehicles {
+  /** Wie die Stelle heißt, wörtlich wie bei ihr selbst. */
+  authority: string
+  /** Die amtliche Seite. Sie gilt, nicht die Angaben hier. */
+  url: string
+  /** Nur, wenn auf genau dieser Seite belegt. */
+  phone?: string
+  /** Wann die Angaben zuletzt gegen die Seite gehalten wurden, `JJJJ-MM`. */
+  checkedOn: string
+  /** Ein Satz, der etwas erklärt, das die Nummer allein nicht sagt. */
+  note?: string
 }
 
 /**
@@ -122,6 +159,14 @@ export const BERLIN: City = {
     licence: 'Datenlizenz Deutschland Zero 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
     attributionRequired: false,
+  },
+  towedVehicles: {
+    authority: 'Auskunfts- und Fahndungsstelle der Polizei Berlin',
+    url: 'https://www.berlin.de/polizei/service/auto-fahrrad-bus/auto-wiederfinden/',
+    // Die Nummer aus der Ideenliste von 2012 — (030) 4664-98 7800 — stimmt
+    // nicht mehr. Diese steht auf der amtlichen Seite.
+    phone: '(030) 4664-709800',
+    checkedOn: '2026-09',
   },
 }
 
@@ -153,6 +198,16 @@ export const HAMBURG: City = {
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
+  },
+  towedVehicles: {
+    authority: 'Zentrale Verwahrstelle der Polizei Hamburg, Ausschläger Allee',
+    url: 'https://www.polizei.hamburg/zentrale-verwahrstelle-fuer-fahrzeuge-791284',
+    phone: '040 7810450',
+    checkedOn: '2026-09',
+    // Hamburg hat zwei Verwahrstellen, und welches Kommissariat zuständig
+    // ist, hängt am Abstellort — die Seite sagt das selbst. Deshalb der
+    // Zusatz statt der stillen Annahme, eine Nummer reiche.
+    note: 'Rund um die Uhr. Wohin genau umgesetzt wurde, weiß das Polizeikommissariat des Abstellorts.',
   },
 }
 
@@ -191,6 +246,16 @@ export const FRANKFURT: City = {
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
+  },
+  towedVehicles: {
+    authority: 'Stadt Frankfurt am Main, Abschleppungen',
+    url: 'https://frankfurt.de/themen/sicherheit-und-ordnung/vorgaben-und-regeln/fuer-das-auto/abschleppungen',
+    // **Bewusst ohne Nummer.** Die Seite der Stadt weist automatisierte
+    // Abrufe mit 403 ab, und eine Nummer aus zweiter Hand einzutragen wäre
+    // genau der Fehler, den dieser Abschnitt beheben soll. Wer sie belegen
+    // kann, trägt sie nach; bis dahin führt der Weg über die Seite.
+    checkedOn: '2026-09',
+    note: 'Die Seite der Stadt nennt die zuständige Stelle und ihre Zeiten.',
   },
 }
 
@@ -245,6 +310,13 @@ export const MUENCHEN: City = {
    * zweitgrößte Stadt des Landes falsch gewesen.
    */
   holidays: ['08-15'],
+  towedVehicles: {
+    authority: 'Kfz-Verwahrstelle der Polizei München',
+    url: 'https://stadt.muenchen.de/service/info/kfzverwahrstelle-der-polizei/1081220/',
+    phone: '089 429301',
+    checkedOn: '2026-09',
+    note: 'Bei Falschparkern rund um die Uhr erreichbar, Thomas-Hauser-Straße 19.',
+  },
 }
 
 export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN]

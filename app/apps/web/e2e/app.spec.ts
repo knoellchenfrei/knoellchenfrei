@@ -686,6 +686,24 @@ test.describe('die weiteren Städte', () => {
    * Attrappen — und ein Schalter, der nichts tut, liest sich als Aussage über
    * die Stadt („hier gibt es keine Ladepunkte") statt als eine über die Daten.
    */
+  test('nennt in Hamburg die Hamburger Auskunftsstelle, nicht die Berliner', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    await dismissPrompt(page)
+    await openPanel(page)
+
+    await page.getByRole('button', { name: /Auto weg\?/ }).click()
+    const body = page.locator('#tow-info-body')
+    await expect(body).toContainText('Polizei Hamburg')
+    await expect(body).not.toContainText('Polizei Berlin')
+    // Die Berliner Nummer stand hier bis zum 7. September auch in Hamburg.
+    await expect(body).not.toContainText('030')
+  })
+
   test('zeigt in Hamburg keine Ebene, hinter der nichts liegt', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)

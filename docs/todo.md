@@ -1005,48 +1005,38 @@ Was noch offen ist:
       Dem Städte-Umschalter kommt das nicht in die Quere: Der lädt die Seite
       neu, `CITY` steht also beim Erzeugen der Karte fest.
 
-- [ ] **„Auto weg?" nennt immer Berlin — auch in Hamburg, Frankfurt und
-      München.** `components/TowInfo.tsx` hat die Auskunftsstelle der Polizei
-      Berlin fest verdrahtet: Link, Nummer und den Satz „Auskunfts- und
-      Fahndungsstelle der Polizei Berlin". Wer in München steht und sein Auto
-      sucht, bekommt eine Berliner Telefonnummer — das ist schlechter als gar
-      keine Angabe, weil es wie eine Auskunft aussieht.
+- [x] **„Auto weg?" nennt jetzt die richtige Stelle** — am 7. September.
+      Vorher standen Link, Nummer und der Name „Auskunfts- und Fahndungsstelle
+      der Polizei Berlin" fest in `TowInfo.tsx`, in allen vier Städten.
 
-      Das ist derselbe Fehler wie bei `seed.ts` und den Zeiten-Parsern: eine
-      Berliner Tatsache, die als allgemeine ausgegeben wird. Also derselbe Weg:
-      Die Angaben gehören an `City` in `core/city.ts`, mit Quelle und
-      Prüfdatum je Stadt, und `TowInfo` liest sie. Fehlt sie für eine Stadt,
-      wird der Abschnitt **nicht angezeigt** — nicht auf Berlin
-      zurückgefallen.
+      Die Angaben hängen jetzt an der Stadt (`City.towedVehicles`), mit Quelle
+      und Prüfdatum. Fehlt das Feld, **verschwindet der Abschnitt**, statt auf
+      Berlin zurückzufallen.
 
-- [x] **Ebenen ohne Daten werden ausgeblendet** — am 7. September. Vorher
-      standen alle sechs Chips da, gleich ob dahinter Daten lagen; in Hamburg
-      waren damit **fünf von sechs Schaltern Attrappen**. Ein Schalter, der
-      nichts tut, liest sich als Aussage über die Stadt („hier gibt es keine
-      Ladepunkte") statt als eine über die Daten.
+      | Stadt | Stelle | Nummer |
+      | --- | --- | --- |
+      | Berlin | Auskunfts- und Fahndungsstelle der Polizei Berlin | (030) 4664-709800 |
+      | Hamburg | Zentrale Verwahrstelle der Polizei Hamburg, Ausschläger Allee | 040 7810450 |
+      | München | Kfz-Verwahrstelle der Polizei München | 089 429301 |
+      | Frankfurt | Stadt Frankfurt am Main, Abschleppungen | **keine** |
 
-      | Stadt | Ladepunkte | Carsharing | P+R | Behindertenparkplätze | Umweltzone |
-      | --- | --- | --- | --- | --- | --- |
-      | Berlin | 385 | 83 | 108 | 923 | 1 |
-      | Hamburg | — | — | — | — | — |
-      | Frankfurt | — | — | — | 458 | — |
-      | München | 369 | 710 | 25 | 556 | 12 |
+      Frankfurt bekommt bewusst keine Nummer: Die Seite der Stadt weist
+      automatisierte Abrufe mit `403` ab, und eine Nummer aus zweiter Hand
+      einzutragen wäre genau der Fehler, den dieser Abschnitt behebt. Wer sie
+      am Bildschirm belegen kann, trägt sie nach.
 
-      Gelesen wird das **aus den geladenen Daten**, nicht aus `meta.absent`:
-      Die Liste dort ist gepflegt, die Punkte sind gezählt, und bei einem
-      Widerspruch gewinnt das Gezählte — genau die gepflegte Liste läuft
-      irgendwann weg. Solange die Daten noch nicht da sind, steht kein Chip,
-      statt dass sechs erscheinen und drei wieder verschwinden. Die
-      Kontrolldichte bleibt immer: Sie hängt an Meldungen, nicht an
-      städtischen Daten.
+      Zwei Dinge, die beim Nachschlagen auffielen und die zeigen, warum das
+      nicht aus dem Kopf geht: Hamburg hat **zwei** Verwahrstellen, und welche
+      zuständig ist, hängt am Abstellort — die amtliche Seite sagt das selbst,
+      also steht es als Zusatz dabei. Und dieselbe Seite nennt für die
+      Verwahrstelle Flughafenstraße `0711/94791-201`, eine **Stuttgarter**
+      Vorwahl. Ob Tippfehler oder Servicenummer war nicht zu klären; sie steht
+      deshalb nicht in der App.
 
-      Zwei E2E-Tests halten beide Richtungen fest — in Berlin stehen alle
-      sechs, in Hamburg nur die Kontrolldichte.
-
-      **Offen bleibt die andere Hälfte der Frage: die Daten besorgen.** Für
-      Hamburg gibt es Ladepunkte und Carsharing im Transparenzportal, für
-      Frankfurt die Ladeinfrastruktur im Geoportal. Hamburgs Umweltzone gibt
-      es nicht — die Stadt hat keine, und das ist keine Datenlücke.
+      Vier Unit-Tests halten fest, dass jede Stadt eine Stelle hat, dass die
+      Berliner Seite nur bei Berlin steht und dass jede Nummer ein Prüfdatum
+      trägt. Ein E2E-Test schaltet auf Hamburg und prüft, dass dort weder
+      „Polizei Berlin" noch eine `030`-Nummer auftaucht.
 
 - [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.
 - [x] **Drei Dependabot-PRs, die Code brauchten — alle drei erledigt** am

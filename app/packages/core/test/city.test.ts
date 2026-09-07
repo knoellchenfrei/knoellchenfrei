@@ -426,3 +426,39 @@ describe('die Lizenzangaben jeder Stadt', () => {
     }
   })
 })
+
+describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
+  // Regression: `TowInfo.tsx` nannte in allen vier Städten die Polizei Berlin
+  // — Link, Nummer und Name fest verdrahtet. Wer in München sein Auto suchte,
+  // bekam eine Berliner Telefonnummer, und das ist schlechter als gar keine
+  // Angabe: Es sieht aus wie eine Auskunft.
+  it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
+    for (const city of CITIES) {
+      const info = city.towedVehicles
+      expect(info, city.name).toBeDefined()
+      expect(info?.authority.length ?? 0, city.name).toBeGreaterThan(3)
+      expect(info?.url ?? '', city.name).toMatch(/^https:\/\//)
+    }
+    // Die Berliner Seite darf ausschließlich bei Berlin stehen.
+    const berlinerSeiten = CITIES.filter((city) => city.towedVehicles?.url.includes('berlin.de'))
+    expect(berlinerSeiten.map((city) => city.key)).toEqual(['berlin'])
+  })
+
+  it('trägt ein Prüfdatum, weil eine Nummer veraltet', () => {
+    for (const city of CITIES) {
+      expect(city.towedVehicles?.checkedOn, city.name).toMatch(/^\d{4}-\d{2}$/)
+    }
+  })
+
+  // Eine falsche Nummer kostet jemanden Zeit in einer Lage, in der er ohnehin
+  // keine hat. Wo sie sich nicht belegen liess, steht sie deshalb nicht da —
+  // Frankfurt ist der Fall.
+  it('nennt eine Nummer nur da, wo es eine gibt, und dann eine deutsche', () => {
+    for (const city of CITIES) {
+      const phone = city.towedVehicles?.phone
+      if (phone === undefined) continue
+      expect(phone, city.name).toMatch(/^[()\d][()\d\s-]{6,}$/)
+    }
+    expect(CITIES.find((city) => city.key === 'frankfurt')?.towedVehicles?.phone).toBeUndefined()
+  })
+})
