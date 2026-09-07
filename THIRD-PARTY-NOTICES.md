@@ -791,7 +791,7 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ```
 
-## maplibre-gl 6.4.0
+## maplibre-gl 6.6.0
 
 Lizenz: BSD-3-Clause
 Herkunft: https://maplibre.org/
