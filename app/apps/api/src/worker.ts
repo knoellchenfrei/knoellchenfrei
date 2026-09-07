@@ -25,6 +25,7 @@ import {
   countingWindowStart,
   isFeedbackKind,
   markFor,
+  originAllowed,
   parseTelegramUpdate,
   tidyFeedback,
   windowStart,
@@ -146,10 +147,9 @@ const VOTE_LIMIT_PER_HOUR = 40
 
 function corsHeaders(request: Request, env: Env): Record<string, string> {
   const origin = request.headers.get('Origin') ?? ''
-  const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((value) => value.trim())
   // An unset allowlist means "same-origin only": no header, so the browser
   // blocks cross-origin reads. Failing closed beats a wildcard by default.
-  if (!allowed.includes(origin)) return {}
+  if (!originAllowed(env.ALLOWED_ORIGINS, origin)) return {}
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -206,8 +206,7 @@ function rejectsCrossSite(request: Request, env: Env): Response | null {
     return json({ error: 'Content-Type: application/json required' }, { status: 415 })
   }
   const origin = request.headers.get('Origin')
-  const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((value) => value.trim())
-  if (origin !== null && !allowed.includes(origin)) {
+  if (origin !== null && !originAllowed(env.ALLOWED_ORIGINS, origin)) {
     return json({ error: 'origin not allowed' }, { status: 403 })
   }
   return null
@@ -309,11 +308,13 @@ async function serveLayer(name: string, env: Env, cors: Record<string, string>):
       throw new Error('upstream did not return a FeatureCollection')
     }
   } catch (error) {
-    return json(
-      { error: 'upstream unavailable', detail: (error as Error).message },
-      { status: 502 },
-      cors
-    )
+    // Ins Log, nicht in die Antwort (Audit-Punkt M-092). Die Meldung kommt aus
+    // fremder Hand — sie kann interne Adressen, Pfade oder den Aufbau des
+    // Dienstes nennen, und ein Aufrufer kann sie erzwingen, indem er eine
+    // Ebene anfragt, die der Behörden-WFS gerade nicht mag. `wrangler tail`
+    // zeigt sie dem Betreiber; nach außen geht der Zustand, nicht der Grund.
+    console.error(`WFS ${layer.service}/${layer.typeName}:`, (error as Error).message)
+    return json({ error: 'upstream unavailable' }, { status: 502 }, cors)
   }
 
   await env.CACHE.put(key, body, { expirationTtl: layer.ttlSeconds })

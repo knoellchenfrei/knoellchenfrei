@@ -773,11 +773,62 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
-- [ ] Bilder für die Installations-Karte neu aufnehmen, sobald die Kacheln
-      erreichbar sind: `public/screenshots/` zeigt zurzeit die App ohne
-      Hintergrundkarte, weil die Aufnahme in einer Umgebung ohne Zugang zu
-      `tile.openstreetmap.org` entstanden ist. Befehl steht im Kopf von
-      `apps/web/scripts/make-screenshots.mjs`.
+- [x] **Bilder neu aufgenommen** — am 7. September, mit Hintergrundkarte
+      (Audit-Punkt M-076). Vorher zeigten `public/screenshots/` und
+      `docs/images/` eine Karte ohne alles: erst, weil der Egress-Proxy
+      `tile.openstreetmap.org` sperrte, danach, weil der MapLibre-Worker fehlte
+      und auch die Zonen nicht gezeichnet wurden.
+
+      Ein Handgriff, der beim nächsten Mal Zeit spart: **Mit
+      `VITE_TILES_URL=https://tiles.knoellchenfrei.de/…` bauen bringt nichts.**
+      Die R2-CORS-Regel lässt nur `https://knoellchenfrei.de` zu, und die
+      Aufnahme läuft gegen `127.0.0.1` — die Kachelanfragen scheitern, und das
+      Bild sieht aus wie eine leere Karte mit Zonen darauf. Richtig ist, das
+      Archiv einmal herunterzuladen und lokal auszuliefern:
+
+      ```bash
+      curl -o /tmp/berlin.pmtiles https://tiles.knoellchenfrei.de/v<datum>/berlin.pmtiles
+      # kleiner Server mit Range-Unterstützung und Access-Control-Allow-Origin: *
+      VITE_TILES_URL=http://127.0.0.1:4190/ pnpm --filter @knoellchenfrei/web build
+      cd apps/web && node scripts/make-screenshots.mjs && node scripts/make-docs-images.mjs
+      ```
+
+      Die CORS-Regel selbst bleibt eng — sie für die Bilder aufzumachen wäre
+      der falsche Weg herum.
+- [ ] **„Auto weg?" nennt immer Berlin — auch in Hamburg, Frankfurt und
+      München.** `components/TowInfo.tsx` hat die Auskunftsstelle der Polizei
+      Berlin fest verdrahtet: Link, Nummer und den Satz „Auskunfts- und
+      Fahndungsstelle der Polizei Berlin". Wer in München steht und sein Auto
+      sucht, bekommt eine Berliner Telefonnummer — das ist schlechter als gar
+      keine Angabe, weil es wie eine Auskunft aussieht.
+
+      Das ist derselbe Fehler wie bei `seed.ts` und den Zeiten-Parsern: eine
+      Berliner Tatsache, die als allgemeine ausgegeben wird. Also derselbe Weg:
+      Die Angaben gehören an `City` in `core/city.ts`, mit Quelle und
+      Prüfdatum je Stadt, und `TowInfo` liest sie. Fehlt sie für eine Stadt,
+      wird der Abschnitt **nicht angezeigt** — nicht auf Berlin
+      zurückgefallen.
+
+- [ ] **Ebenen ohne Daten ausblenden — oder die Daten besorgen.** Nachgemessen
+      am 7. September in `public/data/<stadt>/`:
+
+      | Stadt | Ladepunkte | Carsharing | P+R | Behindertenparkplätze | Umweltzone |
+      | --- | --- | --- | --- | --- | --- |
+      | Berlin | 385 | 83 | 108 | 923 | 1 |
+      | Hamburg | — | — | — | — | — |
+      | Frankfurt | — | — | — | 458 | — |
+      | München | 369 | 710 | 25 | 556 | 12 |
+
+      Hamburg hat **keinen einzigen** POI, Frankfurt nur die
+      Behindertenparkplätze — die Ebenen-Chips stehen trotzdem da und schalten
+      dann etwas ein, das leer ist. Zwei Wege, und der zweite ist der bessere,
+      wo er geht: entweder den Chip ausblenden, solange die Stadt nichts
+      liefert, oder die Quelle nachtragen (Hamburgs Umweltzone gibt es nicht —
+      die Stadt hat keine —, Ladepunkte und Carsharing stehen im Transparenz-
+      portal, Frankfurts Ladeinfrastruktur im Geoportal). Was **nicht** geht,
+      ist ein Schalter, der nichts tut und dabei aussieht, als wäre in dieser
+      Stadt nichts vorhanden.
+
 - [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.
 - [x] **Drei Dependabot-PRs, die Code brauchten — alle drei erledigt** am
       6. September, mit 105 grünen E2E-Tests. Die Ursachen, als Historie:

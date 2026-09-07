@@ -38,3 +38,23 @@ packages:
 # liefert `undefined`). Mit dem Sprung auf 11 gehört diese Zeile geprüft.
 minimumReleaseAgeExclude:
   - '*'
+
+# Was beim ersten `pnpm install` als Warnung erscheint — und warum es so
+# bleibt.
+#
+# pnpm 10 führt Installations-Skripte von Abhängigkeiten **nicht** aus, solange
+# sie nicht ausdrücklich freigegeben sind. Der frische Klon meldet deshalb
+# „Ignored build scripts: esbuild, workerd. Run `pnpm approve-builds` to pick
+# which dependencies should be allowed to run scripts." Das sieht nach einem
+# halben Install aus und ist keiner: Beide Pakete laden in ihrem Skript nur ihr
+# passendes Binary herunter, und beide finden es auch ohne — `esbuild` über
+# seine plattformspezifischen Unterpakete, `workerd` genauso. Gemessen: Build,
+# Tests und `wrangler dev` laufen.
+#
+# Eintragen statt freigeben ist die Entscheidung: Ein Installations-Skript ist
+# der bequemste Weg, über eine kompromittierte Abhängigkeit Code auf dem
+# Entwicklerrechner auszuführen. Solange nichts fehlt, bleibt es aus (der
+# Audit-Punkt dazu ist M-099, „nirgends erklärt" — nicht „falsch").
+ignoredBuiltDependencies:
+  - esbuild
+  - workerd

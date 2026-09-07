@@ -20,7 +20,14 @@ verbindliche Liste, nicht dieser Absatz.
 
 ## Befehle
 
+**Alles hier läuft aus `app/`, nicht aus dem Wurzelverzeichnis.** Das ist kein
+Stil, sondern eine Falle: Im Wurzelverzeichnis gibt es absichtlich keine
+`package.json` und keine `pnpm-workspace.yaml`, und `pnpm install` **legt sich
+die zweite selbst an** — von da an findet pnpm von hier aus den falschen
+Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
+
 ```bash
+cd app
 pnpm -r typecheck                                   # alles, streng
 pnpm --filter @knoellchenfrei/core test                # 500 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
@@ -29,14 +36,14 @@ pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 132 End-to-End-Tests
 ```
 
-`pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
+`pnpm test` in `app/` läuft über alle Pakete, aber nur `core` hat
 Tests. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
 ab und scheitert — nicht der Code ist kaputt, der Aufruf ist falsch.
 
 Erzeugte Dateien, nur bei Bedarf neu bauen:
 
 ```bash
-cd apps/web
+cd app/apps/web
 node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quelle
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
@@ -53,7 +60,7 @@ Diese kosten sonst je eine halbe Stunde Fehlersuche:
 | | |
 | --- | --- |
 | **Playwright** | Der vorinstallierte Chromium passt nicht zur erwarteten Build-Nummer. Immer mit `PLAYWRIGHT_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome` aufrufen (die Nummer kann sich ändern, `ls /opt/pw-browsers`). Die Skripte oben lesen dieselbe Variable. |
-| **Kartenkacheln** | Der Egress-Proxy hat `tile.openstreetmap.org` zeitweise gesperrt; seit dem 6. September 2026 ist er offen. Was bleibt: Bilder in `public/screenshots/` und `docs/images/` sind noch ohne Hintergrundkarte aufgenommen. |
+| **Kartenkacheln** | Der Egress-Proxy hat `tile.openstreetmap.org` zeitweise gesperrt; seit dem 6. September 2026 ist er offen. Die Bilder in `public/screenshots/` und `docs/images/` sind seit dem 7. September mit Karte aufgenommen — mit dem **eigenen Vektorarchiv**, lokal ausgeliefert. Direkt gegen `tiles.knoellchenfrei.de` zu bauen geht nicht: Die R2-CORS-Regel lässt nur `https://knoellchenfrei.de` zu, die Aufnahme läuft gegen `127.0.0.1`, und das Ergebnis sieht aus wie eine leere Karte statt wie ein Fehler. Der Weg steht in `docs/todo.md`. |
 | **Node und der Proxy** | Node ist hier anders als curl: Sein `fetch` ignoriert `HTTPS_PROXY`. Direkt hinaus antwortet `geodienste.hamburg.de` mit **403** — kein Netzwerkfehler, keine TLS-Meldung, nur ein Verbot, das nach einer Sperre der Behörde aussieht. Abhilfe: `NODE_USE_ENV_PROXY=1`, das `fetch-data`-Skript setzt es. Für curl gilt umgekehrt: `gdi.berlin.de` braucht `--cacert $(python3 -c 'import certifi; print(certifi.where())')`, weil dem System-Bundle die Telekom-Wurzel fehlt. |
 | **`pnpm fetch`** | Ist ein **eingebautes pnpm-Kommando** und lief still statt des Projektskripts. Das Skript heißt deshalb `fetch-data`. |
 | **Artifact** | Die Sicherheitsrichtlinie des Artifact-Sandkastens blockiert **jede** Bildanfrage an fremde Adressen. Im veröffentlichten Artifact gibt es prinzipiell keine Hintergrundkarte. Auch das ist kein Fehler. |
@@ -97,8 +104,10 @@ wiederholt.
   Hamburg-Instanz mit einem Tippfehler in der Konfiguration würde Berliner
   Grenzen anlegen und jede Hamburger Meldung mit „position outside" abweisen —
   im Log stünde nichts, was nach einem Fehler aussieht. Der einzige erlaubte
-  Rückfall ist eine *fehlende* Angabe: Ohne `VITE_CITY` bzw. `CITY` bleibt es
-  Berlin, weil das die Stadt ist, die heute ausgeliefert wird.
+  Rückfall ist eine *fehlende* Angabe: Ohne `VITE_CITY` bleibt es Berlin, weil
+  das die Stadt ist, die heute ausgeliefert wird. Im Worker gibt es dafür seit
+  dem 6. September **keine** Variable mehr — er liest die Stadt aus der
+  Anfrage, weil eine Instanz alle vier bedient.
 - **Stadtgrenzen stehen genau einmal, in `core/city.ts`.** Sie standen vorher
   an sechs Stellen als Zahlenpaar — im Browser-Speicher zweimal, beim Merken des
   Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,

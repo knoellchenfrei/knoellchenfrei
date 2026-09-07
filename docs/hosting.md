@@ -242,9 +242,29 @@ pnpm --filter @knoellchenfrei/api exec wrangler d1 create knoellchenfrei --locat
 pnpm --filter @knoellchenfrei/api exec wrangler d1 create knoellchenfrei --jurisdiction eu # verbindlich, DSGVO
 ```
 
-`--jurisdiction eu` ist die stärkere Zusage: Sie **beschränkt** Ausführung und
-Speicherung auf die EU, und ein gesetzter `--location`-Hinweis wird dann
-ignoriert. Für alles, was über eine Demo hinausgeht, ist das die richtige Wahl.
+`--jurisdiction eu` ist die stärkere Zusage: Sie **beschränkt** Speicherung und
+Abfrage **dieser Datenbank** auf die EU, und ein gesetzter `--location`-Hinweis
+wird dann ignoriert. Für alles, was über eine Demo hinausgeht, ist das die
+richtige Wahl.
+
+**Sie gilt aber nur für D1 — nicht für den Rest.** Das war hier zu weit
+formuliert (Audit-Punkt M-055), und es ist der Unterschied, auf den es in einer
+Datenschutzerklärung ankommt:
+
+| | Wo |
+| --- | --- |
+| D1 `knoellchenfrei` | EU, verbindlich durch `--jurisdiction eu` |
+| KV-Namespace `CACHE` | **weltweit repliziert** — Cloudflare kennt für KV keine Jurisdiktionsbindung |
+| Ausführung des Workers | **am nächstgelegenen Rand-Knoten**, also dort, wo der Aufrufer sitzt |
+| Pages, R2-Kachelarchiv | Auslieferung über dasselbe weltweite Netz |
+
+Warum das trotzdem trägt: Im KV liegen ausschließlich zwischengespeicherte
+**Behördendaten** — Parkzonen aus offenen WFS, nichts Personenbezogenes. Und der
+Worker verarbeitet am Rand zwar eine IP-Adresse, schreibt sie aber nie: Was in
+die Datenbank geht, ist der gesalzene Hash aus `clientHash`, und der entsteht
+vor dem Schreiben. Die eine Stelle mit personenbezogenem Bezug ist damit
+tatsächlich in der EU. Was hier nicht steht, wäre eine Zusage, die niemand
+halten kann.
 
 ### Einrichten
 

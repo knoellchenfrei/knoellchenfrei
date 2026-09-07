@@ -1,7 +1,13 @@
 <title>Nachtschicht und Tagwerk</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=JetBrains+Mono:wght@400;600&display=swap">
+<!--
+  Keine Web-Schriften. Der Bericht lud Archivo, Newsreader und JetBrains Mono
+  von fonts.googleapis.com und fonts.gstatic.com — damit ging die IP-Adresse
+  jedes Lesers an Google, und zwar in einem Dokument, das dem Projekt gerade
+  Datensparsamkeit bescheinigt (Audit-Punkt M-018). Ein Bericht, der eine
+  Regel aufstellt und sie im selben Atemzug bricht, ist der schlechteste Ort
+  für eine Ausnahme. Es bleiben die Schriften des Systems; die Stapel darunter
+  sind dieselben, die vorher als Rückfall dastanden.
+-->
 <style>
   :root {
     --ground: #eef2f4;
@@ -51,7 +57,7 @@
   body {
     background: var(--ground);
     color: var(--ink);
-    font-family: Newsreader, Georgia, "Times New Roman", serif;
+    font-family: Georgia, "Times New Roman", serif;
     font-size: 18px;
     line-height: 1.62;
     -webkit-font-smoothing: antialiased;
@@ -59,8 +65,8 @@
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px 96px; }
   .col { max-width: 66ch; }
 
-  h1, h2, h3, .ui { font-family: Archivo, "Helvetica Neue", Arial, sans-serif; }
-  .mono, td.t, .fig-n, .chip, code { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  h1, h2, h3, .ui { font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  .mono, td.t, .fig-n, .chip, code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   code { font-size: .86em; background: var(--surface-2); padding: .1em .34em; border-radius: 3px; }
   a { color: var(--sign); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:focus-visible { outline: 2px solid var(--sign); outline-offset: 3px; border-radius: 2px; }
@@ -71,11 +77,11 @@
     display: inline-flex; align-items: center; justify-content: center;
     width: 40px; height: 40px; border-radius: 5px;
     background: var(--sign); color: var(--sign-ink);
-    font-family: Archivo, sans-serif; font-weight: 700; font-size: 26px;
+    font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-weight: 700; font-size: 26px;
     line-height: 1; letter-spacing: -.02em;
   }
   .eyebrow {
-    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px;
     letter-spacing: .14em; text-transform: uppercase; color: var(--faint);
     margin-top: 22px;
   }
@@ -100,7 +106,7 @@
     font-variant-numeric: tabular-nums; line-height: 1.1;
   }
   .fig-l {
-    font-family: Archivo, sans-serif; font-size: 12px; font-weight: 600;
+    font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 12px; font-weight: 600;
     letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
     margin-top: 6px;
   }
@@ -125,15 +131,15 @@
   .scroll { overflow-x: auto; margin: 22px 0; }
   table { border-collapse: collapse; width: 100%; font-size: 16.5px; }
   th {
-    font-family: Archivo, sans-serif; font-size: 11.5px; font-weight: 600;
+    font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 11.5px; font-weight: 600;
     letter-spacing: .1em; text-transform: uppercase; color: var(--faint);
     text-align: left; padding: 0 16px 10px 0; white-space: nowrap;
     border-bottom: 1px solid var(--rule);
   }
   td { padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   td.t { white-space: nowrap; font-size: 14px; color: var(--faint); font-variant-numeric: tabular-nums; }
-  td.k { font-family: Archivo, sans-serif; font-weight: 600; font-size: 15.5px; white-space: nowrap; }
-  td.n { font-family: "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.k { font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: 15.5px; white-space: nowrap; }
+  td.n { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
   tr:last-child td { border-bottom: 0; }
 
   .chip {
@@ -153,11 +159,11 @@
     padding: 11px 0; border-bottom: 1px solid var(--rule); align-items: baseline;
   }
   .row .time {
-    font-family: "JetBrains Mono", monospace; font-size: 13.5px; color: var(--faint);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13.5px; color: var(--faint);
     font-variant-numeric: tabular-nums;
   }
   .row .what { font-size: 17px; text-wrap: pretty; }
-  .row.mark-row .what { font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
+  .row.mark-row .what { font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
   .row.mark-row { background: var(--surface-2); }
   .row.mark-row .time, .row.mark-row .what { padding-left: 0; }
   .row.mark-row { padding-left: 10px; padding-right: 10px; margin-left: -10px; margin-right: -10px; }
@@ -169,7 +175,7 @@
   }
   .note p:last-child { margin-bottom: 0; }
   .note .lbl {
-    font-family: Archivo, sans-serif; font-size: 11.5px; font-weight: 600;
+    font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 11.5px; font-weight: 600;
     letter-spacing: .12em; text-transform: uppercase; color: var(--sign);
     display: block; margin-bottom: 8px;
   }
@@ -179,7 +185,7 @@
   li::marker { color: var(--faint); }
 
   .quotes {
-    font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.9;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.9;
     background: var(--surface); border: 1px solid var(--rule); border-radius: 7px;
     padding: 16px 18px; overflow-x: auto; white-space: pre; color: var(--muted);
     margin: 20px 0;

@@ -117,11 +117,11 @@ jobs:
       - name: Bekannte Schwachstellen in Abhängigkeiten
         run: pnpm audit --audit-level moderate
 
-      - name: Keine offensichtlichen Secrets im ausgelieferten Bundle
+      # Das Skript prueft sich vor jedem Lauf selbst: Es legt erfundene
+      # Geheimnisse an und bricht ab, wenn seine eigenen Muster die nicht
+      # finden. Eine Pruefung, die nie anschlaegt, ist von einer kaputten
+      # nicht zu unterscheiden — Audit-Punkt M-091.
+      - name: Keine Secrets im ausgelieferten Bundle
         run: |
           pnpm --filter @knoellchenfrei/web build
-          if grep -rIiE '(api[_-]?key|secret|password|token)["'"'"']?\s*[:=]\s*["'"'"'][A-Za-z0-9_\-]{16,}' apps/web/dist/assets/ ; then
-            echo "::error::Mögliches Secret im Bundle gefunden"
-            exit 1
-          fi
-          echo "Keine Treffer."
+          ../scripts/geheimnisse-pruefen.sh

@@ -1,6 +1,7 @@
 export * from './berlin-time.js'
 export * from './beta-gate.js'
 export * from './city.js'
+export * from './cors.js'
 export * from './feedback.js'
 export * from './frankfurt.js'
 export * from './geo.js'
