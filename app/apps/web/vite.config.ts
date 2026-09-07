@@ -211,6 +211,33 @@ function securityHeaders(singleBundle: boolean): Plugin {
   }
 }
 
+/**
+ * Hält den Build an, wenn `VITE_TILES_URL` noch auf eine **Datei** zeigt.
+ *
+ * Bis zum 7. September war das die richtige Form. Seit die App vier Städte
+ * kennt, ist es die falsche: Der eine Pfad landete unabhängig von der
+ * geladenen Stadt im Kartenstil, und in drei von vier Städten blieb der
+ * Hintergrund leer — ohne Fehlermeldung, weil eine leere Karte wie eine noch
+ * ladende aussieht.
+ *
+ * Deshalb hier und nicht zur Laufzeit: Ein Build, der mit dem alten Wert
+ * durchläuft, liefert eine App aus, die für drei Städte kaputt ist. Ein Build,
+ * der anhält, kostet eine Minute.
+ */
+function pruefeKachelAdresse(): void {
+  const wert = (process.env.VITE_TILES_URL ?? '').trim()
+  if (wert === '') return
+  if (/\.pmtiles$/i.test(wert)) {
+    throw new Error(
+      `VITE_TILES_URL zeigt auf eine Datei: ${wert}\n` +
+        'Seit vier Staedten muss die Variable auf das VERZEICHNIS zeigen, in dem\n' +
+        'die Archive liegen — die App haengt <stadt>.pmtiles selbst an. Also z. B.\n' +
+        '  https://tiles.knoellchenfrei.de/v20260904/\n' +
+        'Mit dem alten Wert bliebe die Karte in drei von vier Staedten leer.',
+    )
+  }
+}
+
 // The artifact build must produce ONE module: a published artifact runs under a
 // CSP that blocks external requests, so a second chunk pulled in by an ES import
 // would simply fail to load.
@@ -218,6 +245,8 @@ const singleBundle = process.env.BUILD_TARGET === 'artifact'
 
 // Voreinstellung ist die Beta. Zum Start: PUBLIC_LAUNCH=1 pnpm build
 const beta = process.env.PUBLIC_LAUNCH !== '1'
+
+pruefeKachelAdresse()
 
 export default defineConfig({
   plugins: [

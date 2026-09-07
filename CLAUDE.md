@@ -43,7 +43,7 @@ node scripts/make-docs-images.mjs                   # Bilder für README und Dok
 cd ../../packages/ingest
 TEST_COUNT=500 E2E_COUNT=130 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
-scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
+scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
 
 ## Eigenheiten der Umgebung
@@ -363,6 +363,18 @@ wiederholt.
   own report" auf — geprüft wurde es nie (Audit-Punkt M-047). Eine selbst
   bestätigte Meldung sieht für jeden anderen aus wie eine von zwei Leuten
   bestätigte, und genau diese Zahl trägt die Konfidenz.
+- **`VITE_TILES_URL` zeigt auf ein Verzeichnis, nie auf eine Datei.** Bis zum
+  7. September stand dort `…/v20260904/berlin.pmtiles`, und dieser eine Pfad
+  landete unabhängig von der geladenen Stadt im Kartenstil. In Hamburg,
+  Frankfurt und München lag der Ausschnitt damit außerhalb des Archivs: Der
+  Hintergrund blieb leer, und zwar so, dass es nach „lädt noch" aussah statt
+  nach einem Fehler — **eine gesetzte Variable war schlechter als keine**, weil
+  ohne sie die Rasterkacheln von OpenStreetMap eingesprungen wären. Die App
+  hängt `<stadt>.pmtiles` jetzt selbst an, und `vite.config.ts` bricht den
+  Build ab, wenn der Wert auf `.pmtiles` endet. Die Rahmen der Ausschnitte
+  kommen aus `core/city.ts` — im Skript standen sie als zweite Kopie von
+  Berlins `reportBounds`, und mit vier Städten wären es acht Zahlen geworden,
+  die auseinanderlaufen können.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

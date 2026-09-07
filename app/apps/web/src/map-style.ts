@@ -1,5 +1,7 @@
 import type { LayerSpecification, StyleSpecification } from 'maplibre-gl'
 
+import { CITY } from './city.js'
+
 /**
  * Der Kartenhintergrund — in drei Ausbaustufen.
  *
@@ -21,17 +23,35 @@ import type { LayerSpecification, StyleSpecification } from 'maplibre-gl'
  */
 
 /**
- * Zur Bauzeit gesetzt, z. B. `https://tiles.knoellchenfrei.de/berlin.pmtiles`.
+ * Zur Bauzeit gesetzt — das **Verzeichnis** mit den Archiven, nicht eine Datei:
+ * `https://tiles.knoellchenfrei.de/v20260904/`.
  *
- * Bewusst ohne Hilfsfunktion: Vite ersetzt den Ausdruck durch eine Konstante,
- * und nur dann kann der Bündler den ganzen Vektor-Zweig samt PMTiles-Leser
- * herauswerfen, wenn keine eigenen Kacheln eingerichtet sind.
+ * Bis zum 7. September zeigte die Variable auf `…/berlin.pmtiles`, und dieser
+ * eine Pfad landete unabhängig von der geladenen Stadt im Stil. In Hamburg,
+ * Frankfurt und München lag der Kartenausschnitt damit außerhalb des Archivs:
+ * Der Hintergrund blieb leer, und zwar so, dass es nach „noch nicht geladen"
+ * aussah statt nach einem Fehler. Ohne die Variable wäre es sogar richtig
+ * gewesen, weil die App dann auf Rasterkacheln zurückfällt — eine gesetzte
+ * Variable war schlechter als keine.
+ *
+ * Ein Wert, der noch auf eine Datei zeigt, hält jetzt den **Build** an; die
+ * Prüfung steht in `vite.config.ts`. Ein stiller Rückfall auf Berlin wäre die
+ * schlechteste Antwort, aus demselben Grund wie bei `cityByKey`.
+ *
+ * Bewusst ohne Hilfsfunktion beim Lesen: Vite ersetzt den Ausdruck durch eine
+ * Konstante, und nur dann kann der Bündler den ganzen Vektor-Zweig samt
+ * PMTiles-Leser herauswerfen, wenn keine eigenen Kacheln eingerichtet sind.
  */
 const RAW_TILES_URL = import.meta.env.VITE_TILES_URL
-export const TILES_URL: string | undefined =
+export const TILES_BASE: string | undefined =
   typeof RAW_TILES_URL === 'string' && RAW_TILES_URL.trim().length > 0
-    ? RAW_TILES_URL.trim()
+    ? RAW_TILES_URL.trim().replace(/\/*$/, '/')
     : undefined
+
+/** Das Archiv einer Stadt: `<verzeichnis>/<schlüssel>.pmtiles`. */
+export function tilesUrlFor(cityKey: string): string | undefined {
+  return TILES_BASE === undefined ? undefined : `${TILES_BASE}${cityKey}.pmtiles`
+}
 
 /**
  * Die Ebenen des Vektor-Themes — nachgereicht, nicht importiert.
@@ -92,7 +112,8 @@ export function baseStyle(withTiles: boolean): StyleSpecification {
 
   // Beides oder keins: Ohne die nachgeladenen Ebenen ergäbe der Vektorstil eine
   // leere Karte, und dann sind die Rasterkacheln das bessere Ergebnis.
-  if (TILES_URL !== undefined && vectorLayers !== null) return vectorStyle(TILES_URL)
+  const archiv = tilesUrlFor(CITY.key)
+  if (archiv !== undefined && vectorLayers !== null) return vectorStyle(archiv)
 
   return {
     version: 8,

@@ -128,31 +128,33 @@ ist der einzige kritische Befund des ganzen Berichts (M-001).
 
 Alles andere ist Code, Konfiguration oder ein paar Tage Daten.
 
-## Was beim Prüfen im Weg steht
+## Zwei Zugangsdaten, und sie können Verschiedenes
 
-Am 7. September gemessen, und es ist genau die Sorte Falle, die man im
-Ernstfall nicht sucht: **Es gibt zwei Zugangsdaten, und beide können die
-wichtigste Frage nicht beantworten.**
+Am 7. September gemessen, und es ist die Sorte Falle, die man im Ernstfall
+nicht sucht:
 
 | Schlüssel | Wo | Kann | Kann nicht |
 | --- | --- | --- | --- |
-| `CLOUDFLARE_API_TOKEN` in der Umgebung, Präfix `cfat_` | aus `wrangler login` | Pages, Worker, Secrets | DNS; `d1 list`; `kv namespace list` |
-| `~/.knoellchenfrei-cf-token`, Präfix `cfut_` | echter API-Token | DNS, Zonen | D1, KV |
+| `~/.knoellchenfrei-cf-token`, Präfix `cfut_` | echter API-Token, den `einrichten.sh` benutzt | DNS, Zonen, D1, KV, R2, Memberships | Workers Scripts, Pages — braucht er nicht |
+| `CLOUDFLARE_API_TOKEN` in der Shell, Präfix `cfat_` | aus `wrangler login` | Pages, Worker, Secrets | DNS, D1, KV |
 
-Der erste ist **kein API-Token**, sondern ein OAuth-Token:
+Der zweite ist **kein API-Token**, sondern ein OAuth-Token:
 `/user/tokens/verify` antwortet darauf `Invalid API Token`, während Zonen- und
 Pages-Abrufe funktionieren. Eine Rechteänderung im Dashboard geht an ihm
-vorbei — sie betrifft den anderen.
+vorbei — sie betrifft den anderen. Wer etwas an DNS, D1, KV oder R2 tut,
+exportiert vorher den Token aus der Datei:
 
-Und beide scheitern an `wrangler d1 list`, weil wrangler dafür erst die Konten
-aufzählt und `User → Memberships → Read` verlangt. Deshalb sagt
-`./scripts/einrichten.sh --pruefen cloudflare` heute *„ob es sie gibt, war
-nicht zu prüfen"* statt *„weg"* — die ehrliche Antwort, aber eben auch keine.
+```bash
+export CLOUDFLARE_API_TOKEN="$(tr -d '\n' < ~/.knoellchenfrei-cf-token)"
+```
 
-**Für einen belastbaren Wiederanlauf-Test fehlt ein Token mit Leserechten:**
-`D1:Read`, `Workers KV Storage:Read` und `User → Memberships → Read`. Ohne das
-lässt sich „meine Datenbank existiert noch" nicht prüfen, und genau das ist die
-Frage, mit der ein Ernstfall anfängt.
+`User → Memberships → Read` ist dabei das Recht mit der größten Hebelwirkung:
+Ohne es brechen **alle** wrangler-Listenbefehle ab, bevor sie überhaupt fragen
+— `d1 list`, `kv namespace list`, `r2 bucket cors list`. Die Fehlermeldung
+nennt dann D1 oder KV und führt damit von der Ursache weg.
+
+Der **CI-Token** ist ein dritter und bleibt eng: *Workers Scripts:Edit* und
+*Cloudflare Pages:Edit*, mehr nicht. Er rollt nur aus.
 
 ## Was ungeprüft ist
 
@@ -162,7 +164,8 @@ Ehrlichkeit an der Stelle, an der sie am meisten wert ist:
   einmal gegen ein leeres Konto (6. September) und meldete dabei acht Dinge
   falsch. Gegen ein *verlorenes* Konto lief es nie.
 - **Es gibt noch keine Sicherung.** `./scripts/sichern.sh --pruefen` sagt das
-  auch. Der erste Lauf braucht ein Token mit `D1:Edit`.
+  auch. Seit dem 7. September hat der Betreiber-Token `D1:Edit`, der erste Lauf
+  ist also nur noch ein Befehl.
 - **Ein Zurückspielen ist nie erprobt worden.** Der Weg oben ist hergeleitet,
   nicht gemessen. Ein Probelauf gegen eine Wegwerf-Datenbank wäre eine halbe
   Stunde und die einzige Art, das zu ändern.

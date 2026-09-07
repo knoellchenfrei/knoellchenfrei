@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App.js'
 import { ErrorBoundary } from './components/ErrorBoundary.js'
 import { registerServiceWorker, startInstallWatch } from './pwa.js'
-import { installVectorBasemap, TILES_URL } from './map-style.js'
+import { installVectorBasemap, TILES_BASE } from './map-style.js'
 // MapLibre's stylesheet must come first: it sets `.maplibregl-map { position:
 // relative }`, which has the same specificity as our `.map` rule and would
 // otherwise win on order and collapse the map container to zero height.
@@ -21,7 +21,7 @@ startInstallWatch()
 // ersten Karte angemeldet, scheitert deren Stil bereits am unbekannten Schema.
 // Nachgeladen statt fest eingebunden, damit der Leser nicht im Bündel liegt,
 // wo er nie gebraucht wird.
-if (TILES_URL !== undefined) {
+if (TILES_BASE !== undefined) {
   // Abgewartet, nicht nebenher: Entstünde die Karte vor der Anmeldung,
   // scheiterte ihr Stil am unbekannten Schema `pmtiles://` — und zwar
   // sporadisch, je nachdem wer schneller ist.

@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "build-artifact": "tsx src/build-artifact.ts",
     "build-badges": "tsx src/build-badges.ts",
-    "build-notices": "tsx src/build-notices.ts"
+    "build-notices": "tsx src/build-notices.ts",
+    "city-bbox": "tsx src/city-bbox.ts"
   },
   "dependencies": {
     "@knoellchenfrei/core": "workspace:*"

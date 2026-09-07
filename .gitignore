@@ -39,3 +39,6 @@ pnpm-lock.yaml
 # Client-Hashes und Freitext-Rueckmeldungen — verschluesselt, aber ein
 # Repository ist trotzdem der falsche Ort dafuer.
 sicherungen/
+
+# Lokal gebaute PMTiles-Archive (hunderte MB, gehoeren nach R2)
+app/packages/ingest/.kacheln/

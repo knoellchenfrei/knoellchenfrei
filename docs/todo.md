@@ -421,20 +421,6 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
       hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
       Das war Audit-Punkt M-031.
-- [ ] **R2-CORS neu anwenden** — die Regeldatei ist geändert, der Eimer noch
-      nicht. `app/apps/api/r2-cors.json` erlaubte `localhost` am Produktiv-Eimer
-      (Audit-Punkt M-050); die Zeilen sind raus, aber das Anwenden scheiterte
-      an derselben Grenze wie die Ressourcenprüfung: `wrangler r2 bucket cors`
-      zählt erst die Konten auf und verlangt dafür `User → Memberships → Read`.
-
-      ```bash
-      cd app && pnpm --filter @knoellchenfrei/api exec wrangler \
-        r2 bucket cors set knoellchenfrei-tiles --file apps/api/r2-cors.json
-      ```
-
-      Geht mit demselben Token, das auch [den Wiederanlauf prüfbar
-      macht](#) — siehe den Punkt „Ein Token, das lesen darf".
-
 - [x] **Lizenzen aufgeräumt** — am 7. September, Audit-Punkte M-021, M-023,
       M-058 und M-016. `LICENSE` ist wieder reines MIT (der deutsche
       Datenanhang liess GitHub `NOASSERTION` melden), die Datenlizenzen aller
@@ -455,58 +441,51 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Ressourcen zu halten; [notfall.md](notfall.md) sagt, was läuft, was bei
       Verlust weg ist (`feedback` und `marks` — beides nicht ersetzbar) und in
       welcher Reihenfolge es zurückkommt.
-- [ ] **Ein Token, das lesen darf** — sonst bleibt der Wiederanlauf ungeprüft.
-      Gemessen am 7. September: **Keiner der beiden vorhandenen Schlüssel kann
-      beantworten, ob die Datenbank noch existiert.** Der in der Umgebung
-      (`cfat_`) ist das OAuth-Token aus `wrangler login` und kennt kein DNS;
-      der in `~/.knoellchenfrei-cf-token` (`cfut_`) kennt DNS, aber kein D1 und
-      kein KV. Und `wrangler d1 list` scheitert bei beiden schon davor, weil es
-      erst die Konten aufzählt.
+- [x] **Der Betreiber-Token darf lesen** — am 7. September erweitert um
+      `User → Memberships → Read`, `D1` und `Workers KV Storage`. Damit
+      beantwortet `./scripts/einrichten.sh --pruefen cloudflare` die Frage, mit
+      der ein Ernstfall anfängt: *„KV und D1 stehen in wrangler.toml — und
+      dieses Konto kennt beide."* Vorher stand dort „war nicht zu prüfen".
+      Die R2-CORS-Regel ohne `localhost` ist damit auch angewendet (M-050).
 
-      Nötig sind, an einem Token: **`D1:Read`**, **`Workers KV Storage:Read`**
-      und **`User → Memberships → Read`**. Danach sagt
-      `./scripts/einrichten.sh --pruefen cloudflare` statt „war nicht zu
-      prüfen" eine Antwort — und das ist die Frage, mit der ein Ernstfall
-      anfängt.
 - [ ] **Einmal wirklich zurückspielen.** Der Weg in [notfall.md](notfall.md)
       ist hergeleitet, nicht gemessen — dieselbe Lage wie beim
       Einrichtungsskript vor dem 6. September, und das meldete beim ersten
       echten Lauf acht Dinge falsch. Eine halbe Stunde gegen eine
       Wegwerf-Datenbank: sichern, neue D1 anlegen, einspielen, App dagegen
       laufen lassen.
-- [ ] **Kacheln gibt es nur für Berlin — in drei Städten ist die Karte leer.**
-      Gemessen am 7. September: `tiles.knoellchenfrei.de/v20260904/berlin.pmtiles`
-      antwortet `206`, die Adresse und der DNS-Eintrag sind also in Ordnung.
-      Der Fehler liegt eine Ebene höher: Die Repository-Variable
-      `VITE_TILES_URL` zeigt auf **eine Datei**, und `map-style.ts` hängt genau
-      diese als `pmtiles://` in den Stil — unabhängig davon, welche Stadt
-      geladen ist. In Hamburg, Frankfurt und München liegt der Kartenausschnitt
-      damit außerhalb des Archivs, und der Hintergrund bleibt leer. Ohne
-      `VITE_TILES_URL` fiele es auf die Rasterkacheln von OpenStreetMap zurück
-      und sähe richtig aus — mit gesetzter Variable ist es kaputt.
+- [x] **Kacheln für alle vier Städte** — am 7. September gebaut und
+      ausgeliefert. Der Fehler lag nicht bei DNS oder R2 (`206` auf den
+      Range-Request, die Adresse stimmte immer), sondern eine Ebene höher:
+      `VITE_TILES_URL` zeigte auf **eine Datei**, und `map-style.ts` hängte
+      genau die in den Stil — unabhängig von der geladenen Stadt.
 
-      Vier Schritte, und der dritte ist der, der die Bauart ändert:
+      Drei Änderungen: Die Rahmen kommen jetzt aus `core/city.ts` statt als
+      zweite Zahlenreihe im Skript (das war zugleich Audit-Punkt M-034);
+      `build-tiles.sh` baut und lädt ein Archiv je Stadt nach
+      `v<datum>/<stadt>.pmtiles`; die Variable zeigt auf das **Verzeichnis**,
+      und die App hängt `<stadt>.pmtiles` selbst an. Ein Wert, der noch auf
+      eine Datei zeigt, hält den Build an — ein stiller Rückfall auf Berlin
+      wäre die schlechteste Antwort.
 
-      1. `packages/ingest/scripts/build-tiles.sh` schneidet heute eine feste
-         `BBOX="13.0,52.3,13.8,52.7"` und schreibt `berlin.pmtiles`. Beides
-         gehört aus `core/city.ts` abgeleitet — die `reportBounds` stehen dort
-         schon, und der Kommentar im Skript sagt selbst, dass eine zweite
-         Zahlenreihe eine Fehlerquelle ohne Nutzen wäre.
-      2. Je Stadt ein Archiv, `\<stadt\>.pmtiles`, in denselben Ordner
-         `v\<datum\>/` hochladen.
-      3. `VITE_TILES_URL` muss vom Dateinamen auf das **Verzeichnis** wechseln
-         (`…/v20260904/`), und `map-style.ts` hängt `${CITY.key}.pmtiles` an.
-         Das ist der eigentliche Umbau; die Variable ist heute falsch
-         geschnitten, nicht nur falsch belegt.
-      4. Automatisieren: Protomaps' Tagesarchive verfallen (siehe CLAUDE.md),
-         das Bauen dauert Minuten und braucht `pmtiles` lokal. Ein Workflow
-         nach Zeitplan, der baut, hochlädt und die Variable auf den neuen
-         Ordner setzt, wäre der ehrliche Weg — mit einem Halt, wenn ein
-         Stadtarchiv fehlt, statt es still auszulassen.
+      | Stadt | Archiv |
+      | --- | --- |
+      | Berlin | 89 MB |
+      | Hamburg | 65 MB |
+      | Frankfurt am Main | 32 MB |
+      | München | 32 MB |
 
-      Bis dahin ist die stillste Variante die richtige: **Solange nicht alle
-      vier Städte ein Archiv haben, ist eine gesetzte `VITE_TILES_URL`
-      schlechter als keine.**
+- [ ] **Der Kachelbau läuft von Hand.** Protomaps' Tagesarchive verfallen nach
+      wenigen Tagen (siehe CLAUDE.md), der Bau dauert Minuten und braucht
+      `pmtiles` lokal — deshalb steht er nicht im Deploy. Für den Dauerbetrieb
+      wäre ein Workflow nach Zeitplan richtig, der baut, hochlädt und
+      `VITE_TILES_URL` auf den neuen Ordner setzt. Zwei Bedingungen dafür: Er
+      braucht einen Token mit R2-Schreibrecht im CI (heute hat der CI-Token
+      bewusst nur zwei Rechte), und er muss **anhalten**, wenn ein Stadtarchiv
+      fehlt, statt es auszulassen — sonst ist genau der Fehler wieder da, der
+      gerade behoben wurde. Die alten Ordner `v<datum>/` bleiben liegen und
+      gehören dann auch aufgeräumt.
+
 - [ ] **Der Worker hat keinen einzigen Test.** `packages/core` steht bei
       99,9 % Zeilen, `apps/api/src/worker.ts` bei null — und dort sind am
       7. September vier Fehler gefunden worden, die alle vier ohne Test

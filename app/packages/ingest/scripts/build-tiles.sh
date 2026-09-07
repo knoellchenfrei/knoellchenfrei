@@ -1,65 +1,68 @@
 #!/usr/bin/env bash
 #
-# Schneidet Berlin aus dem globalen Protomaps-Basiskartenarchiv und legt es in
-# einen R2-Eimer.
+# Baut die PMTiles-Archive — eines je Stadt — und lädt sie nach R2.
 #
-# Kein Kachelserver: Das Ergebnis ist eine einzige Datei. Der Browser holt per
-# HTTP-Range-Request genau die Bytes, die er für den sichtbaren Ausschnitt
-# braucht. Kein Prozess, der laufen muss, keine Skalierung, kein Egress-Preis —
-# derselbe Aufbau, den FreiFahren fährt.
-#
-# Warum überhaupt: Die Karte holt ihre Kacheln zurzeit von
-# tile.openstreetmap.org. Die Kachelrichtlinie der OSM Foundation deckt
-# ausgelieferte Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen an
-# einen Dritten, über den die Datenschutzerklärung Auskunft geben muss.
+# Warum eigene Kacheln: Die Kachelrichtlinie der OSM Foundation deckt
+# ausgelieferte Anwendungen nicht ab, und bei `tile.openstreetmap.org` gehen
+# die IP-Adressen aller Nutzer an einen Dritten, über den die
+# Datenschutzerklärung Auskunft geben muss.
 #
 # Voraussetzungen:
 #   - pmtiles-CLI:  https://github.com/protomaps/go-pmtiles/releases
-#   - wrangler:     ueber den Workspace, nie als nacktes npx —
+#   - wrangler:     über den Workspace, nie als nacktes npx —
 #                   cd app && pnpm --filter @knoellchenfrei/api exec wrangler --version
 #
 # Aufruf:
-#   ./build-tiles.sh                 # neuestes Tagesarchiv suchen
-#   ./build-tiles.sh --hochladen     # dasselbe, und gleich nach R2 legen
-#   ./build-tiles.sh 20260904        # ein bestimmtes Tagesarchiv
+#   ./build-tiles.sh                        # alle Städte, neuestes Tagesarchiv
+#   ./build-tiles.sh --hochladen            # dasselbe, und gleich nach R2
+#   ./build-tiles.sh muenchen --hochladen   # nur eine Stadt
+#   ./build-tiles.sh 20260904               # ein bestimmtes Tagesarchiv
 #
 # Ohne Datum ist der Regelfall. Ein Datum in einer Anleitung veraltet, das
 # Archiv verschwindet, und der Aufruf scheitert dann mit einer 404, die nach
 # einem Fehler im Skript aussieht.
-#
-# Danach hochladen — der Befehl steht am Ende der Ausgabe.
 
 set -euo pipefail
 
-# Berlin, großzügig umrandet. Dieselben Grenzen, die der Worker für Meldungen
-# durchsetzt — eine zweite Zahlenreihe, die auseinanderläuft, wäre eine
-# Fehlerquelle ohne Nutzen.
-BBOX="13.0,52.3,13.8,52.7"
+HIER="$(cd "$(dirname "$0")" && pwd)"
+INGEST="$(cd "$HIER/.." && pwd)"
+APP="$(cd "$INGEST/../.." && pwd)"
 
 # Zoom 15 reicht: Darüber hinaus geht es um einzelne Hausnummern, und jede
 # weitere Stufe verdoppelt die Dateigröße ungefähr.
 MAXZOOM=15
-
-AUSGABE="berlin.pmtiles"
 EIMER="knoellchenfrei-tiles"
 
 # `--hochladen` erspart den Zwischenschritt, den Befehl aus der Ausgabe von
 # Hand zu kopieren. Der Pfad im Eimer entsteht dabei an genau **einer** Stelle
-# — hier. Ein zweites Skript, das ihn nachbildet, laeuft irgendwann auseinander,
-# und das faellt erst auf, wenn eine Karte alte Kacheln zeigt.
+# — hier. Ein zweites Skript, das ihn nachbildet, läuft irgendwann auseinander,
+# und das fällt erst auf, wenn eine Karte alte Kacheln zeigt.
 HOCHLADEN=nein
 BUILD=""
+STAEDTE=""
 for arg in "$@"; do
   case "$arg" in
     --hochladen|--upload) HOCHLADEN=ja ;;
     -*) echo "Unbekannte Option: $arg" >&2; exit 2 ;;
-    *)  BUILD="$arg" ;;
+    [0-9]*) BUILD="$arg" ;;
+    *)  STAEDTE="$STAEDTE $arg" ;;
   esac
 done
 
 if ! command -v pmtiles >/dev/null; then
   echo "pmtiles-CLI fehlt: https://github.com/protomaps/go-pmtiles/releases" >&2
   exit 1
+fi
+
+# Die Rahmen kommen aus `core/city.ts`, nicht aus diesem Skript. Sie standen
+# hier als zweite Kopie von Berlins `reportBounds`; mit vier Städten wären es
+# acht Zahlen geworden, die auseinanderlaufen können (Audit-Punkt M-034). Der
+# Kommentar an der alten Stelle warnte selbst davor.
+# shellcheck disable=SC2086
+RAHMEN="$(cd "$APP" && pnpm --filter @knoellchenfrei/ingest --silent city-bbox $STAEDTE)"
+if [[ -z "$RAHMEN" ]]; then
+  echo "Keine Städte gefunden." >&2
+  exit 2
 fi
 
 # Protomaps hält nur ein kurzes Fenster an Tagesarchiven vor — gemessen am
@@ -72,6 +75,11 @@ fi
 #
 # was nach einem kaputten Skript aussieht und ein abgelaufenes Datum ist.
 # Deshalb sucht das Skript selbst, statt eines zu verlangen.
+archiv_da() {
+  curl -sS -o /dev/null -r 0-0 -w '%{http_code}' --max-time 15 \
+    "https://build.protomaps.com/${1}.pmtiles" 2>/dev/null | grep -qE '^(200|206)$'
+}
+
 neuestes_archiv() {
   local tag i
   for i in $(seq 0 60); do
@@ -81,12 +89,7 @@ neuestes_archiv() {
     else
       tag="$(date -d "-${i} days" +%Y%m%d)"
     fi
-    # Ein Ein-Byte-Range-Request kostet nichts und beantwortet die Frage.
-    if curl -sS -o /dev/null -r 0-0 -w '%{http_code}' --max-time 15 \
-         "https://build.protomaps.com/${tag}.pmtiles" 2>/dev/null | grep -qE '^(200|206)$'; then
-      printf '%s' "$tag"
-      return 0
-    fi
+    if archiv_da "$tag"; then printf '%s' "$tag"; return 0; fi
   done
   return 1
 }
@@ -102,8 +105,7 @@ fi
 
 # Auch ein angegebenes Datum wird geprüft, bevor pmtiles minutenlang läuft und
 # dann an einer 404 scheitert.
-if ! curl -sS -o /dev/null -r 0-0 -w '%{http_code}' --max-time 15 \
-     "https://build.protomaps.com/${BUILD}.pmtiles" 2>/dev/null | grep -qE '^(200|206)$'; then
+if ! archiv_da "$BUILD"; then
   echo "Das Archiv ${BUILD} gibt es nicht (mehr). Protomaps hält nur ein kurzes" >&2
   echo "Fenster vor. Ohne Datum aufrufen, dann sucht das Skript das neueste:" >&2
   echo "  $0" >&2
@@ -111,43 +113,54 @@ if ! curl -sS -o /dev/null -r 0-0 -w '%{http_code}' --max-time 15 \
 fi
 
 QUELLE="https://build.protomaps.com/${BUILD}.pmtiles"
+AUSGABEORDNER="$INGEST/.kacheln/v${BUILD}"
+mkdir -p "$AUSGABEORDNER"
 
-echo "→ Ausschnitt aus $QUELLE"
-echo "  Rahmen $BBOX, bis Zoom $MAXZOOM"
-# Der Ausschnitt entsteht über Range-Requests: Es wird nicht das globale Archiv
-# geladen, sondern nur die Kacheln im Rahmen.
-pmtiles extract "$QUELLE" "$AUSGABE" --bbox="$BBOX" --maxzoom="$MAXZOOM"
-
-GROESSE=$(du -h "$AUSGABE" | cut -f1)
+echo "→ Ausschnitte aus $QUELLE, bis Zoom $MAXZOOM"
 echo
-echo "Fertig: $AUSGABE ($GROESSE)"
-echo
-ZIEL="${EIMER}/v${BUILD}/berlin.pmtiles"
 
-# Der Pfad traegt das Datum, damit ein Zwischenstand nie eine laufende Version
-# ueberschreibt und der Browser beliebig lange cachen darf.
-if [[ "$HOCHLADEN" == ja ]]; then
-  echo "→ Hochladen nach $ZIEL"
-  ( cd "$(dirname "$0")/../../../apps/api" \
-    && pnpm --filter @knoellchenfrei/api exec wrangler r2 object put "$ZIEL" \
-         --file="$(cd "$(dirname "$AUSGABE")" && pwd)/$(basename "$AUSGABE")" \
-         --content-type=application/octet-stream --remote )
+GEBAUT=""
+while read -r stadt bbox; do
+  [ -n "$stadt" ] || continue
+  ziel="$AUSGABEORDNER/${stadt}.pmtiles"
+  echo "  ${stadt}: Rahmen ${bbox}"
+  # Der Ausschnitt entsteht über Range-Requests: Es wird nicht das globale
+  # Archiv geladen, sondern nur die Kacheln im Rahmen.
+  pmtiles extract "$QUELLE" "$ziel" --bbox="$bbox" --maxzoom="$MAXZOOM"
+  echo "  ${stadt}: $(du -h "$ziel" | cut -f1)"
+  echo
+  GEBAUT="$GEBAUT $stadt"
+done <<< "$RAHMEN"
+
+echo "Fertig in $AUSGABEORDNER"
+echo
+
+if [ "$HOCHLADEN" = ja ]; then
+  for stadt in $GEBAUT; do
+    ziel="${EIMER}/v${BUILD}/${stadt}.pmtiles"
+    echo "→ Hochladen nach $ziel"
+    ( cd "$APP/apps/api" \
+      && pnpm --filter @knoellchenfrei/api exec wrangler r2 object put "$ziel" \
+           --file="$AUSGABEORDNER/${stadt}.pmtiles" \
+           --content-type=application/octet-stream --remote )
+  done
   echo "Hochgeladen."
   echo
 else
   echo "Hochladen:"
   echo
-  echo "  $0 ${BUILD} --hochladen"
-  echo
-  echo "oder von Hand:"
-  echo
-  echo "  cd app/apps/api && pnpm exec wrangler r2 object put $ZIEL \\"
-  echo "    --file=<pfad>/$AUSGABE --content-type=application/octet-stream --remote"
+  echo "  $0 ${BUILD}${STAEDTE} --hochladen"
   echo
 fi
-echo "Danach die Web-App darauf zeigen lassen (Buildzeit-Variable):"
+
+echo "Danach die Web-App darauf zeigen lassen — das VERZEICHNIS, nicht eine Datei:"
 echo
-echo "  VITE_TILES_URL=https://tiles.knoellchenfrei.de/v${BUILD}/berlin.pmtiles"
+echo "  gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/v${BUILD}/'"
+echo
+echo "Die App hängt <stadt>.pmtiles selbst an. Ein Wert, der auf eine Datei"
+echo "zeigt, hält seit dem 7. September den Build an: Er landete sonst"
+echo "unabhängig von der geladenen Stadt im Kartenstil, und in drei von vier"
+echo "Städten blieb die Karte leer."
 echo
 echo "Der Eimer braucht CORS für die eigene Domain und muss Range-Requests"
 echo "zulassen — ohne beides lädt der Browser kein einziges Kachelbyte."
