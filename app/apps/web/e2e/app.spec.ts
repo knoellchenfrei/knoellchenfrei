@@ -267,15 +267,22 @@ test.describe('reporting never fails silently', () => {
 
 test.describe('explaining a quiet day', () => {
   test('says why so few zones are charging, and goes away when told', async ({ page }) => {
+    // Die Uhr steht, sonst prüft dieser Test je nach Tageszeit etwas anderes.
+    // Am 7. September liefen zwei Läufe gegen denselben Stand: um 08:38 war der
+    // Hinweis da (Montag vor Beginn der Bewirtschaftung), um 10:04 nicht mehr —
+    // und der Test sprang beide Male grün heraus, einmal prüfend, einmal nicht.
+    // Ein Test, der sich selbst überspringt, ist kein bestandener Test
+    // (Audit-Punkt M-084).
+    //
+    // `setFixedTime` und nicht `install`: Letzteres hält auch die Timer an, und
+    // an denen hängt der Kartenaufbau — `withMapReady` wartet notfalls zehn
+    // Sekunden, die dann nie vergingen.
+    await page.clock.setFixedTime(new Date('2026-09-06T10:00:00+02:00'))
     await ready(page)
     // Der Hinweis steht in der Seitenleiste, neben dem, was er erklärt — auf
     // dem Handy startet die eingeklappt.
     await openPanel(page)
     const note = page.locator('.daynote')
-
-    // Der Hinweis erscheint nur, wenn die Zahl erklärungsbedürftig ist. An einem
-    // gewöhnlichen Werktagvormittag darf er fehlen — das ist kein Fehlschlag.
-    if ((await note.count()) === 0) test.skip()
 
     await expect(note).toContainText(/kassieren/)
     await note.getByRole('button', { name: 'Hinweis ausblenden' }).click()
@@ -283,12 +290,15 @@ test.describe('explaining a quiet day', () => {
   })
 
   test('names no city and no weekday in the shipped code', async ({ page }) => {
+    // Sonntag, 10:00 — derselbe feste Zeitpunkt wie im Test darüber, damit der
+    // Hinweis sicher da ist statt nur meistens.
+    await page.clock.setFixedTime(new Date('2026-09-06T10:00:00+02:00'))
     await ready(page)
     await openPanel(page)
     // Der Text wird aus Uhr und geladenen Fahrplänen abgeleitet. Stünde
     // "Sonntag" fest im Bündel, wäre er in einer zweiten Stadt falsch.
     const note = page.locator('.daynote')
-    if ((await note.count()) === 0) test.skip()
+    await expect(note).toContainText(/kassieren/)
     await expect(note).not.toContainText('Berlin')
   })
 })

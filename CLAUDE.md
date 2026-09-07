@@ -22,7 +22,7 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 489 Unit-Tests
+pnpm --filter @knoellchenfrei/core test                # 495 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -41,7 +41,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=489 E2E_COUNT=128 npx tsx src/build-badges.ts
+TEST_COUNT=495 E2E_COUNT=128 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -340,6 +340,28 @@ wiederholt.
   ausgelieferten Adresse. Seitdem: `cache.add` je Eintrag mit
   `Promise.allSettled`, ein Fehler kostet einen Eintrag statt aller, und was
   scheitert, steht in der Konsole.
+- **Wer Zeitstempel gröber speichert, als er sie vergleicht, zählt falsch.**
+  `feedback.created_at` steht auf die Stunde abgerundet in der Datenbank — die
+  genaue Minute sagt über einen Vorschlag nichts und grenzt ein, wer ihn
+  geschrieben haben kann. Gezählt wurde gegen ein rollendes Fenster
+  `jetzt − 1 h`, und damit fiel eine um 10:59 geschriebene Zeile (Stempel
+  10:00) um 11:01 heraus: vier Rückmeldungen um 10:59 plus vier um 11:01 sind
+  acht in zwei Minuten bei einer Grenze von vier. Die Rechnung steht jetzt als
+  `countingWindowStart` in `core/rate-limit.ts` und ist auf genau diesen
+  Stundenwechsel getestet (Audit-Punkt M-045).
+- **Ein `fetch` ist erfolgreich, sobald irgendeine Antwort kommt.** 415, 429
+  und 500 landen alle im `then`. Die Stimmen der Web-App gingen deshalb
+  monatelang ins Leere: `vote` schickte `POST` **ohne**
+  `Content-Type: application/json`, der Worker antwortete mit `415` — und weil
+  niemand den Status ansah, zählte die Anzeige hoch und die Datenbank nicht
+  (Audit-Punkt M-046). Schreibzugriffe auf den Worker laufen seitdem über
+  `send()` in `sighting-backend.ts`, das bei `!response.ok` wirft; die
+  Aufrufer in `App.tsx` nehmen ihren optimistischen Eintrag dann zurück.
+- **Was ein Kommentar verspricht, muss der Code auch tun.** Der Schema-Text zu
+  `sightings.client_hash` sagte, die Spalte halte „one client confirming its
+  own report" auf — geprüft wurde es nie (Audit-Punkt M-047). Eine selbst
+  bestätigte Meldung sieht für jeden anderen aus wie eine von zwei Leuten
+  bestätigte, und genau diese Zahl trägt die Konfidenz.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

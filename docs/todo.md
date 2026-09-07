@@ -421,6 +421,65 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
       hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
       Das war Audit-Punkt M-031.
+- [ ] **Kacheln gibt es nur für Berlin — in drei Städten ist die Karte leer.**
+      Gemessen am 7. September: `tiles.knoellchenfrei.de/v20260904/berlin.pmtiles`
+      antwortet `206`, die Adresse und der DNS-Eintrag sind also in Ordnung.
+      Der Fehler liegt eine Ebene höher: Die Repository-Variable
+      `VITE_TILES_URL` zeigt auf **eine Datei**, und `map-style.ts` hängt genau
+      diese als `pmtiles://` in den Stil — unabhängig davon, welche Stadt
+      geladen ist. In Hamburg, Frankfurt und München liegt der Kartenausschnitt
+      damit außerhalb des Archivs, und der Hintergrund bleibt leer. Ohne
+      `VITE_TILES_URL` fiele es auf die Rasterkacheln von OpenStreetMap zurück
+      und sähe richtig aus — mit gesetzter Variable ist es kaputt.
+
+      Vier Schritte, und der dritte ist der, der die Bauart ändert:
+
+      1. `packages/ingest/scripts/build-tiles.sh` schneidet heute eine feste
+         `BBOX="13.0,52.3,13.8,52.7"` und schreibt `berlin.pmtiles`. Beides
+         gehört aus `core/city.ts` abgeleitet — die `reportBounds` stehen dort
+         schon, und der Kommentar im Skript sagt selbst, dass eine zweite
+         Zahlenreihe eine Fehlerquelle ohne Nutzen wäre.
+      2. Je Stadt ein Archiv, `\<stadt\>.pmtiles`, in denselben Ordner
+         `v\<datum\>/` hochladen.
+      3. `VITE_TILES_URL` muss vom Dateinamen auf das **Verzeichnis** wechseln
+         (`…/v20260904/`), und `map-style.ts` hängt `${CITY.key}.pmtiles` an.
+         Das ist der eigentliche Umbau; die Variable ist heute falsch
+         geschnitten, nicht nur falsch belegt.
+      4. Automatisieren: Protomaps' Tagesarchive verfallen (siehe CLAUDE.md),
+         das Bauen dauert Minuten und braucht `pmtiles` lokal. Ein Workflow
+         nach Zeitplan, der baut, hochlädt und die Variable auf den neuen
+         Ordner setzt, wäre der ehrliche Weg — mit einem Halt, wenn ein
+         Stadtarchiv fehlt, statt es still auszulassen.
+
+      Bis dahin ist die stillste Variante die richtige: **Solange nicht alle
+      vier Städte ein Archiv haben, ist eine gesetzte `VITE_TILES_URL`
+      schlechter als keine.**
+- [ ] **Der Worker hat keinen einzigen Test.** `packages/core` steht bei
+      99,9 % Zeilen, `apps/api/src/worker.ts` bei null — und dort sind am
+      7. September vier Fehler gefunden worden, die alle vier ohne Test
+      geblieben wären, hätte das Audit sie nicht aufgeschrieben (M-046). Das
+      Werkzeug dafür gibt es fertig: `@cloudflare/vitest-pool-workers` fährt
+      denselben Vitest gegen eine echte Worker-Laufzeit samt D1 und KV. Es
+      lohnt sich beim nächsten Eingriff in den Worker, nicht als Selbstzweck —
+      aber dann wirklich, denn die Ratenbremsen, die CORS-Prüfung und der
+      Telegram-Webhook sind genau die Stellen, an denen ein stiller Fehler
+      niemandem auffällt.
+- [ ] **`/visits` kann weiterhin beliebig viele Zeilen anlegen.** Die
+      Kennung ist `<tag>-<zufall>`, vom Client erfunden; wer den Zufallsteil
+      variiert, schreibt so viele Zeilen, wie er mag, und treibt die Zahl
+      „heute geöffnet" nach oben. Der teure Teil von M-015 ist erledigt — ein
+      Ping schreibt nur noch, wenn die Zeile älter als drei Minuten ist, statt
+      alle zwei Minuten —, dieser Teil nicht.
+
+      Der saubere Weg wäre, die Kennung **nicht** vom Client zu nehmen,
+      sondern aus `clientHash` und dem Tag zu bilden. Damit wäre die Zahl der
+      Zeilen durch die Zahl der Besucher begrenzt, der Zufallswert im
+      `localStorage` entfiele (das nähme auch M-020 die Grundlage, § 25
+      TDDDG), und zwei Geräte hinter demselben Anschluss zählten als einer —
+      eine ehrliche Untererfassung statt einer aufblasbaren Zahl. Das ändert
+      aber, welche Daten in `visits` stehen, und gehört deshalb erst in die
+      Datenschutzerklärung und dann in den Code, nicht umgekehrt.
+
 - [ ] **Der Beta-Riegel hat keinen automatischen Test.** Die Prüflogik in
       `core/beta-gate.ts` ist mit 26 Unit-Tests gedeckt, die *Verdrahtung*
       nicht: dass `wrangler pages deploy` das Verzeichnis `functions/`

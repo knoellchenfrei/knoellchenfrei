@@ -223,6 +223,31 @@ function artifactBackend(db: Db): SightingBackend {
 // ------------------------------------------------------------------- worker
 
 /**
+ * Ein Schreibzugriff auf den Worker — und er **wirft**, wenn er scheitert.
+ *
+ * Vorher stand hier ein blankes `await fetch(…)`. Ein `fetch` gilt aber als
+ * erfolgreich, sobald *irgendeine* Antwort kommt: 415, 429 und 500 landen alle
+ * im `then`. Die Aufrufer in `App.tsx` nehmen ihren optimistischen Eintrag
+ * genau dann zurück, wenn die Zusage bricht — bei einer Zusage, die nie bricht,
+ * blieb eine Meldung stehen, die es nur auf diesem Schirm gab. Das Panel
+ * verspricht „geteilt", und das wäre dann eine Lüge gewesen.
+ *
+ * Der Statustext kommt bewusst mit: 429 („zu viele Meldungen") und 415 („der
+ * Aufruf war falsch gebaut") sind für den, der das Protokoll liest, zwei
+ * verschiedene Geschichten.
+ */
+async function send(url: string, body: string): Promise<void> {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+  })
+  if (!response.ok) {
+    throw new Error(`${url} antwortete ${response.status} ${response.statusText}`)
+  }
+}
+
+/**
  * Polls rather than holding a socket: sightings move on a scale of minutes, and
  * a socket would cost a durable object per viewer for no visible gain.
  */
@@ -304,17 +329,18 @@ function workerBackend(base: string): SightingBackend {
       // The worker derives the mark from the report itself: a client that could
       // post marks directly could paint a heatmap without reporting anything,
       // and the rate limit only covers reports.
-      await fetch(`${base}/sightings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lon: safeLon, lat: safeLat }),
-      })
+      await send(`${base}/sightings`, JSON.stringify({ lon: safeLon, lat: safeLat }))
     },
 
     vote: async (sighting, kind) => {
-      await fetch(`${base}/sightings/${encodeURIComponent(sighting.id)}/${kind}`, {
-        method: 'POST',
-      })
+      // Leerer Rumpf, aber mit Inhaltstyp — und das ist kein Schönheitsfehler
+      // gewesen: `rejectsCrossSite` im Worker verlangt
+      // `Content-Type: application/json`, weil erst der einen Preflight
+      // erzwingt und damit die CORS-Allowlist überhaupt gefragt wird. Ohne den
+      // Kopf antwortete der Worker mit **415**, und weil hier niemand den
+      // Status ansah, verschwand die Stimme lautlos: Die Anzeige zählte hoch,
+      // die Datenbank nicht. Gefunden im Audit (M-046).
+      await send(`${base}/sightings/${encodeURIComponent(sighting.id)}/${kind}`, '{}')
     },
   }
 }

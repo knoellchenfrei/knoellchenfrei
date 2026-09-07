@@ -22,6 +22,7 @@ import {
   CITIES,
   cityAt,
   cityByKey,
+  countingWindowStart,
   isFeedbackKind,
   markFor,
   parseTelegramUpdate,
@@ -177,10 +178,13 @@ function json(body: unknown, init: ResponseInit = {}, extra: Record<string, stri
  * actions can be linked to each other.
  */
 async function clientHash(request: Request, env: Env): Promise<string> {
-  const material = [
-    request.headers.get('CF-Connecting-IP') ?? '',
-    env.CLIENT_SALT ?? '',
-  ].join('|')
+  const salt = env.CLIENT_SALT ?? ''
+  // Zweite Sperre hinter der im Router: Wer diese Funktion je aus einem
+  // anderen Pfad aufruft, soll nicht versehentlich ungesalzen hashen. Ein
+  // ungesalzener Hash ist kein Pseudonym, sondern eine umgeschriebene
+  // IP-Adresse.
+  if (salt === '') throw new Error('CLIENT_SALT fehlt — ohne Salz kein Client-Hash')
+  const material = [request.headers.get('CF-Connecting-IP') ?? '', salt].join('|')
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material))
   return [...new Uint8Array(digest)]
     .slice(0, 8)
@@ -227,12 +231,35 @@ const RATE_COLUMNS = {
   feedback: 'created_at',
 } as const
 
+/**
+ * Ab wann gezaehlt wird — und warum das nicht ueberall dasselbe ist.
+ *
+ * `feedback` speichert `created_at` **auf die Stunde abgerundet**: Die genaue
+ * Minute sagt ueber einen Vorschlag nichts und grenzt ein, wer ihn geschrieben
+ * haben kann. Ein rollendes Ein-Stunden-Fenster ueber gerundete Werte zaehlt am
+ * Stundenwechsel aber falsch — eine um 10:59 geschriebene Zeile traegt den
+ * Stempel 10:00 und faellt um 11:01 aus dem Fenster. Vier Rueckmeldungen um
+ * 10:59 und vier um 11:01 waren acht in zwei Minuten (Audit-Punkt M-045).
+ *
+ * Das Fenster reicht deshalb bei `feedback` eine Stunde weiter zurueck. Die
+ * Grenze ist damit eher zu streng als zu locker, und das ist die richtige
+ * Richtung: Eine Rueckmeldung ist eine seltene Handlung.
+ */
+const RATE_WINDOW_MS = 3_600_000
+
 async function countRecent(
   env: Env,
   table: keyof typeof RATE_COLUMNS,
   hash: string
 ): Promise<number> {
-  const since = Date.now() - 3_600_000
+  // `feedback` speichert auf die Stunde gerundet, die uebrigen Tabellen auf die
+  // Millisekunde — `countingWindowStart` in `core` kennt den Unterschied und
+  // ist dort auf genau diesen Stundenwechsel getestet.
+  const since = countingWindowStart(
+    Date.now(),
+    RATE_WINDOW_MS,
+    table === 'feedback' ? RATE_WINDOW_MS : 0
+  )
   const column = RATE_COLUMNS[table]
   const row = await env.DB.prepare(
     `SELECT COUNT(*) AS n FROM ${table} WHERE client_hash = ? AND ${column} > ?`
@@ -366,6 +393,14 @@ async function listMarks(
 
 /** A device is "here" if it pinged within this window. */
 const ONLINE_WINDOW_MS = 5 * 60_000
+/**
+ * Ab wann ein Ping die Zeile wirklich neu schreibt.
+ *
+ * Drei Minuten: kurz genug, dass ein Zusehender nie aus dem
+ * Fünf-Minuten-Fenster fällt, lang genug, dass aus einem Ping alle zwei
+ * Minuten nicht ein Schreibvorgang alle zwei Minuten wird.
+ */
+const VISIT_REFRESH_MS = 3 * 60_000
 /** Visit rows are kept a day beyond the count, so a day boundary is not a cliff. */
 const VISIT_KEEP_MS = 2 * 86_400_000
 
@@ -430,8 +465,24 @@ async function recordVisit(
   // day's count for as long as it is kept.
   if (match[1] !== today) return json({ error: 'stale day' }, { status: 422 }, cors)
 
-  await env.DB.prepare('INSERT OR REPLACE INTO visits (id, day, seen_at) VALUES (?, ?, ?)')
-    .bind(id, today, now)
+  // Schreiben nur, wenn die Zeile wirklich veraltet ist.
+  //
+  // Vorher stand hier `INSERT OR REPLACE`, und das schrieb bei **jedem** Ping.
+  // Die App pingt alle zwei Minuten, solange der Tab sichtbar ist — ein
+  // Arbeitstag mit einem offenen Tab sind rund 240 Schreibvorgänge, zwei
+  // Nutzer sprengen das Tagesbudget des Free Tier (1.000). Das ist keine
+  // Missbrauchsrechnung, sondern der Normalbetrieb (Audit-Punkt M-015).
+  //
+  // `excluded` ist die Zeile, die eingefügt worden wäre; die Bedingung im
+  // `DO UPDATE` lässt SQLite die Zeile unangetastet, solange sie frisch genug
+  // ist. Die Schwelle liegt unter `ONLINE_WINDOW_MS`, damit ein Besucher nie
+  // aus dem Fenster fällt, während er zusieht.
+  await env.DB.prepare(
+    'INSERT INTO visits (id, day, seen_at) VALUES (?, ?, ?)' +
+      ' ON CONFLICT(id) DO UPDATE SET seen_at = excluded.seen_at' +
+      ' WHERE excluded.seen_at - visits.seen_at > ?'
+  )
+    .bind(id, today, now, VISIT_REFRESH_MS)
     .run()
 
   const counts = await env.DB.prepare(
@@ -607,11 +658,24 @@ async function voteOnSighting(
   // any invented id burnt a database write, and the free tier's 1,000 writes a
   // day are exhausted in seconds.
   const target = await env.DB.prepare(
-    'SELECT id FROM sightings WHERE id = ? AND reported_at > ?'
+    'SELECT id, client_hash FROM sightings WHERE id = ? AND reported_at > ?'
   )
     .bind(id, Date.now() - SIGHTING_MAX_AGE_MS)
-    .first<{ id: string }>()
+    .first<{ id: string; client_hash: string | null }>()
   if (target === null) return json({ error: 'not found' }, { status: 404 }, cors)
+
+  // Der Schema-Kommentar zu `sightings.client_hash` versprach seit jeher, die
+  // Spalte halte "one client confirming its own report" auf — geprueft wurde
+  // es nie (Audit-Punkt M-047). Eine selbst bestaetigte Meldung sieht fuer
+  // jeden anderen aus wie eine von zwei Leuten bestaetigte, und genau diese
+  // Zahl traegt die Konfidenz.
+  //
+  // `client_hash` darf NULL sein — bei Meldungen aus Telegram steht dort
+  // nichts. Ein NULL ist keine Uebereinstimmung, sondern eine fehlende Angabe,
+  // und die verbietet nichts.
+  if (target.client_hash !== null && target.client_hash === hash) {
+    return json({ error: 'cannot vote on your own report' }, { status: 403 }, cors)
+  }
 
   // One vote per client per sighting; the primary key does the enforcing, so a
   // duplicate is a no-op rather than an error the caller has to handle.
@@ -671,7 +735,9 @@ function secretMatches(given: string, expected: string): boolean {
  * der Hash.
  */
 async function telegramHash(userId: number, env: Env): Promise<string> {
-  const material = `telegram:${userId}|${env.CLIENT_SALT ?? ''}`
+  const salt = env.CLIENT_SALT ?? ''
+  if (salt === '') throw new Error('CLIENT_SALT fehlt — ohne Salz kein Telegram-Hash')
+  const material = `telegram:${userId}|${salt}`
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material))
   return [...new Uint8Array(digest)]
     .slice(0, 8)
@@ -776,6 +842,20 @@ export default {
     const path = url.pathname.replace(/\/+$/, '')
 
     if (path === '/health') return json({ ok: true }, {}, cors)
+
+    // Ohne Salz wird nicht geschrieben. `clientHash` fiel sonst still auf einen
+    // ungesalzenen SHA-256 über die IP-Adresse zurück (`env.CLIENT_SALT ?? ''`)
+    // — und 64 Bit über den IPv4-Raum rechnet man offline in Minuten zurück.
+    // Aus dem Pseudonym, das die Datenschutzerklärung verspricht, wäre damit
+    // die IP-Adresse selbst geworden. Der Kommentar über `clientHash` sagt das
+    // seit jeher; der Code tat es trotzdem (Audit-Punkt M-014).
+    //
+    // 503 und nicht 500: Das ist keine Panne, sondern eine Einrichtung, die
+    // fehlt — dieselbe Richtung wie beim Beta-Riegel. Lieber gar nicht
+    // schreiben als umkehrbare Kennungen sammeln.
+    if (request.method === 'POST' && (env.CLIENT_SALT ?? '') === '') {
+      return json({ error: 'CLIENT_SALT not configured' }, { status: 503 }, cors)
+    }
 
     // Vor der CORS-Behandlung und ohne sie: Telegram ist kein Browser, schickt
     // keinen Origin und wird durch das Geheimnis im Kopf ausgewiesen.
