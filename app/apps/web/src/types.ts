@@ -18,6 +18,11 @@ export interface ZoneProperties {
    * Zahl im Feed. In Berlin ist sie eine Eigenschaft einzelner
    * Straßenabschnitte — sie dort als Zonenregel auszugeben war ein gefundener
    * Fehler, und `maxStayShare` sagt seitdem, auf wie wenigen sie gilt.
+   *
+   * Frankfurt setzt sie aus demselben Grund **nicht**: Dort steht sie je
+   * Parkscheinautomat, und in 19 von 27 Bereichen stehen mehrere Werte
+   * nebeneinander, oft „1 h" neben „keine". Der Weg über `maxStayShare` ist
+   * dort der einzige, der nicht mehr behauptet, als die Quelle sagt.
    */
   maxStayMinutes?: number | null
   maxStay: string | null

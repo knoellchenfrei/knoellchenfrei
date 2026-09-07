@@ -534,7 +534,7 @@ test.describe('provenance', () => {
   })
 })
 
-test.describe('die zweite Stadt', () => {
+test.describe('die weiteren Städte', () => {
   /** Öffnet die Einstellungen und liefert das Dialog-Locator zurück. */
   async function openSettings(page: Page) {
     await page.getByRole('button', { name: 'Einstellungen' }).click()
@@ -543,11 +543,12 @@ test.describe('die zweite Stadt', () => {
     return sheet
   }
 
-  test('offers both cities and marks the current one', async ({ page }) => {
+  test('offers every city and marks the current one', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
     await expect(sheet.getByRole('button', { name: 'Berlin' })).toBeDisabled()
     await expect(sheet.getByRole('button', { name: 'Hamburg' })).toBeEnabled()
+    await expect(sheet.getByRole('button', { name: 'Frankfurt am Main' })).toBeEnabled()
   })
 
   // Der eigentliche Punkt: Nach dem Wechsel stehen ANDERE Daten auf der Karte.
@@ -581,6 +582,46 @@ test.describe('die zweite Stadt', () => {
     await expect(sheet).toContainText('Datenlizenz Deutschland Namensnennung 2.0')
     // Berlin gibt unter Zero heraus — dort fehlt dieser Satz zu Recht.
     await expect(sheet).toContainText('verlangt')
+  })
+
+  // Dasselbe fuer die dritte Stadt, und aus demselben Grund: Ein Umschalter,
+  // der nur eine Beschriftung aendert, waere schlimmer als keiner.
+  test('switches to Frankfurt and loads Frankfurt zones', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Frankfurt am Main' }).click()
+
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    // Ueber den Stadtteil, nicht ueber die Zonennummer: Frankfurts Bereiche
+    // heissen wie Berlins Zonen schlicht "19" -- ein Zahlentreffer bewiese
+    // also nicht, dass wirklich andere Daten geladen sind. "Sachsenhausen"
+    // gibt es in Berlin nicht.
+    await page.locator('.search__input').fill('Sachsenhausen')
+    await expect(page.locator('.search__results button').first()).toBeVisible({ timeout: 15_000 })
+    await page.locator('.search__results button').first().click()
+
+    await openPanel(page)
+    await expect(page.locator('.panel__eyebrow').first()).toContainText('Sachsenhausen')
+    await expect(page.locator('.provenance')).toContainText('Frankfurt am Main')
+  })
+
+  // Die Quellenangabe ist bei DL-DE/Namensnennung Lizenzbedingung. Sie steht
+  // woertlich in `city.ts`; dieser Test haelt fest, dass sie auch woertlich
+  // ankommt und nicht unterwegs umformuliert wird.
+  test('names the Frankfurt licence as a condition and the source verbatim', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Frankfurt am Main' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    sheet = await openSettings(page)
+    await expect(sheet).toContainText('Datenlizenz Deutschland Namensnennung 2.0')
+    await expect(sheet).toContainText('verlangt')
+    await expect(sheet).toContainText('Stadt Frankfurt am Main, www.frankfurt.de')
   })
 
   // Berlin darf nicht als Nebenwirkung verlorengehen: Der Wechsel muss in

@@ -127,14 +127,42 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
         </p>
       )}
 
+      {/*
+        „Abschnitte" hiess das hier, solange nur Berlin diesen Weg ging. Mit
+        Frankfurt sind es Parkscheinautomaten — dieselbe Aussage, anderes
+        gezaehltes Ding. „Stellen" deckt beides, ohne einer Stadt ein Wort
+        aufzudraengen, das ihre Quelle nicht benutzt.
+      */}
       {properties.maxStayMinutes == null && properties.maxStay !== null && (
         <p className="warn">
-          Auf einzelnen Abschnitten dieser Zone gilt eine Höchstparkdauer von{' '}
-          <strong>{properties.maxStayValues.map(maxStayLabel).join(' / ')}</strong> — nach Datenlage auf{' '}
-          {properties.maxStayShare < 0.05
-            ? 'unter 5 %'
-            : `rund ${Math.round(properties.maxStayShare * 100)} %`}{' '}
-          der erfassten Abschnitte. Was für deinen Platz gilt, steht am Automaten.
+          {properties.maxStayShare < 0.95 ? (
+            <>
+              An einzelnen Stellen dieser Zone gilt eine Höchstparkdauer von{' '}
+              <strong>{properties.maxStayValues.map(maxStayLabel).join(' / ')}</strong> — nach
+              Datenlage an{' '}
+              {properties.maxStayShare < 0.05
+                ? 'unter 5 %'
+                : `rund ${Math.round(properties.maxStayShare * 100)} %`}{' '}
+              der erfassten Stellen. Was für deinen Platz gilt, steht am Automaten.
+            </>
+          ) : properties.maxStayValues.length === 1 ? (
+            /*
+              Jede erfasste Stelle nennt denselben Wert. Das ist die staerkste
+              Aussage, die diese Datenlage traegt — und trotzdem keine
+              Gebietsregel wie in Hamburg, wo sie als Feld am Gebiet steht.
+            */
+            <>
+              Höchstparkdauer in dieser Zone:{' '}
+              <strong>{properties.maxStayValues.map(maxStayLabel).join('')}</strong> — so steht es
+              an jeder erfassten Stelle. Verbindlich ist trotzdem der Automat vor Ort.
+            </>
+          ) : (
+            <>
+              Überall in dieser Zone gilt eine Höchstparkdauer, aber nicht überall dieselbe:{' '}
+              <strong>{properties.maxStayValues.map(maxStayLabel).join(' / ')}</strong>. Was für
+              deinen Platz gilt, steht am Automaten.
+            </>
+          )}
         </p>
       )}
 

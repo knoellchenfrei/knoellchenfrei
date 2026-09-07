@@ -74,12 +74,21 @@ export function duration(ms: number): string {
   return `${minutes} Min.`
 }
 
+/**
+ * Die Codes, die in den Zonendaten stehen, als Minuten.
+ *
+ * `5h` kam mit Frankfurt dazu (Bereich 26, zwei Automaten am Riedhof). Es
+ * fehlen zu lassen hätte nichts sichtbar kaputt gemacht: `toParkingZone` hätte
+ * dort still keine Höchstparkdauer gesetzt, die Anzeige hätte sie trotzdem
+ * genannt, und nur die Kostenschätzung wäre unbegrenzt weitergelaufen.
+ */
 export const MAX_STAY_MINUTES: Record<string, number> = {
   '30min': 30,
   '1h': 60,
   '2h': 120,
   '3h': 180,
   '4h': 240,
+  '5h': 300,
 }
 
 /** "4h" → "4 Std.", "30min" → "30 Min." — the feed's codes are not German prose. */
