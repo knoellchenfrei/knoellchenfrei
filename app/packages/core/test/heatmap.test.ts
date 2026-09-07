@@ -11,6 +11,7 @@ import {
   HISTORY_DAYS,
   markFor,
   MIN_MARKS_FOR_PATTERN,
+  weekdayOf,
   windowStart,
   type HeatMark,
 } from '../src/index.js'
@@ -259,5 +260,116 @@ describe('heatActivity.byDay', () => {
     const activity = heatActivity(legacy, { now: NOW })
     expect(activity.hourlyMarks).toBe(0)
     expect(activity.byDay.reduce((sum, count) => sum + count, 0)).toBe(2)
+  })
+})
+
+/**
+ * Was aus einem kaputten oder feindlichen Speicher kommen kann.
+ *
+ * Die Markierungen liegen in D1 und werden von einem Worker geschrieben, den
+ * nicht dieselbe Auslieferung erzeugt haben muss wie die lesende Seite. Eine
+ * einzelne unbrauchbare Zeile darf deshalb die ganze Karte nicht kippen — und
+ * sie darf auch nicht mitgezählt werden, denn dann stünde unter der Karte eine
+ * Zahl, die die Punkte nicht erklären.
+ */
+describe('heatActivity mit unbrauchbaren Zeilen', () => {
+  const junk = [
+    { day: '2026-09-02', cell: 42 },
+    { day: 20260902, cell: '10_10' },
+    { cell: '10_10' },
+    { day: '2026-09-02' },
+    null,
+    undefined,
+  ] as unknown as HeatMark[]
+
+  it('überspringt sie, statt sie zu zählen oder zu werfen', () => {
+    const good = markFor(ALEX, NOW)
+    const activity = heatActivity([...junk, good], { now: NOW })
+    expect(activity.hourlyMarks).toBe(1)
+    expect(activity.byDay.reduce((sum, count) => sum + count, 0)).toBe(1)
+    expect(buildHeatmap([...junk, good], { now: NOW }).totalMarks).toBe(1)
+  })
+
+  // Eine Markierung von morgen ist kein alter Datenstand, sondern eine falsch
+  // gestellte Uhr oder ein Schreibversuch. Sie ans Fensterende zu klemmen
+  // hiesse, sie dauerhaft ganz oben stehen zu lassen.
+  it('lässt eine Markierung aus der Zukunft und eine aus der Vorzeit liegen', () => {
+    const activity = heatActivity(
+      [markFor(ALEX, NOW + DAY), markFor(ALEX, NOW - 400 * DAY), markFor(ALEX, NOW)],
+      { now: NOW }
+    )
+    expect(activity.hourlyMarks).toBe(1)
+  })
+
+  it('zählt eine Stunde ausserhalb 0-23 nicht mit, lässt den Tag aber stehen', () => {
+    const broken = { ...markFor(ALEX, NOW), hour: 24 }
+    const activity = heatActivity([broken], { now: NOW })
+    expect(activity.hourlyMarks).toBe(0)
+    expect(activity.byDay[activity.byDay.length - 1]).toBe(1)
+    expect(activity.peakHour).toBeNull()
+    expect(activity.quietFrom).toBeNull()
+  })
+})
+
+describe('weekdayOf', () => {
+  it('liest den Wochentag aus einem Tagesschlüssel', () => {
+    // 2. September 2026 ist ein Mittwoch.
+    expect(weekdayOf('2026-09-02')).toBe(3)
+    expect(weekdayOf('2026-09-06')).toBe(0)
+  })
+
+  // Der Schlüssel kommt aus der Datenbank, nicht aus dieser Datei. `new
+  // Date(NaN).getUTCDay()` wäre NaN und stimmte danach mit keinem Wochentag
+  // überein — der Tagesprofil-Chart bliebe stumm, ohne dass jemand erführe warum.
+  it('gibt für einen unlesbaren Schlüssel null zurück statt NaN', () => {
+    expect(weekdayOf('kein Datum')).toBeNull()
+    expect(weekdayOf('')).toBeNull()
+    expect(weekdayOf('2026-13-45')).toBeNull()
+  })
+})
+
+describe('Aufbewahrung mit unbrauchbaren Zeilen', () => {
+  // `expiredMarks` sagt dem Worker, was er löschen darf. Eine Zeile, deren Tag
+  // keine Zeichenkette ist, kann nie wieder in ein Fenster fallen — sie bliebe
+  // sonst für immer liegen.
+  it('nennt eine Zeile ohne brauchbaren Tag als löschbar', () => {
+    const junk = [{ cell: '1_1' }, { day: 7, cell: '1_1' }, null] as unknown as HeatMark[]
+    expect(expiredMarks(junk, { now: NOW })).toHaveLength(3)
+    expect(expiredMarks([markFor(ALEX, NOW)], { now: NOW })).toEqual([])
+  })
+})
+
+describe('entartete Halbwertszeit', () => {
+  /**
+   * `halfLifeDays: 0` lässt jedes Gewicht auf 0 fallen — auch das des besten
+   * Feldes. Die Normierung teilt danach durch die Spitze; ohne die Prüfung
+   * `peak > 0` stünde in jedem Feld `NaN` statt einer Zahl zwischen 0 und 1,
+   * und die Karte zeichnete gar nichts, ohne leer zu sein.
+   */
+  it('liefert Gewicht 0 statt NaN, wenn jede Markierung auf null zerfällt', () => {
+    const marks = marksAt(ALEX, [1, 2, 3])
+    const map = buildHeatmap(marks, { now: NOW, halfLifeDays: 0 })
+    expect(map.cells).toHaveLength(1)
+    expect(map.cells[0]?.weight).toBe(0)
+    expect(map.totalMarks).toBe(3)
+  })
+})
+
+describe('Spitzenstunde', () => {
+  /**
+   * Die Spitze ist die grösste Stunde, nicht die erste mit Meldungen.
+   *
+   * Die Suche merkt sich die bisherige Spitze und muss sie ersetzen, sobald
+   * eine spätere Stunde mehr trägt. Ohne diesen Vergleich stünde in der
+   * Auswertung die erste Stunde des Tages — „meist kontrolliert um 8" für ein
+   * Viertel, in dem nachmittags dreimal so viel gemeldet wird.
+   */
+  it('nennt die grösste Stunde, auch wenn eine kleinere früher liegt', () => {
+    const at = (hour: number): HeatMark => ({ ...markFor(ALEX, NOW), hour })
+    const activity = heatActivity([at(8), at(15), at(15), at(15), at(9)], { now: NOW })
+    expect(activity.peakHour).toBe(15)
+    expect(activity.byHourOnWeekday[15]).toBe(3)
+    // Nach 15 Uhr wird nichts mehr gemeldet — ab 16 ist Ruhe.
+    expect(activity.quietFrom).toBe(16)
   })
 })

@@ -85,3 +85,33 @@ describe('distanceMetres', () => {
     expect(distanceMetres([13.4, 52.5], [13.4, 52.5])).toBe(0)
   })
 })
+
+describe('boundsOf an den Rändern', () => {
+  // Ein Feature ohne Ringe kommt aus einem WFS, der eine leere Geometrie
+  // liefert. `rings[0]` wäre dort `undefined`, und ein `for … of undefined`
+  // wirft — mitten im Datenbau, für eine Zone, die ohnehin nichts abdeckt.
+  it('überspringt ein Polygon ohne Ringe, statt daran zu scheitern', () => {
+    const empty: PolygonRings = []
+    const bounds = boundsOf([empty, withHole])
+    expect(bounds).toEqual({ minLon: 0, minLat: 0, maxLon: 4, maxLat: 4 })
+  })
+
+  /**
+   * Ohne eine einzige Position bleiben die Grenzen unendlich — und das ist die
+   * richtige Antwort: `withinBounds` sagt dann für jeden Punkt „nein“, statt
+   * eine Box um den Nullpunkt zu erfinden, in der halb Westafrika läge.
+   */
+  it('liefert für gar keine Position eine Box, die nichts enthält', () => {
+    const bounds = boundsOf([])
+    expect(bounds.minLon).toBe(Infinity)
+    expect(bounds.maxLon).toBe(-Infinity)
+    expect(withinBounds([13.4, 52.5], bounds)).toBe(false)
+  })
+
+  // Die Löcher zählen für die Grenzen nicht mit: Sie liegen definitionsgemäss
+  // im äusseren Ring, und ein Loch, das darüber hinausragte, wäre kaputte
+  // Geometrie und keine grössere Zone.
+  it('misst nur den äusseren Ring', () => {
+    expect(boundsOf([withHole])).toEqual({ minLon: 0, minLat: 0, maxLon: 4, maxLat: 4 })
+  })
+})

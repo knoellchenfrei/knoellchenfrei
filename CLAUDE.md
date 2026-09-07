@@ -20,8 +20,8 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 380 Unit-Tests
-pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht
+pnpm --filter @knoellchenfrei/core test                # 463 Unit-Tests
+pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 128 End-to-End-Tests
@@ -39,7 +39,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=380 E2E_COUNT=128 npx tsx src/build-badges.ts
+TEST_COUNT=463 E2E_COUNT=128 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -159,6 +159,33 @@ wiederholt.
   nichts und verlangen trotzdem etwas; wer ohne Scheibe steht, zahlt.
   `Fee` hat dafür `disc` und `unknown`, und `CostEstimate.priced` zwingt die
   Oberfläche, etwas anderes zu sagen als „0,00 €".
+- **Und null Euro sind auch kein Betrag.** Die Regel darüber hatte ein Loch:
+  `parseFee("0,00 Euro")` ergab `exact` mit 0 Cent und damit `priced: true` —
+  der einzige Weg, an der Marke vorbei doch ein „0,00 €" auf den Schirm zu
+  bringen. Dasselbe in Hamburg (`0,00 € je Stunde`) und Frankfurt (`0 €/h`),
+  wo `mergeFrankfurtFees` die Spanne eines ganzen Bereichs auf „0,00–4,00 €"
+  heruntergezogen hätte. Alle drei Parser brechen jetzt ab, wie Frankfurt es
+  mit `0 h` schon hielt: Was ein Nullbetrag im Feed bedeutete, weiß niemand,
+  und „kostenlos" ist die eine Lesart, die er sicher nicht verdient. In keinem
+  der vier Abzüge steht einer. Gefunden hat es der Beschuss in
+  `test/fuzz.test.ts`.
+- **Ein Parser wirft nur seine eigene Fehlerklasse.** `parseSchedule("Fr-Mo
+  9-20 Uhr")` warf ein blankes `Error`: `expandDays` kannte die Rohzeile nicht
+  und konnte deshalb keinen `ScheduleParseError` bauen. Eine umgedrehte
+  Tagesspanne ist aber Feed-Inhalt und kein Fehler des Parsers — wer
+  `instanceof` prüft, um „unlesbare Zeile" von „kaputtem Parser" zu
+  unterscheiden, bekam für genau diese eine Schreibweise die falsche Antwort,
+  und im Fehler fehlte die Zeile, um die es ging. Die Zusicherung steht jetzt
+  als Eigenschaft in `fuzz.test.ts`: Bei beliebigen Zeichenketten wirft jeder
+  der vier Zeit- und drei Gebührenparser **nur** seine eigene `*ParseError`
+  oder liefert ein gültiges Ergebnis.
+- **Ein Zeitstempel aus fremder Hand kann NaN sein.** `confidenceOf` klammerte
+  die Zähler einer Sichtung, nicht aber `reportedAt`. Mit `NaN` darin wurden
+  `ageMs` und `score` zu `NaN`. Der Status fiel dabei zufällig richtig aus —
+  jeder Vergleich mit `NaN` ist falsch, also fiel er durch beide Schwellen —,
+  aber die zugesicherte Spanne 0..1 galt nicht mehr, und aus `ageMs` hätte die
+  Oberfläche „vor NaN Min." geschrieben. Ein unlesbarer Zeitstempel heißt
+  jetzt unendlich alt.
 - **Eine Regelphrase braucht eine Wortgrenze auf BEIDEN Seiten — und `\b`
   taugt nur auf der vorderen.** Münchens Regeltexte werden an Phrasen wie
   `Mischparken` und `frei` in Klauseln zerschnitten. Ohne hintere Grenze fand
@@ -322,7 +349,7 @@ wiederholt.
   geschrieben; deutsche Kommentare bei neuem Code, die englischen im Bestand
   bleiben stehen. Wo ein Kommentar einen konkreten Fehler festhält, gehört der
   Fehler hinein — er ist die Begründung.
-- **Für jeden gefundenen Fehler ein Test.** 24 der Unit-Tests sind genau das.
+- **Für jeden gefundenen Fehler ein Test.** 30 der Unit-Tests sind genau das.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
 - **`packages/core` bleibt frei von Frameworks und ohne Laufzeit-Abhängigkeiten.**

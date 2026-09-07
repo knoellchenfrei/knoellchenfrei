@@ -120,3 +120,53 @@ describe('estimateCost', () => {
     expect(estimateCost(SYNTHETIC_MAX_STAY, summerMon(10), 120).exceedsMaxStay).toBe(false)
   })
 })
+
+describe('chargeableAt ohne Wechsel', () => {
+  /**
+   * Eine Zone ohne Fenster wechselt nie — und `changesAt: null` ist die einzige
+   * ehrliche Antwort. Ein Datum zu liefern hiesse „ab dann wird kassiert“, und
+   * die Oberfläche schriebe „gebührenfrei bis 09:00“ über eine Zone, in der nie
+   * etwas fällig wird.
+   */
+  it('liefert null, wenn sich in einer Woche nichts ändert', () => {
+    const never: ParkingZone = { ...zone1, windows: [] }
+    const result = chargeableAt(never, summerMon(10))
+    expect(result.chargeable).toBe(false)
+    expect(result.changesAt).toBeNull()
+  })
+
+  it('liefert auch für eine durchgehend kassierende Zone null', () => {
+    const always: ParkingZone = {
+      ...zone1,
+      // Rund um die Uhr, alle sieben Tage — und ohne Feiertagsbefreiung, sonst
+      // wäre der 3. Oktober der Wechsel.
+      windows: [{ weekdays: [0, 1, 2, 3, 4, 5, 6], fromMinute: 0, toMinute: 1440 }],
+      freeOnHolidays: false,
+    }
+    const result = chargeableAt(always, summerMon(10))
+    expect(result.chargeable).toBe(true)
+    expect(result.changesAt).toBeNull()
+  })
+})
+
+describe('isUncertainAt am Feiertag', () => {
+  /**
+   * Ein Adventssamstag, der zugleich ein Feiertag ist, ist nicht unsicher —
+   * er ist frei.
+   *
+   * Die Adventsregel verlängert die Bewirtschaftung; ein Feiertag hebt sie
+   * ganz auf, und das eine schlägt das andere. „Unsicher" darüberzuschreiben
+   * hiesse, jemanden zum Ticketautomaten zu schicken, an einem Tag, an dem
+   * dort nichts zu zahlen ist. Der Fall ist über `extraHolidays` konstruiert —
+   * dasselbe Feld, mit dem München Mariä Himmelfahrt trägt.
+   */
+  it('meldet frei statt unsicher, wenn der Adventssamstag ein Feiertag ist', () => {
+    const spandau = zoneFrom('10', 'Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -17 Uhr', '2,00 Euro')
+    const adventSaturday = Date.UTC(2026, 11, 5, 15) // 5. Dezember 2026, 16:00 Ortszeit
+    expect(chargeableAt(spandau, adventSaturday).uncertain).toBe(true)
+
+    const withHoliday: ParkingZone = { ...spandau, extraHolidays: ['12-05'] }
+    expect(chargeableAt(withHoliday, adventSaturday).uncertain).toBe(false)
+    expect(isChargeable(withHoliday, adventSaturday)).toBe(false)
+  })
+})

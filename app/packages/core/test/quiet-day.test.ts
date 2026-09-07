@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { quietDayNote, type ParkingZone } from '../src/index.js'
+import { isChargeable, quietDayNote, type ParkingZone } from '../src/index.js'
 
 const MO_TO_SA = [1, 2, 3, 4, 5, 6] as const
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6] as const
@@ -97,5 +97,59 @@ describe('quietDayNote', () => {
 
   it('says nothing for an empty city', () => {
     expect(quietDayNote([], { now: SUNDAY_NOON })).toBeNull()
+  })
+})
+
+describe('quietDayNote am Feiertag', () => {
+  /** Freitag, 1. Mai 2026, 12:00 Berlin — gesetzlicher Feiertag im ganzen Land. */
+  const LABOUR_DAY_NOON = Date.UTC(2026, 4, 1, 10, 0)
+
+  /**
+   * Der Fall, den der bestehende Test „stays silent when it cannot explain the
+   * number" nicht konstruieren konnte — mit einem Feiertag geht er.
+   *
+   * Alle Zonen führen den Freitag in ihren Fenstern, es ist mitten in der
+   * üblichen Zeit, und trotzdem kassiert keine einzige: `isFreeDay` nimmt sie
+   * alle heraus. Keiner der drei Gründe trifft zu, und `quietDayNote` schweigt.
+   *
+   * Das ist bewusst so und keine Lücke im Test: `QuietReason` kennt keinen
+   * Feiertag, und einen zu erfinden hiesse, aus „ich weiss es nicht" ein
+   * „heute ist frei" zu machen. Wer das ändern will, ändert den Typ, nicht
+   * diesen Test.
+   */
+  it('schweigt an einem Feiertag mitten in der üblichen Zeit', () => {
+    const zones = Array.from({ length: 10 }, (_, i) => zone(`f${i}`, MO_TO_SA))
+    expect(quietDayNote(zones, { now: LABOUR_DAY_NOON })).toBeNull()
+  })
+
+  // Zur Gegenprobe: Die Stille kommt wirklich vom Kalender und nicht von den
+  // Fenstern. Ohne den Feiertag kassieren dieselben Zonen zur selben Uhrzeit
+  // alle — und dann schweigt `quietDayNote` aus dem gewöhnlichen Grund.
+  it('lässt dieselben Zonen eine Woche später alle kassieren', () => {
+    const zones = Array.from({ length: 10 }, (_, i) => zone(`f${i}`, MO_TO_SA))
+    const nextFriday = LABOUR_DAY_NOON + 7 * 86_400_000
+    expect(zones.every((z) => isChargeable(z, nextFriday))).toBe(true)
+    expect(zones.some((z) => isChargeable(z, LABOUR_DAY_NOON))).toBe(false)
+    expect(quietDayNote(zones, { now: nextFriday })).toBeNull()
+  })
+})
+
+describe('quietDayNote ohne Fenster', () => {
+  /**
+   * Eine Stadt, deren Zonen gar keine Fenster tragen.
+   *
+   * Kein hypothetischer Fall: Genau so sieht die geladene Liste aus, wenn der
+   * Datenbau für eine Stadt durchgelaufen ist, ohne einen einzigen Fahrplan
+   * lesen zu können. Der Median über eine leere Menge ist dann 0, und der
+   * Hinweis nennt „ab 0 Uhr" — richtig, weil er nichts anderes weiss, und
+   * jedenfalls besser als ein NaN in der Anzeige.
+   */
+  it('liefert einen Ruhetag mit Stunden 0, statt an einem leeren Median zu scheitern', () => {
+    const empty = Array.from({ length: 5 }, (_, i) => ({ ...zone(`e${i}`, MO_TO_SA), windows: [] }))
+    const note = quietDayNote(empty, { now: TUESDAY_MIDDAY })
+    expect(note?.reason).toBe('restDay')
+    expect(note?.chargeable).toBe(0)
+    expect(note?.usualStartHour).toBe(0)
+    expect(note?.usualEndHour).toBe(0)
   })
 })

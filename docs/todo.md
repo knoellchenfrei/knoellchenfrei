@@ -373,6 +373,15 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       neben der Karte, unsichtbar, während die Liste „am häufigsten
       kontrolliert" dreimal „Außerhalb der Zonen" nannte. Sie stehen jetzt als
       Abstand zu `CITY.center`.
+- [ ] **Das Heatmap-Raster ist noch Berlin.** `core/heatmap.ts` rechnet das
+      250-m-Raster mit `ORIGIN` 13,0/52,3 und `cos 52,52°` — beides fest
+      verdrahtet. In München sind die Zellen dadurch rund 9 % breiter als
+      250 m; funktional fällt das nicht auf, weil der Ursprung nur als
+      Bezugspunkt dient und die Zellen innerhalb einer Stadt gleich groß
+      bleiben. Ein Wechsel des Rasters ändert aber die Zell-Schlüssel und
+      damit jede im Worker und in D1 gespeicherte Markierung — deshalb erst
+      mit Migrationsplan, nicht nebenbei.
+
 - [ ] **Drei Rückfragen an München**, `gb1-23.mor@muenchen.de` (MOR-GB1).
       Keine davon ist aus dem Feed zu beantworten:
       1. **Was sind `Milbertshofen` (25 Abschnitte) und `Riesenfeld` (15)?**
