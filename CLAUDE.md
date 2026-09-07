@@ -384,6 +384,22 @@ wiederholt.
   kommen aus `core/city.ts` — im Skript standen sie als zweite Kopie von
   Berlins `reportBounds`, und mit vier Städten wären es acht Zahlen geworden,
   die auseinanderlaufen können.
+- **Gegen fremde Daten hilft die Karte des Anbieters selbst.** „Da sind Löcher
+  in den Parkzonen, das glaube ich nicht" liess sich am 7. September in zehn
+  Minuten beantworten, ohne eine einzige Vermutung: Der Dienst hat neben dem
+  WFS einen **WMS**, und `GetMap` auf `layers=parkzonen` liefert Berlins eigene
+  Darstellung als PNG. Sie zeigt dieselben Löcher — Tiergarten mit Zoo,
+  Gleisdreieck — also liegt es nicht an uns. Dazu drei Zahlen, die den Verdacht
+  vollends ausräumten: `resultType=hits` nennt `numberMatched="103"`, ein
+  frischer Abruf ist **byteweise identisch** mit dem Bestand (299.224 Bytes),
+  und die Geometrie keiner einzigen Zone hat sich geändert. Bei „unsere Daten
+  sehen falsch aus" also erst den Anbieter zeichnen lassen, dann die eigene
+  Kette prüfen.
+  Zwei Fallen dabei: Der WMS-Layer heisst `parkzonen`, nicht
+  `parkraumbewirtschaftung:parkzonen` — mit dem Präfix antwortet er
+  `LayerNotDefined` als XML mit **HTTP 200**. Und `curl` braucht für
+  `gdi.berlin.de` nur dann `--cacert`, wenn das System-Bundle die
+  Telekom-Wurzel nicht kennt; auf macOS geht es ohne.
 - **Ein 206 ist noch kein Bild — und ein 200 ist noch kein Skript.** Die
   Kachelarchive antworteten mit `206`, der PMTiles-Leser lieferte im Browser
   eine 172-KB-Kachel, das TileJSON war vollständig — und die Karte blieb leer,

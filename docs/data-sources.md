@@ -34,6 +34,49 @@ Foundation deckt ausgelieferte Anwendungen nicht ab. Der belegte Weg dorthin
 steht in [docs/hosting.md](hosting.md): ein PMTiles-Archiv in Objektspeicher,
 kein laufender Kachelserver — so macht es FreiFahren.
 
+## Die Löcher in den Berliner Parkzonen — geprüft, nicht unsere
+
+Am 7. September fiel auf, dass die Zonenkarte Löcher hat, das grösste rund
+6 km² zwischen Zoologischem Garten und Tiergarten. Der Verdacht lag auf dem
+eigenen Datenbau. Er trifft nicht zu, und der Weg dahin gehört aufgeschrieben,
+weil er beim nächsten Zweifel wieder trägt.
+
+| Geprüft | Ergebnis |
+| --- | --- |
+| `resultType=hits` gegen den Dienst | `numberMatched="103"` — genau so viele wie im Bestand |
+| Frischer Abruf gegen die vorhandene Datei | **byteweise identisch**, 299.224 Bytes |
+| Zonen, deren Geometrie sich geändert hat | **0** |
+| Innenringe in den 103 Polygonen | **0** — es sind Lücken zwischen Flächen, keine ausgestanzten Löcher |
+| Vereinfachung im Datenbau | `1e-6` Grad, rund 10 cm — erzeugt keine sichtbaren Lücken |
+| Berlins **eigene** Darstellung (WMS `GetMap`, `layers=parkzonen`) | zeigt dieselben Löcher |
+| Umschlossene Lücken im Innenstadtring | 12, jede davon Park oder Bahngelände |
+| Strassenabschnitte im grössten Loch | 810, davon sagen **762 selbst** `nicht bewirtschaftet` |
+
+Der WMS ist dabei das schärfste Werkzeug: Derselbe Anbieter zeichnet denselben
+Datensatz, und wenn seine Karte aussieht wie unsere, liegt es nicht an uns.
+
+```bash
+curl -o berlin.png 'https://gdi.berlin.de/services/wms/parkraumbewirtschaftung?service=WMS&version=1.3.0&request=GetMap&layers=parkzonen&styles=&crs=EPSG:4326&bbox=52.49,13.30,52.53,13.40&width=1000&height=400&format=image/png'
+```
+
+Der Layer heisst dort **`parkzonen`**, nicht `parkraumbewirtschaftung:parkzonen`
+— mit Präfix antwortet der Dienst `LayerNotDefined` als XML, und zwar mit
+`HTTP 200`.
+
+**Was dabei wirklich schief ist**, und zwar in der Quelle: 421 Strassen-
+abschnitte tragen eine Gebühr und Bewirtschaftungszeiten, liegen aber in keinem
+Zonenpolygon; 354 davon behaupten zugleich `zone = "nicht bewirtschaftet"`.
+Schwerpunkte sind Reinickendorf, Steglitz-Zehlendorf und Tempelhof-Schöneberg —
+Gegenden, in denen die Bewirtschaftung neu ist. Die Folge in der App steht als
+Befund in [todo.md](todo.md).
+
+**Zur Zahl 103:** Die Zonen*nummern* laufen von 1 bis **138**, 39 Nummern
+dazwischen gibt es nicht, und acht Zonen tragen einen Bezirkszusatz (`9-CW`,
+`9-TS`, `17-CW`, `17-TS`, `41-Mitte`, `41-Pankow`, `51-Arena Süd`,
+`51-OberbaumCity`). Wer die höchste Nummer für die Anzahl hält, erwartet mehr
+als 103. Hamburg hat 145 Gebiete, München 82, Frankfurt 27 — auch das eine
+Quelle für „das waren doch mehr".
+
 ## Bewusst nicht verwendet
 
 | Quelle | Umfang | Warum nicht |
