@@ -58,6 +58,43 @@ describe('holidaysFor', () => {
     expect(holidaysFor('HH', 2026).size).toBe(10)
   })
 
+  // Hessen ist der Grund für die Strukturänderung: Fronleichnam ist beweglich
+  // (Ostersonntag + 60) und trotzdem nicht bundesweit. Vorher kannte die Datei
+  // nur eine *globale* Osterliste — Fronleichnam wäre dort in Berlin und
+  // Hamburg gelandet, wo er kein Feiertag ist.
+  it('gives Hessen Fronleichnam on the right day in two different years', () => {
+    // Ostersonntag 2026 ist der 5. April, 2027 der 28. März.
+    expect(holidaysFor('HE', 2026).has('2026-06-04')).toBe(true)
+    expect(holidaysFor('HE', 2027).has('2027-05-27')).toBe(true)
+  })
+
+  // Der eigentliche Beweis, dass die Umstellung nichts verschoben hat: Die
+  // beiden bestehenden Länder bekommen Fronleichnam NICHT mit.
+  it('keeps Fronleichnam out of Berlin and Hamburg', () => {
+    expect(holidaysFor('BE', 2026).has('2026-06-04')).toBe(false)
+    expect(holidaysFor('HH', 2026).has('2026-06-04')).toBe(false)
+  })
+
+  it('denies Hessen the two days its neighbours have', () => {
+    const he = holidaysFor('HE', 2026)
+    expect(he.has('2026-03-08')).toBe(false) // Frauentag, nur BE und MV
+    expect(he.has('2026-10-31')).toBe(false) // Reformationstag, nicht in HE
+    expect(he.has('2026-11-01')).toBe(false) // Allerheiligen, nicht in HE
+    expect(he.has('2026-11-18')).toBe(false) // Buss- und Bettag, nur in SN
+  })
+
+  it('counts ten holidays for Hessen too', () => {
+    expect(holidaysFor('HE', 2026).size).toBe(10)
+  })
+
+  // Die Kalender der drei Länder unterscheiden sich um genau je einen Tag —
+  // gäbe es keinen Unterschied, wäre die Tabelle überflüssig.
+  it('leaves the nine nationwide holidays identical across all three Länder', () => {
+    const [be, hh, he] = [holidaysFor('BE', 2026), holidaysFor('HH', 2026), holidaysFor('HE', 2026)]
+    const shared = [...be].filter((date) => hh.has(date) && he.has(date))
+    expect(shared).toHaveLength(9)
+  })
+
   // Ein Land ohne hinterlegten Kalender darf nicht als "keine Feiertage"
   // durchgehen: Das hiesse, an Karfreitag zum Zahlen aufzufordern, und zwar
   // ohne dass irgendwo etwas nach einem Fehler aussieht.

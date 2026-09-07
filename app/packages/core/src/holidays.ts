@@ -19,7 +19,7 @@
 import { berlinDateKey, type BerlinWallClock } from './berlin-time.js'
 
 /** Amtliche Kürzel der Bundesländer, so weit belegt. */
-export type Land = 'BE' | 'HH'
+export type Land = 'BE' | 'HH' | 'HE'
 
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
@@ -67,6 +67,16 @@ const NATIONWIDE_FROM_EASTER = [
 /**
  * Was ein Land über die neun bundesweiten hinaus hat.
  *
+ * **Zwei Listen, nicht eine.** Bis Hessen dazukam, hielt `REGIONAL` nur *feste*
+ * Daten als `MM-TT`, und alles Bewegliche stand global in
+ * `NATIONWIDE_FROM_EASTER`. Fronleichnam ist beides zugleich — beweglich
+ * (Ostersonntag + 60) und **nicht** bundesweit. In der alten Struktur ließ er
+ * sich nur falsch unterbringen: als festes Datum wäre er jedes Jahr um Wochen
+ * daneben, in der globalen Osterliste bekämen ihn Berlin und Hamburg mit, wo er
+ * keiner ist. Ein Land, das keinen beweglichen Zusatzfeiertag hat, trägt hier
+ * eine leere Liste; im Ergebnis ändert sich für BE und HH dadurch nichts, und
+ * ein Test hält genau das fest.
+ *
  * Zwei Fallstricke, bevor jemand hier ein Land ergänzt:
  *
  * - **Manche Feiertage gelten nur in Teilen eines Landes.** Mariä Himmelfahrt
@@ -74,10 +84,10 @@ const NATIONWIDE_FROM_EASTER = [
  *   Thüringen ebenso. Eine Tabelle je Land kann das nicht ausdrücken; für
  *   München gehört der Eintrag deshalb an die Stadt, nicht ans Land.
  * - **Buß- und Bettag ist beweglich, aber nicht österlich.** Er ist der
- *   Mittwoch vor dem 23. November und braucht eine eigene Regel, kein
- *   festes Datum.
+ *   Mittwoch vor dem 23. November und braucht eine eigene Regel, weder ein
+ *   festes Datum noch einen Oster-Abstand.
  *
- * Belege für die beiden Einträge unten:
+ * Belege für die drei Einträge unten:
  *
  * - **BE** — Der Internationale Frauentag am 8. März ist seit 2019 in Berlin
  *   gesetzlicher Feiertag; außer Berlin führt ihn nur Mecklenburg-Vorpommern.
@@ -85,10 +95,23 @@ const NATIONWIDE_FROM_EASTER = [
  * - **HH** — Der Reformationstag am 31. Oktober ist seit 2018 gesetzlicher
  *   Feiertag; damit hat Hamburg zehn. Der 8. März ist keiner, Fronleichnam
  *   auch nicht. Nachgesehen am 6. September 2026.
+ * - **HE** — Hessen hat zehn: die neun bundesweiten plus **Fronleichnam**,
+ *   und sonst nichts. Kein Reformationstag, kein Allerheiligen, kein Buß- und
+ *   Bettag, keine gemeindeweise Regelung. Quelle: Hessisches Ministerium des
+ *   Innern, <https://innen.hessen.de/buerger-staat/feiertage>, abgerufen am
+ *   7. September 2026.
  */
-const REGIONAL: Record<Land, readonly string[]> = {
-  BE: ['03-08'], // Internationaler Frauentag
-  HH: ['10-31'], // Reformationstag
+interface RegionalHolidays {
+  /** Feste Daten als `MM-TT`. */
+  readonly fixed: readonly string[]
+  /** Bewegliche Daten als Abstand in Tagen zum Ostersonntag. */
+  readonly fromEaster: readonly number[]
+}
+
+const REGIONAL: Record<Land, RegionalHolidays> = {
+  BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
+  HH: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag
+  HE: { fixed: [], fromEaster: [60] }, // Fronleichnam
 }
 
 const cache = new Map<string, ReadonlySet<string>>()
@@ -102,15 +125,17 @@ export function holidaysFor(land: Land, year: number): ReadonlySet<string> {
   // Ausdrücklich als "kann fehlen" typisiert: Zur Übersetzungszeit deckt
   // `Record<Land, …>` jeden Fall ab, zur Laufzeit kommt `land` aber aus
   // Konfiguration und damit aus einer Datei, die niemand geprüft hat.
-  const regional: readonly string[] | undefined = REGIONAL[land]
+  const regional: RegionalHolidays | undefined = REGIONAL[land]
   if (regional === undefined) {
     throw new Error(`Kein Feiertagskalender für "${land}" hinterlegt`)
   }
 
   const dates = new Set<string>(
-    [...NATIONWIDE_FIXED, ...regional].map((date) => `${year}-${date}`),
+    [...NATIONWIDE_FIXED, ...regional.fixed].map((date) => `${year}-${date}`),
   )
-  for (const offset of NATIONWIDE_FROM_EASTER) dates.add(shiftFromEaster(year, offset))
+  for (const offset of [...NATIONWIDE_FROM_EASTER, ...regional.fromEaster]) {
+    dates.add(shiftFromEaster(year, offset))
+  }
 
   cache.set(cacheKey, dates)
   return dates
