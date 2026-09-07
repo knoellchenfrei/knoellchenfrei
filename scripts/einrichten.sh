@@ -464,9 +464,9 @@ schritt_cloudflare() {
 
     local kv d1
     kv="$(kv_id_holen)"
-    [ -n "$kv" ] && ok "KV-Namespace: $kv" || { schlimm "keine KV-Kennung"; offen_merken; return 1; }
+    if [ -n "$kv" ]; then ok "KV-Namespace: $kv"; else schlimm "keine KV-Kennung"; offen_merken; return 1; fi
     d1="$(d1_id_holen)"
-    [ -n "$d1" ] && ok "D1-Datenbank: $d1" || { schlimm "keine D1-Kennung"; offen_merken; return 1; }
+    if [ -n "$d1" ]; then ok "D1-Datenbank: $d1"; else schlimm "keine D1-Kennung"; offen_merken; return 1; fi
 
     # `sed -i` ist auf macOS und GNU verschieden. Ein Temporärfile ist auf
     # beiden gleich.
@@ -513,8 +513,11 @@ schritt_cloudflare() {
   else
     fehlt "Pages-Projekt $PAGES_PROJEKT fehlt"
     if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; else
-      wr pages project create "$PAGES_PROJEKT" --production-branch main >/dev/null 2>&1 \
-        && ok "angelegt" || { schlimm "ließ sich nicht anlegen"; offen_merken; }
+      if wr pages project create "$PAGES_PROJEKT" --production-branch main >/dev/null 2>&1; then
+        ok "angelegt"
+      else
+        schlimm "ließ sich nicht anlegen"; offen_merken
+      fi
     fi
   fi
 
@@ -542,8 +545,11 @@ schritt_cloudflare() {
       git -C "$WURZEL" commit -q \
         -m "Cloudflare-Kennungen eintragen" \
         -m "Von scripts/einrichten.sh. KV- und D1-Kennungen sind keine Geheimnisse: ohne den API-Token ist damit nichts anzufangen, und wrangler braucht sie im Klartext."
-      git -C "$WURZEL" push && ok "gepusht — der Deploy-Workflow läuft an" \
-        || { schlimm "Push ging nicht"; offen_merken; }
+      if git -C "$WURZEL" push; then
+        ok "gepusht — der Deploy-Workflow läuft an"
+      else
+        schlimm "Push ging nicht"; offen_merken
+      fi
     else
       offen_merken
     fi
@@ -589,8 +595,11 @@ schritt_ci() {
       wert="$(geheim_fragen "$name (Eingabe bleibt unsichtbar):")"
     fi
     if [ -z "$wert" ]; then fehlt "$name übersprungen"; offen_merken; continue; fi
-    printf '%s' "$wert" | gh secret set "$name" --repo "$REPO_SLUG" --body-file - \
-      && ok "$name gesetzt" || { schlimm "$name ließ sich nicht setzen"; offen_merken; }
+    if printf '%s' "$wert" | gh secret set "$name" --repo "$REPO_SLUG" --body-file -; then
+      ok "$name gesetzt"
+    else
+      schlimm "$name ließ sich nicht setzen"; offen_merken
+    fi
   done
 }
 
@@ -654,21 +663,30 @@ bot_profil_setzen() {
 
   antwort="$(tg_api "$token" setMyShortDescription \
     "$(printf '{"short_description":%s}' "$(json_text "$BOT_ABOUT")")")"
-  tg_ok "$antwort" && ok "About gesetzt (${#BOT_ABOUT} von 120 Zeichen)" \
-    || { schlimm "About abgelehnt: $antwort"; offen_merken; }
+  if tg_ok "$antwort"; then
+    ok "About gesetzt (${#BOT_ABOUT} von 120 Zeichen)"
+  else
+    schlimm "About abgelehnt: $antwort"; offen_merken
+  fi
 
   antwort="$(tg_api "$token" setMyDescription \
     "$(printf '{"description":%s}' "$(json_text "$BOT_BESCHREIBUNG")")")"
-  tg_ok "$antwort" && ok "Beschreibung gesetzt (${#BOT_BESCHREIBUNG} von 512 Zeichen)" \
-    || { schlimm "Beschreibung abgelehnt: $antwort"; offen_merken; }
+  if tg_ok "$antwort"; then
+    ok "Beschreibung gesetzt (${#BOT_BESCHREIBUNG} von 512 Zeichen)"
+  else
+    schlimm "Beschreibung abgelehnt: $antwort"; offen_merken
+  fi
 
   # Nur was der Worker wirklich beantwortet. Ein Menue, das einen Befehl
   # anbietet, den der Bot nicht kennt, ist schlimmer als keines: Es verspricht
   # etwas und die Antwort ist eine hoefliche Absage.
   antwort="$(tg_api "$token" setMyCommands \
     '{"commands":[{"command":"hilfe","description":"Wie das Melden geht, und was gespeichert wird"}]}')"
-  tg_ok "$antwort" && ok "Befehlsmenü gesetzt (/hilfe)" \
-    || { schlimm "Befehlsmenü abgelehnt: $antwort"; offen_merken; }
+  if tg_ok "$antwort"; then
+    ok "Befehlsmenü gesetzt (/hilfe)"
+  else
+    schlimm "Befehlsmenü abgelehnt: $antwort"; offen_merken
+  fi
 
   hinweis ""
   hinweis "Zwei Bilder kann die Bot-API nicht, nur der BotFather:"
@@ -747,8 +765,8 @@ schritt_telegram() {
   printf '%s' "$liste" | grep -q TELEGRAM_TOKEN  && hat_token=ja
   printf '%s' "$liste" | grep -q TELEGRAM_SECRET && hat_secret=ja
 
-  [ "$hat_token" = ja ]  && ok "TELEGRAM_TOKEN liegt im Worker"  || fehlt "TELEGRAM_TOKEN fehlt"
-  [ "$hat_secret" = ja ] && ok "TELEGRAM_SECRET liegt im Worker" || fehlt "TELEGRAM_SECRET fehlt"
+  if [ "$hat_token" = ja ];  then ok "TELEGRAM_TOKEN liegt im Worker";  else fehlt "TELEGRAM_TOKEN fehlt";  fi
+  if [ "$hat_secret" = ja ]; then ok "TELEGRAM_SECRET liegt im Worker"; else fehlt "TELEGRAM_SECRET fehlt"; fi
 
   # Vorhanden ist nicht dasselbe wie gueltig. Wer den Bot bei BotFather neu
   # anlegt, hat danach zwei Geheimnisse im Worker, die beide auf einen Bot
@@ -791,8 +809,16 @@ print(('@' + r['username']) if d.get('ok') and r.get('username') else '')" 2>/de
   ok "Der Token gehoert zu $wer"
 
   local geheim; geheim="$(openssl rand -hex 24)"
-  printf '%s' "$token"  | wr secret put TELEGRAM_TOKEN  >/dev/null 2>&1 && ok "TELEGRAM_TOKEN gesetzt"  || { schlimm "TELEGRAM_TOKEN ging nicht"; offen_merken; }
-  printf '%s' "$geheim" | wr secret put TELEGRAM_SECRET >/dev/null 2>&1 && ok "TELEGRAM_SECRET erzeugt und gesetzt" || { schlimm "TELEGRAM_SECRET ging nicht"; offen_merken; }
+  if printf '%s' "$token" | wr secret put TELEGRAM_TOKEN >/dev/null 2>&1; then
+    ok "TELEGRAM_TOKEN gesetzt"
+  else
+    schlimm "TELEGRAM_TOKEN liess sich nicht setzen"; offen_merken; return 1
+  fi
+  if printf '%s' "$geheim" | wr secret put TELEGRAM_SECRET >/dev/null 2>&1; then
+    ok "TELEGRAM_SECRET erzeugt und gesetzt"
+  else
+    schlimm "TELEGRAM_SECRET liess sich nicht setzen"; offen_merken; return 1
+  fi
 
   local basis
   basis="$(worker_adresse)"
@@ -1410,9 +1436,11 @@ schritt_github() {
   elif [ "$NUR_PRUEFEN" = ja ]; then
     fehlt "Dependabot-Warnungen aus"; offen_merken
   else
-    gh api -X PUT "repos/$REPO_SLUG/vulnerability-alerts" >/dev/null 2>&1 \
-      && ok "Dependabot-Warnungen eingeschaltet" \
-      || { fehlt "ließen sich nicht einschalten"; offen_merken; }
+    if gh api -X PUT "repos/$REPO_SLUG/vulnerability-alerts" >/dev/null 2>&1; then
+      ok "Dependabot-Warnungen eingeschaltet"
+    else
+      fehlt "ließen sich nicht einschalten"; offen_merken
+    fi
   fi
   if [ "$NUR_PRUEFEN" != ja ]; then
     gh api -X PUT "repos/$REPO_SLUG/automated-security-fixes" >/dev/null 2>&1 \
@@ -1468,7 +1496,7 @@ for arg in "$@"; do
   case "$arg" in
     --pruefen|-p)      NUR_PRUEFEN=ja ;;
     --neuaufbau)       NEUAUFBAU=ja ;;
-    --liste|-l)        printf '%s\n' $SCHRITTE; exit 0 ;;
+    --liste|-l)        printf '%s\n' "$SCHRITTE" | tr ' ' '\n' | grep -v '^$'; exit 0 ;;
     --hilfe|-h|--help) usage; exit 0 ;;
     -*) printf 'Unbekannte Option: %s\n' "$arg"; usage; exit 2 ;;
     *)  GEWAEHLT="$GEWAEHLT $arg" ;;

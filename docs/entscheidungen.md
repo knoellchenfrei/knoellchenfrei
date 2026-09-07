@@ -475,3 +475,32 @@ OpenStreetMap zurück, holt also gar nichts aus R2.
 Wer lokal doch gegen die echten Kacheln entwickeln will, trägt seinen Origin
 vorübergehend ein und nimmt ihn wieder heraus. Eine dauerhafte Ausnahme für
 einen Rechner, der nicht existiert, ist keine.
+
+## shellcheck ja, ESLint und Prettier vorerst nicht
+
+*7. September 2026, Audit-Punkt M-036.*
+
+Der Befund stimmt: Es gab keinen Formatter, keinen Linter, kein shellcheck und
+keine statische Sicherheitsanalyse — nichts davon erzwungen.
+
+**shellcheck ist jetzt in der CI**, und das war verdient: Beim ersten Lauf
+fand es 15 Hinweise, darunter 13-mal `A && B || C`. Das ist kein
+if-then-else — `C` läuft auch, wenn `A` wahr war und `B` scheiterte. Genau
+diese Sorte Kette hat in diesem Projekt schon einmal einen Commit rausgehen
+lassen, der nichts geändert hatte. Alle 15 sind behoben, der Lauf ist bei
+null.
+
+**ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
+Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
+`exactOptionalPropertyTypes`, hat 500 Unit-Tests und 99,9 % Zeilenabdeckung —
+die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
+formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
+
+Ein Linter kostet dagegen sofort: Konfiguration, eine Runde Regelstreit und
+ein Commit, der jede Datei anfasst und damit jede `git blame` unbrauchbar
+macht.
+
+**Wiedervorlage, sobald ein zweiter Mensch Code beiträgt.** Dann ist der
+Nutzen ein anderer — nicht Fehler finden, sondern Streit über Stil vermeiden,
+bevor er entsteht.
+

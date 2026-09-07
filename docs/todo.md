@@ -421,6 +421,16 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
       hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
       Das war Audit-Punkt M-031.
+- [x] **Skripte werden geprüft** — am 7. September, Audit-Punkte M-036, M-035
+      und M-078. shellcheck läuft in der CI und ist bei null Hinweisen; die 15
+      Befunde des ersten Laufs sind behoben, darunter 13-mal `A && B || C`.
+      Dazu prüft `scripts/namen-pruefen.sh`, dass Worker-, Datenbank-, Pages-
+      und Eimername in allen vier Dateien übereinstimmen und `parkingzone` nur
+      noch als historische Adresse vorkommt. Und `app/scripts/fetch-parkzonen.sh`
+      ist gelöscht: ein zweiter, undokumentierter Abrufweg neben `fetch.ts`,
+      der nur Berlins Zonen holte. ESLint und Prettier bewusst nicht — die
+      Begründung steht in [entscheidungen.md](entscheidungen.md).
+
 - [x] **Lizenzen aufgeräumt** — am 7. September, Audit-Punkte M-021, M-023,
       M-058 und M-016. `LICENSE` ist wieder reines MIT (der deutsche
       Datenanhang liess GitHub `NOASSERTION` melden), die Datenlizenzen aller

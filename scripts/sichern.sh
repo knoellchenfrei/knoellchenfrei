@@ -45,6 +45,12 @@ wr() {
 }
 
 # Die jüngste Sicherung, oder nichts.
+#
+# `ls -t` statt `find`: shellcheck rät zu `find`, weil `ls` an Dateinamen mit
+# Zeilenumbrüchen scheitert. Diese Namen entstehen aber zwei Funktionen weiter
+# unten aus einem Zeitstempel — es gibt hier keine fremden Namen, und `find`
+# mit Sortierung nach Zeit wäre drei Zeilen für dasselbe Ergebnis.
+# shellcheck disable=SC2012
 juengste() {
   ls -t "$ZIEL"/knoellchenfrei-*.sql.enc 2>/dev/null | head -1
 }

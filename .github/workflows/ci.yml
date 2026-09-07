@@ -76,6 +76,26 @@ jobs:
           path: app/apps/web/test-results/
           retention-days: 14
 
+  # Die Skripte richten Produktivsysteme ein und sichern die Datenbank — sie
+  # sind kein Beiwerk. shellcheck fand beim ersten Lauf 15 Hinweise, darunter
+  # 13× `A && B || C`: Das ist kein if-then-else, C laeuft auch, wenn A wahr
+  # war und B scheiterte. Genau diese Sorte Kette hat in diesem Projekt schon
+  # einmal einen Commit rausgehen lassen, der nichts geaendert hatte
+  # (Audit-Punkt M-036).
+  shell:
+    name: Shell-Skripte
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck scripts/*.sh app/packages/ingest/scripts/*.sh
+      # Eine Umbenennung muss alle Stellen treffen. Die Namen stehen in vier
+      # Sprachen; diese Pruefung sagt es laut, wenn zwei auseinanderlaufen.
+      - name: Namen der Ressourcen stimmen ueberein
+        run: ./scripts/namen-pruefen.sh
+
   security:
     name: Sicherheit
     runs-on: ubuntu-latest
