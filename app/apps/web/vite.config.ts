@@ -116,6 +116,101 @@ function betaGuard(beta: boolean): Plugin {
   }
 }
 
+/**
+ * Schreibt `_headers` für Cloudflare Pages — Sicherheits-Kopfzeilen samt CSP.
+ *
+ * Die App hatte keine (Audit-Punkt M-043). Sie ist zwar frei von
+ * `innerHTML`-Senken und die einzige HTML-Konstruktion maskiert jeden Wert,
+ * aber eine CSP ist die Grenze, die auch dann noch hält, wenn irgendwann doch
+ * jemand eine Senke einbaut.
+ *
+ * **Erzeugt, nicht geschrieben.** Die erlaubten Ziele sind dieselben, die der
+ * Build ohnehin kennt: `VITE_API_BASE` und `VITE_TILES_URL`. Eine `_headers`
+ * von Hand wäre am Tag der ersten eigenen Worker-Domain falsch — und zwar so,
+ * dass die App aufhört zu laden, ohne dass jemand die Ursache sieht. Dieselbe
+ * Begründung wie bei der Vorratsliste des Service Workers.
+ *
+ * Was die Richtlinie erlaubt und warum:
+ *
+ * - `script-src 'self'` — der Build enthält **kein** Inline-Skript, geprüft.
+ * - `worker-src 'self' blob:` — **nachgemessen, nicht angenommen.** Der erste
+ *   Entwurf stand auf `blob:` allein, weil MapLibre das früher so tat. Version 6
+ *   lädt den Worker als eigene Datei von der eigenen Herkunft
+ *   (`/assets/maplibre-gl-worker.mjs`), und der Browser meldete prompt
+ *   „Creating a worker … violates … worker-src blob:". `blob:` bleibt
+ *   trotzdem stehen: Der PMTiles-Teil kann diesen Weg nehmen.
+ * - `style-src 'unsafe-inline'` — MapLibre setzt Stile direkt an Elemente
+ *   (Marker, Popups). Das ist unvermeidbar, solange die Bibliothek das tut,
+ *   und deutlich weniger wert als eine Lücke bei `script-src`.
+ * - `img-src data: blob:` — Symbole und Kartenkacheln entstehen zur Laufzeit.
+ * - `frame-ancestors 'none'` — die App gehört in kein fremdes Fenster.
+ */
+function securityHeaders(singleBundle: boolean): Plugin {
+  let outDir = join(process.cwd(), 'dist')
+  return {
+    name: 'security-headers',
+    configResolved(config) {
+      outDir = join(config.root, config.build.outDir)
+    },
+    closeBundle() {
+      // Ein Artifact liegt nicht auf Cloudflare Pages; dort gilt die CSP des
+      // Sandkastens, und eine `_headers` läge nur herum.
+      if (singleBundle) return
+
+      const herkunft = (wert: string | undefined): string => {
+        if (wert === undefined || wert.trim() === '') return ''
+        try {
+          return new URL(wert).origin
+        } catch {
+          // Ein unbrauchbarer Wert soll den Build anhalten, nicht still eine
+          // Richtlinie erzeugen, die die App aussperrt.
+          throw new Error(`Unbrauchbare Adresse in der Build-Umgebung: ${wert}`)
+        }
+      }
+      const api = herkunft(process.env.VITE_API_BASE)
+      const kacheln = herkunft(process.env.VITE_TILES_URL)
+      // Schriften und Symbole der Vektorkarte, siehe `map-style.ts`. Der
+      // Abfluss steht so auch in der Datenschutzerklärung.
+      const protomaps = 'https://protomaps.github.io'
+      const osm = 'https://tile.openstreetmap.org'
+
+      const verbinden = ["'self'", api, kacheln, protomaps].filter((wert) => wert !== '')
+      const bilder = ["'self'", 'data:', 'blob:', osm, protomaps, kacheln].filter(
+        (wert) => wert !== '',
+      )
+
+      const csp = [
+        "default-src 'self'",
+        "base-uri 'self'",
+        "object-src 'none'",
+        "frame-ancestors 'none'",
+        "form-action 'self'",
+        "script-src 'self'",
+        "worker-src 'self' blob:",
+        "style-src 'self' 'unsafe-inline'",
+        `img-src ${bilder.join(' ')}`,
+        "font-src 'self'",
+        `connect-src ${verbinden.join(' ')}`,
+        "manifest-src 'self'",
+      ].join('; ')
+
+      writeFileSync(
+        join(outDir, '_headers'),
+        [
+          '# Erzeugt von vite.config.ts — nicht von Hand ändern.',
+          '/*',
+          `  Content-Security-Policy: ${csp}`,
+          '  X-Content-Type-Options: nosniff',
+          '  Referrer-Policy: no-referrer',
+          '  Cross-Origin-Opener-Policy: same-origin',
+          '  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=()',
+          '',
+        ].join('\n'),
+      )
+    },
+  }
+}
+
 // The artifact build must produce ONE module: a published artifact runs under a
 // CSP that blocks external requests, so a second chunk pulled in by an ES import
 // would simply fail to load.
@@ -125,7 +220,12 @@ const singleBundle = process.env.BUILD_TARGET === 'artifact'
 const beta = process.env.PUBLIC_LAUNCH !== '1'
 
 export default defineConfig({
-  plugins: [react(), stampServiceWorker(singleBundle), betaGuard(beta)],
+  plugins: [
+    react(),
+    stampServiceWorker(singleBundle),
+    betaGuard(beta),
+    securityHeaders(singleBundle),
+  ],
   base: './',
   define: {
     __BETA__: JSON.stringify(beta),

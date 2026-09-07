@@ -247,7 +247,7 @@ pnpm test                              # 500 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 128 End-to-End-Tests
+cd apps/web && npx playwright test     # 130 End-to-End-Tests
 ```
 
 **Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
@@ -283,7 +283,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 | | |
 | --- | --- |
 | Unit-Tests | 500, davon 34 Regressionstests für konkrete gefundene Fehler |
-| End-to-End | 128 über Desktop und Handy, gegen den Produktions-Build; 127 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
+| End-to-End | 130 über Desktop und Handy, gegen den Produktions-Build; 129 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |
@@ -294,7 +294,7 @@ ohnehin nichts anzeigen. Erzeugt werden sie **von Hand**, nicht vom CI:
 
 ```bash
 cd app/packages/ingest
-TEST_COUNT=500 E2E_COUNT=128 npx tsx src/build-badges.ts
+TEST_COUNT=500 E2E_COUNT=130 npx tsx src/build-badges.ts
 ```
 
 Hier stand bis zum 7. September „werden vom CI generiert". Das war falsch —

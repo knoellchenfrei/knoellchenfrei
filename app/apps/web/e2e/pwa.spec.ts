@@ -275,3 +275,39 @@ test.describe('the closed beta', () => {
     ).toContainText('Testbetrieb')
   })
 })
+
+/**
+ * Die Sicherheits-Kopfzeilen liegen als `_headers` im Ausgabeverzeichnis und
+ * werden von Cloudflare Pages ausgewertet — der Vorschauserver dieser Suite
+ * tut das nicht. Geprüft wird deshalb die **Datei**, nicht ihre Wirkung: dass
+ * sie überhaupt entsteht, und dass die Richtlinie die Ziele nennt, die die App
+ * wirklich braucht.
+ *
+ * Warum das einen Test wert ist: Eine CSP, die eine Herkunft vergisst, macht
+ * die App nicht kaputt, sondern leer — die Karte bleibt schwarz, und im
+ * Protokoll steht nichts, was nach einem Fehler aussieht. Genau dieser Fall
+ * ist beim Bauen aufgetreten: `worker-src blob:` allein sperrte MapLibre 6 aus.
+ */
+test.describe('die Sicherheits-Kopfzeilen', () => {
+  test('_headers entsteht und nennt die nötigen Herkünfte', async ({ page }) => {
+    const response = await page.request.get('/_headers')
+    expect(response.status()).toBe(200)
+    const text = await response.text()
+
+    const csp = /Content-Security-Policy: (.+)/.exec(text)?.[1] ?? ''
+    expect(csp).toContain("default-src 'self'")
+    expect(csp).toContain("frame-ancestors 'none'")
+    expect(csp).toContain("object-src 'none'")
+    // Ohne `'self'` bleibt die Karte schwarz: MapLibre 6 lädt seinen Worker
+    // als eigene Datei, nicht als Blob.
+    expect(csp).toContain("worker-src 'self' blob:")
+    // Schriften und Symbole der Vektorkarte kommen von dort — der Abfluss
+    // steht so auch in der Datenschutzerklärung.
+    expect(csp).toContain('https://protomaps.github.io')
+
+    expect(text).toContain('X-Content-Type-Options: nosniff')
+    expect(text).toContain('Referrer-Policy: no-referrer')
+    // Der Standort ist die einzige Berechtigung, die diese App je anfragt.
+    expect(text).toContain('geolocation=(self)')
+  })
+})
