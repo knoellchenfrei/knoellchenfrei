@@ -19,13 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Die Berliner Geodaten in diesem Repository stammen von der
-Geodateninfrastruktur Berlin und stehen unter der Datenlizenz Deutschland
-Zero 2.0 (https://www.govdata.de/dl-de/zero-2-0). Sie sind nicht Teil der
-obigen MIT-Lizenz und erfordern keine Namensnennung.
-
-Kartenkacheln stammen von OpenStreetMap (© OpenStreetMap-Mitwirkende, ODbL).
-Die Namensnennung ist in der Anwendung sichtbar und darf nicht entfernt werden.

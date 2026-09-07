@@ -421,6 +421,18 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
       hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
       Das war Audit-Punkt M-031.
+- [x] **Lizenzen aufgeräumt** — am 7. September, Audit-Punkte M-021, M-023,
+      M-058 und M-016. `LICENSE` ist wieder reines MIT (der deutsche
+      Datenanhang liess GitHub `NOASSERTION` melden), die Datenlizenzen aller
+      vier Städte stehen in [NOTICE](../NOTICE), die Lizenztexte der
+      Abhängigkeiten in `THIRD-PARTY-NOTICES.md` — erzeugt, nicht geschrieben
+      (`pnpm --filter @knoellchenfrei/ingest build-notices`), und als
+      `third-party-notices.txt` mit ausgeliefert, weil BSD genau das verlangt.
+      Alle fünf `package.json` tragen jetzt `"license": "MIT"`. Und die
+      Oberfläche nennt bei den drei Namensnennungs-Städten den **Datensatz**
+      und sagt, dass die Daten **verändert** sind — beides verlangt § 2 der
+      Datenlizenz Deutschland, beides fehlte.
+
 - [x] **Sicherung, Wiederanlauf und Notfallplan** — am 7. September gebaut,
       Audit-Punkte M-008, M-009 und M-010. `scripts/sichern.sh` zieht die
       D1-Datenbank ab und verschlüsselt sie lokal;

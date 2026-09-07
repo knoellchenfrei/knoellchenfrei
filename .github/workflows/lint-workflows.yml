@@ -1,4 +1,5 @@
-# Prüft, dass jede Datei unter .github gültiges YAML ist.
+# Prüft, dass jede YAML-Datei unter .github gültiges YAML ist —
+# Workflows, `dependabot.yml` und die Issue-Formulare.
 #
 # Eine kaputte Workflow-Datei fällt sonst erst auf, wenn GitHub sie ignoriert —
 # und "der Workflow läuft nicht" ist ein deutlich schlechteres Signal als ein
@@ -12,9 +13,9 @@ name: Workflows prüfen
 
 on:
   push:
-    paths: ['.github/**.yml']
+    paths: ['.github/**.yml', '.github/**.yaml']
   pull_request:
-    paths: ['.github/**.yml']
+    paths: ['.github/**.yml', '.github/**.yaml']
 
 permissions:
   contents: read
@@ -29,10 +30,17 @@ jobs:
           python3 - <<'PY'
           import pathlib, sys, yaml
           bad = []
-          files = sorted(pathlib.Path('.github/workflows').glob('*.yml'))
-          dependabot = pathlib.Path('.github/dependabot.yml')
-          if dependabot.exists():
-              files.append(dependabot)
+          # Alles unter .github, nicht nur die Workflows: Der Ausloeser oben
+          # heisst `.github/**.yml`, geprueft wurden aber nur `workflows/*.yml`
+          # und `dependabot.yml`. Die Issue-Formulare unter ISSUE_TEMPLATE/
+          # blieben damit ungeprueft und der Lauf trotzdem gruen — GitHub
+          # ignoriert ein kaputtes Formular stillschweigend, und dann fehlt
+          # schlicht die Vorlage (Audit-Punkt M-070).
+          root = pathlib.Path('.github')
+          files = sorted(set(root.rglob('*.yml')) | set(root.rglob('*.yaml')))
+          if not files:
+              print('Keine YAML-Datei unter .github gefunden — das ist selbst ein Fehler.')
+              sys.exit(1)
           for path in files:
               try:
                   yaml.safe_load(path.read_text())

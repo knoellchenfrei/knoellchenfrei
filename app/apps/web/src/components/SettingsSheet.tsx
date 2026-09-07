@@ -394,9 +394,26 @@ export function SettingsSheet({
         {CITY.attribution.attributionRequired && (
           <p className="sheet__hint">
             Die Lizenz dieser Stadt <strong>verlangt</strong> die Nennung der Quelle. Wer die
-            Daten weiterverwendet, muss {CITY.attribution.source} nennen.
+            Daten weiterverwendet, muss {CITY.attribution.source} nennen und auf den{' '}
+            <a href={CITY.attribution.datasetUrl} target="_blank" rel="noreferrer">
+              Datensatz
+            </a>{' '}
+            verweisen.
           </p>
         )}
+        {/*
+          § 2 der Datenlizenz Deutschland verlangt bei Veränderungen einen
+          Hinweis darauf — und verändert sind die Daten in jedem Fall: Wir
+          bilden Teilmengen, vereinfachen Geometrien und übersetzen Freitext in
+          ein eigenes Schema. Der Satz stand nirgends (Audit-Punkt M-016).
+          Er gilt für alle Städte, nicht nur die mit Namensnennung: Auch unter
+          Zero soll niemand die vereinfachte Geometrie für die amtliche halten.
+        */}
+        <p className="sheet__hint">
+          Die Daten sind <strong>verändert</strong>: Teilmenge der amtlichen Ebenen, Geometrien
+          vereinfacht, Zeiten und Tarife in ein eigenes Format übersetzt. Verbindlich ist der
+          Originaldatensatz — und vor Ort die Beschilderung.
+        </p>
       </div>
 
       <footer className="sheet__foot">

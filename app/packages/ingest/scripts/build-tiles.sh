@@ -15,7 +15,8 @@
 #
 # Voraussetzungen:
 #   - pmtiles-CLI:  https://github.com/protomaps/go-pmtiles/releases
-#   - wrangler:     npx wrangler --version
+#   - wrangler:     ueber den Workspace, nie als nacktes npx —
+#                   cd app && pnpm --filter @knoellchenfrei/api exec wrangler --version
 #
 # Aufruf:
 #   ./build-tiles.sh                 # neuestes Tagesarchiv suchen

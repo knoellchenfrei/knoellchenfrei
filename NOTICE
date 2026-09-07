@@ -1,0 +1,44 @@
+# Herkunft und Lizenzen der Daten
+
+Der Programmcode steht unter MIT (siehe `LICENSE`). Die Daten nicht — sie
+stammen von Behörden und von OpenStreetMap und haben eigene Bedingungen. Diese
+Datei steht getrennt von `LICENSE`, weil GitHub eine Lizenzdatei mit Anhang
+nicht mehr als MIT erkennt und stattdessen `NOASSERTION` meldet (Audit-Punkt
+M-021).
+
+## Geodaten der Städte
+
+Zwei verschiedene Lizenzen, und der Unterschied ist keine Formalie: Unter
+**Zero** ist die Quellenangabe freiwillig, unter **Namensnennung** ist sie
+Bedingung. Eine Ansicht, die sie weglässt, verletzt die Lizenz. `City.attribution`
+in `packages/core/src/city.ts` trägt den Unterschied bis in die Oberfläche.
+
+| Stadt | Herausgeber | Lizenz |
+| --- | --- | --- |
+| Berlin | Geodateninfrastruktur Berlin (gdi.berlin.de) | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig |
+| Hamburg | Freie und Hansestadt Hamburg, Landesbetrieb Geoinformation und Vermessung | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
+| Frankfurt am Main | Stadt Frankfurt am Main, www.frankfurt.de | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
+| München | Landeshauptstadt München – opendata.muenchen.de | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
+
+**Die Daten sind verändert.** Aus den amtlichen Diensten werden Teilmengen
+gebildet, Geometrien vereinfacht (Douglas-Peucker, siehe
+`packages/ingest/src/simplify.ts`) und Freitextfelder in ein eigenes Schema
+übersetzt. § 2 der Datenlizenz Deutschland verlangt bei Veränderungen einen
+entsprechenden Hinweis; er steht in der Anwendung neben der Quellenangabe und
+hier. Welche Ebenen aus welchem Dienst kommen, steht in
+[docs/data-sources.md](docs/data-sources.md) und
+[docs/staedte.md](docs/staedte.md).
+
+## Kartenkacheln
+
+OpenStreetMap-Daten, © OpenStreetMap-Mitwirkende, unter der
+[ODbL](https://www.openstreetmap.org/copyright). Als Vektorarchiv über
+[Protomaps](https://protomaps.com) gebaut. **Die Namensnennung ist in der
+Anwendung sichtbar und darf nicht entfernt werden** — sie ist
+Lizenzbedingung, keine Höflichkeit.
+
+## Programmbibliotheken
+
+Die Lizenztexte der mitgelieferten Abhängigkeiten stehen in
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). Die Datei wird erzeugt:
+`pnpm --filter @knoellchenfrei/ingest build-notices`.

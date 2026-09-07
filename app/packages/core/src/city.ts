@@ -40,6 +40,16 @@ export interface Attribution {
   licence: string
   licenceUrl: string
   /**
+   * Der Datensatz selbst, nicht die Lizenz.
+   *
+   * § 2 der Datenlizenz Deutschland verlangt bei Namensnennung neben dem
+   * Herausgeber auch einen Verweis auf den Datensatz — „soweit verfügbar mit
+   * dem Uniform Resource Identifier". Der Quellenvermerk allein erfüllt die
+   * Auflage nicht (Audit-Punkt M-016). Hier steht die Adresse, die der
+   * Datenbau wirklich abruft, nicht eine Portalseite, die daneben liegt.
+   */
+  datasetUrl: string
+  /**
    * Ob die Lizenz die Nennung verlangt.
    *
    * Der Unterschied ist keine Formalie: Berlin gibt unter Datenlizenz
@@ -108,6 +118,7 @@ export const BERLIN: City = {
   sessionBounds: { minLon: 12.5, minLat: 52.0, maxLon: 14.5, maxLat: 53.0 },
   attribution: {
     source: 'Geodateninfrastruktur Berlin (gdi.berlin.de)',
+    datasetUrl: 'https://gdi.berlin.de/services/wfs/parkraumbewirtschaftung',
     licence: 'Datenlizenz Deutschland Zero 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
     attributionRequired: false,
@@ -138,6 +149,7 @@ export const HAMBURG: City = {
   sessionBounds: { minLon: 9.4, minLat: 53.15, maxLon: 10.7, maxLat: 54.0 },
   attribution: {
     source: 'Freie und Hansestadt Hamburg, Landesbetrieb Geoinformation und Vermessung',
+    datasetUrl: 'https://geodienste.hamburg.de/HH_WFS_bewohnerparkgebiete',
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
@@ -175,6 +187,7 @@ export const FRANKFURT: City = {
     // Bei DL-DE/Namensnennung ist er Lizenzbedingung, nicht Höflichkeit —
     // wer ihn umformuliert, erfüllt sie nicht mehr sicher.
     source: 'Stadt Frankfurt am Main, www.frankfurt.de',
+    datasetUrl: 'https://geowebdienste.frankfurt.de/Parken',
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
@@ -213,6 +226,7 @@ export const MUENCHEN: City = {
     // Lizenzbedingung; der Metadatensatz der Stadtbezirke nennt daneben den
     // GeodatenService, das steht in `docs/staedte.md`.
     source: 'Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de',
+    datasetUrl: 'https://geoportal.muenchen.de/geoserver/mor_wfs/ows',
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,

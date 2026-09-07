@@ -7,7 +7,7 @@ der Unterschied steht bei Hamburg.
 
 ## Verwendet
 
-Sämtliche Geodaten stammen von der **Geodateninfrastruktur Berlin**
+Die **Berliner** Geodaten stammen von der **Geodateninfrastruktur Berlin**
 (`gdi.berlin.de`), WFS 2.0.0, Lizenz **[Datenlizenz Deutschland Zero
 2.0](https://www.govdata.de/dl-de/zero-2-0)** — freie Nutzung, keine
 Namensnennung erforderlich, keine Weitergabebedingungen.
@@ -318,5 +318,5 @@ curl -sD- -o /dev/null -H "Origin: https://example.com" \
 **Hinweis zu TLS:** `gdi.berlin.de` wird von der *Telekom Security TLS RSA Root
 2023* signiert, die in manchen Container-Images fehlt. Bei einem
 Zertifikatsfehler ein aktuelles Mozilla-Bundle anhängen
-(`python -c 'import certifi; print(certifi.where())'`) und per `--cacert`
+(`python3 -c 'import certifi; print(certifi.where())'`) und per `--cacert`
 übergeben — nicht die Verifikation abschalten.

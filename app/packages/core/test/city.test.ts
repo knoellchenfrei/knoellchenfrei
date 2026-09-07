@@ -399,3 +399,30 @@ describe('suggestCity', () => {
     }
   })
 })
+
+/**
+ * Die Lizenzangaben sind kein Beiwerk, sondern bei drei der vier Städte eine
+ * Auflage. Eine Stadt, die ohne Quellenvermerk oder ohne Datensatz-Adresse
+ * dazukommt, verletzt sie — und das fiele niemandem auf, weil die Oberfläche
+ * dann einfach ein leeres Feld zeigt (Audit-Punkt M-016).
+ */
+describe('die Lizenzangaben jeder Stadt', () => {
+  for (const city of CITIES) {
+    it(`${city.name} nennt Quelle, Lizenz und Datensatz`, () => {
+      expect(city.attribution.source.trim().length).toBeGreaterThan(0)
+      expect(city.attribution.licence.trim().length).toBeGreaterThan(0)
+      expect(city.attribution.licenceUrl).toMatch(/^https:\/\//)
+      expect(city.attribution.datasetUrl).toMatch(/^https:\/\//)
+    })
+  }
+
+  // Die Unterscheidung trägt bis in die Oberfläche: Unter Zero ist die Nennung
+  // freiwillig, unter Namensnennung Bedingung. Wer beide gleich behandelt,
+  // verletzt entweder eine Auflage oder behauptet eine, die es nicht gibt.
+  it('setzt attributionRequired passend zur Lizenz', () => {
+    for (const city of CITIES) {
+      const istZero = /Zero/i.test(city.attribution.licence)
+      expect(city.attribution.attributionRequired, city.name).toBe(!istZero)
+    }
+  })
+})

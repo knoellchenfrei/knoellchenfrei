@@ -342,6 +342,7 @@ write('meta.json', {
   licence: BERLIN.attribution.licence,
   licenceUrl: BERLIN.attribution.licenceUrl,
   attributionRequired: BERLIN.attribution.attributionRequired,
+  datasetUrl: BERLIN.attribution.datasetUrl,
   zones: zones.features.length,
   segments: segments.length,
   managedSpaces: totalSpaces,

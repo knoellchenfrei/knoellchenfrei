@@ -22,7 +22,7 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 495 Unit-Tests
+pnpm --filter @knoellchenfrei/core test                # 500 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -41,7 +41,8 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=495 E2E_COUNT=128 npx tsx src/build-badges.ts
+TEST_COUNT=500 E2E_COUNT=128 npx tsx src/build-badges.ts
+npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 

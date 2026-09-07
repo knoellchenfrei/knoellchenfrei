@@ -79,10 +79,13 @@ CREATE TABLE IF NOT EXISTS marks (
 );
 
 -- Bestehende Installationen: `hour` kam nach dem ersten Release dazu, `city`
--- mit der zweiten Stadt. Die Anweisungen dafür stehen ausführbar in
--- migrations/001-stadt.sql — als Kommentar hier wären sie nie gelaufen:
--- `CREATE TABLE IF NOT EXISTS` ist auf einer vorhandenen Tabelle ein No-op,
--- und SQLite kennt kein `ADD COLUMN IF NOT EXISTS`.
+-- mit der zweiten Stadt. Beides steckt inzwischen in dieser Datei; eine Datei
+-- `migrations/001-stadt.sql`, auf die dieser Kommentar bis zum 7. September
+-- verwies, gibt es nicht mehr (Audit-Punkt M-079). Eine künftige Änderung an
+-- einer bestehenden Tabelle gehört als `migrations/NNNN_name.sql` daneben,
+-- nicht als Kommentar hierher: `CREATE TABLE IF NOT EXISTS` ist auf einer
+-- vorhandenen Tabelle ein No-op, und SQLite kennt kein
+-- `ADD COLUMN IF NOT EXISTS`. Zur Erinnerung, was damals nötig war:
 -- ALTER TABLE marks ADD COLUMN hour INTEGER;
 
 -- Reads are always "everything inside the window", which this index carries;
@@ -124,7 +127,8 @@ CREATE INDEX IF NOT EXISTS visits_seen ON visits (seen_at);
 -- die es **keinen Lese-Endpunkt gibt**. Sichtungen sind für alle sichtbar;
 -- eine Rückmeldung ist es ausdrücklich nicht. Gelesen wird sie über
 --
---   npx wrangler d1 execute knoellchenfrei --remote \
+--   cd app && pnpm --filter @knoellchenfrei/api exec wrangler \
+--     d1 execute knoellchenfrei --remote \
 --     --command "SELECT created_at, kind, text FROM feedback ORDER BY created_at DESC LIMIT 50"
 --
 -- Kein Kontaktfeld: Wer keine Adresse abfragt, speichert auch keine.

@@ -706,6 +706,7 @@ write('meta.json', {
   licence: MUENCHEN.attribution.licence,
   licenceUrl: MUENCHEN.attribution.licenceUrl,
   attributionRequired: MUENCHEN.attribution.attributionRequired,
+  datasetUrl: MUENCHEN.attribution.datasetUrl,
   zones: zoneFeatures.length,
   districts: districtFeatures.length,
   poi: poi.length,

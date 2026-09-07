@@ -3,7 +3,7 @@
 # Beides tut dasselbe. Dependabot ist bei GitHub eingebaut: keine fremde App in
 # der Organisation, keine zusätzlichen Rechte, keine zweite Stelle, an der
 # jemand ein Token hinterlegt. Renovate kann mehr, aber „mehr" ist hier kein
-# Argument — dieses Projekt hat fünf `package.json` und fünf Workflow-Dateien.
+# Argument — dieses Projekt hat fünf `package.json` und drei Workflow-Dateien.
 #
 # Zwei Dinge, die man beim Lesen dieser Datei wissen sollte:
 #
@@ -86,7 +86,7 @@ updates:
   # Ökosystem sucht Dependabot fest in `.github/workflows` und in einer
   # `action.yml` im Wurzelverzeichnis.
   #
-  # Warum das nicht optional ist: In den fünf Workflows stecken
+  # Warum das nicht optional ist: In den drei Workflows stecken
   # `actions/checkout`, `actions/setup-node`, `pnpm/action-setup` und
   # `actions/upload-artifact`. Die laufen mit Repository-Rechten. Eine
   # veraltete Action ist genau die Art Abhängigkeit, die niemand mitzählt.

@@ -286,6 +286,7 @@ write('meta.json', {
   licence: HAMBURG.attribution.licence,
   licenceUrl: HAMBURG.attribution.licenceUrl,
   attributionRequired: HAMBURG.attribution.attributionRequired,
+  datasetUrl: HAMBURG.attribution.datasetUrl,
   zones: zoneFeatures.length,
   districts: districtFeatures.length,
   poi: 0,

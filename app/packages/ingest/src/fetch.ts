@@ -6,7 +6,7 @@
  * still valid data, just older, and shipping yesterday's zones beats shipping
  * nothing.
  *
- * Welche Stadt: `CITY=hamburg pnpm --filter @knoellchenfrei/ingest fetch`. Ohne
+ * Welche Stadt: `CITY=hamburg pnpm --filter @knoellchenfrei/ingest fetch-data`. Ohne
  * Angabe Berlin.
  *
  * **Hinter einem Proxy muss `NODE_USE_ENV_PROXY=1` gesetzt sein** — das

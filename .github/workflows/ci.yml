@@ -10,6 +10,13 @@ on:
     branches: ['**', '!dependabot/**']
   pull_request:
 
+# Ohne diesen Block bekommt `GITHUB_TOKEN` die Voreinstellung des Repositories
+# — und die ist einstellbar, steht also nicht hier, sondern irgendwo im
+# Dashboard. Dieser Workflow prueft nur; er braucht Lesen und sonst nichts.
+# Die drei uebrigen Workflows hatten den Block seit jeher (Audit-Punkt M-044).
+permissions:
+  contents: read
+
 jobs:
   check:
     name: Typen, Tests, Coverage

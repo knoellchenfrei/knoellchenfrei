@@ -26,7 +26,7 @@ installierbar, ohne Server.
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
-| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
+| **Umfeld** | 385 Ladepunkte, 83 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
 | **Ordnungsamt** | Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. |
 | **Live-Zahlen** | Wie viele die App gerade offen haben, wie viele heute, wie viele Meldungen aktiv sind. Nur was zählbar ist — sonst gar nichts. |
 | **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
@@ -217,7 +217,7 @@ anwaltlich geprüft.
 app/
   packages/core      Domänenlogik, framework-frei — Tarife, Feiertage, Parser, Geo, Sichtungen
   packages/ingest    WFS → eingefrorene Web-Assets, Geometrie-Vereinfachung, Artifact-Bundle
-  apps/web           PWA: React 19, Vite 7, MapLibre GL 6
+  apps/web           PWA: React 19, Vite 8, MapLibre GL 6
   apps/api           Cloudflare Worker: WFS-Cache + geteilte Meldungen (optional)
 ```
 
@@ -243,7 +243,7 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 495 Unit-Tests
+pnpm test                              # 500 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -274,7 +274,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 495, davon 34 Regressionstests für konkrete gefundene Fehler |
+| Unit-Tests | 500, davon 34 Regressionstests für konkrete gefundene Fehler |
 | End-to-End | 128 über Desktop und Handy, gegen den Produktions-Build; 127 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

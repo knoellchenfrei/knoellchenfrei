@@ -493,6 +493,7 @@ write('meta.json', {
   licence: FRANKFURT.attribution.licence,
   licenceUrl: FRANKFURT.attribution.licenceUrl,
   attributionRequired: FRANKFURT.attribution.attributionRequired,
+  datasetUrl: FRANKFURT.attribution.datasetUrl,
   zones: zoneFeatures.length,
   districts: districtFeatures.length,
   poi: poi.length,

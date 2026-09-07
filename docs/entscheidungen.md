@@ -209,7 +209,7 @@ toter Link in jedem Beitrag, der ihn je geteilt hat.
 **Dependabot, nicht Renovate.** Beide tun dasselbe. Dependabot ist bei GitHub
 eingebaut — keine fremde App in der Organisation, keine zusätzlichen Rechte,
 keine zweite Stelle, an der ein Token liegt. Renovate kann mehr; „mehr" ist bei
-fünf `package.json` und fünf Workflow-Dateien kein Argument, und die
+fünf `package.json` und drei Workflow-Dateien kein Argument, und die
 Organisation hat ohnehin schon das Problem, dass die eine App, die dort
 Rechte hat, zu wenige davon hat.
 
@@ -263,7 +263,7 @@ Doku verlangt, dass sich die Verzeichnisse zweier Einträge desselben
 Ökosystems nicht überschneiden. pnpm läuft dabei unter
 `package-ecosystem: npm`, unterstützt sind pnpm 7 bis 10.
 
-**GitHub Actions bekommt einen eigenen Eintrag.** In den fünf Workflows stecken
+**GitHub Actions bekommt einen eigenen Eintrag.** In den drei Workflows stecken
 `actions/checkout`, `actions/setup-node`, `pnpm/action-setup` und
 `actions/upload-artifact` — sie laufen mit Repository-Rechten. Eine veraltete
 Action ist genau die Art Abhängigkeit, die niemand mitzählt.

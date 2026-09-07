@@ -86,7 +86,7 @@ personenbezogenen Daten über ihre Nutzer, außer dem, was sie selbst melden.
 - Fahrplan- und Gebührenparser mit Längengrenze (200 bzw. 100 Zeichen); die
   längste echte Angabe hat 51. Ohne Grenze brauchte ein 100k-Zeichen-String
   15 Sekunden zum Ablehnen — quadratisches Backtracking.
-- Koordinaten müssen im Berliner Bereich liegen, sonst wird der Datensatz
+- Koordinaten müssen im Bereich einer bekannten Stadt liegen (`cityAt`), sonst wird der Datensatz
   verworfen.
 - Zeitstempel werden beidseitig begrenzt. Ein Wert aus der Zukunft ergab sonst
   eine Meldung mit Bestbewertung, die nie verfiel und die kein Widerspruch mehr
