@@ -355,11 +355,24 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       **Satz**, kein Feld — 291 Schreibweisen mit zusammengesetzten Klauseln,
       und `core/muenchen.ts` ist deshalb eine kleine Grammatik. Einzelheiten
       mit Zahlen in [staedte.md](staedte.md#münchen-im-einzelnen).
-- [ ] **Standort-Vorschlag beim ersten Öffnen.** FreiFahren fragt „Switch to
-      {{city}}? Your location looks like you are in {{city}}." Mit der vierten
-      Stadt ist die Liste in den Einstellungen die einzige Stelle, an der
-      jemand die Stadt findet — damit ist der Punkt fällig, nicht mehr nur
-      sinnvoll.
+- [x] **Standort-Vorschlag beim ersten Öffnen** — am 7. September gebaut, nach
+      FreiFahrens Vorbild („Switch to {{city}}? Your location looks like you are
+      in {{city}}."). Er entsteht **ohne zusätzliche Berechtigungsabfrage**,
+      allein aus der Position, die `locate()` ohnehin liefert; die Entscheidung
+      ist `suggestCity` in `core/city.ts` (zehn Tests), das Merken der Ablehnung
+      steht in `apps/web/src/city-suggestion.ts`. Vorgeschlagen wird nur, wozu
+      diese Auslieferung auch umschalten kann — im Artifact also nur
+      Eingebettetes, sonst endete die Annahme in „Diese Fassung enthält
+      muenchen nicht".
+
+      Zwei Nebenbefunde, beide mitbehoben: Der Satz „hier ist Parken
+      gebührenfrei" entfällt, sobald ein Vorschlag entsteht — über 82 Münchner
+      Gebieten wäre er falsch und läge auch noch über dem Hinweis, der ihn
+      erklärt. Und die Beispieldaten in `seed.ts` waren Berliner Koordinaten:
+      In München lagen die sechs Meldungen und die acht Heatmap-Ecken 500 km
+      neben der Karte, unsichtbar, während die Liste „am häufigsten
+      kontrolliert" dreimal „Außerhalb der Zonen" nannte. Sie stehen jetzt als
+      Abstand zu `CITY.center`.
 - [ ] **Drei Rückfragen an München**, `gb1-23.mor@muenchen.de` (MOR-GB1).
       Keine davon ist aus dem Feed zu beantworten:
       1. **Was sind `Milbertshofen` (25 Abschnitte) und `Riesenfeld` (15)?**
@@ -398,11 +411,19 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Ein Feed-Wechsel fällt erst auf, wenn jemand von Hand abruft. Ein
       wöchentlicher Job mit `continue-on-error` je Stadt wäre der nächste
       Schritt.
-- [ ] **Die FAQ in den Einstellungen ist Berlin.** „Warum kassiert sonntags nur
-      eine einzige Zone?", „Von 45.917 Abschnitten tragen 747 einen Wert" —
-      beides stimmt und beides gilt nur für Berlin. Mit vier Städten gehört die
-      Liste je Stadt gefiltert oder umformuliert. Seit München kommt eine
-      fünfte Frage dazu, die dort jeder stellt: „Warum steht kein Preis da?"
+- [x] **FAQ je Stadt** — am 7. September umgestellt. Ein Eintrag trägt optional
+      `cities`; ohne Angabe gilt er überall, gefiltert wird nach `CITY.key`.
+      Die Berliner Zahlen (103 Zonen, 45.917 Abschnitte, Zone 29, „Advents-Sa")
+      stehen nur noch in Berlin; allgemein blieben „unsicher", Bezahlen,
+      Sichtungsmeldung und Aktualität, jeweils ohne Berlin-Bezug. Neu je Stadt:
+      München „Warum steht kein Preis da?" und „Was heißt ‚an Schultagen'?",
+      Hamburg „Was heißt ‚Parkscheibe' statt eines Preises?", Frankfurt
+      „Warum steht die Höchstparkdauer mit einem Anteil dabei?" und die
+      Preisspanne aus zwei Automatentarifen.
+
+      Die Regel dahinter: Wo eine Zahl an der Stadt hängt, bekommt sie einen
+      Eintrag je Stadt — nicht einen gemeinsamen, der sie verschweigt. Eine
+      Antwort ohne Zahl beantwortet die Frage meistens nicht.
 - [x] **Gruppenbilder für Frankfurt und München.** `scripts/make-brand.mjs`
       erzeugt jetzt auch `telegram-frankfurt-512.png` (`F`) und
       `telegram-muenchen-512.png` (`M`), abgelegt unter `docs/brand/`. Die

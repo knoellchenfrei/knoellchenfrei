@@ -330,10 +330,28 @@ test.describe('settings', () => {
     )
 
     // The one-chargeable-zone question is the first thing a Sunday visitor asks.
+    // Sie steht seit der stadtweisen FAQ nur noch in Berlin ganz oben — und
+    // Berlin ist die Voreinstellung, mit der dieser Test startet.
     const first = sheet.locator('.faq__item').first()
     await expect(first).toContainText('sonntags')
     await first.locator('summary').click()
     await expect(first).toContainText('Zone 29')
+  })
+
+  // Die Zahlen in der FAQ sind Befunde aus je einem Feed. In der falschen Stadt
+  // gelesen sind sie nicht ungenau, sondern falsch — und zwar zuversichtlich
+  // falsch, was die schlechteste Sorte Hilfe ist.
+  test('answers only what holds in the loaded city', async ({ page }) => {
+    await ready(page)
+    await page.getByRole('button', { name: 'Einstellungen' }).click()
+    const sheet = page.getByRole('dialog', { name: 'Einstellungen' })
+
+    await expect(sheet).toContainText('sonntags nur eine einzige Zone')
+    await expect(sheet).toContainText('45.917')
+    // Hamburgs Parkscheibe und Münchens fehlender Tarif haben in Berlin nichts
+    // zu suchen: Beides gibt es hier nicht.
+    await expect(sheet).not.toContainText('Parkscheibe')
+    await expect(sheet).not.toContainText('Warum steht kein Preis da?')
   })
 
   test('offers no donation button', async ({ page }) => {
@@ -688,6 +706,23 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet).toContainText(
       'Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de'
     )
+  })
+
+  // Die Frage, die in München jeder stellt — und die Berliner Frage, die dort
+  // niemand stellen kann: Die Parkraumbewirtschaftung läuft in München auch
+  // sonntags nicht, aber „genau eine von 103 Zonen" ist kein Satz über München.
+  test('answers the München questions and drops the Berlin ones', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'München' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    sheet = await openSettings(page)
+    await expect(sheet).toContainText('Warum steht kein Preis da?')
+    await expect(sheet).toContainText('an Schultagen')
+    await expect(sheet).not.toContainText('sonntags')
+    await expect(sheet).not.toContainText('45.917')
   })
 
   // Berlin darf nicht als Nebenwirkung verlorengehen: Der Wechsel muss in

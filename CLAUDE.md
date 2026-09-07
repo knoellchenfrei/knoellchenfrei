@@ -20,11 +20,11 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 370 Unit-Tests
+pnpm --filter @knoellchenfrei/core test                # 380 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 118 End-to-End-Tests
+cd apps/web && npx playwright test                  # 128 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -39,7 +39,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=370 E2E_COUNT=118 npx tsx src/build-badges.ts
+TEST_COUNT=380 E2E_COUNT=128 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -101,6 +101,16 @@ wiederholt.
   Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,
   nimmt die App eine Meldung an, die der Server danach verwirft, und niemand
   erfährt, warum.
+- **Demodaten sind auch Daten — sie hängen an der Stadt.** `seed.ts` streute
+  sechs Beispielmeldungen und acht Heatmap-Ecken über feste **Berliner**
+  Koordinaten. In München lagen sie damit 500 km neben der Karte: nichts zu
+  sehen, kein Fehler im Log, und die einzige sichtbare Spur war die Liste „am
+  häufigsten kontrolliert", die dreimal „Außerhalb der Zonen" nannte — was wie
+  eine Aussage über München aussah und eine über Berlin war. Sie stehen jetzt
+  als Abstand zu `CITY.center`. Denselben Fehler machte ein Satz: „Außerhalb
+  der Parkraumbewirtschaftung — hier ist Parken gebührenfrei" behauptet etwas
+  über den Ort und wusste etwas über die geladenen Daten. Er entfällt seitdem,
+  sobald die Position in einer anderen bekannten Stadt liegt.
 - **Ein Feed, ein Parser — nie ein gemeinsamer.** Die vier Dienste teilen sich
   außer der Domäne nichts: andere Felder, andere Schreibweisen, anderes
   Ausgabeformat, andere Achsenreihenfolge. Berlin schreibt `Mo-Sa 9-20 Uhr` und

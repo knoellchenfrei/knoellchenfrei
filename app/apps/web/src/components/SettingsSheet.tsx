@@ -27,10 +27,22 @@ const FREIFAHREN = 'https://freifahren.org'
  * überrascht und deshalb erklärt gehört — jede einzelne ist beim Bauen als
  * echte Verwirrung aufgetreten. Eine FAQ, die stattdessen „Wie benutze ich die
  * Karte?" beantwortet, liest niemand.
+ *
+ * `cities` schränkt einen Eintrag auf Stadtschlüssel ein; ohne Angabe gilt er
+ * überall. Bis zur vierten Stadt war die ganze Liste Berlin: „Warum kassiert
+ * sonntags nur eine einzige Zone?" und „Von 45.917 Abschnitten tragen 747
+ * einen Wert" stimmen beide — und beide nur hier. In Hamburg gelesen war die
+ * erste Frage schlicht falsch, und das ist die schlechteste Sorte Hilfe: eine,
+ * die zuversichtlich klingt.
+ *
+ * Wo eine Zahl an der Stadt hängt, steht sie deshalb in einem Eintrag je Stadt
+ * — nicht in einem gemeinsamen, der sie verschweigt. Eine Antwort ohne Zahl
+ * beantwortet die Frage meistens nicht.
  */
-const FAQ: readonly { q: string; a: React.ReactNode }[] = [
+const FAQ: readonly { q: string; a: React.ReactNode; cities?: readonly string[] }[] = [
   {
     q: 'Warum kassiert sonntags nur eine einzige Zone?',
+    cities: ['berlin'],
     a: (
       <>
         Weil das stimmt. Die Berliner Parkraumbewirtschaftung läuft Montag bis Samstag; sonntags
@@ -41,26 +53,56 @@ const FAQ: readonly { q: string; a: React.ReactNode }[] = [
     ),
   },
   {
-    q: 'Was bedeutet „unsicher"?',
+    q: 'Warum steht kein Preis da?',
+    cities: ['muenchen'],
     a: (
       <>
-        Vier Zonen führen <code>Advents-Sa</code> in ihren Zeiten, ohne zu sagen, welche Samstage
-        gemeint sind. An diesen Tagen zeigt die App „unsicher" statt zu raten — hier hilft nur der
-        Automat vor Ort.
+        Weil die Quelle keinen nennt. In keinem der 291 Regeltexte, aus denen Münchens 82 Gebiete
+        entstehen, steht ein Betrag; der Tarif steht allein in der Gebührenordnung, und die ist
+        eine PDF-Auskunft, keine Datenquelle. Die App sagt deshalb „Tarif nicht angegeben" statt
+        einen Betrag zu erfinden — und <strong>nicht</strong> „0,00 €": Zahlen musst du trotzdem.
       </>
     ),
   },
   {
-    q: 'Warum steht bei manchen Zonen eine Preisspanne?',
+    q: 'Was heißt „an Schultagen"?',
+    cities: ['muenchen'],
     a: (
       <>
-        Weil sie so im Feed steht, etwa <code>2,00-3,00 Euro</code>. Auf einen Wert zu reduzieren
-        würde dich um bis zu 50&nbsp;% verschätzen, deshalb bleibt die Spanne stehen.
+        So steht es an 15 Abschnitten in 10 Gebieten. Ein Schulkalender ist keine
+        Feiertagstabelle — er ist je Land und Jahr anders und steht nirgends in dieser Quelle. Die
+        App löst die Regel deshalb nicht auf, sondern zeigt sie wörtlich als Zusatz an. Ob heute
+        Schultag ist, weißt du besser als sie.
+      </>
+    ),
+  },
+  {
+    q: 'Was heißt „Parkscheibe" statt eines Preises?',
+    cities: ['hamburg'],
+    a: (
+      <>
+        Sieben der 145 Gebiete tragen als Gebührenzone <code>Parkscheibe</code>, drei gar nichts.
+        Das ist <strong>kein Preis von null</strong>: Stehen darfst du dort nur mit eingestellter
+        Scheibe und nur bis zur Höchstparkdauer — wer ohne Scheibe steht, zahlt. Die App zeigt
+        deshalb die Auflage und keinen Betrag.
+      </>
+    ),
+  },
+  {
+    q: 'Warum steht die Höchstparkdauer mit einem Anteil dabei?',
+    cities: ['frankfurt'],
+    a: (
+      <>
+        Weil sie in Frankfurt am <strong>Automaten</strong> steht und nicht am Bereich: In 19 der
+        27 gezeigten Bereiche stehen mehrere Werte nebeneinander, oft <code>1 h</code> neben{' '}
+        <code>-</code>, also neben „keine". Die App nennt den Wert samt Anteil, statt ihn zur
+        Regel des ganzen Bereichs zu erklären.
       </>
     ),
   },
   {
     q: 'Warum steht bei der Höchstparkdauer eine Abdeckung dabei?',
+    cities: ['berlin'],
     a: (
       <>
         Weil sie fast nie für die ganze Zone gilt: Von 45.917 Abschnitten tragen 747 einen Wert.
@@ -69,12 +111,55 @@ const FAQ: readonly { q: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    q: 'Was bedeutet „unsicher"?',
+    a: (
+      <>
+        Dass die Quelle für diesen Tag eine Regel nennt, die sich nicht in ein Zeitfenster
+        übersetzen lässt. Die App zeigt dann „unsicher" und die Regel im Wortlaut, statt zu raten
+        — hier hilft nur der Automat oder das Schild vor Ort.
+      </>
+    ),
+  },
+  {
+    q: 'Was ist „Advents-Sa"?',
+    cities: ['berlin'],
+    a: (
+      <>
+        Vier Zonen führen <code>Advents-Sa</code> in ihren Zeiten, ohne zu sagen, welche Samstage
+        gemeint sind. An diesen Tagen zeigt die App „unsicher": Ein „gebührenfrei" wäre an genau
+        den Tagen falsch, für die die Zusatzregel da ist, und die Regel unbesehen anzuwenden
+        verlangte an den anderen rund 48 Samstagen Geld, das nicht anfällt.
+      </>
+    ),
+  },
+  {
+    q: 'Warum steht bei manchen Zonen eine Preisspanne?',
+    cities: ['berlin'],
+    a: (
+      <>
+        Weil sie so im Feed steht, etwa <code>2,00-3,00 Euro</code>. Auf einen Wert zu reduzieren
+        würde dich um bis zu 50&nbsp;% verschätzen, deshalb bleibt die Spanne stehen.
+      </>
+    ),
+  },
+  {
+    q: 'Warum steht bei manchen Bereichen eine Preisspanne?',
+    cities: ['frankfurt'],
+    a: (
+      <>
+        Weil der Tarif am Automaten steht und nicht am Bereich: In zwei Bereichen stehen{' '}
+        <code>2 €/h</code> und <code>4 €/h</code> nebeneinander. Auf einen Wert zu reduzieren
+        würde dich dort um 100&nbsp;% verschätzen, deshalb bleibt die Spanne stehen.
+      </>
+    ),
+  },
+  {
     q: 'Kann ich hier bezahlen?',
     a: (
       <>
-        Nein. Handyparken läuft in Berlin über eine geschlossene Plattform; ohne Vertrag ist kein
-        Parkticket lösbar. Diese App sagt dir, was es kostet — bezahlen musst du am Automaten oder
-        in einer der Anbieter-Apps.
+        Nein. Handyparken läuft über geschlossene Plattformen; ohne Vertrag bei einem der Anbieter
+        ist kein Parkticket lösbar. Diese App sagt dir, was es kostet — bezahlen musst du am
+        Automaten oder in einer der Anbieter-Apps.
       </>
     ),
   },
@@ -100,6 +185,11 @@ const FAQ: readonly { q: string; a: React.ReactNode }[] = [
     ),
   },
 ]
+
+/** Die Einträge, die für die geladene Stadt gelten — ohne Angabe gilt einer überall. */
+function faqFor(cityKey: string): readonly { q: string; a: React.ReactNode }[] {
+  return FAQ.filter((entry) => entry.cities === undefined || entry.cities.includes(cityKey))
+}
 
 /**
  * Einstellungen und alles Beiläufige an einem Ort, nach dem Vorbild von
@@ -218,7 +308,7 @@ export function SettingsSheet({
 
         <h3 className="sheet__label">Häufige Fragen</h3>
         <div className="faq">
-          {FAQ.map((entry) => (
+          {faqFor(CITY.key).map((entry) => (
             <details key={entry.q} className="faq__item">
               <summary>{entry.q}</summary>
               <div className="faq__answer">{entry.a}</div>
