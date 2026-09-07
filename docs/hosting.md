@@ -415,9 +415,9 @@ Wie es jetzt läuft:
   Worker nirgends sonst. Die Zahl beantwortet ohnehin „wie viele benutzen
   knoellchenfrei gerade", nicht „wie viele in Berlin".
 
-Offen bleibt eins: Die Web-App schickt `?city=` noch **nicht** mit und liest
-damit Berlin, auch wenn Hamburg eingestellt ist. Steht in
-[todo.md](todo.md) unter Punkt 8.
+Die Web-App schickt `?city=` bei beiden Aufrufen mit (`sighting-backend.ts`);
+ohne den Parameter fiele der Worker auf Berlin zurück, und ein Hamburg-Nutzer
+läse Berliner Meldungen — auf der Karte unsichtbar, in den Zählern falsch.
 
 ### Was im Worker liegt
 

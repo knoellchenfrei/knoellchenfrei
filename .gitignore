@@ -17,6 +17,12 @@
 # pnpm zu installieren). Das Projekt selbst hat hier keine Abhängigkeiten.
 node_modules/
 package-lock.json
+# Und die Datei, die `npm install pnpm` dabei anlegt: eine package.json mit
+# pnpm ^12 als Abhaengigkeit. Sie war einmal committet und haette jedem, der
+# im Wurzelverzeichnis `npm install` ausfuehrt, pnpm 12 statt der in
+# app/package.json festgelegten 10.33 beschert. Das Projekt hat im
+# Wurzelverzeichnis keine package.json und braucht keine.
+package.json
 
 # Dasselbe mit pnpm, und hier ist es gefährlicher als nur unordentlich: pnpm 10
 # legt seine Einstellungen in `pnpm-workspace.yaml` ab und **erzeugt die Datei,

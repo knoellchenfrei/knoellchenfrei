@@ -14,7 +14,7 @@ cd app/apps/web && node scripts/make-brand.mjs
 | `brand/org-avatar-512.png` | Bild der GitHub-Organisation | 512 × 512, randlos |
 | `brand/social-preview-1280x640.png` | „Social preview" des Repositories, taugt auch als `og:image` | 1280 × 640 |
 | `brand/telegram-dach-512.png` | Gruppe `@knoellchenfrei` | 512 × 512 |
-| `brand/telegram-bot-512.png` | Bot `@knoellchenfrei_bot` | 512 × 512 |
+| `brand/telegram-bot-512.png` | Bot `@knoellchen_bot` | 512 × 512 |
 | `brand/telegram-berlin-512.png` | Gruppe `@knoellchenfrei_B` | 512 × 512 |
 | `brand/telegram-hamburg-512.png` | Gruppe `@knoellchenfrei_HH` | 512 × 512 |
 | `brand/*.svg` | Die Quellen dazu | — |
@@ -32,7 +32,7 @@ nicht nach Zuschnitt aus, sondern nach einem schlecht gezeichneten Buchstaben.
 | Wofür | Bild | Warum |
 | --- | --- | --- |
 | **Dach** `@knoellchenfrei` | blaue Fläche, weißes P | die Marke selbst |
-| **Bot** `@knoellchenfrei_bot` | dunkle Fläche, weißes P | Auf 24 Pixeln trägt nur ein Helligkeitswechsel. **Nicht weiß**, obwohl das der naheliegende Gegenpol wäre: In einer hellen Chatliste hätte ein weißes Bild keinen Rand, und das P schwebte ohne Fläche. |
+| **Bot** `@knoellchen_bot` | dunkle Fläche, weißes P | Auf 24 Pixeln trägt nur ein Helligkeitswechsel. **Nicht weiß**, obwohl das der naheliegende Gegenpol wäre: In einer hellen Chatliste hätte ein weißes Bild keinen Rand, und das P schwebte ohne Fläche. |
 | **Berlin** `@knoellchenfrei_B` | Marke plus Kennzeichen `B` | Klein verschmilzt das Kürzel zu einem Punkt und stört nicht; groß beantwortet es die Frage, in welcher Gruppe man ist. |
 | **Hamburg** `@knoellchenfrei_HH` | Marke plus Kennzeichen `HH` | dasselbe |
 
@@ -191,7 +191,7 @@ stehen, nicht danach. FreiFahren macht es mit einem Stadtkürzel:
 | `@knoellchenfrei` | Dach: Ankündigungen, alle Städte |
 | `@knoellchenfrei_B` | Community Berlin |
 | `@knoellchenfrei_HH` | Community Hamburg |
-| `@knoellchenfrei_bot` | Meldebot, Stufe 1 aus [todo.md](todo.md#6-telegram--du-token-dann-ich) |
+| `@knoellchen_bot` | Meldebot, Stufe 1 aus [todo.md](todo.md#6-telegram--du-token-dann-ich) |
 
 Am 6. September 2026 waren **alle vier frei** (geprüft über `t.me/<name>`: Ein
 vergebener Name liefert Titel und Beschreibung, ein freier nur den Platzhalter

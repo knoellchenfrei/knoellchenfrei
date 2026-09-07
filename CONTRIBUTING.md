@@ -5,7 +5,7 @@
 ```bash
 cd app
 pnpm install
-pnpm test          # 62 Unit-Tests
+pnpm test          # 190 Unit-Tests
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
 ```
@@ -35,11 +35,13 @@ existiert, helfen niemandem.
 ```
 app/packages/core      Domänenlogik, framework-frei. Keine Laufzeitabhängigkeit.
 app/packages/ingest    WFS → eingefrorene Web-Assets, Badges, Artifact-Bundle
-app/apps/web           PWA: React 19, Vite 7, MapLibre GL 5
-app/apps/api           Cloudflare Worker (optional)
-ParkingZone/           Java-Original von 2012. Wird nicht gebaut und zieht
-                       beim Umzug nicht mit — siehe docs/ideen-2012.md.
+app/apps/web           PWA: React 19, Vite 8, MapLibre GL 6
+app/apps/api           Cloudflare Worker: WFS-Cache, geteilte Meldungen, Telegram
 ```
+
+Das Java-Original von 2012 ist beim Umzug am 6. September 2026 im alten
+Repository geblieben; seine Ideenliste zieht kommentiert mit:
+[docs/ideen-2012.md](docs/ideen-2012.md).
 
 `core` darf nichts aus `apps/` importieren und kein Framework kennen.
 
@@ -59,7 +61,7 @@ Die CI führt dasselbe aus.
 ## Daten aktualisieren
 
 ```bash
-pnpm --filter @knoellchenfrei/ingest fetch
+pnpm --filter @knoellchenfrei/ingest fetch-data
 pnpm --filter @knoellchenfrei/ingest build-data
 ```
 

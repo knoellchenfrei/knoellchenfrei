@@ -197,7 +197,8 @@ FreiFahren macht es mit einem Stadtkürzel — `@FreiFahren_BE`. Hier genauso,
 aber mit dem **Kfz-Kennzeichen** statt dem Ländercode: Die App handelt von
 Autos, und ein Unterscheidungszeichen ist das, was auf jedem davon steht.
 `@knoellchenfrei` als Dach, `@knoellchenfrei_B` und `@knoellchenfrei_HH` je
-Stadt, `@knoellchenfrei_bot` für den Meldeweg. Ein Name ohne Schema müsste bei
+Stadt, `@knoellchen_bot` für den Meldeweg (so heißt er tatsächlich — `getMe`
+hat es beim Einrichten gezeigt; `@knoellchenfrei_bot` war ein Wunsch, kein Befund). Ein Name ohne Schema müsste bei
 der dritten Stadt umbenannt werden, und ein umbenannter Telegram-Link ist ein
 toter Link in jedem Beitrag, der ihn je geteilt hat.
 

@@ -726,7 +726,7 @@ print('      wartende Nachrichten: ' + str(r.get('pending_update_count', '?')))
   hinweis ""
   hinweis "Die Bilder liegen fertig, 512 × 512, kreissicher zugeschnitten:"
   hinweis "  @knoellchenfrei      docs/brand/telegram-dach-512.png"
-  hinweis "  @knoellchenfrei_bot  docs/brand/telegram-bot-512.png"
+  hinweis "  @knoellchen_bot      docs/brand/telegram-bot-512.png"
   hinweis "  @knoellchenfrei_B    docs/brand/telegram-berlin-512.png"
   hinweis "  @knoellchenfrei_HH   docs/brand/telegram-hamburg-512.png"
   hinweis "Setzen: Bot über @BotFather → /setuserpic; Gruppen über"

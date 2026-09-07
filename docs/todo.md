@@ -45,18 +45,19 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    $W delete --name parkingzone-api             # nur falls es ihn doch gibt
    ```
 
-   `wrangler.toml` trägt wieder `REPLACE_WITH_KV_ID` und `REPLACE_WITH_D1_ID`;
-   der Einrichtungs-Workflow füllt beide neu.
+   *(Erledigt am 6. September; die Zeilen bleiben als Anleitung für den Fall,
+   dass es noch einmal nötig wird. `wrangler.toml` trägt seit dem Abend die
+   neuen Kennungen.)*
 
-2. Beides als Repository-Secrets hinterlegen: `Settings → Secrets and
-   variables → Actions` → `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
-   **Danach macht den Rest ein Workflow**, nicht du: `Actions → Cloudflare
-   einrichten → Run workflow` prüft das Token, legt KV, D1, Schema,
-   Migrationen und das Pages-Projekt an, erzeugt das Salz für die
-   Client-Hashes, trägt die Kennungen zurück ins Repository **und stößt den
-   Deploy an**. Der nimmt die Worker-Adresse aus seiner eigenen Ausgabe — ein
-   Secret `VITE_API_BASE` braucht es nur, wenn der Worker später hinter einer
-   eigenen Domain liegt.
+2. **Einrichten — ein Befehl, von deinem Rechner:** `./scripts/einrichten.sh`.
+   Er prüft das Token, legt KV, D1, Migrationen und das Pages-Projekt an,
+   erzeugt das Salz für die Client-Hashes, setzt die CI-Secrets über `gh`,
+   trägt die Kennungen ins Repository und committet sie. Danach rollt jeder
+   Push auf `main` aus; der Deploy nimmt die Worker-Adresse aus seiner eigenen
+   Ausgabe — ein Secret `VITE_API_BASE` braucht es nur, wenn der Worker später
+   hinter einer eigenen Domain liegt. *(Der frühere Weg über einen Workflow
+   „Cloudflare einrichten" ist am 6. September abends entfallen — Bootstrap
+   ist nicht Deployment, siehe [hosting.md](hosting.md#einrichten).)*
 
    > **Am 6. September waren das noch sechs Schritte von Hand, und fünf davon
    > waren mein Versäumnis, keine Grenze der Plattform.** Aufgeschrieben, damit
@@ -352,7 +353,10 @@ Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
       nicht nachsehen — Telegram ist von hier aus nicht erreichbar, und ich
       trage nur ein, was ich geprüft habe. Offen bleiben nach meinem Stand:
       `@knoellchenfrei` (Dach), `@knoellchenfrei_B`, `@knoellchenfrei_HH`,
-      `@knoellchenfrei_bot`. Am 6. September 2026 waren alle vier frei.
+      `@knoellchen_bot`. Am 6. September 2026 waren alle vier frei.
+      *(Der Bot heißt tatsächlich `@knoellchen_bot` — nachgemessen per
+      `getMe` beim Einrichten; die Doku hatte fünfmal `@knoellchenfrei_bot`
+      gesagt, ohne dass es jemand geprüft hätte.)*
       **Nicht als leere Hülle:** Telegram behält sich ausdrücklich vor, Namen
       ungenutzter Kanäle zurückzuholen — also anlegen, benennen, ein paar Leute
       hineinholen und den Beitritt auf Genehmigung stellen. Das erfüllt
@@ -492,28 +496,16 @@ dem Free Tier ist das n-mal Betrieb ohne Gegenwert.
 
 Was noch offen ist:
 
-- [ ] **Migration auf der bestehenden D1 einspielen** — **du** oder ich,
-      sobald der Einrichtungslauf durch ist. Die Datenbank vom 6. September,
-      18:57 Uhr trägt die Spalte noch nicht, und `schema.sql` bringt sie ihr
-      auch nicht bei: `CREATE TABLE IF NOT EXISTS` ist auf einer vorhandenen
-      Tabelle ein No-op, SQLite kennt kein `ADD COLUMN IF NOT EXISTS`.
-
-      ```bash
-      cd app
-      pnpm --filter @knoellchenfrei/api exec wrangler d1 execute knoellchenfrei \
-        --file=migrations/001-stadt.sql --remote
-      ```
-
-      Genau einmal — ein zweiter Lauf bricht mit `duplicate column name` ab.
-      Solange die Datenbank leer ist, tut es auch das Löschen und Neuanlegen;
-      heute wäre das folgenlos, weil noch keine Zeile drinsteht. Ohne das eine
-      oder das andere antwortet jede Meldung mit `no such column: city`.
-- [ ] **Die Web-App schickt `?city=` noch nicht mit.** Sie liest damit
-      Berlin, auch wenn Hamburg eingestellt ist — der Rückfall greift, wie er
-      soll, aber falsch für den Nutzer. Zwei Zeilen in
-      `apps/web/src/sighting-backend.ts` (`/sightings` und `/marks`), dazu
-      ein E2E-Lauf. Bewusst nicht im selben Zug erledigt: Am Web-Teil wurde
-      parallel gearbeitet.
+- [x] **Migration auf der bestehenden D1 eingespielt** — am 6. September,
+      19:28 Uhr, mit 4 geschriebenen Zeilen. Seitdem laufen Migrationen über
+      `wrangler d1 migrations apply knoellchenfrei --remote` (führt die
+      Tabelle `d1_migrations` mit, überspringt Eingespieltes); das
+      Einrichtungsskript ruft das auf. Die frühere Datei `001-stadt.sql` und
+      der Weg über `d1 execute` existieren nicht mehr — siehe
+      [CLAUDE.md](../CLAUDE.md), Regel zu D1-Migrationen.
+- [x] **Die Web-App schickt `?city=` mit** — beide Aufrufe in
+      `apps/web/src/sighting-backend.ts`, seit dem 6. September abends, mit
+      grünem E2E-Lauf.
 
 ## 9. Kleinkram — **ich**
 
@@ -523,8 +515,8 @@ Was noch offen ist:
       `tile.openstreetmap.org` entstanden ist. Befehl steht im Kopf von
       `apps/web/scripts/make-screenshots.mjs`.
 - [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.
-- [ ] **Drei Dependabot-PRs, die Code brauchen.** Sie sind rot, und zwar zu
-      Recht — jeder hat eine echte Ursache, keine ist ein Flackern:
+- [x] **Drei Dependabot-PRs, die Code brauchten — alle drei erledigt** am
+      6. September, mit 105 grünen E2E-Tests. Die Ursachen, als Historie:
       - **Vite 8** (PR #6): Vite 8 baut mit rolldown, und unser eigenes Plugin
         `stamp-service-worker` liest im `closeBundle` die fertige
         `dist/index.html`. Die gibt es zu dem Zeitpunkt nicht mehr —
@@ -539,5 +531,6 @@ Was noch offen ist:
         (`TS7006`). Import auf `* as maplibregl` umstellen und die Handler
         typisieren.
       Die fünf Actions-Bumps und `typescript` 7, `@types/node` 26 und
-      `@cloudflare/workers-types` 5 sind grün und können zusammengeführt
-      werden.
+      `@cloudflare/workers-types` 5 waren grün und sind zusammengeführt.
+      Alle elf PRs sind zu; Begründungen in
+      [entscheidungen.md](entscheidungen.md#abhängigkeiten-aktuell-halten).
