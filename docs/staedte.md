@@ -35,6 +35,13 @@ keinem Metadatensatz. Sie zeigen sich erst, wenn man die Zeilen liest.
 
 Vor jeder Umsetzung gehört die Checkliste am Ende dieses Dokuments abgearbeitet.
 
+**Nachtrag, 7. September 2026:** Für sechzehn weitere Städte ist die Checkliste
+inzwischen abgearbeitet — abgerufen, nicht abgeschrieben. Die Ergebnisse, die
+Rangliste und die Negativbefunde stehen in
+[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md). Die Tabelle
+„Städte im Einzelnen" weiter unten ist damit an mehreren Stellen überholt; wo
+sich beide widersprechen, gilt die Recherche.
+
 ## Was gebraucht wird
 
 Vier Dinge, in dieser Reihenfolge. Ohne die ersten beiden geht gar nichts;
