@@ -34,3 +34,8 @@ package.json
 # Der Workspace liegt unter `app/`. Von dort aus arbeiten, nicht von hier.
 pnpm-workspace.yaml
 pnpm-lock.yaml
+
+# Verschluesselte D1-Abzuege aus scripts/sichern.sh. Sie enthalten gesalzene
+# Client-Hashes und Freitext-Rueckmeldungen — verschluesselt, aber ein
+# Repository ist trotzdem der falsche Ort dafuer.
+sicherungen/

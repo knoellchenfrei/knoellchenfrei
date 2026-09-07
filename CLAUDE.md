@@ -423,6 +423,7 @@ wiederholt.
 | [docs/todo.md](docs/todo.md) | Die Handover-Liste: was offen ist, und wer es tun kann |
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Getroffene Entscheidungen mit Begründung und Quellen |
 | [docs/hosting.md](docs/hosting.md) | Cloudflare, Worker, D1, Telegram, PMTiles — mit Befehlen |
+| [docs/notfall.md](docs/notfall.md) | Was läuft, was bei Verlust weg ist, in welcher Reihenfolge es zurückkommt |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
 | [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg, Frankfurt und München im Einzelnen |

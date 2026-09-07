@@ -421,6 +421,33 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
       hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
       Das war Audit-Punkt M-031.
+- [x] **Sicherung, Wiederanlauf und Notfallplan** — am 7. September gebaut,
+      Audit-Punkte M-008, M-009 und M-010. `scripts/sichern.sh` zieht die
+      D1-Datenbank ab und verschlüsselt sie lokal;
+      `./scripts/einrichten.sh --neuaufbau cloudflare` legt KV und D1 nach
+      einem Kontoverlust neu an, statt eingetragene Kennungen für vorhandene
+      Ressourcen zu halten; [notfall.md](notfall.md) sagt, was läuft, was bei
+      Verlust weg ist (`feedback` und `marks` — beides nicht ersetzbar) und in
+      welcher Reihenfolge es zurückkommt.
+- [ ] **Ein Token, das lesen darf** — sonst bleibt der Wiederanlauf ungeprüft.
+      Gemessen am 7. September: **Keiner der beiden vorhandenen Schlüssel kann
+      beantworten, ob die Datenbank noch existiert.** Der in der Umgebung
+      (`cfat_`) ist das OAuth-Token aus `wrangler login` und kennt kein DNS;
+      der in `~/.knoellchenfrei-cf-token` (`cfut_`) kennt DNS, aber kein D1 und
+      kein KV. Und `wrangler d1 list` scheitert bei beiden schon davor, weil es
+      erst die Konten aufzählt.
+
+      Nötig sind, an einem Token: **`D1:Read`**, **`Workers KV Storage:Read`**
+      und **`User → Memberships → Read`**. Danach sagt
+      `./scripts/einrichten.sh --pruefen cloudflare` statt „war nicht zu
+      prüfen" eine Antwort — und das ist die Frage, mit der ein Ernstfall
+      anfängt.
+- [ ] **Einmal wirklich zurückspielen.** Der Weg in [notfall.md](notfall.md)
+      ist hergeleitet, nicht gemessen — dieselbe Lage wie beim
+      Einrichtungsskript vor dem 6. September, und das meldete beim ersten
+      echten Lauf acht Dinge falsch. Eine halbe Stunde gegen eine
+      Wegwerf-Datenbank: sichern, neue D1 anlegen, einspielen, App dagegen
+      laufen lassen.
 - [ ] **Kacheln gibt es nur für Berlin — in drei Städten ist die Karte leer.**
       Gemessen am 7. September: `tiles.knoellchenfrei.de/v20260904/berlin.pmtiles`
       antwortet `206`, die Adresse und der DNS-Eintrag sind also in Ordnung.

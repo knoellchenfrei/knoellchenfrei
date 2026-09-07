@@ -224,6 +224,9 @@ tun() {
 }
 
 NUR_PRUEFEN=nein
+# Setzt die Kennungen in wrangler.toml auf Platzhalter zurueck, damit KV und D1
+# neu angelegt werden. Fuer den Wiederaufbau nach einem Kontoverlust.
+NEUAUFBAU=nein
 HAT_GH=nein
 HAT_CF=nein
 
@@ -382,9 +385,74 @@ migrationen_anwenden() {
   return 1
 }
 
+# Die Kennung, die in wrangler.toml steht — oder nichts.
+kennung_aus_toml() {
+  case "$1" in
+    kv) grep -A2 '^\[\[kv_namespaces\]\]' "$TOML" | grep -oE '[0-9a-f]{32}' | head -1 ;;
+    d1) grep -oE 'database_id = "[0-9a-f-]{36}"' "$TOML" | grep -oE '[0-9a-f-]{36}' | head -1 ;;
+  esac
+}
+
+# Antwortet `ja`, `nein` oder **`unbekannt`** — und die dritte Antwort ist die
+# wichtige.
+#
+# Das Skript hielt bis zum 7. September eine eingetragene Kennung fuer den
+# Beweis, dass es die Ressource gibt (`grep -q REPLACE_WITH_`, Audit-Punkt
+# M-009). Nach einem Kontoverlust ist das genau falsch herum: Die Datei
+# ueberlebt im Repository, die Ressourcen nicht — und der Wiederaufbau begann
+# mit einem Handgriff, der nirgends stand.
+#
+# `unbekannt` steht fuer "nicht pruefbar", etwa weil die Abfrage selbst
+# scheiterte. Daraus "weg" zu machen waere derselbe Fehler wie der, den das
+# Skript schon einmal gemacht hat: eine fehlende Antwort als Befund melden.
+ressource_lebt() {
+  local art="$1" id="$2" ausgabe='' konto=''
+  [ -n "$id" ] || { printf 'nein'; return; }
+
+  # Erster Weg: wrangler. Am 7. September scheiterte er in dieser Werkstatt
+  # daran, dass `kv namespace list` und `d1 list` ohne
+  # `User -> Memberships -> Read` gar nicht erst bis zur Abfrage kommen —
+  # wrangler zaehlt vorher die Konten auf.
+  case "$art" in
+    kv) ausgabe="$(wr kv namespace list 2>/dev/null || true)" ;;
+    d1) ausgabe="$(wr d1 list --json 2>/dev/null || true)" ;;
+    *)  printf 'unbekannt'; return ;;
+  esac
+  case "$ausgabe" in
+    *"$id"*) printf 'ja'; return ;;
+  esac
+
+  # Zweiter Weg: die REST-API. Sie braucht die Kontokennung, dafuer kein
+  # Membership-Recht — wohl aber `D1:Read` bzw. `Workers KV Storage:Read`.
+  konto="${CLOUDFLARE_ACCOUNT_ID:-}"
+  if [ -n "$konto" ]; then
+    case "$art" in
+      kv) ausgabe="$(cf_api GET "/accounts/$konto/storage/kv/namespaces?per_page=100" 2>/dev/null || true)" ;;
+      d1) ausgabe="$(cf_api GET "/accounts/$konto/d1/database?per_page=100" 2>/dev/null || true)" ;;
+    esac
+    if printf '%s' "$ausgabe" | grep -q '"success"[[:space:]]*:[[:space:]]*true'; then
+      case "$ausgabe" in
+        *"$id"*) printf 'ja' ;;
+        *)       printf 'nein' ;;
+      esac
+      return
+    fi
+  fi
+
+  # Beide Wege stumm. Daraus "weg" zu machen waere derselbe Fehler, den dieses
+  # Skript schon einmal gemacht hat: eine fehlende Antwort als Befund melden.
+  printf 'unbekannt'
+}
+
 schritt_cloudflare() {
   ueberschrift "1. Cloudflare: KV, D1, Migrationen, Pages"
   braucht_cf || return 0
+
+  if [ "$NEUAUFBAU" = ja ] && [ "$NUR_PRUEFEN" != ja ]; then
+    sed 's|^id = "[0-9a-f]\{32\}"|id = "REPLACE_WITH_KV_ID"|; s|^database_id = "[0-9a-f-]\{36\}"|database_id = "REPLACE_WITH_D1_ID"|' \
+      "$TOML" > "$TOML.neu" && mv "$TOML.neu" "$TOML"
+    ok "Kennungen zurueckgesetzt — KV und D1 werden neu angelegt"
+  fi
 
   if grep -q 'REPLACE_WITH_' "$TOML"; then
     fehlt "wrangler.toml trägt noch Platzhalter"
@@ -402,7 +470,29 @@ schritt_cloudflare() {
       && mv "$TOML.neu" "$TOML"
     ok "Kennungen in wrangler.toml eingetragen"
   else
-    ok "KV und D1 stehen in wrangler.toml"
+    local kv_toml d1_toml kv_da d1_da
+    kv_toml="$(kennung_aus_toml kv)"
+    d1_toml="$(kennung_aus_toml d1)"
+    kv_da="$(ressource_lebt kv "$kv_toml")"
+    d1_da="$(ressource_lebt d1 "$d1_toml")"
+    if [ "$kv_da" = ja ] && [ "$d1_da" = ja ]; then
+      ok "KV und D1 stehen in wrangler.toml — und dieses Konto kennt beide"
+    elif [ "$kv_da" = unbekannt ] || [ "$d1_da" = unbekannt ]; then
+      fehlt "Kennungen stehen in wrangler.toml; ob es sie gibt, war nicht zu pruefen"
+      hinweis "KV: $kv_da, D1: $d1_da"
+      hinweis "Dem Token fehlen die Leserechte. wrangler braucht dafuer"
+      hinweis "'User -> Memberships -> Read', die REST-API 'D1:Read' und"
+      hinweis "'Workers KV Storage:Read' plus CLOUDFLARE_ACCOUNT_ID in der Umgebung."
+    else
+      schlimm "wrangler.toml nennt Kennungen, die dieses Konto nicht kennt"
+      hinweis "KV $kv_toml: $kv_da"
+      hinweis "D1 $d1_toml: $d1_da"
+      hinweis "Nach einem Kontoverlust ist das der Normalfall: Die Datei ueberlebt"
+      hinweis "im Repository, die Ressourcen nicht."
+      hinweis "Neu anlegen:  ./scripts/einrichten.sh --neuaufbau cloudflare"
+      offen_merken
+      return 1
+    fi
   fi
 
   if [ "$NUR_PRUEFEN" = ja ]; then
@@ -1335,6 +1425,8 @@ Aufruf:
   ./scripts/einrichten.sh --pruefen    nur berichten, nichts ändern
   ./scripts/einrichten.sh <schritt>    einen einzelnen Schritt
   ./scripts/einrichten.sh --liste      welche Schritte es gibt
+  ./scripts/einrichten.sh --neuaufbau cloudflare
+                                       KV und D1 neu anlegen (nach Kontoverlust)
 ENDE
 }
 
@@ -1342,6 +1434,7 @@ GEWAEHLT=''
 for arg in "$@"; do
   case "$arg" in
     --pruefen|-p)      NUR_PRUEFEN=ja ;;
+    --neuaufbau)       NEUAUFBAU=ja ;;
     --liste|-l)        printf '%s\n' $SCHRITTE; exit 0 ;;
     --hilfe|-h|--help) usage; exit 0 ;;
     -*) printf 'Unbekannte Option: %s\n' "$arg"; usage; exit 2 ;;
