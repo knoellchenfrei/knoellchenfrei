@@ -374,10 +374,21 @@ deckt ausgelieferte Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen
 zurzeit an einen Dritten. Der Weg ist derselbe wie bei FreiFahren: eine Datei je
 Stadt in R2, die der Browser per Range-Request liest.
 
-Umgesetzt ist die Client-Seite: Mit `VITE_TILES_URL` zeichnet die App aus dem
-Archiv, ohne den Wert bleibt alles bei den Rasterkacheln. PMTiles-Leser und
-Vektor-Theme werden nur dann nachgeladen — statisch eingebunden wuchs das
-Bündel um 40 kB für etwas, das im Artifact ohnehin nie laden darf.
+Mit `VITE_TILES_URL` zeichnet die App aus dem Archiv, ohne den Wert bleibt
+alles bei den Rasterkacheln. PMTiles-Leser und Vektor-Theme werden nur dann
+nachgeladen — statisch eingebunden wuchs das Bündel um 40 kB für etwas, das im
+Artifact ohnehin nie laden darf.
+
+**Seit dem 7. September läuft beides.** Vier Archive liegen in R2 (Berlin
+89 MB, Hamburg 65 MB, Frankfurt 32 MB, München 32 MB), der Workflow *Kacheln*
+baut sie wöchentlich neu, und die App zeigt auf den stabilen Pfad `aktuell/`
+statt auf eine Version — sonst müsste nach jedem Bau eine Variable umgesetzt
+und neu ausgerollt werden, und das kann ein Workflow nicht.
+
+Dass die Karte davor **nie** etwas gezeichnet hat, lag an keiner dieser
+Entscheidungen: MapLibre 6 startet einen Worker aus einer eigenen Datei, die
+kein Bundler statisch erkennen kann, und die Anfrage danach lief in die
+SPA-Rückfalladresse. Der Befund steht in `docs/todo.md`.
 
 **Zoom 15 als Obergrenze** im Bau-Skript: Darüber geht es um einzelne
 Hausnummern, und jede Stufe verdoppelt die Dateigröße ungefähr.
@@ -492,7 +503,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 500 Unit-Tests und 99,9 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 541 Unit-Tests und 99,9 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 

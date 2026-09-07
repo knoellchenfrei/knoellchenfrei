@@ -329,10 +329,12 @@ Zustand darf nur an einer Stelle stehen.
 - Kein Hintergrund-Geofencing — das gibt es nur nativ.
 - Bewohnerparkausweise sind nicht abgebildet; die App weist darauf hin, dass der
   Preis für Besucher gilt.
-- Kartenkacheln kommen im Auslieferungszustand von OpenStreetMap, was die
-  OSM-Kachelrichtlinie für ausgelieferte Anwendungen nicht deckt. Der Ausweg ist
-  eingebaut: Mit `VITE_TILES_URL` zeichnet die App aus einem eigenen
-  PMTiles-Archiv. Es fehlt nur der R2-Eimer.
+- Die Schriften der Vektorkarte kommen von `protomaps.github.io` und sind damit
+  der letzte fremde Abruf; sie selbst auszuliefern steht auf der Liste. Die
+  Kacheln selbst liegen seit dem 7. September für alle vier Städte im eigenen
+  R2-Eimer. Ohne `VITE_TILES_URL` — lokal und in der Testsuite — fällt die App
+  auf die Rasterkacheln von OpenStreetMap zurück, was die OSM-Kachelrichtlinie
+  für ausgelieferte Anwendungen nicht deckt.
 - **Verbindlich ist die Beschilderung vor Ort.** Die Quelle sagt selbst, dass
   Gebühren und Zeiten abschnittsweise abweichen können.
 

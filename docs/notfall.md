@@ -52,9 +52,14 @@ Die Anmeldedaten liegen im Passwortmanager des Betreibers.
 
 Geheimnisse, die nirgends im Repository stehen und beim Wiederaufbau neu
 gesetzt werden müssen: `CLIENT_SALT`, `TELEGRAM_TOKEN`, `TELEGRAM_SECRET`
-(Worker), `BETA_PASSWORD` (Pages), `CLOUDFLARE_API_TOKEN` und
-`CLOUDFLARE_ACCOUNT_ID` (GitHub Actions). `scripts/einrichten.sh` legt alle bis
-auf die Telegram-Werte selbst an.
+(Worker), `BETA_PASSWORD` (Pages), `CLOUDFLARE_API_TOKEN`,
+`CLOUDFLARE_ACCOUNT_ID` und `CLOUDFLARE_R2_TOKEN` (GitHub Actions).
+`scripts/einrichten.sh` legt alle bis auf die Telegram-Werte selbst an.
+
+Der letzte ist seit dem 7. September dazugekommen und trägt genau **ein**
+Recht, *Workers R2 Storage: Edit*: Ohne ihn baut der Workflow *Kacheln* nichts,
+und die Karte altert still vor sich hin. Getrennt vom Deploy-Token, weil der
+bei jedem Push läuft und absichtlich nur Pages und Worker kann.
 
 ## Was in der Datenbank steht — und was davon wehtut
 
@@ -122,24 +127,45 @@ Die Reihenfolge ist keine Geschmacksfrage: Jeder Schritt braucht den davor.
 5. **Rest der Einrichtung:** `./scripts/einrichten.sh` ohne Argument — CI-
    Secrets, Telegram, Kacheln, DNS.
 6. **Ausrollen:** ein Push auf `main`, oder *Actions → Deploy → Run workflow*.
-7. **Beta-Riegel:** neues Passwort setzen, sonst antwortet die Seite mit `503`.
+7. **Kacheln:** `CLOUDFLARE_R2_TOKEN` setzen und den Workflow *Kacheln* einmal
+   von Hand anstoßen — oder lokal
+   `app/packages/ingest/scripts/build-tiles.sh --hochladen`. Er lädt jedes
+   Archiv nach `v<datum>/` **und** nach `aktuell/`; darauf zeigt
+   `VITE_TILES_URL`.
+8. **Beta-Riegel:** neues Passwort setzen, sonst antwortet die Seite mit `503`.
    ```bash
    cd app && pnpm --filter @knoellchenfrei/api exec wrangler pages secret put \
      BETA_PASSWORD --project-name=knoellchenfrei
    ```
-8. **Nachmessen**, nicht glauben:
+9. **Nachmessen**, nicht glauben:
    ```bash
    curl -s -o /dev/null -w '%{http_code}\n' https://knoellchenfrei.de/          # 401
    curl -s https://<worker>/health                                              # {"ok":true}
-   curl -s -o /dev/null -r 0-99 -w '%{http_code}\n' "$VITE_TILES_URL"           # 206
+   curl -s -o /dev/null -r 0-99 -w '%{http_code}\n' \
+     https://tiles.knoellchenfrei.de/aktuell/berlin.pmtiles                    # 206
    ```
 
 ## Der eine unwiederbringliche Punkt
 
 **Die Domains.** Läuft eine aus und wird von jemand anderem registriert, ist
-sie weg — kein Skript und keine Sicherung holt sie zurück. Deshalb steht
-*Auto-Renew* seit dem ersten Audit ganz oben auf der Liste des Betreibers und
-ist der einzige kritische Befund des ganzen Berichts (M-001).
+sie weg — kein Skript und keine Sicherung holt sie zurück. Es war der einzige
+kritische Befund des ganzen Audits (M-001).
+
+**Seit dem 7. September ist Auto-Renew bei INWX für alle fünf aktiv.** Nachgemessen,
+soweit es öffentlich geht: `whois knoellchenfrei.org` nennt
+`Registry Expiry Date 2027-09-06` und INWX als Registrar; die DENIC
+veröffentlicht für `.de` **kein** Ablaufdatum, die vier `.de`-Domains sind am
+selben Tag registriert worden.
+
+Ein Schalter ist trotzdem kein Beweis: Auto-Renew scheitert nicht an sich
+selbst, sondern an einer abgelaufenen Karte oder einer Rechnungsmail, die
+niemand mehr liest. Dafür stehen zwei Kalendereinträge des Betreibers,
+8. März und 9. August 2027, mit genau dieser Prüfung darin. Nachsehen lässt es
+sich hinterher an einer Zeile:
+
+```bash
+whois knoellchenfrei.org | grep 'Registry Expiry'   # steht dort 2028, ist es durch
+```
 
 Alles andere ist Code, Konfiguration oder ein paar Tage Daten.
 
@@ -179,8 +205,11 @@ Ehrlichkeit an der Stelle, an der sie am meisten wert ist:
   einmal gegen ein leeres Konto (6. September) und meldete dabei acht Dinge
   falsch. Gegen ein *verlorenes* Konto lief es nie.
 - **Es gibt noch keine Sicherung.** `./scripts/sichern.sh --pruefen` sagt das
-  auch. Seit dem 7. September hat der Betreiber-Token `D1:Edit`, der erste Lauf
-  ist also nur noch ein Befehl.
+  auch — geprüft am 7. September, es gibt keine. Der Betreiber-Token hat
+  seitdem `D1:Edit`, der erste Lauf ist also nur noch ein Befehl. Viel steht
+  auch nicht darin: `feedback` und `marks` sind leer, `/marks` antwortet
+  `{"marks":[]}`. Genau deshalb kostet der erste Lauf nichts und beweist den
+  Weg.
 - **Ein Zurückspielen ist nie erprobt worden.** Der Weg oben ist hergeleitet,
   nicht gemessen. Ein Probelauf gegen eine Wegwerf-Datenbank wäre eine halbe
   Stunde und die einzige Art, das zu ändern.

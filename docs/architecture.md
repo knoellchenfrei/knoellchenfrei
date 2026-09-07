@@ -21,7 +21,7 @@ flowchart TB
     end
 
     subgraph laufzeit["Laufzeit"]
-        W["apps/web<br/>React 19 · MapLibre GL 5"]
+        W["apps/web<br/>React 19 · MapLibre GL 6"]
         S["Sichtungs-Backend<br/>db-Capability oder Worker"]
     end
 
@@ -75,7 +75,7 @@ flowchart LR
 
 `core` kennt weder React noch Node noch MapLibre. Das ist keine Ästhetik: Die
 Tarifberechnung ist der Teil, bei dem ein Fehler den Nutzer Geld kostet, und sie
-soll ohne Browser prüfbar sein — 500 Unit-Tests laufen in rund zwei Sekunden.
+soll ohne Browser prüfbar sein — 541 Unit-Tests laufen in rund zwei Sekunden.
 
 Ein späterer nativer Client wäre ein zusätzliches Frontend gegen dasselbe `core`,
 kein Rewrite.
@@ -220,10 +220,22 @@ Eine frühere Fassung presste die REST-Variante in die Form des Dokumentspeicher
 und verlor dabei die Richtung einer Stimme: Jedes „weg" wurde als „gesehen"
 gesendet.
 
-## Zwei Fehler, die nur im echten Build auftreten
+## Drei Fehler, die nur im echten Build auftreten
 
-Beide wurden erst durch das Ausführen der gebauten App gefunden, nicht beim
-Lesen des Codes:
+Alle drei wurden durch das Ausführen der gebauten App gefunden, nicht beim
+Lesen des Codes — und der dritte hat am längsten gebraucht:
+
+**MapLibre 6 lag gar nicht im Bündel.** Die Bibliothek startet zur Laufzeit
+einen Worker aus einer eigenen Datei und setzt dessen Adresse selbst zusammen:
+`new URL('./maplibre-gl-worker.mjs', import.meta.url)`. Der Dateiname steht
+dabei in einer Variablen — kein Bundler kann ihn statisch erkennen, rolldown
+legte die Datei also nicht ab, und die Anfrage lief in die SPA-Rückfalladresse.
+Zurück kam **`index.html` mit `200 OK` und `text/html`**: kein 404, kein
+`error`-Ereignis, keine Konsolenmeldung. Ohne Worker parst MapLibre weder
+Vektorkacheln noch GeoJSON — die Karte hat deshalb **nie** etwas gezeichnet,
+auch die Parkzonen nicht. Sichtbar war davon nur, dass `withMapReady` jedes Mal
+in seinen 10-Sekunden-Rückfall lief. Behoben mit `setWorkerUrl` und einer
+Adresse aus `?worker&url`.
 
 **Der Kartencontainer hatte Höhe 0.** `maplibre-gl.css` setzt
 `.maplibregl-map { position: relative }` bei gleicher Spezifität wie die eigene

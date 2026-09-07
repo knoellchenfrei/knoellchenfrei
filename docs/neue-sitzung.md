@@ -29,8 +29,8 @@ das Projekt erklären, sondern nur sagen, wo es steht und was ansteht.
 ```text
 Wir ziehen dieses Projekt aus herbeus/parkingzone hierher um.
 
-Stand: Die App ist fertig und getestet (129 Unit-Tests, 93 E2E, Coverage
-96,3 %). Der letzte Stand liegt dort auf dem Branch
+Stand: Die App ist fertig und getestet (541 Unit-Tests, 140 E2E, Coverage
+99,9 %). Der letzte Stand liegt dort auf dem Branch
 claude/github-repo-integration-cqhab3, letzter Commit d33474a.
 
 Lies zuerst CLAUDE.md, docs/todo.md und docs/entscheidungen.md — dort steht
@@ -62,13 +62,21 @@ Drei Dinge stehen zwar in den Dokumenten, gehen aber erfahrungsgemäß unter:
 
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Das ist Absicht.
-- **Die Karte ohne Hintergrund ist meist kein Fehler — aber nicht immer.** Im
-  Artifact grundsätzlich: Die Sicherheitsrichtlinie des Sandkastens blockiert
-  jede fremde Bildquelle. In der Web-App dagegen liegt es seit dem
-  7. September an etwas anderem: `VITE_TILES_URL` zeigt auf **ein** Archiv,
-  und das ist Berlin. In Hamburg, Frankfurt und München bleibt der Hintergrund
-  deshalb leer. Steht als offener Punkt in [todo.md](todo.md). *(Der
-  Egress-Proxy sperrte `tile.openstreetmap.org` zeitweise; seit dem
+- **Eine Karte, auf der nichts steht, hat drei mögliche Gründe — und zwei
+  davon sind kein Fehler.** Im Artifact ist es normal: Die
+  Sicherheitsrichtlinie des Sandkastens blockiert jede fremde Bildquelle, und
+  seit dem 7. September zeichnet es wenigstens die Zonen aus den eingebetteten
+  Daten. Lokal ohne `VITE_TILES_URL` ist es auch normal — dann springen die
+  Rasterkacheln von OpenStreetMap ein. Der dritte Grund war ein Fehler und ist
+  behoben: **MapLibre 6 startet einen Worker aus einer eigenen Datei**, kein
+  Bundler erkennt sie statisch, und die Anfrage lief in die SPA-Rückfall-
+  adresse — ohne Worker parst MapLibre weder Vektorkacheln noch GeoJSON. Die
+  Karte hat deshalb **nie** etwas gezeichnet, auch die Parkzonen nicht.
+  Kommt es wieder: `content-type` der Worker-Antwort ansehen, nicht den Status.
+  *(Der Egress-Proxy sperrte `tile.openstreetmap.org` zeitweise; seit dem
   6. September ist er offen.)*
+- **Die Kacheln liegen unter `aktuell/`, nicht unter einer Version.** Der
+  Workflow *Kacheln* baut sie wöchentlich; deshalb braucht ein neuer Bau weder
+  eine Variable noch einen Deploy.
 - **Playwright braucht `PLAYWRIGHT_CHROMIUM`.** Sonst sucht es eine
   Build-Nummer, die es nicht gibt.

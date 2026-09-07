@@ -33,7 +33,7 @@ pnpm test                                           # 541 Unit-Tests (core, api,
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 138 End-to-End-Tests
+cd apps/web && npx playwright test                  # 140 End-to-End-Tests
 ```
 
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
