@@ -73,8 +73,10 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    > die ich hinter das Schema gehängt hatte statt davor.
 3. **Dependabot-Warnungen** und **Sicherheitsupdates** einschalten
    (Punkt 7) — zwei Schalter, und genau die, die den dringenden Teil abdecken.
-4. **Auto-Renew** für die fünf Domains (Punkt 2). Der einzige Punkt auf dieser
-   Liste, an dem ein Versäumnis nicht reparierbar ist.
+4. ~~**Auto-Renew** für die fünf Domains (Punkt 2).~~ **Am 7. September
+   erledigt** — bei INWX aktiv, mit zwei Kalendereinträgen für 2027 als
+   Rückversicherung. Es war der einzige Punkt auf dieser Liste, an dem ein
+   Versäumnis nicht reparierbar gewesen wäre.
 5. **Telegram-Token** beim BotFather holen (Punkt 6) und die restlichen Namen
    sichern, solange sie frei sind.
 
@@ -207,9 +209,25 @@ Am 6. September 2026 bestellt. Begründung der Auswahl in
 Die Punycode-Formen stehen dabei, weil Cloudflare und die meisten Werkzeuge die
 Umlautdomains so verlangen.
 
-- [ ] **Auto-Renew für alle fünf einschalten.** Eine abgelaufene Hauptdomain
-      wird binnen Stunden von Drop-Catchern gegriffen. Das ist das einzige echte
-      Risiko an diesem Paket und kostet einen Klick.
+- [x] **Auto-Renew ist an** — vom Betreiber am 7. September bestätigt, bei
+      INWX für alle fünf. Damit ist der einzige `critical`-Befund des Audits
+      erledigt (M-001).
+
+      Was trotzdem bleibt, weil ein Schalter kein Beweis ist: Auto-Renew
+      scheitert nicht an sich selbst, sondern an einer abgelaufenen Karte oder
+      einer Rechnungs-E-Mail, die niemand mehr liest. Dafür stehen jetzt zwei
+      Kalendereinträge (6. März und 9. August 2027) mit der Prüfung darin.
+
+      Nachgemessen am 7. September, damit die Daten nicht geraten sind:
+      `whois knoellchenfrei.org` nennt **Registry Expiry Date 2027-09-06** und
+      als Registrar INWX. Die DENIC veröffentlicht für `.de` **kein**
+      Ablaufdatum — dort steht nur `Status: connect` und das Änderungsdatum;
+      alle vier `.de`-Domains sind am selben Tag registriert worden, laufen
+      also mit. Wer das nachprüfen will, braucht das INWX-Konto:
+
+      ```bash
+      whois knoellchenfrei.org | grep 'Registry Expiry'   # das einzige oeffentliche Datum
+      ```
 - [ ] **Cloudflare-Konto anlegen, alle fünf als eigene Zone hinzufügen**, dann
       beim Registrar die Nameserver umstellen. Eigene Zone auch für die reinen
       Weiterleitungen — sonst gibt es für sie kein Zertifikat, und
@@ -265,8 +283,48 @@ Was am neuen Repository noch offen ist — **du**:
       seit dem 6. September **optional** — der Deploy nimmt die Worker-Adresse
       aus seiner eigenen Ausgabe, wenn kein Secret gesetzt ist.
       `./scripts/einrichten.sh ci` setzt beide, wenn `gh` angemeldet ist.
-- [ ] **Branch-Schutz für `main`** einschalten, wenn außer dir jemand pusht.
-      Solange nicht, ist es Aufwand ohne Gegenwert.
+- [x] **Der Sicherheits-Meldeweg funktioniert jetzt wirklich** — am
+      7. September eingeschaltet (Audit-Punkt M-003).
+
+      `SECURITY.md` verwies auf *Private Vulnerability Reporting*, und das war
+      am Repository **abgeschaltet**: Wer dem Link folgte, landete auf einer
+      Seite ohne Meldeformular. Ein toter Meldeweg ist schlechter als gar
+      keiner, weil er wie ein vorhandener aussieht — dieselbe Sorte Fehler wie
+      `cache.addAll`, `pnpm fetch` und der fehlende MapLibre-Worker: etwas
+      meldet Erfolg und tut nichts.
+
+      Mit eingeschaltet, weil es am selben Schalterbrett lag und für
+      öffentliche Repositories nichts kostet: **Secret Scanning** und **Push
+      Protection** — die fangen ein versehentlich committetes Token schon vor
+      dem Push, was die eigene Prüfung in der CI (`geheimnisse-pruefen.sh`,
+      M-091) grundsätzlich nicht kann. Dazu Dependabot-Warnungen und
+      -Sicherheitsupdates.
+
+      `einrichten.sh` prüft alle drei jetzt selbst, statt sie zu glauben.
+
+      Nicht durchgegangen sind `secret_scanning_non_provider_patterns` und
+      `secret_scanning_validity_checks`: Die `PATCH`-Anfrage kommt ohne Fehler
+      zurück und der Status bleibt `disabled` — vermutlich brauchen sie GitHub
+      Advanced Security. Beide sind Zusatznutzen, keine Grundlage.
+
+      Was **nicht** dazugehört: eine E-Mail-Adresse als zweiter Weg. Solange
+      das Impressum auf eine Privatperson läuft, ist eine öffentlich genannte
+      Adresse der teurere Weg; `SECURITY.md` sagt das jetzt ausdrücklich, statt
+      die Lücke offenzulassen.
+
+- [x] **Branch-Schutz für `main`: bewusst aus** — Entscheidung des Betreibers
+      vom 7. September (Audit-Punkt M-002).
+
+      Am Repository arbeiten genau zwei: der Betreiber und diese Sitzung. Eine
+      Regel, die einen Review verlangt, den niemand geben kann, führt zu einem
+      Schalter, den man bei jedem Push umlegt — und das ist schlechter als
+      keine Regel, weil es so aussieht, als gäbe es eine.
+
+      **Wiedervorlage, sobald jemand Drittes Schreibrechte bekommt.** Dann
+      gehören dazu: Pflicht-PR, grüne CI als Bedingung, keine
+      Force-Pushes. Was den Befund entschärft, ist bereits da: Die CI läuft auf
+      jedem Push, der Deploy-Token kann nur Pages und Worker, und jeder Commit
+      ist signiert nachvollziehbar.
 
 ## 4. Eigene Kartenkacheln — **du** (R2), der Rest ist fertig
 

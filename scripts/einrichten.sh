@@ -1442,6 +1442,44 @@ schritt_github() {
       fehlt "ließen sich nicht einschalten"; offen_merken
     fi
   fi
+  # Der Meldeweg aus SECURITY.md. Er stand dort schon, als er noch abgeschaltet
+  # war: Wer dem Link folgte, landete auf einer Seite ohne Meldeformular. Ein
+  # toter Meldeweg sieht aus wie ein vorhandener — genau die Sorte Fehler, die
+  # dieses Projekt sonst laut macht (Audit-Punkt M-003). Also geprüft und nicht
+  # geglaubt.
+  if gh api "repos/$REPO_SLUG/private-vulnerability-reporting" 2>/dev/null \
+      | grep -q '"enabled":true'; then
+    ok "Private Vulnerability Reporting ist an (der Weg aus SECURITY.md)"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    schlimm "Private Vulnerability Reporting aus — der Link in SECURITY.md geht ins Leere"
+    offen_merken
+  else
+    if gh api -X PUT "repos/$REPO_SLUG/private-vulnerability-reporting" >/dev/null 2>&1; then
+      ok "Private Vulnerability Reporting eingeschaltet"
+    else
+      fehlt "ließ sich nicht einschalten"; offen_merken
+    fi
+  fi
+
+  # Secret Scanning und Push Protection sind für öffentliche Repositories
+  # kostenlos und fangen, was die eigene Prüfung im CI nicht kann: ein Token,
+  # das jemand versehentlich committet, und zwar **vor** dem Push.
+  if gh api "repos/$REPO_SLUG" --jq '.security_and_analysis.secret_scanning.status' 2>/dev/null \
+      | grep -q enabled; then
+    ok "Secret Scanning ist an"
+  elif [ "$NUR_PRUEFEN" = ja ]; then
+    fehlt "Secret Scanning aus"; offen_merken
+  else
+    if gh api -X PATCH "repos/$REPO_SLUG" \
+        -f 'security_and_analysis[secret_scanning][status]=enabled' \
+        -f 'security_and_analysis[secret_scanning_push_protection][status]=enabled' \
+        >/dev/null 2>&1; then
+      ok "Secret Scanning und Push Protection eingeschaltet"
+    else
+      fehlt "ließen sich nicht einschalten"; offen_merken
+    fi
+  fi
+
   if [ "$NUR_PRUEFEN" != ja ]; then
     # Als `if`, nicht als `A && B || true`: shellcheck weist zu Recht darauf
     # hin (SC2015), dass das kein if-then-else ist — scheitert das `ok`, liefe

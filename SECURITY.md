@@ -3,10 +3,26 @@
 ## Eine Lücke melden
 
 Bitte **kein** öffentliches Issue für Sicherheitsprobleme. Nutze stattdessen
-[GitHub Security Advisories](https://github.com/knoellchenfrei/knoellchenfrei/security/advisories/new).
+[GitHub Security Advisories](https://github.com/knoellchenfrei/knoellchenfrei/security/advisories/new)
+— „Report a vulnerability" im Reiter *Security*.
+
+Der Weg ist seit dem 7. September tatsächlich offen. Vorher stand er hier auch,
+aber *Private Vulnerability Reporting* war am Repository **abgeschaltet**: Wer
+dem Link folgte, landete auf einer Seite, die das Melden nicht anbietet. Ein
+toter Meldeweg ist schlechter als gar keiner, weil er so aussieht, als gäbe es
+einen (Audit-Punkt M-003). Nachgeprüft wird das jetzt mit
+`./scripts/einrichten.sh --nur-pruefen`, nicht mehr durch Hinsehen.
+
+Was dieser Weg voraussetzt: ein GitHub-Konto. Das ist eine bewusste
+Einschränkung und keine Auslassung — solange das Impressum auf eine
+Privatperson läuft, ist eine öffentlich genannte E-Mail-Adresse der teurere
+Weg. Wer kein Konto hat und etwas Ernstes gefunden hat: ein Issue **ohne
+Einzelheiten** („Sicherheitsfrage, bitte um Kontakt") reicht als erster
+Schritt.
 
 Zeitrahmen, den wir uns setzen: Eingangsbestätigung innerhalb von drei Tagen,
-Ersteinschätzung innerhalb von zehn.
+Ersteinschätzung innerhalb von zehn. **Dahinter steht eine Person** — wer
+schnellere Zusagen braucht, bekommt sie hier nicht (Audit-Punkt M-042).
 
 ## Bedrohungsmodell
 
