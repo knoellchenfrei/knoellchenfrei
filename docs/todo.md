@@ -878,6 +878,44 @@ Was noch offen ist:
       `CONTRIBUTING.md` an, also auf die Regel, die sie durchsetzt; was in
       Grave-Akzenten steht, ist seitdem ein Zitat und kein Befund.
 
+- [ ] **Rückmeldungen von der Webseite in den Admin-Kanal des Telegram-Bots.**
+      Wunsch des Betreibers vom 7. September. Heute landet Freitext aus dem
+      Formular in `feedback` in D1 — und **bleibt dort**: Es gibt absichtlich
+      keinen Lesepfad über die API, der einzige Weg an eine Rückmeldung ist
+      `./scripts/sichern.sh`. Das ist unbequem genug, dass es niemand tut, und
+      damit ist eine Rückmeldung praktisch verloren.
+
+      Der Weg ist kurz: `createFeedback` in `worker.ts` hat den Text schon
+      durch `tidyFeedback` geschickt und schreibt ihn nach D1; danach ein
+      `sendMessage` an den Admin-Chat. Vier Dinge, die dabei nicht
+      untergehen dürfen:
+
+      1. **Der Bot heißt `@knoellchen_bot`**, nicht `@knoellchenfrei_bot`.
+         `getMe` hat das beim Einrichten am 6. September gezeigt; der zweite
+         Name war ein Wunsch, kein Befund (Audit-Punkt M-011). Beim Anlegen
+         des Kanals also den echten nehmen.
+      2. **Die Chat-Kennung ist ein Secret, keine Variable im Repository.**
+         `wrangler secret put TELEGRAM_ADMIN_CHAT`. Steht sie im Klartext,
+         kann jeder, der den Bot kennt, hineinschreiben.
+      3. **Das Senden darf die Antwort nicht aufhalten und nicht kippen.**
+         Telegram ist von außen; ein Timeout dort darf nicht dazu führen, dass
+         die Nutzerin „hat nicht geklappt" liest, obwohl der Eintrag in der
+         Datenbank steht. Also nach dem `INSERT`, mit `ctx.waitUntil`, und ein
+         Fehler geht ins Log statt in die Antwort.
+      4. **Die Datenschutzerklärung muss mit.** `docs/datenschutz.md` sagt
+         heute, Freitext liege ausschließlich in der Datenbank und werde nur
+         vom Betreiber gelesen. Geht er zusätzlich an Telegram, ist Telegram
+         ein weiterer Empfänger und gehört in die Tabelle unter „Empfänger und
+         Auftragsverarbeiter" — mit dem Hinweis, dass die Verarbeitung dort
+         außerhalb des Einflusses dieses Projekts liegt. Was **nicht**
+         mitgehen darf, ist der Client-Hash: Er ist ein Pseudonym und hat in
+         einem Chat nichts zu suchen.
+
+      Offene Entscheidung: ob der Kanal auch die **Sichtungen** bekommt. Dafür
+      spräche, dass man den Betrieb dann in einem Fenster sieht; dagegen, dass
+      sechs Meldungen pro Stunde einen Kanal unlesbar machen, in dem sonst
+      Wochen nichts steht.
+
 - [ ] **Herauszoomen bis ins Schwarze.** Die Karte kennt keine untere
       Zoomgrenze und keinen Rahmen: Wer weit genug herauszieht, sitzt vor einer
       schwarzen Fläche mit einem kleinen Stadtfleck darin. Das eigene
