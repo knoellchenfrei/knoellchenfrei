@@ -475,6 +475,45 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       | Frankfurt am Main | 32 MB |
       | München | 32 MB |
 
+- [ ] **Die Vektorkarte zeichnet nicht — und hat es nie.** Am 7. September beim
+      Nachmessen gefunden, nachdem die Archive für alle vier Städte lagen: Die
+      App zeigt den Hintergrund des Themes (grau, `#34373d`), aber **keine
+      einzige Kachel**. Das betrifft Berlin genauso wie die drei neuen Städte;
+      es ist also nicht der Fehler, der eben behoben wurde, sondern ein
+      zweiter darunter.
+
+      Was nachgemessen ist — jede Zeile einzeln geprüft, damit die nächste
+      Sitzung nicht dieselben Sackgassen abläuft:
+
+      | Geprüft | Ergebnis |
+      | --- | --- |
+      | Archiv über HTTP | `206`, `pmtiles tile … 12/2179/1421` liefert 121 KB |
+      | PMTiles-Leser **im Browser** | Header ok, dieselbe Kachel 172 KB, auch über `Protocol.tile` |
+      | TileJSON | vollständig: `tiles`, `bounds`, `minzoom 0`, `maxzoom 15`, 9 `vector_layers` |
+      | Theme-Ebenen | 68, Quellen-ID `protomaps`, `source-layer` passt exakt zu den 9 Ebenen im Archiv |
+      | Konsolenfehler | **keine**, auch kein `map.on('error')` |
+      | Kachelanfragen | **genau eine** (`bytes=0-16383`, der Kopf) — auch nach dreimal Hineinzoomen |
+      | CORS / eigener Server | gleiches Verhalten same-origin; CORS ist es nicht |
+      | Öffentliches Demo-Archiv von Protomaps | ebenfalls **0 gezeichnete Features** — es liegt also nicht an unseren Archiven |
+
+      Damit ist der Fehler eingekreist: **MapLibre bekommt die Quelle, fordert
+      aber nie eine Kachel an.** Die Kombination ist `maplibre-gl` 6.4.0,
+      `pmtiles` 4.5.0 und `protomaps-themes-base` 4.5.0 — und das letzte Paket
+      ist **abgekündigt**: „migrated to @protomaps/basemaps with a new major
+      version" (Audit-Punkt M-049). Der nächste Schritt ist deshalb der Umstieg
+      auf `@protomaps/basemaps` 5.x zusammen mit `maplibre-gl` 6.7, und zwar in
+      einem Zug — dazwischen liegt ein Schemawechsel, der auch die Archive
+      betreffen kann.
+
+      **Solange das offen ist, ist eine gesetzte `VITE_TILES_URL` eine
+      Entscheidung, keine Selbstverständlichkeit:** Ohne sie fällt die App auf
+      die Rasterkacheln von OpenStreetMap zurück und zeigt sofort eine
+      brauchbare Karte — zum Preis, dass die IP-Adressen der Testleser wieder
+      an einen Dritten gehen und die OSM-Kachelrichtlinie ausgelieferte
+      Anwendungen nicht deckt. Für sieben Testleser ist das vertretbar; für den
+      öffentlichen Betrieb nicht. Rückgängig mit einem Befehl:
+      `gh variable delete VITE_TILES_URL`.
+
 - [ ] **Der Kachelbau läuft von Hand.** Protomaps' Tagesarchive verfallen nach
       wenigen Tagen (siehe CLAUDE.md), der Bau dauert Minuten und braucht
       `pmtiles` lokal — deshalb steht er nicht im Deploy. Für den Dauerbetrieb

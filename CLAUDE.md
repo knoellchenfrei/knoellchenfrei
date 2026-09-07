@@ -375,6 +375,14 @@ wiederholt.
   kommen aus `core/city.ts` — im Skript standen sie als zweite Kopie von
   Berlins `reportBounds`, und mit vier Städten wären es acht Zahlen geworden,
   die auseinanderlaufen können.
+- **Ein 206 ist noch kein Bild.** Die Kachelarchive antworteten mit `206`, der
+  PMTiles-Leser lieferte im Browser eine 172-KB-Kachel, das TileJSON war
+  vollständig — und die Karte blieb trotzdem leer, weil MapLibre nie eine
+  Kachel *anforderte*: genau eine Anfrage (`bytes=0-16383`, der Kopf), auch
+  nach dreimal Hineinzoomen, ohne einen einzigen Konsolenfehler. Wer bei
+  „Kacheln kommen an" aufhört, hält das für behoben. Der offene Befund samt
+  aller Sackgassen steht in `docs/todo.md`; verdächtig ist die abgekündigte
+  `protomaps-themes-base`.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes
