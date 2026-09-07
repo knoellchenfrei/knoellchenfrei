@@ -7,6 +7,7 @@
     "fetch-data": "NODE_USE_ENV_PROXY=1 tsx src/fetch.ts",
     "build-data": "tsx src/build-data.ts",
     "build-data-hamburg": "tsx src/build-data-hamburg.ts",
+    "build-data-frankfurt": "tsx src/build-data-frankfurt.ts",
     "typecheck": "tsc --noEmit",
     "build-artifact": "tsx src/build-artifact.ts",
     "build-badges": "tsx src/build-badges.ts"

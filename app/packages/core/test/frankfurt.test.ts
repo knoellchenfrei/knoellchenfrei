@@ -393,6 +393,38 @@ describe('stripHtml', () => {
   })
 })
 
+// Gefundener Fehler, deshalb ein Test: Das Feld traegt eine **Zahl**, nicht
+// eine Zeichenkette. Das Interface behauptete zuerst das Gegenteil, und
+// TypeScript prueft eine JSON-Datei nicht -- der Datenbau brach mit
+// `claimed.trim is not a function` ab. Waere stattdessen nur verglichen
+// worden, haette der Vergleich stillschweigend nie gepasst, und alle 921
+// Automaten waeren "ohne Bereich" gewesen.
+describe('bewohnerparkzone im Feed', () => {
+  it('is a number, never a string', () => {
+    for (const row of AUTOMATS) {
+      const zone = row.bewohnerparkzone
+      if (zone === null || zone === undefined) continue
+      expect(typeof zone, JSON.stringify(row)).toBe('number')
+    }
+  })
+
+  it('points at numbers the area layer actually has', () => {
+    const known = new Set(ZONES.map(frankfurtZoneLabel))
+    const claimed = new Set(
+      AUTOMATS.map((row) => row.bewohnerparkzone).filter((zone): zone is number => zone !== null && zone !== undefined)
+    )
+    expect(claimed.size).toBe(21)
+    for (const zone of claimed) expect(known.has(String(zone)), String(zone)).toBe(true)
+  })
+
+  it('is absent on 418 of the 921 machines', () => {
+    const without = AUTOMATS.filter(
+      (row) => row.bewohnerparkzone === null || row.bewohnerparkzone === undefined
+    )
+    expect(without).toHaveLength(418)
+  })
+})
+
 describe('frankfurtZoneLabel', () => {
   it('uses the number, the only identity the feed gives', () => {
     expect(frankfurtZoneLabel({ nummer: 0 })).toBe('0')

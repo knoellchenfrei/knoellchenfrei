@@ -1,22 +1,33 @@
 /**
  * Amtliche Quellen, nach Stadt.
  *
- * Zwei Städte, zwei Behörden, zwei Lizenzen — und drei Unterschiede, die jeder
- * einzeln einen halben Tag kosten, wenn man sie erst im Datenbau bemerkt:
+ * Drei Städte, drei Behörden — und drei Unterschiede, die jeder einzeln einen
+ * halben Tag kosten, wenn man sie erst im Datenbau bemerkt:
  *
  * 1. **Ausgabeformat.** Berlin liefert `application/json`, Hamburg kennt das
- *    nicht und will `application/geo+json`. Ein falscher Wert bringt keinen
- *    Fehler, sondern GML — also gültiges XML, an dem `JSON.parse` scheitert.
+ *    nicht und will `application/geo+json`, Frankfurts Parken-Dienst will
+ *    wieder `application/json` und quittiert Hamburgs Wert mit einem
+ *    `ows:ExceptionReport` — Frankfurts Stadtteil-Dienst dagegen läuft auf
+ *    MapServer und heißt das Format schlicht `GEOJSON`. Ein falscher Wert
+ *    bringt in Berlin keinen Fehler, sondern GML — also gültiges XML, an dem
+ *    `JSON.parse` scheitert.
  * 2. **Achsenreihenfolge.** Auf dieselbe Anfrage (`urn:ogc:def:crs:EPSG::4326`)
- *    antwortet Berlin mit `[lon, lat]` und Hamburg mit `[lat, lon]`. Hamburg
- *    hält sich an die URN-Form, die Breite zuerst vorschreibt; Berlin liefert
- *    GeoJSON-Konvention. Beides ist verteidigbar, und genau deshalb steht die
- *    Reihenfolge hier als Feld: Wer sie rät, legt Hamburgs Zonen in den Indischen
- *    Ozean, und die Karte sieht dabei aus, als wäre sie nur leer.
+ *    antwortet Berlin mit `[lon, lat]`, Hamburg mit `[lat, lon]`, Frankfurt
+ *    wieder mit `[lon, lat]`. Hamburg hält sich an die URN-Form, die Breite
+ *    zuerst vorschreibt; die anderen liefern GeoJSON-Konvention. Alles
+ *    verteidigbar, und genau deshalb steht die Reihenfolge hier als Feld: Wer
+ *    sie rät, legt Hamburgs Zonen in den Indischen Ozean, und die Karte sieht
+ *    dabei aus, als wäre sie nur leer.
  * 3. **Lizenz.** Berlin gibt unter Datenlizenz Deutschland **Zero** 2.0 heraus,
- *    Nennung freiwillig; Hamburg unter **Namensnennung** 2.0, Nennung
- *    Bedingung. `City.attribution` in `@knoellchenfrei/core` trägt das bis in die
- *    Oberfläche.
+ *    Nennung freiwillig; Hamburg und Frankfurt unter **Namensnennung** 2.0,
+ *    Nennung Bedingung. `City.attribution` in `@knoellchenfrei/core` trägt das
+ *    bis in die Oberfläche.
+ *
+ * Und einer, den nur Frankfurt hat: **`srsName` ist dort Pflicht.** Ohne den
+ * Parameter antwortet der Dienst stillschweigend in EPSG:25832 —
+ * `[477189.85, 5550859.91]`, plausible Zahlen, nur keine Grade. `wfsUrl` setzt
+ * ihn für alle Städte; `build-data-frankfurt.ts` prüft die Antwort trotzdem
+ * noch einmal, weil ein Wegfall hier auf der Karte nur nach „leer" aussähe.
  */
 
 /** In welcher Reihenfolge der Dienst die Koordinaten schreibt. */
@@ -104,9 +115,81 @@ const HAMBURG_SOURCES: readonly Source[] = [
   },
 ]
 
+/**
+ * Frankfurt am Main — Stadt Frankfurt am Main, DL-DE/BY-2.0.
+ *
+ * Zahlen und Typnamen sind am 7. September 2026 gegen die Dienste selbst
+ * geprüft. Zwei Dienste statt einem, und das ist keine Nachlässigkeit: Der
+ * Parken-Dienst führt **keine** Verwaltungsgrenzen (`GetCapabilities` kennt
+ * genau drei Typnamen, alle unten). Die Stadtteile liegen in
+ * `WFS_Stadtgebietsgliederung` — anderer Server (MapServer statt GeoServer),
+ * anderes Ausgabeformat, dieselbe Lizenz und derselbe Quellenvermerk.
+ *
+ * Bewusst NICHT abgerufen: nichts. Anders als Berlin und Hamburg hat
+ * Frankfurts Parken-Dienst keine Ebene mit Hunderttausenden Stellplatz-
+ * Polygonen; die drei Typnamen sind alles, was er führt.
+ *
+ * Was der Datensatz **nicht** hergibt, steht in `docs/staedte.md`: keine
+ * Stellplatzzahlen, keine Umweltzonen-Geometrie (die Umweltzone gibt es in
+ * Frankfurt, dieser Dienst führt sie nur nicht), und für 113 der 921
+ * Automaten kein Polygon.
+ */
+const FRANKFURT_PARKEN = 'https://geowebdienste.frankfurt.de/Parken'
+
+const FRANKFURT_DEFAULTS = {
+  // NICHT `application/geo+json` wie Hamburg: Darauf antwortet dieser Dienst
+  // mit einem `ows:ExceptionReport`. Immerhin ein Fehler und nicht, wie in
+  // Berlin, stilles GML.
+  outputFormat: 'application/json',
+  axisOrder: 'lon,lat',
+} as const
+
+const FRANKFURT_SOURCES: readonly Source[] = [
+  {
+    key: 'zones',
+    service: FRANKFURT_PARKEN,
+    typeName: 'opendata:Bewohnerparken',
+    expectedFeatures: 42,
+    ...FRANKFURT_DEFAULTS,
+  },
+  // Die eigentliche Sachauskunft. Tarif, Geltungszeit und Höchstparkdauer
+  // hängen in Frankfurt am Automaten, nicht am Gebiet — ohne diese Ebene
+  // wüsste die App von einem Bereich nur, dass es ihn gibt.
+  {
+    key: 'automats',
+    service: FRANKFURT_PARKEN,
+    typeName: 'opendata:Parkscheinautomaten',
+    expectedFeatures: 921,
+    ...FRANKFURT_DEFAULTS,
+  },
+  {
+    key: 'accessible',
+    service: FRANKFURT_PARKEN,
+    typeName: 'opendata:Behindertenparkplaetze',
+    expectedFeatures: 458,
+    ...FRANKFURT_DEFAULTS,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile und Hamburgs Stadtteile: Ohne
+  // Hintergrundkarte schweben die Bereiche sonst im Nichts — und der Feed
+  // nennt zu einem Bereich nicht einmal einen Namen, nur eine Nummer.
+  //
+  // Eigener Dienst, und deshalb ein eigenes Ausgabeformat: Dahinter steht ein
+  // MapServer, der `application/json` nicht kennt und das Format `GEOJSON`
+  // nennt. Die Achsen kommen auch hier als `[lon, lat]`.
+  {
+    key: 'districts',
+    service: 'https://geowebdienste.frankfurt.de/WFS_Stadtgebietsgliederung',
+    typeName: 'Stadtgebietsgliederung:Stadtteile',
+    expectedFeatures: 46,
+    outputFormat: 'GEOJSON',
+    axisOrder: 'lon,lat',
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
+  frankfurt: FRANKFURT_SOURCES,
 }
 
 /**

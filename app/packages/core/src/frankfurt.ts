@@ -354,8 +354,18 @@ export interface FrankfurtZoneProperties {
 
 /** Rohzeile eines Parkscheinautomaten. */
 export interface FrankfurtAutomatProperties {
-  /** Nummer eines Bewohnerparkbereichs, als Zeichenkette. 418-mal `null`. */
-  bewohnerparkzone?: string | null
+  /**
+   * Nummer eines Bewohnerparkbereichs — als **Zahl**, 418-mal `null`.
+   *
+   * Gefunden, weil hier zuerst `string | null` stand: Die Zonen-Kennung in der
+   * Ausgabe ist eine Zeichenkette, und ein `claimed === label` haette
+   * stillschweigend nie gepasst. Der Datenbau ist stattdessen mit
+   * `claimed.trim is not a function` abgebrochen, weil er trimmen wollte — ein
+   * Glücksfall: Ein Interface ist eine Behauptung über eine JSON-Datei, kein
+   * Beweis, und TypeScript prüft sie nicht. Ein Vergleich, der immer falsch
+   * ist, waere hier gar nicht aufgefallen.
+   */
+  bewohnerparkzone?: number | null
   strassenname?: string | null
   /** `1 h`, `2 h` … oder `-` für „keine". */
   maximal_parkdauer?: string | null
