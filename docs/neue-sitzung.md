@@ -62,8 +62,13 @@ Drei Dinge stehen zwar in den Dokumenten, gehen aber erfahrungsgemäß unter:
 
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Das ist Absicht.
-- **Die Karte ohne Hintergrund ist kein Fehler.** In dieser Umgebung ist
-  `tile.openstreetmap.org` gesperrt, im Artifact grundsätzlich jede fremde
-  Bildquelle.
+- **Die Karte ohne Hintergrund ist meist kein Fehler — aber nicht immer.** Im
+  Artifact grundsätzlich: Die Sicherheitsrichtlinie des Sandkastens blockiert
+  jede fremde Bildquelle. In der Web-App dagegen liegt es seit dem
+  7. September an etwas anderem: `VITE_TILES_URL` zeigt auf **ein** Archiv,
+  und das ist Berlin. In Hamburg, Frankfurt und München bleibt der Hintergrund
+  deshalb leer. Steht als offener Punkt in [todo.md](todo.md). *(Der
+  Egress-Proxy sperrte `tile.openstreetmap.org` zeitweise; seit dem
+  6. September ist er offen.)*
 - **Playwright braucht `PLAYWRIGHT_CHROMIUM`.** Sonst sucht es eine
   Build-Nummer, die es nicht gibt.

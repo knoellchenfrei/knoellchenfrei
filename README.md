@@ -250,8 +250,16 @@ pnpm --filter @knoellchenfrei/web dev
 cd apps/web && npx playwright test     # 128 End-to-End-Tests
 ```
 
+**Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
+`corepack enable`, das die in `app/package.json` festgeschriebene Version
+nimmt. Für die End-to-End-Tests einmalig `npx playwright install chromium`.
 Bringt die Umgebung einen Chromium mit, den Playwright nicht selbst
 installiert hat, zeigt `PLAYWRIGHT_CHROMIUM=/pfad/zu/chromium` darauf.
+
+Beim ersten `pnpm install` meldet pnpm *„Ignored build scripts: esbuild,
+workerd"*. Das ist kein Fehler und nichts zu tun: pnpm 10 führt
+Installationsskripte von Abhängigkeiten nicht mehr ungefragt aus, und beide
+Pakete bringen fertige Binärdateien mit, die auch ohne ihr Skript liegen.
 
 Daten neu ziehen:
 
@@ -280,8 +288,19 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |
 
-Die Badges oben werden vom CI aus den echten Messwerten generiert — kein
-externer Dienst, damit sie auch in einem privaten Repository funktionieren.
+Die Badges oben sind eigene SVGs, kein externer Dienst — shields.io würde den
+Repository-Namen an einen Dritten senden und in einem privaten Repository
+ohnehin nichts anzeigen. Erzeugt werden sie **von Hand**, nicht vom CI:
+
+```bash
+cd app/packages/ingest
+TEST_COUNT=500 E2E_COUNT=128 npx tsx src/build-badges.ts
+```
+
+Hier stand bis zum 7. September „werden vom CI generiert". Das war falsch —
+kein Workflow ruft das Skript auf, und die Zahlen kommen aus
+Umgebungsvariablen, die jemand tippt (Audit-Punkt M-028). Wer die Zahlen
+ändert, führt den Befehl aus; wer es vergisst, hat einen Badge, der lügt.
 
 Sicherheitsmaßnahmen und Bedrohungsmodell: [SECURITY.md](SECURITY.md).
 

@@ -83,11 +83,13 @@ Danach rollt jeder Push auf `main` aus.
 > offen, und die Doku verlangt weiterhin einen API-Token für CI). Was bleibt:
 > den Token eng schneiden und ihm ein Ablaufdatum geben.
 
-**Ungetestet.** Der Einrichtungs-Workflow ist geschrieben, aber nie gegen ein
-echtes Cloudflare-Konto gelaufen — hier gibt es keins. Er schreibt deshalb die
-vollständige Ausgabe beider `create`-Befehle ins Log, bevor er etwas auswertet:
-Scheitert das Auslesen der IDs, stehen sie trotzdem lesbar da und lassen sich
-über den Web-Editor von Hand in `wrangler.toml` eintragen.
+**Überholt seit dem 6. September 2026.** Es gibt keinen
+Einrichtungs-*Workflow* mehr: Bootstrap ist nicht Deployment, und
+`setup-cloudflare.yml` ist gelöscht. Eingerichtet wird von einem Rechner aus
+mit `./scripts/einrichten.sh` — das Skript ist inzwischen gegen ein echtes
+Konto gelaufen und hat dabei acht eigene Fehlbefunde offengelegt. Was heute
+gilt, steht in [hosting.md](hosting.md#einrichten); was bei Verlust zu tun
+ist, in [notfall.md](notfall.md).
 
 ### 4. Impressum und Datenschutzerklärung
 
@@ -162,14 +164,23 @@ Jetzt steht sie einmal in `core/city.ts`, und Browser, Worker und Bot lesen
 dieselbe. Auseinanderlaufende Grenzen waren der teuerste Fehler dieser Art:
 Der Server hätte Meldungen verworfen, die die App gerade angenommen hat.
 
-Offen bleibt eine **Datenbank je Stadt**. FreiFahren macht genau das: Ihr
-Bündel nennt `api-worker-db-eu`, `api-worker-db-hamburg-eu` und
-`api-worker-db-leipzig` als getrennte D1-Bindings an einem Worker, dazu eine
-Subdomain je Stadt. Solange hier nur Berlin einen Worker hat, wäre eine zweite
-Datenbank Aufwand ohne Gegenwert — aber sobald Meldungen für Hamburg
-hereinkommen sollen, ist es dieser Weg und nicht eine gemeinsame Tabelle mit
-einer Stadtspalte: Getrennte Datenbanken machen es unmöglich, dass eine
-Hamburger Meldung versehentlich auf einer Berliner Karte landet.
+**Entschieden am 6. September 2026, und anders als hier vorher stand:** eine
+Datenbank mit einer Spalte `city`, nicht eine Datenbank je Stadt. Dieser
+Absatz empfahl das Gegenteil und widersprach damit dem, was seitdem läuft
+(Audit-Punkt M-026).
+
+FreiFahren fährt je Stadt eine eigene D1 *und* einen eigenen Worker
+(`api-worker-db-eu`, `…-hamburg-eu`, `…-leipzig`). Sauber getrennt, aber
+n-mal Betrieb. Für vier Städte auf dem Free Tier ist das Aufwand ohne
+Gegenwert, und das Argument „getrennte Datenbanken machen eine Verwechslung
+unmöglich" trägt nicht: Die Stadt entsteht beim Schreiben aus der **Position**
+(`cityAt`), nicht aus einer Angabe des Clients. Eine Meldung ohne Stadt kann
+gar nicht entstehen, und eine falsche Stadt hieße, dass die Koordinaten falsch
+sind — was zwei Datenbanken auch nicht heilen würden.
+
+Wiedervorlage, sobald eine Stadt eigene Betriebszeiten, eigenes Recht oder
+eigene Betreiber bekommt. Dann trennt man nicht die Tabelle, sondern den
+Betrieb.
 
 ## Danach — und da kann ich wieder übernehmen
 

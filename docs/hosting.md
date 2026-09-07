@@ -18,11 +18,17 @@ voraus.
 | Kartenkacheln | nein (CSP) | ja | **ja** |
 | Live-Daten (WFS, Ladepunkte) | nein | nein | **ja (Worker)** |
 
-**Stand am 6. September 2026, abends:** Das Repository ist öffentlich, GitHub
-Pages ist eingeschaltet und liefert aus, das Cloudflare-Konto steht, und das
-API-Token hat seit dem Nachtrag unten auch `Workers Scripts:Edit`. Offen sind
-der erste erfolgreiche Worker-Deploy, `VITE_API_BASE` und der R2-Eimer für die
-Kacheln.
+**Stand am 7. September 2026, nachgemessen:** Alles läuft. Worker
+(`/health` antwortet), Cloudflare Pages unter `knoellchenfrei.de` und `www.`,
+D1 mit eingespielten Migrationen, R2 mit dem Kachelarchiv
+(`tiles.knoellchenfrei.de/v20260904/berlin.pmtiles` → `206`), Telegram-Bot mit
+Webhook. **GitHub Pages ist abgeschaltet** — davor lässt sich kein
+Zugangsriegel setzen, und die App ist geschlossener Testbetrieb.
+
+Zwei Dinge sind offen und stehen in [todo.md](todo.md): Kacheln gibt es nur
+für Berlin, in den drei anderen Städten bleibt der Hintergrund leer; und ein
+Token, das lesen darf — ohne das lässt sich nicht prüfen, ob KV und D1 noch
+existieren.
 
 ## Wie FreiFahren es macht
 
@@ -299,9 +305,18 @@ nicht zurückrufen, nur rollen. Ein Ablaufdatum gehört dazu.
 
 **Nicht** nötig sind KV, D1 und R2 — die CI fasst sie nicht an, seit die
 Einrichtung lokal läuft — und **Workers Routes** ebenfalls nicht, solange
-`wrangler.toml` keine `routes` deklariert. Nachgesehen: Dort stehen nur `name`,
-`main`, Bindings, Cron-Trigger und Vars; der Worker liegt auf der
+`wrangler.toml` keine `routes` deklariert. Nachgesehen, vollständig (bis zum
+7. September nannte diese Aufzählung drei Einträge zu wenig, Audit-Punkt
+M-082): `name`, `main`, `compatibility_date`, die Bindings für KV und D1 samt
+`migrations_dir`, ein Cron-Trigger, `[observability]` und `[vars]` mit
+`ALLOWED_ORIGINS`. Keine `routes` — der Worker liegt auf der
 `workers.dev`-Adresse.
+
+`[observability] enabled = true` schaltet **Workers Logs** ein: Cloudflare hält
+Anfrageprotokolle des Workers vor, und die enthalten IP-Adressen. Das ist beim
+Fehlersuchen Gold wert und in der Datenschutzerklärung bisher nicht erwähnt
+(Audit-Punkt M-056) — es gehört dort hinein oder abgeschaltet, und zwar bevor
+die App öffentlich wird.
 
 > **Das ändert sich mit einer eigenen Domain.** Trägst du
 > `api.knoellchenfrei.de` als `routes` in die `wrangler.toml`, braucht die CI
@@ -429,11 +444,23 @@ gespeichert.
 ### Frontend an den Worker hängen
 
 Die Web-App spricht den Worker nur an, wenn sie zur **Buildzeit** weiß, wo er
-steht. In Cloudflare Pages unter *Settings → Environment variables*:
+steht. Der Build läuft in **GitHub Actions**, nicht bei Cloudflare — die
+Umgebungsvariablen im Pages-Dashboard sind also der falsche Ort und wirken
+nicht (Audit-Punkt M-025).
+
+Normalerweise ist gar nichts zu setzen: `deploy.yml` nimmt die Adresse aus der
+Ausgabe des Worker-Deploys, der unmittelbar davor gelaufen ist. Ein Secret
+`VITE_API_BASE` unter *Settings → Secrets and variables → Actions* braucht es
+nur, wenn der Worker hinter einer eigenen Domain liegt; dann gewinnt es.
 
 ```
-VITE_API_BASE = https://knoellchenfrei-api.<konto>.workers.dev
+VITE_API_BASE   Secret, optional — nur bei eigener Worker-Domain
+VITE_TILES_URL  Variable, kein Secret — die Adresse des Kachelarchivs
 ```
+
+`VITE_TILES_URL` ist bewusst eine **Variable** und kein Secret: Die Adresse
+steht ohnehin in jedem Netzwerk-Request der App. Als Secret wäre sie im
+Protokoll maskiert, und man suchte im Dunkeln nach einem öffentlichen Wert.
 
 Ohne diese Variable läuft die App im lokalen Modus: Meldungen bleiben auf dem
 Gerät, und die Live-Zähler zeigen „nur dieses Gerät". Das ist kein Fehler,
@@ -507,7 +534,7 @@ app/packages/ingest/scripts/build-tiles.sh
 ```
 
 Das Skript nennt am Ende den Upload-Befehl. Der Pfad im Eimer trägt das Datum
-(`/v20260730/berlin.pmtiles`), damit ein Zwischenstand nie eine laufende Version
+(`/v20260904/berlin.pmtiles`), damit ein Zwischenstand nie eine laufende Version
 überschreibt und der Browser beliebig lange cachen darf.
 
 ### Eimer einrichten
@@ -529,7 +556,7 @@ Danach eine eigene Domain vor den Eimer hängen (`tiles.knoellchenfrei.de`) und
 die Web-App darauf zeigen lassen — Buildzeit, nicht Laufzeit:
 
 ```
-VITE_TILES_URL=https://tiles.knoellchenfrei.de/v20260730/berlin.pmtiles
+VITE_TILES_URL=https://tiles.knoellchenfrei.de/v20260904/berlin.pmtiles
 ```
 
 ### Was dann anders ist

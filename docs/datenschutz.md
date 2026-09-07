@@ -31,12 +31,32 @@ erteilt der Browser-Dialog; widerrufbar in den Browser-Einstellungen.
 
 ### 2.2 Speicher auf dem Gerät
 
-Im `localStorage` des Browsers liegen: der gemerkte Parkplatz samt Startzeit und
-Erinnerung, eine gerätelokale Liste eigener Meldungen sowie eine
-**tagesfrische Zufallskennung** für die Besuchszählung. Diese Daten verlassen
-das Gerät nicht und lassen sich über die Browser-Einstellungen jederzeit
-löschen. Sie sind technisch erforderlich, damit die Parkuhr einen Neuladen
-übersteht (§ 25 Abs. 2 Nr. 2 TDDDG).
+Im `localStorage` des Browsers liegen **neun** Einträge. Hier stand bis zum
+7. September eine Aufzählung von dreien; die Liste war unvollständig
+(Audit-Punkt M-019):
+
+| Schlüssel | Inhalt |
+| --- | --- |
+| `knoellchenfrei.session` | der gemerkte Parkplatz samt Startzeit und Erinnerung |
+| `knoellchenfrei.sightings` | gerätelokale Liste eigener Meldungen |
+| `knoellchenfrei.marks.v1` | gerätelokale Strichliste für die Heatmap |
+| `knoellchenfrei.visit.v1` | tagesfrische Zufallskennung für die Besuchszählung |
+| `knoellchenfrei.visits.v1` | zuletzt angezeigte Besuchszahlen |
+| `knoellchenfrei.locationAsked.v1` | ob der Standort-Vordialog schon erschien |
+| `knoellchenfrei.installHidden.v1` | ob der Installationshinweis weggeklickt wurde |
+| `knoellchenfrei:city` | die gewählte Stadt |
+| `knoellchenfrei:city-suggestion-dismissed` | Städte, für die „hier bleiben" gewählt wurde |
+
+Diese Daten verlassen das Gerät nicht und lassen sich über die
+Browser-Einstellungen jederzeit löschen. Sieben davon sind technisch
+erforderlich, damit Parkuhr, Stadtwahl und weggeklickte Hinweise einen Neuladen
+überstehen (§ 25 Abs. 2 Nr. 2 TDDDG).
+
+**Zwei nicht:** `knoellchenfrei.visit.v1` und `knoellchenfrei.visits.v1` dienen
+der Besuchszählung des Betreibers, nicht einem Dienst, den die Nutzerin
+angefordert hat. Ob § 25 Abs. 2 Nr. 2 TDDDG das trägt, ist offen und
+anwaltlich zu klären (Audit-Punkt M-020); die ehrliche Alternative wäre, die
+Zählung abzuschalten.
 
 ### 2.3 Ordnungsamt-Meldungen
 
@@ -47,6 +67,15 @@ Wer eine Sichtung meldet, überträgt an den Server:
 | Position | auf etwa 10 Meter gerundet |
 | Zeitpunkt | auf 5 Minuten gerundet |
 | Bestätigungen und Widersprüche | Zähler |
+
+Zur Meldung selbst wird ein **gesalzener Hash** der IP-Adresse gespeichert, um
+die Meldegrenze durchzusetzen; er wird nach Ablauf des Zeitfensters auf `NULL`
+gesetzt. Eine **Stimme** (Bestätigung oder Widerspruch) legt eine eigene Zeile
+mit demselben Hash und dem Zeitpunkt auf die Millisekunde an — das ist der
+Schlüssel, der „eine Stimme je Person und Meldung" durchsetzt. Diese Zeilen
+werden nicht genullt, sondern zusammen mit der Meldung gelöscht, also
+spätestens nach 90 Minuten. Auch das stand hier bis zum 7. September nicht
+(Audit-Punkt M-019).
 
 **Eine Meldung ist auch eine Ortsangabe über die meldende Person** und für alle
 sichtbar. Deshalb die Rundung. Meldungen werden nach **90 Minuten gelöscht**,
@@ -66,7 +95,10 @@ nicht derselben Person zuordnen. Gelöscht nach **28 Tagen**.
 
 Das Formular gibt es **nur in der selbst gehosteten Fassung**, nicht im
 Artifact — Begründung unten. Wer es abschickt, überträgt **den Text, die gewählte Kategorie und den
-Zeitpunkt auf die Stunde gerundet** — sonst nichts. Es gibt **kein Kontaktfeld**:
+Zeitpunkt auf die Stunde gerundet**. Gespeichert wird zusätzlich ein
+gesalzener Hash der IP-Adresse, allein um die Grenze von vier Rückmeldungen je
+Stunde durchzusetzen; er wird nach Ablauf der Stunde auf `NULL` gesetzt. Sonst
+nichts. Es gibt **kein Kontaktfeld**:
 Wer keine Adresse abfragt, speichert auch keine. Der Preis ist, dass auf eine
 Rückmeldung nicht geantwortet werden kann; das Formular sagt das.
 
@@ -147,10 +179,22 @@ Art. 6 Abs. 1 lit. f DSGVO.
 | Dienst | Wofür | Hinweis |
 | --- | --- | --- |
 | ⟨Cloudflare, Inc.⟩ | Auslieferung, Worker, Datenbank | Vertrag zur Auftragsverarbeitung erforderlich; Datenbank per `--jurisdiction eu` auf die EU beschränken |
-| OpenStreetMap Foundation | Kartenkacheln | Sieht beim Kachelabruf die IP-Adresse der Nutzenden. **Entfällt**, sobald die Kacheln aus dem eigenen Speicher kommen — vorbereitet, siehe `docs/hosting.md`. |
+| OpenStreetMap Foundation | Rasterkacheln | Sieht beim Kachelabruf die IP-Adresse der Nutzenden. Entfällt dort, wo das eigene Vektorarchiv greift — heute nur in Berlin. |
+| GitHub, Inc. (`protomaps.github.io`) | Schriften und Symbole der Vektorkarte | Sieht die IP-Adresse. **Entfällt nicht** durch das eigene Kachelarchiv: Glyphen und Sprites lädt der Kartenstil weiterhin von dort (`map-style.ts`). Hier stand vorher, der Abfluss „entfällt" — das war falsch (Audit-Punkt M-017). |
 | ⟨Telegram Messenger Inc.⟩ | Meldungen über den Bot | Nur für Nutzende des Bots. Die Verarbeitung dort richtet sich nach Telegrams eigenen Bestimmungen und liegt außerhalb des Einflusses dieses Projekts. Entfällt, wenn kein Bot betrieben wird. |
 
-⟨Prüfen und ergänzen, was tatsächlich eingesetzt wird.⟩
+| Anthropic PBC | nur in der Artifact-Fassung | Dort liegen Meldungen und Anwesenheit im Speicher der Artifact-Laufzeit, gebunden an das Claude-Konto des Betreibers. In der selbst gehosteten Fassung kommt Anthropic nicht vor (Audit-Punkt M-057). |
+
+**Cloudflare Workers Logs sind eingeschaltet** (`[observability] enabled = true`
+in `wrangler.toml`). Cloudflare hält damit Anfrageprotokolle des Workers vor,
+und die enthalten IP-Adressen. Das gehört in den Vertrag zur
+Auftragsverarbeitung und in diese Tabelle — oder abgeschaltet (Audit-Punkt
+M-056).
+
+⟨Prüfen und ergänzen, was tatsächlich eingesetzt wird. Der Vertrag zur
+Auftragsverarbeitung mit Cloudflare und die Rechtsgrundlage für den
+Drittlandtransfer fehlen weiterhin — Audit-Punkt M-007, anwaltlich zu
+klären.⟩
 
 ## 4. Speicherdauer im Überblick
 

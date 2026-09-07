@@ -75,7 +75,7 @@ flowchart LR
 
 `core` kennt weder React noch Node noch MapLibre. Das ist keine Ästhetik: Die
 Tarifberechnung ist der Teil, bei dem ein Fehler den Nutzer Geld kostet, und sie
-soll ohne Browser prüfbar sein — 62 Unit-Tests laufen in 1,5 Sekunden.
+soll ohne Browser prüfbar sein — 500 Unit-Tests laufen in rund zwei Sekunden.
 
 Ein späterer nativer Client wäre ein zusätzliches Frontend gegen dasselbe `core`,
 kein Rewrite.
@@ -236,8 +236,12 @@ jetzt per ID nach.
 
 ## Herkunft
 
-Das Repository begann 2012 als Java/Spring-Anwendung. Die liegt unverändert
-unter `ParkingZone/` und wird nicht gebaut. Zwei Befunde aus dem Altcode haben
+Das Repository begann 2012 als Java/Spring-Anwendung. Sie ist beim Umzug am
+6. September 2026 **nicht mitgekommen** und liegt weiter im alten Repository
+`herbeus/parkingzone`; ein Verzeichnis `ParkingZone/` gibt es hier nicht mehr
+(Audit-Punkt M-027). Der Grund steht in CLAUDE.md: In den Commits von 2012
+steht ein Passwort, und die Historie wird nicht umgeschrieben, sondern
+zurückgelassen. Zwei Befunde aus dem Altcode haben
 den Neubau geprägt:
 
 Die Zonendaten waren **von Hand gezeichnet** — der Commit heißt wörtlich
