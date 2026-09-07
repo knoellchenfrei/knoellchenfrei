@@ -878,6 +878,25 @@ Was noch offen ist:
       `CONTRIBUTING.md` an, also auf die Regel, die sie durchsetzt; was in
       Grave-Akzenten steht, ist seitdem ein Zitat und kein Befund.
 
+- [ ] **Meldestadt statt Zonenstadt: Städte vom Feed entkoppeln.** Richtung
+      vom 7. September, ausführlich in
+      [staedte.md](staedte.md#zwei-stufen-meldestadt-und-zonenstadt) — hier nur
+      der Zeiger, damit es nicht zweimal steht.
+
+      Kurz: Wo bewirtschaftet wird, sollen Leute melden können, auch ohne
+      Zonen, Tarife und Automaten. Stufe 1 braucht nur Name, Kfz-Kürzel,
+      Bundesland und eine Grenze; Stufe 2 ist das Heutige. Möglich ist das,
+      weil der Worker die Stadt ohnehin aus der Position ableitet (`cityAt`)
+      und die Oberfläche mit `absent` in `meta.json` schon ausblenden kann, was
+      eine Stadt nicht hat.
+
+      **Nicht anfangen, bevor zwei Fragen beantwortet sind**, denn beide
+      bestimmen die Form des Codes: woher die Grenzen kommen (vierhundert
+      Rahmen pflegt niemand von Hand — das muss erzeugt werden) und wie die
+      Meldegrenze aussieht (`cityAt` nimmt die *erste passende* Stadt, und ein
+      Test hält heute fest, dass sich die vier Rahmen nicht überlappen; bei
+      vielen Städten überlappen Rechtecke zwangsläufig, es bräuchte Polygone).
+
 - [ ] **Rückmeldungen von der Webseite in den Admin-Kanal des Telegram-Bots.**
       Wunsch des Betreibers vom 7. September. Heute landet Freitext aus dem
       Formular in `feedback` in D1 — und **bleibt dort**: Es gibt absichtlich

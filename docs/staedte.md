@@ -62,6 +62,84 @@ Berlins Besonderheit ist Punkt 3 und 4 **im selben Datensatz wie die
 Geometrie**. Genau das ist andernorts die Ausnahme: Die meisten Städte
 veröffentlichen die Flächen, die Gebührenordnung steht daneben in einer PDF.
 
+## Zwei Stufen: Meldestadt und Zonenstadt
+
+**Stand 7. September 2026: eine Richtung, keine Entscheidung.** Der Abschnitt
+steht hier, damit die nächste Sitzung ihn nicht neu herleitet. Was er
+vorschlägt, ist an keiner Stelle umgesetzt.
+
+Die Idee ist, eine Stadt nicht mehr an ihrem Feed festzumachen. Wo
+bewirtschaftet wird, sollen Leute Kontrolleure melden können — auch ohne Zonen,
+Tarife und Automaten. Die Aufnahme einer Stadt wäre dann ein Rollout und kein
+Projekt; das Fernziel wäre bundesweite Abdeckung.
+
+**Warum das mehr ist als „noch eine Stadt".** Heute ist eine Stadt *definiert*
+durch ihren Feed: eigener Parser, eigener Datenbau, geprüfte Lizenz,
+Feiertagskalender. Frankfurt und München haben je einen halben Tag gekostet.
+Die Recherche in
+[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md) zeigt, warum das
+nicht skaliert: Von 24 geprüften Städten hatten **acht Großstädte gar keinen
+Parkdatensatz** (Stuttgart, Leipzig, Bremen, Hannover, Nürnberg, Münster,
+Potsdam, Freiburg), und mehrere weitere einen unbrauchbaren — Kölns
+Gebührenfeld ist zwei Erhöhungen alt. Bundesweit wäre der Feed die Ausnahme,
+nicht die Regel.
+
+### Die Trennung, um die es geht
+
+| | Braucht | Kann |
+| --- | --- | --- |
+| **Stufe 1 — Meldestadt** | Name, Kfz-Kürzel, Bundesland (für die Feiertage), eine Grenze | Meldungen, Heatmap, Telegram, Karte — **vollständig** |
+| **Stufe 2 — Zonenstadt** | zusätzlich Feed, Parser, Datenbau, Lizenzprüfung | zusätzlich Zonen, Tarife, Zeiten, Automaten |
+
+Stufe 1 ist deshalb möglich, weil der Worker die Stadt **ohnehin schon aus der
+Position ableitet** und nicht aus einer Konfiguration: `cityAt(lon, lat)` in
+`core/city.ts` sucht die erste Stadt, deren Rahmen den Punkt enthält. Eine
+Stadt ohne Feed wäre für den Meldeweg kein Sonderfall.
+
+Die Oberfläche kann es halb schon: `meta.json` trägt `absent`, und die App
+blendet aus, was eine Stadt nicht hat — Hamburg listet dort `poi`,
+`umweltzone`, `segments`, München `fee`. Eine Stufe-1-Stadt wäre der Grenzfall
+davon: alles abwesend außer den Meldungen.
+
+### Was zu klären ist, bevor Code entsteht
+
+Fünf Fragen. Keine davon ist beantwortet, und die ersten beiden sind die, an
+denen es hängt.
+
+1. **Woher die Grenzen kommen.** Vier Rahmen von Hand zu pflegen geht,
+   vierhundert nicht. Das müsste ein **erzeugter** Datensatz werden — amtliche
+   Gemeindegrenzen (Destatis, GADM) oder OSM-Relationen. Damit bekäme die Regel
+   „Stadtgrenzen stehen genau einmal, in `core/city.ts`" eine andere Form: Sie
+   stünden weiter genau einmal, aber als Erzeugnis mit einem Bauskript davor,
+   nicht als getippte Zahlen. Die Regel selbst bleibt — sie hat einen Vorfall
+   hinter sich.
+2. **Die Meldegrenze.** `cityAt` nimmt die **erste passende** Stadt, und ein
+   Test hält fest, dass sich die vier Rahmen nicht überlappen. Bei
+   vierhundert Städten ist beides nicht mehr haltbar: Rechteckige Rahmen
+   überlappen zwangsläufig, und „die erste" wäre dann Zufall. Es bräuchte
+   echte Polygone und eine Punkt-in-Polygon-Suche — `polygonContains` in
+   `core/geo.ts` gibt es schon, die Frage ist der Index davor.
+3. **Feiertage.** `holidaysFor` deckt heute vier Bundesländer ab
+   (`Land = 'BE' | 'HH' | 'HE' | 'BY'`). Bundesweit heißt: alle sechzehn, jedes
+   mit Beleg. Und Mariä Himmelfahrt gilt in Bayern **gemeindeweise** — genau
+   das hat bei München `City.holidays` erzwungen. Ein `Record<Land, …>` reicht
+   dafür nicht, und das gilt bundesweit erst recht.
+4. **Woher „hier wird bewirtschaftet" kommt.** Ohne Feed weiß die App es nicht.
+   Entweder eine gepflegte Liste — dann ist sie die neue Handarbeit —, oder man
+   lässt es offen und meldet trotzdem. Im zweiten Fall darf die App aber
+   **nicht behaupten, es koste etwas**. Das ist dieselbe Linie wie bei
+   `CostEstimate.priced`: Kein Betrag ist nicht null Euro.
+5. **Was die Datenschutzerklärung sagt.** Rechtlich ändert sich nichts — es
+   werden keine anderen Daten verarbeitet. Aber `docs/datenschutz.md` nennt
+   heute vier Städte namentlich; das müsste eine Regel werden statt einer
+   Aufzählung.
+
+### Was dafür spricht, es trotzdem zu tun
+
+Der Meldeweg ist der Teil, der ohne Behörde auskommt — und der, für den
+FreiFahren das Vorbild ist. Eine Stadt, in der man melden kann, ist mehr wert
+als eine, in der nichts steht, weil die Stadt keinen Feed veröffentlicht.
+
 ## Drei Wege zu einer zweiten Stadt
 
 ### Weg A — kommunales Open-Data-Portal
