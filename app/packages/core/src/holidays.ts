@@ -19,7 +19,7 @@
 import { berlinDateKey, type BerlinWallClock } from './berlin-time.js'
 
 /** Amtliche Kürzel der Bundesländer, so weit belegt. */
-export type Land = 'BE' | 'HH' | 'HE'
+export type Land = 'BE' | 'HH' | 'HE' | 'BY'
 
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
@@ -100,6 +100,19 @@ const NATIONWIDE_FROM_EASTER = [
  *   Bettag, keine gemeindeweise Regelung. Quelle: Hessisches Ministerium des
  *   Innern, <https://innen.hessen.de/buerger-staat/feiertage>, abgerufen am
  *   7. September 2026.
+ * - **BY** — Bayern hat **zwölf** landesweite: die neun bundesweiten plus
+ *   Heilige Drei Könige, Fronleichnam und Allerheiligen. Das ist der lange
+ *   Eintrag dieser Tabelle und trotzdem der unvollständige — Mariä Himmelfahrt
+ *   gilt in Bayern *gemeindeweise* und steht deshalb nicht hier, sondern an
+ *   der Stadt (`City.holidays`, siehe `extraFixed` unten). Wörtlich, Art. 1
+ *   Abs. 1 Nr. 1 BayFTG: „Neujahr, Heilige Drei Könige (Epiphanias),
+ *   Karfreitag, Ostermontag, der 1. Mai, Christi Himmelfahrt, Pfingstmontag,
+ *   Fronleichnam, der 3. Oktober als Tag der Deutschen Einheit, Allerheiligen,
+ *   Erster Weihnachtstag, Zweiter Weihnachtstag". Abs. 2 gibt zusätzlich der
+ *   **Stadt Augsburg** den 8. August (Friedensfest) — auch das eine Sache der
+ *   Stadt, nicht des Landes. Quelle:
+ *   <https://www.gesetze-bayern.de/Content/Document/BayFTG-1>, abgerufen am
+ *   7. September 2026.
  */
 interface RegionalHolidays {
   /** Feste Daten als `MM-TT`. */
@@ -112,13 +125,49 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
   HH: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag
   HE: { fixed: [], fromEaster: [60] }, // Fronleichnam
+  BY: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
 }
+
+/**
+ * Ein stadtspezifisches Datum, wie `City.holidays` es führt: `MM-TT`.
+ *
+ * Streng geprüft, statt einfach angehängt: Ein Tippfehler wie `15-08` oder
+ * `15.08.` würde sonst nie auf einen Datumsschlüssel passen und damit
+ * **stillschweigend nichts** bewirken — die App verlangte am 15. August in
+ * München Gebühren, und in der Konfiguration stünde ein Eintrag, der aussieht,
+ * als sei die Sache erledigt. Das ist derselbe Fehler wie ein stiller
+ * Rückfall auf Berlin, nur an einem anderen Feld.
+ */
+const FIXED_DATE = /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/
 
 const cache = new Map<string, ReadonlySet<string>>()
 
-/** Feiertage eines Landes in einem Jahr, als `YYYY-MM-DD`-Schlüssel. */
-export function holidaysFor(land: Land, year: number): ReadonlySet<string> {
-  const cacheKey = `${land}:${year}`
+/**
+ * Feiertage eines Landes in einem Jahr, als `YYYY-MM-DD`-Schlüssel.
+ *
+ * `extraFixed` sind feste Daten, die **nicht am Land** hängen. Das ist kein
+ * Sonderweg für einen Einzelfall, sondern die Form, die das Bayerische
+ * Feiertagsgesetz vorgibt: Mariä Himmelfahrt gilt nach Art. 1 Abs. 1 Nr. 2
+ * BayFTG „in Gemeinden mit überwiegend katholischer Bevölkerung", das
+ * Friedensfest nach Abs. 2 nur in Augsburg. Eine Tabelle `Record<Land, …>`
+ * kann das nicht ausdrücken — sie hätte für Bayern die Wahl zwischen
+ * „München zahlt am 15. August" und „Nürnberg zahlt am 15. August nicht", und
+ * beide Antworten wären für die halbe Stadtliste falsch.
+ *
+ * Der Zuschnitt als *Parameter* statt als zweite Tabelle ist Absicht: Er lässt
+ * `Record<Land, …>` unverändert, und für BE, HH und HE ändert sich nichts,
+ * solange niemand etwas übergibt.
+ */
+export function holidaysFor(
+  land: Land,
+  year: number,
+  extraFixed: readonly string[] = []
+): ReadonlySet<string> {
+  // Die Zusatztage gehören in den Cache-Schlüssel: Sonst bekäme der zweite
+  // Aufruf für dasselbe Land und Jahr die Menge des ersten zurück, und ob
+  // der 15. August dabei ist, hinge daran, welche Stadt zuerst gefragt hat.
+  const extras = [...extraFixed].sort()
+  const cacheKey = extras.length === 0 ? `${land}:${year}` : `${land}:${year}:${extras.join('+')}`
   const cached = cache.get(cacheKey)
   if (cached !== undefined) return cached
 
@@ -130,8 +179,14 @@ export function holidaysFor(land: Land, year: number): ReadonlySet<string> {
     throw new Error(`Kein Feiertagskalender für "${land}" hinterlegt`)
   }
 
+  for (const date of extras) {
+    if (!FIXED_DATE.test(date)) {
+      throw new Error(`"${date}" ist kein festes Feiertagsdatum der Form MM-TT`)
+    }
+  }
+
   const dates = new Set<string>(
-    [...NATIONWIDE_FIXED, ...regional.fixed].map((date) => `${year}-${date}`),
+    [...NATIONWIDE_FIXED, ...regional.fixed, ...extras].map((date) => `${year}-${date}`),
   )
   for (const offset of [...NATIONWIDE_FROM_EASTER, ...regional.fromEaster]) {
     dates.add(shiftFromEaster(year, offset))
@@ -141,8 +196,12 @@ export function holidaysFor(land: Land, year: number): ReadonlySet<string> {
   return dates
 }
 
-export function isHoliday(land: Land, clock: BerlinWallClock): boolean {
-  return holidaysFor(land, clock.year).has(berlinDateKey(clock))
+export function isHoliday(
+  land: Land,
+  clock: BerlinWallClock,
+  extraFixed?: readonly string[]
+): boolean {
+  return holidaysFor(land, clock.year, extraFixed).has(berlinDateKey(clock))
 }
 
 /**

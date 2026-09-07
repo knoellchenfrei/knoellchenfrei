@@ -34,6 +34,15 @@ export interface ParkingZone {
    * Hamburg kassiert.
    */
   land: Land
+  /**
+   * Feste Feiertage, die zusätzlich zum Länderkalender gelten, als `MM-TT`.
+   *
+   * Kommt aus `City.holidays` und ist dort begründet: In Bayern gilt Mariä
+   * Himmelfahrt gemeindeweise, also in München und nicht in Nürnberg. Ohne
+   * dieses Feld hätte die Zone nur `land: 'BY'` — und die App verlangte am
+   * 15. August in München Gebühren an einem gesetzlichen Feiertag.
+   */
+  extraHolidays?: readonly string[]
   fee: Fee
   windows: readonly ChargeWindow[]
   /** Maximum stay in minutes, where the zone sets one. */
@@ -83,7 +92,7 @@ const MINUTES_PER_DAY = 1440
  * holidays — it is the honest reading, not a verified one.
  */
 function isFreeDay(zone: ParkingZone, clock: BerlinWallClock): boolean {
-  return (zone.freeOnHolidays ?? true) && isHoliday(zone.land, clock)
+  return (zone.freeOnHolidays ?? true) && isHoliday(zone.land, clock, zone.extraHolidays)
 }
 
 function windowCovers(window: ChargeWindow, clock: BerlinWallClock): boolean {
@@ -101,6 +110,28 @@ export function isChargeable(zone: ParkingZone, at: Date | number): boolean {
 }
 
 /**
+ * Die einzige Zusatzregel, für die dieses Modul einen Kalender hat.
+ *
+ * `unmodelledRules` sammelt Regeln, die `ChargeWindow` nicht ausdrücken kann —
+ * und das ist von Stadt zu Stadt etwas anderes. Berlin schreibt „Advents-Sa"
+ * in vier Spandauer Zonen; München schreibt „an Schultagen" in 15
+ * Straßenseiten. Nur für die erste Sorte lässt sich sagen, ob sie *heute*
+ * greift; einen Schulkalender hat diese Datei nicht und soll sie nicht haben.
+ *
+ * Gefunden beim Anschluss Münchens: `isUncertainAt` fragte vorher nur, ob die
+ * Liste **irgendetwas** enthält, und hätte damit an einem Adventssamstag über
+ * jedem Münchner Gebiet mit Schultagsregel „unsicher" angezeigt und in der
+ * Erklärung den Adventssamstag genannt — für eine Regel, die mit Advent
+ * nichts zu tun hat. Der Filter macht die Kopplung sichtbar, statt sie
+ * vorauszusetzen.
+ */
+const ADVENT_RULE = /advent/i
+
+export function adventRulesOf(zone: ParkingZone): readonly string[] {
+  return (zone.unmodelledRules ?? []).filter((rule) => ADVENT_RULE.test(rule))
+}
+
+/**
  * Whether today carries a rule the windows do not cover.
  *
  * Only "Advents-Sa" qualifies today. Saying "no fee" on those four Saturdays in
@@ -109,7 +140,7 @@ export function isChargeable(zone: ParkingZone, at: Date | number): boolean {
  * the answer is marked uncertain and the UI says why.
  */
 export function isUncertainAt(zone: ParkingZone, at: Date | number): boolean {
-  if ((zone.unmodelledRules?.length ?? 0) === 0) return false
+  if (adventRulesOf(zone).length === 0) return false
   const clock = berlinWallClock(at)
   if (isFreeDay(zone, clock)) return false
   return isAdventSaturday(clock)

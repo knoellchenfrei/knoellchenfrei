@@ -8,7 +8,13 @@ import { adventSaturdays, isAdventSaturday } from '../src/holidays.js'
 import { berlinWallClock } from '../src/berlin-time.js'
 import { parseSchedule } from '../src/parse-schedule.js'
 import { confidenceOf } from '../src/sighting.js'
-import { estimateCost, isUncertainAt, MAX_PRICED_MINUTES, type ParkingZone } from '../src/tariff.js'
+import {
+  adventRulesOf,
+  estimateCost,
+  isUncertainAt,
+  MAX_PRICED_MINUTES,
+  type ParkingZone,
+} from '../src/tariff.js'
 import { parseFee } from '../src/parse-fee.js'
 
 const zone: ParkingZone = {
@@ -107,5 +113,27 @@ describe('Advent Saturdays', () => {
 
   it('leaves zones without an unmodelled rule certain', () => {
     expect(isUncertainAt(zone, Date.UTC(2026, 11, 5, 15))).toBe(false)
+  })
+
+  /**
+   * Gefunden beim Anschluss Münchens.
+   *
+   * `isUncertainAt` fragte vorher nur, ob `unmodelledRules` **irgendetwas**
+   * enthält — und Advent war die einzige Zusatzregel, die es gab. München
+   * schreibt „Regelung nur an Schultagen" hinein. An einem Adventssamstag
+   * hätte die App über jedem solchen Gebiet „unsicher" gezeigt und in der
+   * Erklärung den Adventssamstag genannt, für eine Regel, die mit Advent
+   * nichts zu tun hat. Ein Schulkalender steht in keiner Quelle dieses
+   * Projekts; die Regel bleibt deshalb dauerhaft ein Hinweis und wird nie zu
+   * einer Tagesaussage.
+   */
+  it('stays certain for an unmodelled rule that has nothing to do with Advent', () => {
+    const muenchen: ParkingZone = {
+      ...zone,
+      unmodelledRules: ['Regelung nur an Schultagen', 'Zeit laut Quelle unbekannt'],
+    }
+    expect(isUncertainAt(muenchen, Date.UTC(2026, 11, 5, 15))).toBe(false)
+    expect(adventRulesOf(muenchen)).toEqual([])
+    expect(adventRulesOf(spandau)).toEqual(['Advents-Sa 9 -17 Uhr'])
   })
 })

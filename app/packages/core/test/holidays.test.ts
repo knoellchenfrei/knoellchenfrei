@@ -95,10 +95,85 @@ describe('holidaysFor', () => {
     expect(shared).toHaveLength(9)
   })
 
+  // Bayern ist das längste Land der Tabelle und trotzdem das einzige, das sie
+  // allein nicht abbilden kann — siehe die Zusatztage weiter unten.
+  it('gives Bayern its twelve statewide holidays', () => {
+    const by = holidaysFor('BY', 2026)
+    expect(by.has('2026-01-06')).toBe(true) // Heilige Drei Könige
+    expect(by.has('2026-06-04')).toBe(true) // Fronleichnam, Ostern + 60
+    expect(by.has('2026-11-01')).toBe(true) // Allerheiligen
+    expect(by.size).toBe(12)
+  })
+
+  it('denies Bayern what its neighbours have and it does not', () => {
+    const by = holidaysFor('BY', 2026)
+    expect(by.has('2026-03-08')).toBe(false) // Frauentag, nur BE und MV
+    expect(by.has('2026-10-31')).toBe(false) // Reformationstag, nicht in BY
+    expect(by.has('2026-11-18')).toBe(false) // Buss- und Bettag, nur in SN
+  })
+
+  /**
+   * Der Fall, für den `extraFixed` überhaupt existiert.
+   *
+   * Art. 1 Abs. 1 Nr. 2 BayFTG: Mariä Himmelfahrt ist Feiertag „in Gemeinden
+   * mit überwiegend katholischer Bevölkerung". Das Landesamt für Statistik
+   * führt München mit ja, Nürnberg mit nein — eine Ländertabelle hätte
+   * zwangsläufig für eine der beiden Städte unrecht.
+   */
+  it('leaves Mariä Himmelfahrt out of the Land and lets a city add it', () => {
+    expect(holidaysFor('BY', 2026).has('2026-08-15')).toBe(false)
+    const muenchen = holidaysFor('BY', 2026, ['08-15'])
+    expect(muenchen.has('2026-08-15')).toBe(true)
+    expect(muenchen.size).toBe(13)
+  })
+
+  // Der Cache-Schlüssel muss die Zusatztage kennen: Sonst bekäme der zweite
+  // Aufruf die Menge des ersten, und ob der 15. August dabei ist, hinge daran,
+  // welche Stadt zuerst gefragt hat.
+  it('does not let one city\'s holidays leak into another', () => {
+    expect(holidaysFor('BY', 2026, ['08-15']).has('2026-08-15')).toBe(true)
+    expect(holidaysFor('BY', 2026).has('2026-08-15')).toBe(false)
+    expect(holidaysFor('BY', 2026, ['08-15']).has('2026-08-15')).toBe(true)
+  })
+
+  it('leaves the other three Länder untouched by the new parameter', () => {
+    // Ohne Angabe ändert sich nichts — die Zahlen von vorher, noch einmal.
+    expect(holidaysFor('BE', 2026).size).toBe(10)
+    expect(holidaysFor('HH', 2026).size).toBe(10)
+    expect(holidaysFor('HE', 2026).size).toBe(10)
+    expect(holidaysFor('BE', 2026, []).size).toBe(10)
+  })
+
+  /**
+   * Ein Tippfehler im Zusatzdatum wäre sonst unsichtbar.
+   *
+   * `15-08` oder `15.08.` passt auf keinen Datumsschlüssel und bewirkt
+   * schlicht nichts: Die App verlangte am Feiertag Gebühren, und in der
+   * Konfiguration stünde ein Eintrag, der aussieht, als sei die Sache
+   * erledigt.
+   */
+  it('refuses a malformed extra date instead of quietly ignoring it', () => {
+    expect(() => holidaysFor('BY', 2026, ['15-08'])).toThrow(/15-08/)
+    expect(() => holidaysFor('BY', 2026, ['15.08.'])).toThrow(/MM-TT/)
+    expect(() => holidaysFor('BY', 2026, ['2026-08-15'])).toThrow(/MM-TT/)
+    expect(() => holidaysFor('BY', 2026, ['13-01'])).toThrow(/MM-TT/)
+  })
+
+  it('detects a city holiday from a wall-clock reading', () => {
+    // 15. August 2026, 10:00 Münchner Zeit.
+    const clock = berlinWallClock(Date.UTC(2026, 7, 15, 8, 0))
+    expect(isHoliday('BY', clock)).toBe(false)
+    expect(isHoliday('BY', clock, ['08-15'])).toBe(true)
+  })
+
   // Ein Land ohne hinterlegten Kalender darf nicht als "keine Feiertage"
   // durchgehen: Das hiesse, an Karfreitag zum Zahlen aufzufordern, und zwar
   // ohne dass irgendwo etwas nach einem Fehler aussieht.
   it('throws for a Land that has no table yet, rather than returning nothing', () => {
-    expect(() => holidaysFor('BY' as Land, 2026)).toThrow(/BY/)
+    // Sachsen statt Bayern, seit München dazugehört. Sachsen ist auch der
+    // bessere Platzhalter: Dort ist der Buß- und Bettag gesetzlicher Feiertag
+    // und Fronleichnam gemeindeweise — zwei Formen, die diese Tabelle noch
+    // nicht kann.
+    expect(() => holidaysFor('SN' as Land, 2026)).toThrow(/SN/)
   })
 })
