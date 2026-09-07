@@ -155,12 +155,17 @@ const TG_DACH    = tgFlaeche(glyphFarbe(KREIS_SICHER, '#fff'))
 const TG_BOT     = tgFlaeche(glyphFarbe(KREIS_SICHER, '#fff'), DUNKEL)
 const TG_BERLIN  = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('B')}`)
 const TG_HAMBURG = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('HH')}`)
+// Kfz-Kuerzel wie auf dem Nummernschild, nicht ISO: F und M, siehe docs/marke.md.
+const TG_FRANKFURT = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('F')}`)
+const TG_MUENCHEN  = tgFlaeche(`${glyphFarbe(KREIS_SICHER, '#fff')}${marke('M')}`)
 
 const JOBS = [
   { file: 'telegram-dach-512.png', width: 512, height: 512, svg: TG_DACH },
   { file: 'telegram-bot-512.png', width: 512, height: 512, svg: TG_BOT },
   { file: 'telegram-berlin-512.png', width: 512, height: 512, svg: TG_BERLIN },
   { file: 'telegram-hamburg-512.png', width: 512, height: 512, svg: TG_HAMBURG },
+  { file: 'telegram-frankfurt-512.png', width: 512, height: 512, svg: TG_FRANKFURT },
+  { file: 'telegram-muenchen-512.png', width: 512, height: 512, svg: TG_MUENCHEN },
   { file: 'org-avatar-512.png', width: 512, height: 512, svg: AVATAR },
   { file: 'social-preview-1280x640.png', width: 1280, height: 640, svg: SOCIAL },
 ]
@@ -177,6 +182,8 @@ try {
   await writeFile(join(out, 'telegram-bot.svg'), `${TG_BOT}\n`)
   await writeFile(join(out, 'telegram-berlin.svg'), `${TG_BERLIN}\n`)
   await writeFile(join(out, 'telegram-hamburg.svg'), `${TG_HAMBURG}\n`)
+  await writeFile(join(out, 'telegram-frankfurt.svg'), `${TG_FRANKFURT}\n`)
+  await writeFile(join(out, 'telegram-muenchen.svg'), `${TG_MUENCHEN}\n`)
   for (const job of JOBS) {
     const page = await browser.newPage({
       viewport: { width: job.width, height: job.height },

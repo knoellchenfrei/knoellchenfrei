@@ -403,11 +403,11 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       beides stimmt und beides gilt nur für Berlin. Mit vier Städten gehört die
       Liste je Stadt gefiltert oder umformuliert. Seit München kommt eine
       fünfte Frage dazu, die dort jeder stellt: „Warum steht kein Preis da?"
-- [ ] **Gruppenbilder für Frankfurt und München fehlen.**
-      `scripts/make-brand.mjs` erzeugt `telegram-berlin-512.png` und
-      `telegram-hamburg-512.png`; die Kürzel `F` und `M` stehen im Namensschema
-      in [marke.md](marke.md), die Bilder dazu nicht. Zwei Einträge in der
-      Liste am Ende des Skripts, sobald die Gruppen wirklich angelegt werden.
+- [x] **Gruppenbilder für Frankfurt und München.** `scripts/make-brand.mjs`
+      erzeugt jetzt auch `telegram-frankfurt-512.png` (`F`) und
+      `telegram-muenchen-512.png` (`M`), abgelegt unter `docs/brand/`. Die
+      Gruppen selbst legt der Betreiber an, wenn die Städte freigeschaltet
+      werden.
 - [x] **Produktname entberlinert.** Die App heißt jetzt überall
       `knoellchenfrei`; die `h1` nennt die geladene Stadt dazu. Der interne
       Paketname `@knoellchenfrei/*` bleibt: Ihn umzubenennen wäre Aufwand ohne

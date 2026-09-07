@@ -17,7 +17,8 @@ cd app/apps/web && node scripts/make-brand.mjs
 | `brand/telegram-bot-512.png` | Bot `@knoellchen_bot` | 512 × 512 |
 | `brand/telegram-berlin-512.png` | Gruppe `@knoellchenfrei_B` | 512 × 512 |
 | `brand/telegram-hamburg-512.png` | Gruppe `@knoellchenfrei_HH` | 512 × 512 |
-| _fehlt noch_ | Gruppen `@knoellchenfrei_F` und `@knoellchenfrei_M` | 512 × 512, siehe [todo.md](todo.md) |
+| `brand/telegram-frankfurt-512.png` | Gruppe `@knoellchenfrei_F` | 512 × 512 |
+| `brand/telegram-muenchen-512.png` | Gruppe `@knoellchenfrei_M` | 512 × 512 |
 | `brand/*.svg` | Die Quellen dazu | — |
 
 ## Telegram: vier Bilder, und warum sie so aussehen

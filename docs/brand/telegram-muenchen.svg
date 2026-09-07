@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#1d4ed8"/>
+  <g transform="translate(40.72 56.32) scale(0.78)"><path d="M172 118h104c62 0 104 40 104 100s-42 100-104 100h-40v76h-64V118zm64 60v80h36c26 0 42-15 42-40s-16-40-42-40h-36z" fill="#fff"/></g><g>
+    <circle cx="374" cy="374" r="90" fill="#1d4ed8"/>
+    <circle cx="374" cy="374" r="78" fill="#fff"/>
+    <text x="374" y="376" text-anchor="middle" dominant-baseline="central"
+          font-family="Archivo, Helvetica Neue, Arial, sans-serif"
+          font-size="84" font-weight="700" letter-spacing="-2" fill="#1d4ed8">M</text>
+  </g>
+</svg>
