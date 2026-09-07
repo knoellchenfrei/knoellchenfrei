@@ -164,6 +164,24 @@ export function App() {
   // after 90 minutes and marks after four weeks, so a shared store routinely
   // has real marks and no real sightings.
   const [sightingsSeeded, setSightingsSeeded] = useState(false)
+  /**
+   * Welche Ebenen die geladene Stadt überhaupt hat.
+   *
+   * Die Chips standen bisher für alle vier POI-Arten und die Umweltzone da,
+   * gleich ob dahinter Daten lagen. Nachgemessen am 7. September: **Hamburg
+   * hat keinen einzigen POI**, Frankfurt nur die Behindertenparkplätze, und
+   * Umweltzonen führen nur Berlin (1 Fläche) und München (12). In Hamburg
+   * waren damit fünf von sechs Schaltern Attrappen — und ein Schalter, der
+   * nichts tut, sieht aus wie eine Aussage über die Stadt („hier gibt es keine
+   * Ladepunkte") statt wie eine über die Daten.
+   *
+   * `null`, solange die Daten nicht da sind: Dann steht noch kein Chip, statt
+   * dass sechs erscheinen und drei wieder verschwinden.
+   */
+  const [ebenenMitDaten, setEbenenMitDaten] = useState<{
+    poi: ReadonlySet<PoiKind>
+    umweltzone: boolean
+  } | null>(null)
   const [stats, setStats] = useState<Stats>({ online: null, today: null })
   const [reporting, setReporting] = useState(false)
   // Der eigene Vordialog vor dem des Browsers. Erscheint einmal; die
@@ -401,6 +419,18 @@ export function App() {
             meta: metaData,
           } = await loadData(CITY.key)
           setMeta(metaData)
+          // Aus den Daten gelesen, nicht aus `meta.absent` geschlossen: Die
+          // Liste dort sagt, was die Stadt nicht liefert, und ist gepflegt —
+          // die Punkte sind gezählt. Bei einem Widerspruch gewinnt das
+          // Gezählte, denn genau die gepflegte Liste läuft irgendwann weg.
+          setEbenenMitDaten({
+            poi: new Set(
+              (poiData.features as { properties?: { kind?: PoiKind } }[])
+                .map((feature) => feature.properties?.kind)
+                .filter((kind): kind is PoiKind => kind !== undefined)
+            ),
+            umweltzone: umweltzone.features.length > 0,
+          })
 
           const loaded = loadZones(zoneData)
           setZones(loaded)
@@ -1254,6 +1284,7 @@ export function App() {
           <span className="chip__dot chip__dot--heat" aria-hidden="true" />
           Kontrolldichte
         </button>
+        {ebenenMitDaten?.umweltzone === true && (
         <button
           type="button"
           className={`chip${showLowEmission ? ' chip--on' : ''}`}
@@ -1263,7 +1294,10 @@ export function App() {
           <span className="chip__dot" style={{ background: '#a3e635' }} aria-hidden="true" />
           Umweltzone
         </button>
-        {(Object.keys(POI_LABELS) as PoiKind[]).map((kind) => (
+        )}
+        {(Object.keys(POI_LABELS) as PoiKind[])
+          .filter((kind) => ebenenMitDaten?.poi.has(kind) === true)
+          .map((kind) => (
           <button
             key={kind}
             type="button"

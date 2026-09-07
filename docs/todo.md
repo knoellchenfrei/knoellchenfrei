@@ -1018,8 +1018,11 @@ Was noch offen ist:
       wird der Abschnitt **nicht angezeigt** — nicht auf Berlin
       zurückgefallen.
 
-- [ ] **Ebenen ohne Daten ausblenden — oder die Daten besorgen.** Nachgemessen
-      am 7. September in `public/data/<stadt>/`:
+- [x] **Ebenen ohne Daten werden ausgeblendet** — am 7. September. Vorher
+      standen alle sechs Chips da, gleich ob dahinter Daten lagen; in Hamburg
+      waren damit **fünf von sechs Schaltern Attrappen**. Ein Schalter, der
+      nichts tut, liest sich als Aussage über die Stadt („hier gibt es keine
+      Ladepunkte") statt als eine über die Daten.
 
       | Stadt | Ladepunkte | Carsharing | P+R | Behindertenparkplätze | Umweltzone |
       | --- | --- | --- | --- | --- | --- |
@@ -1028,15 +1031,21 @@ Was noch offen ist:
       | Frankfurt | — | — | — | 458 | — |
       | München | 369 | 710 | 25 | 556 | 12 |
 
-      Hamburg hat **keinen einzigen** POI, Frankfurt nur die
-      Behindertenparkplätze — die Ebenen-Chips stehen trotzdem da und schalten
-      dann etwas ein, das leer ist. Zwei Wege, und der zweite ist der bessere,
-      wo er geht: entweder den Chip ausblenden, solange die Stadt nichts
-      liefert, oder die Quelle nachtragen (Hamburgs Umweltzone gibt es nicht —
-      die Stadt hat keine —, Ladepunkte und Carsharing stehen im Transparenz-
-      portal, Frankfurts Ladeinfrastruktur im Geoportal). Was **nicht** geht,
-      ist ein Schalter, der nichts tut und dabei aussieht, als wäre in dieser
-      Stadt nichts vorhanden.
+      Gelesen wird das **aus den geladenen Daten**, nicht aus `meta.absent`:
+      Die Liste dort ist gepflegt, die Punkte sind gezählt, und bei einem
+      Widerspruch gewinnt das Gezählte — genau die gepflegte Liste läuft
+      irgendwann weg. Solange die Daten noch nicht da sind, steht kein Chip,
+      statt dass sechs erscheinen und drei wieder verschwinden. Die
+      Kontrolldichte bleibt immer: Sie hängt an Meldungen, nicht an
+      städtischen Daten.
+
+      Zwei E2E-Tests halten beide Richtungen fest — in Berlin stehen alle
+      sechs, in Hamburg nur die Kontrolldichte.
+
+      **Offen bleibt die andere Hälfte der Frage: die Daten besorgen.** Für
+      Hamburg gibt es Ladepunkte und Carsharing im Transparenzportal, für
+      Frankfurt die Ladeinfrastruktur im Geoportal. Hamburgs Umweltzone gibt
+      es nicht — die Stadt hat keine, und das ist keine Datenlücke.
 
 - [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.
 - [x] **Drei Dependabot-PRs, die Code brauchten — alle drei erledigt** am

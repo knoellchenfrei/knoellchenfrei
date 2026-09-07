@@ -208,6 +208,20 @@ test.describe('Ebenen und Sonderziele', () => {
     await expect(charging).not.toHaveClass(/chip--on/)
   })
 
+  test('zeigt in Berlin jede Ebene, für die es Daten gibt', async ({ page }) => {
+    await ready(page)
+    await page.locator('.chip--toggle').click()
+    const chips = page.locator('#legend-layers .chip')
+    await expect(chips).toHaveText([
+      'Kontrolldichte',
+      'Umweltzone',
+      'Ladepunkte',
+      'Carsharing',
+      'P+R',
+      'Behindertenparkplätze',
+    ])
+  })
+
   test('zeigt die Umweltzone als eigene Ebene', async ({ page }) => {
     await ready(page)
     await page.locator('.chip--toggle').click()
@@ -660,6 +674,32 @@ test.describe('die weiteren Städte', () => {
 
     await openPanel(page)
     await expect(page.locator('.provenance')).toContainText('Hamburg')
+  })
+
+  /**
+   * Regression: Die Ebenen-Chips standen für alle vier POI-Arten und die
+   * Umweltzone da, gleich ob dahinter Daten lagen.
+   *
+   * Nachgemessen am 7. September in `public/data/<stadt>/`: Hamburg hat
+   * **keinen einzigen** POI und keine Umweltzone, Frankfurt nur die 458
+   * Behindertenparkplätze. In Hamburg waren damit fünf von sechs Schaltern
+   * Attrappen — und ein Schalter, der nichts tut, liest sich als Aussage über
+   * die Stadt („hier gibt es keine Ladepunkte") statt als eine über die Daten.
+   */
+  test('zeigt in Hamburg keine Ebene, hinter der nichts liegt', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    await dismissPrompt(page)
+
+    await page.locator('.chip--toggle').click()
+    const chips = page.locator('#legend-layers .chip')
+    // Die Kontrolldichte bleibt: Sie hängt an Meldungen, nicht an städtischen
+    // Daten, und die kann es in jeder Stadt geben.
+    await expect(chips).toHaveText(['Kontrolldichte'])
   })
 
   test('nennt die Hamburger Lizenz als Bedingung, nicht als Fußnote', async ({ page }) => {
