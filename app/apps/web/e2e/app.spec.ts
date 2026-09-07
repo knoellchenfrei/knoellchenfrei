@@ -48,6 +48,36 @@ async function openPanel(page: Page): Promise<void> {
   await expect(body).toBeVisible()
 }
 
+test.describe('MapLibres Worker', () => {
+  /**
+   * Regression: **Die Karte hat nie etwas gezeichnet, und niemand sah warum.**
+   *
+   * MapLibre 6 liegt nicht mehr in einer Datei — es startet zur Laufzeit einen
+   * Worker unter einer Adresse, die es sich selbst zusammensetzt. Der
+   * Dateiname steht dabei in einer Variablen, also legte rolldown die Datei
+   * gar nicht erst ab; die Anfrage lief in die SPA-Rückfalladresse und bekam
+   * **`index.html` mit `200 OK` und `text/html`**. Kein 404, kein
+   * `error`-Ereignis, keine Konsolenmeldung: Der Worker startete nur nicht,
+   * und ohne ihn parst MapLibre weder Vektorkacheln noch GeoJSON. Sichtbar
+   * war davon einzig, dass die Zonen fehlten und `withMapReady` jedes Mal in
+   * seinen 10-Sekunden-Rückfall lief.
+   *
+   * Geprüft wird deshalb der Statustyp, nicht der Status: Ein `200` sagt hier
+   * nichts, `content-type` sagt alles.
+   */
+  test('kommt als Skript an, nicht als index.html', async ({ page }) => {
+    const antworten: string[] = []
+    page.on('response', (antwort) => {
+      if (/maplibre-gl-worker/.test(antwort.url())) {
+        antworten.push(antwort.headers()['content-type'] ?? '(ohne)')
+      }
+    })
+    await ready(page)
+    expect(antworten.length).toBeGreaterThan(0)
+    for (const typ of antworten) expect(typ).toContain('javascript')
+  })
+})
+
 test.describe('map and zones', () => {
   test('renders the map container at full height', async ({ page }) => {
     await ready(page)

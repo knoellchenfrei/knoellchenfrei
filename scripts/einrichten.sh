@@ -1443,8 +1443,13 @@ schritt_github() {
     fi
   fi
   if [ "$NUR_PRUEFEN" != ja ]; then
-    gh api -X PUT "repos/$REPO_SLUG/automated-security-fixes" >/dev/null 2>&1 \
-      && ok "Dependabot-Sicherheitsupdates eingeschaltet" || true
+    # Als `if`, nicht als `A && B || true`: shellcheck weist zu Recht darauf
+    # hin (SC2015), dass das kein if-then-else ist — scheitert das `ok`, liefe
+    # trotzdem der `||`-Zweig. Der CI-Lauf zu 7586000 ist genau daran rot
+    # geworden, weil Ubuntus shellcheck auch `info` mit Exit 1 quittiert.
+    if gh api -X PUT "repos/$REPO_SLUG/automated-security-fixes" >/dev/null 2>&1; then
+      ok "Dependabot-Sicherheitsupdates eingeschaltet"
+    fi
   fi
 
   # --- Was die API nicht kann ------------------------------------------

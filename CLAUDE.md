@@ -26,7 +26,7 @@ pnpm --filter @knoellchenfrei/core test                # 500 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 130 End-to-End-Tests
+cd apps/web && npx playwright test                  # 132 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -41,7 +41,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=500 E2E_COUNT=130 npx tsx src/build-badges.ts
+TEST_COUNT=500 E2E_COUNT=132 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -375,14 +375,27 @@ wiederholt.
   kommen aus `core/city.ts` — im Skript standen sie als zweite Kopie von
   Berlins `reportBounds`, und mit vier Städten wären es acht Zahlen geworden,
   die auseinanderlaufen können.
-- **Ein 206 ist noch kein Bild.** Die Kachelarchive antworteten mit `206`, der
-  PMTiles-Leser lieferte im Browser eine 172-KB-Kachel, das TileJSON war
-  vollständig — und die Karte blieb trotzdem leer, weil MapLibre nie eine
-  Kachel *anforderte*: genau eine Anfrage (`bytes=0-16383`, der Kopf), auch
-  nach dreimal Hineinzoomen, ohne einen einzigen Konsolenfehler. Wer bei
-  „Kacheln kommen an" aufhört, hält das für behoben. Der offene Befund samt
-  aller Sackgassen steht in `docs/todo.md`; verdächtig ist die abgekündigte
-  `protomaps-themes-base`.
+- **Ein 206 ist noch kein Bild — und ein 200 ist noch kein Skript.** Die
+  Kachelarchive antworteten mit `206`, der PMTiles-Leser lieferte im Browser
+  eine 172-KB-Kachel, das TileJSON war vollständig — und die Karte blieb leer,
+  weil MapLibre nie eine Kachel *anforderte*: genau eine Anfrage
+  (`bytes=0-16383`, der Kopf), auch nach dreimal Hineinzoomen, ohne einen
+  einzigen Konsolenfehler. Zwei Tage Verdacht lagen auf PMTiles, dem Archiv,
+  dem Stil, CORS und der abgekündigten `protomaps-themes-base`. Die Ursache lag
+  eine Ebene tiefer: **MapLibre 6 startet zur Laufzeit einen Worker aus einer
+  eigenen Datei** und setzt deren Adresse selbst zusammen
+  (`new URL('./maplibre-gl-worker.mjs', import.meta.url)`). Der Dateiname steht
+  in einer Variablen, also kann kein Bundler ihn statisch erkennen — rolldown
+  legte die Datei nie ab, die Anfrage lief in die SPA-Rückfalladresse und bekam
+  **`index.html` mit `200 OK` und `text/html`**. Kein 404, kein
+  `map.on('error')`, keine Meldung; ohne Worker parst MapLibre **weder
+  Vektorkacheln noch GeoJSON**, also fehlten auch die Parkzonen, und
+  `withMapReady` lief jedes Mal in seinen 10-Sekunden-Rückfall. Die Messung,
+  die gefehlt hat, war die banalste: *Gibt es die Datei, die der Browser holen
+  will — und was steht in ihrem `content-type`?* Behoben mit `setWorkerUrl` und
+  einer Adresse aus `?worker&url` (`apps/web/src/main.tsx`); das Artifact
+  bekommt denselben Worker als eingebettete Zeichenkette, weil es keine zweite
+  Datei hat. Ein E2E-Test prüft seitdem den `content-type`, nicht den Status.
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes

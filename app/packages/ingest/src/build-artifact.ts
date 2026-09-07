@@ -11,7 +11,7 @@
  * those and expects page content directly.
  */
 
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { CITIES } from '@knoellchenfrei/core'
 
@@ -86,11 +86,49 @@ const bundles = scripts.map((name) => {
   return `<script type="module">\n${source}\n</script>`
 })
 
+/**
+ * MapLibres Worker, mitgeliefert statt nachgeladen.
+ *
+ * MapLibre 6 startet zur Laufzeit einen Worker aus einer eigenen Datei. Im
+ * Artifact gibt es keine zweite Datei — und ohne Worker parst MapLibre weder
+ * Vektorkacheln noch GeoJSON, die Karte bliebe also **leer**, obwohl alle
+ * Zonen eingebettet sind. Genau das war jahrelang der Fall, ohne dass es
+ * jemandem auffiel: Die Karte zeigte Umrisse aus dem Rückfall und sonst
+ * nichts, und im Log stand kein Wort.
+ *
+ * Deshalb wandert die gebündelte Worker-Datei als Zeichenkette mit hinein;
+ * `main.tsx` macht daraus ein Blob und übergibt es an `setWorkerUrl`. Der
+ * Umweg über den Text ist nötig, weil ein Blob mit einem *relativen* Import
+ * wieder ins Leere zeigte — Vite bündelt den Worker deshalb mit `?worker&url`
+ * vollständig, samt `maplibre-gl-shared.mjs`.
+ */
+function maplibreWorkerSource(): string | null {
+  const treffer = readdirSync(join(DIST, 'assets')).filter((name) =>
+    /^maplibre-gl-worker-.*\.js$/.test(name),
+  )
+  if (treffer.length === 0) return null
+  if (treffer.length > 1) {
+    throw new Error(`Mehr als ein MapLibre-Worker in dist/assets: ${treffer.join(', ')}`)
+  }
+  return read(join('assets', treffer[0] as string))
+}
+
+const workerSource = maplibreWorkerSource()
+if (workerSource === null) {
+  // Laut, nicht still: Ohne diese Datei sähe das Artifact aus wie immer — eine
+  // Karte, auf der nichts steht — und niemand käme auf den Worker.
+  throw new Error(
+    'Kein maplibre-gl-worker-*.js in dist/assets. Ohne ihn zeichnet die Karte im ' +
+      'Artifact nichts; siehe setWorkerUrl in apps/web/src/main.tsx.',
+  )
+}
+
 const parts = [
   '<title>knoellchenfrei</title>',
   ...styles.map((name) => `<style>\n${read(name)}\n</style>`),
   '<div id="root"></div>',
   `<script>window.__PARKINGZONE_DATA__ = ${safeJson(data)};</script>`,
+  `<script>window.__MAPLIBRE_WORKER__ = ${safeJson(workerSource)};</script>`,
   ...bundles,
 ]
 

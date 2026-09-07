@@ -56,7 +56,7 @@ export function tilesUrlFor(cityKey: string): string | undefined {
 /**
  * Die Ebenen des Vektor-Themes — nachgereicht, nicht importiert.
  *
- * `protomaps-themes-base` wiegt rund 40 kB. Statisch eingebunden läge es in
+ * `@protomaps/basemaps` wiegt rund 40 kB. Statisch eingebunden läge es in
  * jedem Bündel, auch in dem der Artifact-Fassung, die gar keine Kacheln laden
  * darf. `main.tsx` lädt es nach und reicht es hier herein, bevor die erste
  * Karte entsteht.
@@ -76,7 +76,7 @@ const BACKGROUND = {
 /**
  * Aus dem Archiv wird ein vollständiger Stil.
  *
- * Die Ebenen kommen aus `protomaps-themes-base` — dieselbe Grundlage, auf der
+ * Die Ebenen kommen aus `@protomaps/basemaps` — dieselbe Grundlage, auf der
  * die Protomaps-Karten aufbauen. Sie selbst zu schreiben hieße, 56 Ebenen für
  * Wasser, Wege, Grün und Beschriftung von Hand zu pflegen; die Zeit gehört in
  * die Parkzonen.
@@ -89,7 +89,16 @@ function vectorStyle(url: string): StyleSpecification {
     // Ohne Glyphen bleibt jede Beschriftung leer — der häufigste Fehler beim
     // Umstieg von Raster auf Vektor.
     glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
-    sprite: 'https://protomaps.github.io/basemaps-assets/sprites/v4/dark',
+    // Kein `sprite`. FreiFahren hat auch keins — nachgesehen in ihrem
+    // ausgelieferten Stil (`tiles.freifahren.org/styles/berlin.json`, 89
+    // Ebenen, kein Sprite). Vier der 71 Ebenen tragen ein `icon-image` und
+    // zeichnen ihr Symbol dann nicht; das ist der Preis, und er ist klein
+    // gegen eine weitere Adresse, an die die IP jedes Betrachters geht.
+    //
+    // Die Schriften kommen noch von protomaps.github.io. Das ist der letzte
+    // fremde Abruf der Karte und steht als offener Punkt in `docs/todo.md`:
+    // FreiFahren liefert sie vom eigenen Server aus, und der Weg dahin ist
+    // derselbe wie bei den Kacheln — eine Datei mehr in R2.
     sources: {
       protomaps: {
         type: 'vector',

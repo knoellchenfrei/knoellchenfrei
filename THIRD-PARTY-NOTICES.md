@@ -623,6 +623,14 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
+## @protomaps/basemaps 5.7.2
+
+Lizenz: BSD-3-Clause
+Herkunft: https://github.com/protomaps/basemaps
+
+> Das Paket liefert keine Lizenzdatei mit; es gilt der oben
+> genannte Bezeichner.
+
 ## @types/geojson 7946.0.16
 
 Lizenz: MIT
@@ -1035,14 +1043,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
-
-## protomaps-themes-base 4.5.0
-
-Lizenz: BSD-3-Clause
-Herkunft: https://github.com/protomaps/basemaps
-
-> Das Paket liefert keine Lizenzdatei mit; es gilt der oben
-> genannte Bezeichner.
 
 ## quickselect 3.0.0
 

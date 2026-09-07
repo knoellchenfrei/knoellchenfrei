@@ -135,10 +135,14 @@ function betaGuard(beta: boolean): Plugin {
  * - `script-src 'self'` — der Build enthält **kein** Inline-Skript, geprüft.
  * - `worker-src 'self' blob:` — **nachgemessen, nicht angenommen.** Der erste
  *   Entwurf stand auf `blob:` allein, weil MapLibre das früher so tat. Version 6
- *   lädt den Worker als eigene Datei von der eigenen Herkunft
- *   (`/assets/maplibre-gl-worker.mjs`), und der Browser meldete prompt
- *   „Creating a worker … violates … worker-src blob:". `blob:` bleibt
- *   trotzdem stehen: Der PMTiles-Teil kann diesen Weg nehmen.
+ *   lädt den Worker als eigene Datei von der eigenen Herkunft, und der Browser
+ *   meldete prompt „Creating a worker … violates … worker-src blob:".
+ *   Nachtrag vom 7. September: Die Datei, die der Browser damals holen wollte,
+ *   **gab es gar nicht** — die Ursache dafür, dass die Karte nie etwas
+ *   zeichnete, steht in `main.tsx` bei `setWorkerUrl`. Seitdem legt Vite sie
+ *   unter einem Namen mit Prüfsumme ab; `'self'` deckt beides. `blob:` bleibt
+ *   stehen: MapLibre nimmt diesen Weg, sobald der Worker von fremder Herkunft
+ *   käme, und der PMTiles-Teil kann ihn ebenfalls nehmen.
  * - `style-src 'unsafe-inline'` — MapLibre setzt Stile direkt an Elemente
  *   (Marker, Popups). Das ist unvermeidbar, solange die Bibliothek das tut,
  *   und deutlich weniger wert als eine Lücke bei `script-src`.
