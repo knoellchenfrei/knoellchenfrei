@@ -8,6 +8,7 @@ import {
   FRANKFURT,
   HAMBURG,
   MUENCHEN,
+  suggestCity,
   withinCity,
   withinCitySession,
 } from '../src/city.js'
@@ -313,5 +314,88 @@ describe('cityAt', () => {
     expect(cityAt(9.9924, 53.5503, [HAMBURG])).toBe(HAMBURG)
     expect(cityAt(8.6821, 50.1109, [BERLIN, HAMBURG])).toBeUndefined()
     expect(cityAt(13.3777, 52.5163, [])).toBeUndefined()
+  })
+})
+
+/**
+ * Der Standort-Vorschlag.
+ *
+ * Er darf in genau einem Fall erscheinen — die Position liegt in einer anderen
+ * anzeigbaren Stadt als der geladenen, und niemand hat ihn dort schon
+ * weggeklickt. Jeder andere Fall ist eine Störung oder eine Fehlfunktion, und
+ * jeder hat unten einen eigenen Test.
+ */
+describe('suggestCity', () => {
+  const MARIENPLATZ: [number, number] = [11.5755, 48.1372]
+  const BRANDENBURGER_TOR: [number, number] = [13.3777, 52.5163]
+
+  it('suggests the city the position is in', () => {
+    expect(suggestCity(BERLIN, ...MARIENPLATZ)).toBe(MUENCHEN)
+    expect(suggestCity(MUENCHEN, ...BRANDENBURGER_TOR)).toBe(BERLIN)
+  })
+
+  // Der häufigste Fall überhaupt: Wer in der Stadt steht, die die App zeigt,
+  // soll nichts davon merken, dass es diesen Hinweis gibt.
+  it('stays silent in the city that is already loaded', () => {
+    expect(suggestCity(BERLIN, ...BRANDENBURGER_TOR)).toBeNull()
+    expect(suggestCity(MUENCHEN, ...MARIENPLATZ)).toBeNull()
+  })
+
+  // Kiel kennt die App nicht. Die nächstgelegene Stadt anzubieten wäre
+  // geraten; hier bleibt es bei der bestehenden Antwort "ausserhalb der
+  // Parkraumbewirtschaftung".
+  it('stays silent outside every city', () => {
+    expect(suggestCity(BERLIN, 10.1228, 54.3233)).toBeNull()
+    expect(suggestCity(MUENCHEN, 0, 0)).toBeNull()
+  })
+
+  it('stays silent for a suggestion that was already declined', () => {
+    expect(suggestCity(BERLIN, ...MARIENPLATZ, ['muenchen'])).toBeNull()
+  })
+
+  // Die Ablehnung gilt der abgelehnten Stadt, nicht dem Hinweis als solchem:
+  // Wer in München "hier bleiben" gesagt hat, soll in Hamburg trotzdem gefragt
+  // werden.
+  it('declines only the city that was declined', () => {
+    expect(suggestCity(BERLIN, ...MARIENPLATZ, ['hamburg', 'frankfurt'])).toBe(MUENCHEN)
+    expect(suggestCity(BERLIN, 9.9924, 53.5503, ['muenchen'])).toBe(HAMBURG)
+  })
+
+  // Müll im Speicher darf nicht wirken wie eine Ablehnung — und auch nicht wie
+  // ihr Gegenteil. Ein Schlüssel, den es nicht gibt, ist schlicht folgenlos.
+  it('ignores keys in the dismissed list that name no city', () => {
+    expect(suggestCity(BERLIN, ...MARIENPLATZ, ['', 'köln', 'muenchen '])).toBe(MUENCHEN)
+  })
+
+  // Im Artifact ist umschaltbar nur, was eingebettet ist. Ein Vorschlag, dessen
+  // Annahme in "Diese Fassung enthält muenchen nicht" endet, wäre schlimmer
+  // als keiner.
+  it('suggests only cities this deployment can switch to', () => {
+    expect(suggestCity(BERLIN, ...MARIENPLATZ, [], [BERLIN, HAMBURG])).toBeNull()
+    expect(suggestCity(BERLIN, ...MARIENPLATZ, [], [BERLIN, MUENCHEN])).toBe(MUENCHEN)
+  })
+
+  // Verglichen wird über den Schlüssel. Eine eingeschränkte Liste kann Kopien
+  // enthalten; ein Identitätsvergleich schlüge dort die laufende Stadt sich
+  // selbst vor — der Hinweis stünde dann dauerhaft und ohne Ausweg da.
+  it('compares by key, not by object identity', () => {
+    const copy = { ...BERLIN }
+    expect(suggestCity(copy, ...BRANDENBURGER_TOR)).toBeNull()
+  })
+
+  it('rejects coordinates that are not numbers', () => {
+    expect(suggestCity(BERLIN, Number.NaN, 48.1372)).toBeNull()
+    expect(suggestCity(BERLIN, 11.5755, Number.POSITIVE_INFINITY)).toBeNull()
+  })
+
+  // Über alle Städte statt über ein Paar: Käme eine fünfte dazu, deren Box eine
+  // bestehende schneidet, fiele es hier auf und nicht erst im Betrieb.
+  it('suggests each city at its own centre, and only to the others', () => {
+    for (const from of CITIES) {
+      for (const to of CITIES) {
+        const suggestion = suggestCity(from, to.center[0], to.center[1])
+        expect(suggestion).toBe(from.key === to.key ? null : to)
+      }
+    }
   })
 })

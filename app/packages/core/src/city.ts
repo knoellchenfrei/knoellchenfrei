@@ -300,3 +300,45 @@ export function withinCitySession(city: City, lon: number, lat: number): boolean
 export function cityAt(lon: number, lat: number, cities: readonly City[] = CITIES): City | undefined {
   return cities.find((city) => withinCity(city, lon, lat))
 }
+
+/**
+ * Die Stadt, zu der ein Wechsel vorzuschlagen ist — oder keine.
+ *
+ * Der Vorschlag nach FreiFahrens Vorbild („Switch to {city}? Your location
+ * looks like you are in {city}."). Er entsteht ausschließlich aus einer
+ * Position, die die App ohnehin schon hat: `cityAt` beantwortet die Frage,
+ * diese Funktion entscheidet, ob sie jemanden interessiert.
+ *
+ * Vier Fälle enden in `null`, und jeder aus einem eigenen Grund:
+ *
+ * - **Kein Treffer.** Wer in Kiel steht, bekommt keinen Vorschlag, sondern die
+ *   bestehende Antwort „außerhalb der Parkraumbewirtschaftung". Eine der vier
+ *   Städte anzubieten, weil sie die nächste ist, wäre geraten.
+ * - **Die Stadt, die schon läuft.** Der Normalfall; ein Hinweis darauf wäre
+ *   reine Störung.
+ * - **Schon abgelehnt.** `dismissed` trägt die Schlüssel, zu denen jemand
+ *   „hier bleiben" gesagt hat. Ohne dieses Gedächtnis fragte die App bei jedem
+ *   Standortabruf erneut.
+ * - **Nicht auslieferbar.** Über `cities` schränkt der Aufrufer auf das ein,
+ *   wozu diese Auslieferung überhaupt umschalten kann — im Artifact sind das
+ *   nur die eingebetteten Städte. Ein Vorschlag, dessen Annahme in
+ *   „Diese Fassung enthält muenchen nicht" endet, wäre schlimmer als keiner.
+ *
+ * Verglichen wird über den **Schlüssel**, nicht über die Objektidentität:
+ * `cities` ist ein Parameter, und eine eingeschränkte Liste kann Kopien
+ * enthalten. Ein Identitätsvergleich schlüge dort fehl und schlüge die
+ * laufende Stadt sich selbst vor.
+ */
+export function suggestCity(
+  current: City,
+  lon: number,
+  lat: number,
+  dismissed: readonly string[] = [],
+  cities: readonly City[] = CITIES,
+): City | null {
+  const found = cityAt(lon, lat, cities)
+  if (found === undefined) return null
+  if (found.key === current.key) return null
+  if (dismissed.includes(found.key)) return null
+  return found
+}

@@ -708,6 +708,87 @@ test.describe('die weiteren Städte', () => {
   })
 })
 
+/**
+ * Der Standort-Vorschlag.
+ *
+ * Der Punkt, an dem er hängt: Er darf **keine** eigene Berechtigungsabfrage
+ * auslösen. Deshalb erteilt jeder Test die Berechtigung vorab und drückt dann
+ * denselben Knopf, den es ohnehin gibt — der Vorschlag muss aus dieser einen
+ * Position entstehen und aus keiner zweiten.
+ */
+test.describe('der Standort-Vorschlag', () => {
+  /** Marienplatz. */
+  const MUENCHEN = { latitude: 48.1372, longitude: 11.5755 }
+  /** Potsdamer Platz. */
+  const BERLIN = { latitude: 52.5096, longitude: 13.3765 }
+
+  async function standAt(page: Page, at: { latitude: number; longitude: number }): Promise<void> {
+    await page.context().grantPermissions(['geolocation'])
+    await page.context().setGeolocation(at)
+  }
+
+  /** Denselben Knopf drücken, den es ohnehin gibt. */
+  async function locate(page: Page): Promise<void> {
+    await page.getByRole('button', { name: 'Wo bin ich?' }).click()
+  }
+
+  test('offers München when the position is there and Berlin is loaded', async ({ page }) => {
+    await standAt(page, MUENCHEN)
+    await ready(page)
+    await locate(page)
+
+    const hint = page.locator('.city-hint')
+    await expect(hint).toBeVisible({ timeout: 15_000 })
+    await expect(hint).toContainText('Dein Standort liegt in München')
+    await expect(hint).toContainText('Berlin')
+
+    // Der Hinweis ersetzt die sonst fällige Meldung, statt neben ihr zu stehen:
+    // „hier ist Parken gebührenfrei" wäre über 82 bewirtschafteten Gebieten
+    // falsch, und sie läge auch noch über dem Hinweis, der es erklärt.
+    await expect(page.locator('.toast')).toHaveCount(0)
+
+    await hint.getByRole('button', { name: 'Zu München wechseln' }).click()
+
+    // Der Wechsel lädt neu; danach stehen andere Daten auf der Karte.
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    await openPanel(page)
+    await expect(page.locator('.provenance')).toContainText('München')
+    // In der vorgeschlagenen Stadt angekommen, ist der Hinweis gegenstandslos.
+    await expect(page.locator('.city-hint')).toHaveCount(0)
+  })
+
+  test('remembers "Hier bleiben" across a reload', async ({ page }) => {
+    await standAt(page, MUENCHEN)
+    await ready(page)
+    await locate(page)
+
+    const hint = page.locator('.city-hint')
+    await expect(hint).toBeVisible({ timeout: 15_000 })
+    await hint.getByRole('button', { name: 'Hier bleiben' }).click()
+    await expect(hint).toHaveCount(0)
+
+    // Ohne Gedächtnis stünde er nach jedem Standortabruf wieder da — der
+    // Hinweis wäre dann eine Belästigung statt einer Hilfe.
+    await page.reload()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    await locate(page)
+    await page.waitForTimeout(1500)
+    await expect(page.locator('.city-hint')).toHaveCount(0)
+  })
+
+  test('says nothing when the position is in the loaded city', async ({ page }) => {
+    await standAt(page, BERLIN)
+    await ready(page)
+    await locate(page)
+    await page.waitForTimeout(1500)
+    await expect(page.locator('.city-hint')).toHaveCount(0)
+  })
+})
+
 test.describe('acknowledgement', () => {
   test('names FreiFahren where users can see it, and links there', async ({ page }) => {
     await ready(page)

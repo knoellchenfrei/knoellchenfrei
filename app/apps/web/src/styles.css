@@ -801,6 +801,32 @@ body {
 .prompt__actions .button { flex: 1; margin-top: 0; min-height: 46px; }
 .prompt__note { margin: 10px 0 0; font-size: 12px; color: var(--muted); text-align: center; }
 
+/* Standort-Vorschlag: dieselbe Stelle wie der Vordialog, weil beide dieselbe
+   Frage stellen — und weil sie nie zugleich erscheinen können, der eine geht
+   der Standortabfrage voraus, der andere folgt ihr. Eine Stufe darunter im
+   Stapel, damit die Reihenfolge auch dann stimmt, wenn sie es doch einmal tun.
+
+   Ausdrücklich KEIN `.callout`: Das ist der stehende Vorbehalt im
+   Einstellungsblatt; ein zweiter Kasten dieser Klasse hat dort schon einmal
+   einen Strict-Mode-Test gebrochen. */
+.city-hint {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 17;
+  max-width: 440px; margin: 0 auto;
+  padding: 14px 16px;
+  background: var(--panel); color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--panel-edge));
+  border-radius: 14px;
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.75);
+}
+.city-hint__body { margin: 0 0 12px; font-size: 14px; color: var(--muted); }
+.city-hint__body strong { color: var(--text); }
+.city-hint__actions { display: flex; gap: 8px; }
+.city-hint__actions .button { flex: 1; margin-top: 0; min-height: 44px; }
+
 /* Hinweiskarte im Sheet, Gegenstück zu FreiFahrens „ersetzt kein Ticket". */
 .callout {
   display: flex; gap: 10px; align-items: flex-start;

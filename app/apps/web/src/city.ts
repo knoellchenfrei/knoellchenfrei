@@ -22,7 +22,9 @@
  * nicht stillschweigend Berlin ausliefern.
  */
 
-import { BERLIN, cityByKey, type City } from '@knoellchenfrei/core'
+import { BERLIN, CITIES, cityByKey, type City } from '@knoellchenfrei/core'
+
+import { availableCities } from './data-source.js'
 
 const STORAGE_KEY = 'knoellchenfrei:city'
 
@@ -72,11 +74,20 @@ export function switchCity(city: City): void {
   window.location.reload()
 }
 
-/** Ob überhaupt jemand gewählt hat — für den Standort-Vorschlag. */
-export function hasChosenCity(): boolean {
-  try {
-    return localStorage.getItem(STORAGE_KEY) !== null
-  } catch {
-    return false
-  }
+/**
+ * Welche Städte diese Auslieferung zeigen kann.
+ *
+ * Auf einem statischen Host jede, die es im Bündel gibt — die Daten werden
+ * nachgeladen. Im Artifact nur die eingebetteten, weil dort nichts nachgeladen
+ * werden kann: Dessen Sicherheitsrichtlinie blockiert jede fremde Anfrage.
+ *
+ * Steht hier und nicht mehr in der Einstellungsseite, weil seit dem
+ * Standort-Vorschlag ein zweiter Ort dieselbe Frage stellt. Zwei Listen, die
+ * auseinanderlaufen, hätten den teuersten Fehler dieser Art ergeben: einen
+ * Vorschlag anzubieten, dessen Annahme in „Diese Fassung enthält muenchen
+ * nicht" endet — sichtbar erst nach dem Neuladen, und dann als leere Seite.
+ */
+export function selectableCities(): readonly City[] {
+  const embedded = availableCities()
+  return embedded === null ? CITIES : CITIES.filter((city) => embedded.includes(city.key))
 }

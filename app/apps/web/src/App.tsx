@@ -14,12 +14,14 @@ import {
   markFor,
   withinCitySession,
   MIN_MARKS_FOR_PATTERN,
+  type City,
   type HeatMark,
   type Position,
   type Sighting,
 } from '@knoellchenfrei/core'
 
-import { CITY } from './city.js'
+import { CITY, switchCity } from './city.js'
+import { rememberSuggestionDismissed, suggestionAt } from './city-suggestion.js'
 import { baseStyle } from './map-style.js'
 import { tidyPoiDetail } from './format.js'
 import { isEmbedded, loadData } from './data-source.js'
@@ -30,6 +32,7 @@ import { ParkingTimer } from './components/ParkingTimer.js'
 import { SearchBox } from './components/SearchBox.js'
 import { UpdateBar } from './components/UpdateBar.js'
 import { BetaBadge } from './components/BetaBadge.js'
+import { CitySuggestion } from './components/CitySuggestion.js'
 import { HeatPanel } from './components/HeatPanel.js'
 import { InstallBanner, useInstallState } from './components/InstallHint.js'
 import { LiveStats } from './components/LiveStats.js'
@@ -167,6 +170,11 @@ export function App() {
   // Antwort selbst liegt beim Browser, hier steht nur, dass gefragt wurde.
   const [askLocation, setAskLocation] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  // Die Stadt, in der der letzte Standortabruf gelandet ist, falls es eine
+  // andere als die geladene war. Kein eigener Berechtigungsdialog hängt daran:
+  // Der Wert entsteht in `locate()` aus einer Position, die die App ohnehin
+  // schon hat.
+  const [citySuggestion, setCitySuggestion] = useState<City | null>(null)
   const [quietDismissed, setQuietDismissed] = useState(false)
   // Null solange oder falls es keinen Weg gibt, die Rückmeldung abzuliefern —
   // dann erscheint der Knopf gar nicht erst.
@@ -778,9 +786,20 @@ export function App() {
         const hit = zoneAt(zones, point)
         setSelected(hit?.properties ?? null)
         if (hit !== null) setAnnouncement(describeZone(hit.properties, Date.now()))
+        // Die einzige Stelle, an der der Stadtvorschlag entsteht. Sie hat die
+        // Position schon; ein zweiter `getCurrentPosition`-Aufruf nur für den
+        // Hinweis wäre eine Berechtigungsfrage ohne Gegenwert.
+        const suggestion = suggestionAt(point[0], point[1])
+        setCitySuggestion(suggestion)
         // Outside the ring nothing is metered, so "no zone" is a useful answer,
         // not a failure.
-        if (hit === null) {
+        //
+        // Außer die Position liegt in einer anderen Stadt, die diese App
+        // kennt: Dann träfe der Satz keine Aussage über den Ort, sondern über
+        // die geladenen Daten. In München stünde sonst „hier ist Parken
+        // gebührenfrei" über 82 bewirtschafteten Gebieten — falsch, teuer, und
+        // die Meldung überdeckte ausgerechnet den Hinweis, der sie erklärt.
+        if (hit === null && suggestion === null) {
           setError('Außerhalb der Parkraumbewirtschaftung — hier ist Parken gebührenfrei.')
         }
         mapRef.current?.easeTo({ center: point, zoom: Math.max(15, mapRef.current.getZoom()) })
@@ -1241,6 +1260,28 @@ export function App() {
             // die Berechtigung dauerhaft verbrannt. So bleibt sie abrufbar.
             rememberLocationAsked()
             setAskLocation(false)
+          }}
+        />
+      )}
+
+      {/*
+        Erst nach dem Vordialog möglich und deshalb nie zugleich mit ihm: Der
+        Vorschlag entsteht aus dem Standort, den `locate()` liefert, und
+        `locate()` läuft erst, wenn der Vordialog beantwortet ist. Dieselbe
+        Zurückhaltung gegenüber den Sheets wie dort — auf dem Desktop liegt das
+        Melde-Sheet als Panel in der Mitte, und ein anklickbarer Hinweis neben
+        einem `aria-modal`-Dialog gehört nicht dorthin.
+      */}
+      {citySuggestion !== null && !reporting && !settingsOpen && !feedbackOpen && (
+        <CitySuggestion
+          city={citySuggestion}
+          current={CITY}
+          onSwitch={() => switchCity(citySuggestion)}
+          onStay={() => {
+            // Je Stadt gemerkt, nicht als „nie wieder": Wer in München bleibt,
+            // soll in Hamburg trotzdem gefragt werden.
+            rememberSuggestionDismissed(citySuggestion.key)
+            setCitySuggestion(null)
           }}
         />
       )}

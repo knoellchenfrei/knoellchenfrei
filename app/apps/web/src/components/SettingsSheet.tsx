@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react'
 
-import { CITIES, HISTORY_DAYS, type City } from '@knoellchenfrei/core'
+import { HISTORY_DAYS } from '@knoellchenfrei/core'
 
-import { CITY, switchCity } from '../city.js'
-import { availableCities } from '../data-source.js'
+import { CITY, selectableCities, switchCity } from '../city.js'
 import { InstallRow, useInstallState } from './InstallHint.js'
 
 interface Props {
@@ -20,18 +19,6 @@ interface Props {
 
 const REPO = 'https://github.com/knoellchenfrei/knoellchenfrei'
 const FREIFAHREN = 'https://freifahren.org'
-
-/**
- * Welche Städte diese Auslieferung zeigen kann.
- *
- * Auf einem statischen Host jede, die es im Bündel gibt — die Daten werden
- * nachgeladen. Im Artifact nur die eingebetteten, weil dort nichts nachgeladen
- * werden kann: Dessen Sicherheitsrichtlinie blockiert jede fremde Anfrage.
- */
-function selectableCities(): readonly City[] {
-  const embedded = availableCities()
-  return embedded === null ? CITIES : CITIES.filter((city) => embedded.includes(city.key))
-}
 
 /**
  * Fragen, die diese App selbst aufwirft.

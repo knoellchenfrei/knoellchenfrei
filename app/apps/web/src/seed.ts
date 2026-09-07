@@ -1,29 +1,38 @@
 import { berlinWallClock, HISTORY_DAYS, markFor, type HeatMark } from '@knoellchenfrei/core'
 
+import { CITY } from './city.js'
 import type { StoredSighting } from './storage.js'
 
 /**
  * Seeded demo sightings.
  *
  * A crowdsourced layer with no crowd renders as an empty map, which demonstrates
- * nothing. These are generated, spread over central Berlin, and labelled as demo
- * data in the UI — they are never presented as real reports.
+ * nothing. These are generated, spread over the loaded city's centre, and
+ * labelled as demo data in the UI — they are never presented as real reports.
+ *
+ * Die Punkte stehen als **Abstand zum Stadtmittelpunkt**, nicht als
+ * Koordinaten. Vorher waren es Berliner Koordinaten, fest im Code: In München
+ * lagen die sechs Beispielmeldungen damit 500 km neben der Karte — unsichtbar,
+ * und die Sichtungsliste zeigte trotzdem sechs Einträge, die nirgends
+ * hinzeigten. Das Muster stammt weiter aus Berlin (Potsdamer Platz,
+ * Alexanderplatz, Kottbusser Tor …); übrig davon ist die Streuung, nicht der
+ * Ort.
  */
 const SPOTS: [number, number, number][] = [
-  // lon, lat, minutes ago
-  [13.3889, 52.5169, 8],
-  [13.4132, 52.5219, 22],
-  [13.4271, 52.4995, 41],
-  [13.3421, 52.5065, 63],
-  [13.4501, 52.5121, 15],
-  [13.3652, 52.4934, 74],
+  // Abstand zum Mittelpunkt in Grad (Länge, Breite), dann: vor wie vielen Minuten
+  [-0.0161, -0.0031, 8],
+  [0.0082, 0.0019, 22],
+  [0.0221, -0.0205, 41],
+  [-0.0629, -0.0135, 63],
+  [0.0451, -0.0079, 15],
+  [-0.0398, -0.0266, 74],
 ]
 
 export function seedSightings(now: number): StoredSighting[] {
-  return SPOTS.map(([lon, lat, minutesAgo], index) => ({
+  return SPOTS.map(([dLon, dLat, minutesAgo], index) => ({
     id: `seed-${index}`,
-    lon,
-    lat,
+    lon: CITY.center[0] + dLon,
+    lat: CITY.center[1] + dLat,
     reportedAt: now - minutesAgo * 60_000,
     confirmations: index % 3,
     disputes: index === 4 ? 2 : 0,
@@ -43,20 +52,26 @@ export function seedSightings(now: number): StoredSighting[] {
  * zones, a middle band, and outer spots that are touched once or twice.
  */
 const HOTSPOTS: [number, number, number][] = [
-  // lon, lat, how many of the last 28 days it was reported on
-  [13.3889, 52.5169, 19], // Potsdamer Platz
-  [13.4132, 52.5219, 16], // Alexanderplatz
-  [13.4271, 52.4995, 12], // Kottbusser Tor
-  [13.3282, 52.5063, 8], // Savignyplatz
-  [13.4501, 52.5121, 5], // Frankfurter Allee
-  [13.3652, 52.4934, 4], // Bergmannkiez
-  [13.2846, 52.4757, 2], // Steglitz
-  [13.4712, 52.5442, 1], // Weissensee
+  // Abstand zum Mittelpunkt in Grad (Länge, Breite), dann: an wie vielen der
+  // letzten 28 Tage gemeldet. Dieselbe Umstellung wie bei SPOTS oben und aus
+  // demselben Grund — in einer anderen Stadt zeigte die Kontrolldichte sonst
+  // acht Berliner Ecken, und die Liste „am häufigsten kontrolliert" nannte
+  // dreimal „Außerhalb der Zonen".
+  [-0.0161, -0.0031, 19], // Muster: Potsdamer Platz
+  [0.0082, 0.0019, 16], // Alexanderplatz
+  [0.0221, -0.0205, 12], // Kottbusser Tor
+  [-0.0768, -0.0137, 8], // Savignyplatz
+  [0.0451, -0.0079, 5], // Frankfurter Allee
+  [-0.0398, -0.0266, 4], // Bergmannkiez
+  [-0.1204, -0.0443, 2], // Steglitz
+  [0.0662, 0.0242, 1], // Weissensee
 ]
 
 /**
  * Metres, roughly, in degrees at Berlin's latitude — enough to land in a
- * neighbouring cell.
+ * neighbouring cell. Bleibt für alle Städte dieselbe Zahl: Die Streuung soll
+ * eine Nachbarzelle treffen, und ob sie dabei 250 oder 280 Meter weit reicht,
+ * ändert an Demodaten nichts.
  */
 const SPREAD_LON = 0.0037
 const SPREAD_LAT = 0.0022
@@ -73,7 +88,7 @@ const SHIFT_HOURS = [9, 10, 10, 11, 11, 11, 12, 12, 13, 14, 15, 16, 16, 17, 17, 
 
 export function seedMarks(now: number): HeatMark[] {
   const marks: HeatMark[] = []
-  for (const [lon, lat, activeDays] of HOTSPOTS) {
+  for (const [dLon, dLat, activeDays] of HOTSPOTS) {
     for (let day = 0; day < HISTORY_DAYS; day += 1) {
       // Spread the active days across the window instead of clustering them at
       // one end, so the decay does not make a busy corner look dead.
@@ -97,7 +112,15 @@ export function seedMarks(now: number): HeatMark[] {
       // Never ahead of the clock: today's later shift hours have not happened
       // yet, and a mark dated in the future is exactly what buildHeatmap drops.
       if (at > now) continue
-      marks.push(markFor([lon + dx * SPREAD_LON, lat + dy * SPREAD_LAT], at))
+      marks.push(
+        markFor(
+          [
+            CITY.center[0] + dLon + dx * SPREAD_LON,
+            CITY.center[1] + dLat + dy * SPREAD_LAT,
+          ],
+          at,
+        ),
+      )
     }
   }
   return marks
