@@ -351,11 +351,20 @@ wiederholt.
   `apps/web/functions/_middleware.ts` als Cloudflare-Pages-Funktion **vor**
   `dist`: Ohne gültiges Cookie geht weder Bündel noch Zonendatei noch Manifest
   hinaus. Ein Login *in* der React-App wäre wirkungslos gewesen — die Dateien
-  lägen weiter offen. Zwei Folgen, die man leicht übersieht: `deploy.yml`
-  braucht `workingDirectory: app/apps/web`, weil `wrangler pages deploy` das
-  Verzeichnis `functions/` relativ zum Arbeitsverzeichnis sucht (steht es
-  falsch, rollt der Deploy erfolgreich und ungeschützt aus), und GitHub Pages
-  ist abgeschaltet, weil sich dort kein Riegel davorsetzen lässt.
+  lägen weiter offen. Zwei Folgen, die man leicht übersieht: Der Deploy braucht
+  `pages deploy dist --cwd app/apps/web`, weil `wrangler` das Verzeichnis
+  `functions/` relativ zum Arbeitsverzeichnis sucht (steht es falsch, rollt der
+  Deploy erfolgreich und ungeschützt aus), und GitHub Pages ist abgeschaltet,
+  weil sich dort kein Riegel davorsetzen lässt.
+- **`workingDirectory:` der `wrangler-action` geht nicht auf ein Paket mit
+  `workspace:`-Abhängigkeiten.** Die Action installiert wrangler *im*
+  Arbeitsverzeichnis und wählt das Werkzeug anhand einer Sperrdatei; in
+  `app/apps/web` liegt keine, also nimmt sie npm — und npm bricht an
+  `"@knoellchenfrei/core": "workspace:*"` ab:
+  `EUNSUPPORTEDPROTOCOL: Unsupported URL Type "workspace:"`. Der Lauf vom
+  7. September ist genau daran gescheitert. Der Ausweg ist wranglers eigenes
+  `--cwd`: Die Action installiert weiter im Wurzelverzeichnis, wrangler
+  arbeitet trotzdem im Paket.
 - **Ein Riegel fällt zu, wenn seine Konfiguration fehlt, nicht auf.** Ohne
   `BETA_PASSWORD` antwortet die Pages-Funktion mit `503` statt durchzulassen.
   Die bequeme Richtung wäre genau der Fehler, den dieses Projekt dreimal

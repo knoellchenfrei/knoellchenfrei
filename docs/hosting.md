@@ -182,6 +182,10 @@ der API-Worker unter seiner eigenen Adresse und das Kachelarchiv unter
 eigene Grenzen (Rate-Limits, `ALLOWED_ORIGINS`), aber sie liegen nicht hinter
 dem Formular.
 
+Im Deploy steht deshalb `pages deploy dist --cwd app/apps/web`. Nicht
+`workingDirectory:` der Action: Die installiert wrangler im Arbeitsverzeichnis
+und nimmt dort mangels Sperrdatei npm — das bricht an `workspace:*` ab.
+
 Die Prüflogik steht in `packages/core/src/beta-gate.ts` und wird in
 `test/beta-gate.test.ts` mit Unfug beschossen — sie zerlegt einen
 `Cookie`-Header aus fremder Hand, und das gehört dorthin, wo es getestet wird.

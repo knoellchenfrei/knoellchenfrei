@@ -157,20 +157,27 @@ jobs:
           VITE_TILES_URL: ${{ vars.VITE_TILES_URL }}
         run: pnpm --filter @knoellchenfrei/web build
 
-      # `workingDirectory` ist hier keine Kosmetik: `wrangler pages deploy`
-      # sucht das Verzeichnis `functions/` relativ zum Arbeitsverzeichnis, und
-      # darin liegt der Beta-Riegel (`_middleware.ts`). Vom Wurzelverzeichnis
-      # aus aufgerufen faende wrangler es nicht, ausrollen wuerde trotzdem
-      # klappen — und die geschlossene Beta stuende offen, ohne dass irgendwo
-      # ein roter Haken erschiene.
+      # `--cwd` ist hier keine Kosmetik: `wrangler pages deploy` sucht das
+      # Verzeichnis `functions/` relativ zum Arbeitsverzeichnis, und darin
+      # liegt der Beta-Riegel (`_middleware.ts`). Ohne den Wechsel faende
+      # wrangler es nicht, ausrollen wuerde trotzdem klappen — und die
+      # geschlossene Beta stuende offen, ohne dass irgendwo ein roter Haken
+      # erschiene. Der Pfad `dist` wird relativ zu `--cwd` aufgeloest.
+      #
+      # Warum `--cwd` und nicht `workingDirectory:` der Action: Die Action
+      # installiert wrangler im Arbeitsverzeichnis und waehlt das Werkzeug
+      # anhand einer Sperrdatei. In `app/apps/web` liegt keine, also nimmt sie
+      # npm — und npm bricht an `"@knoellchenfrei/core": "workspace:*"` ab:
+      # `EUNSUPPORTEDPROTOCOL: Unsupported URL Type "workspace:"`. Gemessen am
+      # 7. September, der Lauf ist daran gescheitert. Vom Wurzelverzeichnis aus
+      # installiert sie weiter wie bisher.
       - name: Web-App ausrollen
         if: steps.gate.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: app/apps/web
-          command: pages deploy dist --project-name=knoellchenfrei
+          command: pages deploy dist --project-name=knoellchenfrei --cwd app/apps/web
 
       - name: Zusammenfassung
         run: |
