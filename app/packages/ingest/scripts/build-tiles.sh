@@ -135,14 +135,33 @@ done <<< "$RAHMEN"
 echo "Fertig in $AUSGABEORDNER"
 echo
 
+hochladen_nach() {
+  local pfad="$1" datei="$2"
+  ( cd "$APP/apps/api" \
+    && pnpm --filter @knoellchenfrei/api exec wrangler r2 object put "$pfad" \
+         --file="$datei" --content-type=application/octet-stream --remote )
+}
+
 if [ "$HOCHLADEN" = ja ]; then
   for stadt in $GEBAUT; do
-    ziel="${EIMER}/v${BUILD}/${stadt}.pmtiles"
-    echo "→ Hochladen nach $ziel"
-    ( cd "$APP/apps/api" \
-      && pnpm --filter @knoellchenfrei/api exec wrangler r2 object put "$ziel" \
-           --file="$AUSGABEORDNER/${stadt}.pmtiles" \
-           --content-type=application/octet-stream --remote )
+    datei="$AUSGABEORDNER/${stadt}.pmtiles"
+    echo "→ Hochladen nach ${EIMER}/v${BUILD}/${stadt}.pmtiles"
+    hochladen_nach "${EIMER}/v${BUILD}/${stadt}.pmtiles" "$datei"
+    # **Zweimal, und das ist der Kern der Automatisierung.** Unter `v<datum>/`
+    # bleibt jeder Stand liegen — das ist der Rückweg, wenn ein Archiv kaputt
+    # ist. Unter `aktuell/` liegt der, auf den die App zeigt; deshalb muss
+    # nach einem neuen Bau **keine Variable geändert und nichts neu
+    # ausgerollt** werden, und genau daran hing es, dass der Kachelbau von
+    # Hand lief.
+    #
+    # Was das kostet, damit es niemand später als Überraschung findet: Ein
+    # Browser, der die Seite offen hat, während hier ein Archiv ersetzt wird,
+    # hält den Kopf der alten Datei im Speicher — die Sprungadressen darin
+    # zeigen dann ins Leere, und Kacheln kommen verstümmelt an, bis jemand
+    # neu lädt. Das Fenster ist eine Minute in der Woche. Der Preis dafür,
+    # es auszuschliessen, wäre ein Deploy je Kachelbau.
+    echo "→ Hochladen nach ${EIMER}/aktuell/${stadt}.pmtiles"
+    hochladen_nach "${EIMER}/aktuell/${stadt}.pmtiles" "$datei"
   done
   echo "Hochgeladen."
   echo
@@ -153,14 +172,21 @@ else
   echo
 fi
 
-echo "Danach die Web-App darauf zeigen lassen — das VERZEICHNIS, nicht eine Datei:"
+echo "Die Web-App zeigt auf das VERZEICHNIS 'aktuell', nicht auf eine Datei"
+echo "und nicht auf eine Version:"
 echo
-echo "  gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/v${BUILD}/'"
+echo "  gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/aktuell/'"
 echo
-echo "Die App hängt <stadt>.pmtiles selbst an. Ein Wert, der auf eine Datei"
-echo "zeigt, hält seit dem 7. September den Build an: Er landete sonst"
+echo "Steht das einmal, braucht ein neuer Kachelbau keine Änderung mehr — das"
+echo "ist die Voraussetzung dafür, dass der Workflow 'Kacheln' ihn allein"
+echo "macht. Die App hängt <stadt>.pmtiles selbst an. Ein Wert, der auf eine"
+echo "Datei zeigt, hält seit dem 7. September den Build an: Er landete sonst"
 echo "unabhängig von der geladenen Stadt im Kartenstil, und in drei von vier"
 echo "Städten blieb die Karte leer."
+echo
+echo "Zurück auf einen älteren Stand, falls ein Archiv kaputt ist:"
+echo
+echo "  gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/v<datum>/'"
 echo
 echo "Der Eimer braucht CORS für die eigene Domain und muss Range-Requests"
 echo "zulassen — ohne beides lädt der Browser kein einziges Kachelbyte."

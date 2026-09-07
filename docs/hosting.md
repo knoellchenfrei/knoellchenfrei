@@ -539,58 +539,115 @@ Der stündliche Cron-Job löscht, was aus dem Fenster fällt.
 
 ## 4. Eigene Kartenkacheln
 
-Vorbereitet, nicht scharf geschaltet: Die App kann Vektorkacheln aus einem
-PMTiles-Archiv zeichnen, sobald es eins gibt. Ohne `VITE_TILES_URL` bleibt alles
-wie bisher bei den Rasterkacheln von OpenStreetMap.
+**Läuft, für alle vier Städte.** Die App zeichnet Vektorkacheln aus PMTiles-
+Archiven in R2, hinter `tiles.knoellchenfrei.de`. Ohne `VITE_TILES_URL` fällt
+sie auf die Rasterkacheln von OpenStreetMap zurück — das ist der Weg für lokale
+Bauten und die Testsuite, nicht für die Auslieferung.
 
 ### Archiv bauen
 
 Kein eigener OSM-Import nötig. Protomaps veröffentlicht täglich eine globale
-Basiskarte; daraus wird per Range-Request nur Berlin herausgeschnitten:
+Basiskarte; daraus schneidet das Skript per Range-Request nur die Rahmen der
+Städte heraus. Die Rahmen kommen aus `core/city.ts` (`reportBounds`), nicht aus
+dem Skript.
 
 ```bash
-# Datum eines Tagesarchivs von https://maps.protomaps.com/builds
-app/packages/ingest/scripts/build-tiles.sh
+app/packages/ingest/scripts/build-tiles.sh --hochladen     # alle vier
+app/packages/ingest/scripts/build-tiles.sh muenchen --hochladen
 ```
 
-Das Skript nennt am Ende den Upload-Befehl. Der Pfad im Eimer trägt das Datum
-(`/v20260904/berlin.pmtiles`), damit ein Zwischenstand nie eine laufende Version
-überschreibt und der Browser beliebig lange cachen darf.
+**Ohne Datum aufrufen.** Protomaps hält nur ein kurzes Fenster an Tagesarchiven
+vor; ein Datum aus einer Anleitung ist eine Falle mit Verfallsdatum und endet in
+`HTTP error: 404`, was nach einem kaputten Skript aussieht. Das Skript sucht das
+neueste selbst.
+
+Gemessene Größen (7. September 2026, bis Zoom 15): Berlin 89 MB, Hamburg 65 MB,
+Frankfurt 32 MB, München 32 MB.
+
+### Von Hand ist es nur der Ausnahmefall
+
+Der reguläre Weg ist der Workflow **Kacheln**
+([`.github/workflows/kacheln.yml`](../.github/workflows/kacheln.yml)):
+sonntags um 03:41 UTC, dazu auf Knopfdruck über *Actions → Kacheln → Run
+workflow*. Er braucht das Secret `CLOUDFLARE_R2_TOKEN` mit genau einem Recht,
+*Workers R2 Storage: Edit* — der Deploy-Token kann absichtlich kein R2.
+
+Jedes Archiv geht an **zwei** Stellen:
+
+| Pfad | Wofür |
+| --- | --- |
+| `v<datum>/<stadt>.pmtiles` | bleibt liegen, ist der Rückweg |
+| `aktuell/<stadt>.pmtiles` | darauf zeigt die App |
+
+Der stabile Pfad ist der Grund, warum der Bau überhaupt allein laufen kann: Ein
+versionierter Pfad verlangte nach jedem Bau, `VITE_TILES_URL` umzusetzen und neu
+auszurollen — und Repository-Variablen darf GitHubs `GITHUB_TOKEN` nicht
+schreiben.
+
+Zurück auf einen älteren Stand:
+
+```bash
+gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/v<datum>/'
+```
 
 ### Eimer einrichten
 
 ```bash
-npx wrangler r2 bucket create knoellchenfrei-tiles
+cd app && pnpm --filter @knoellchenfrei/api exec wrangler r2 bucket create knoellchenfrei-tiles
 ```
 
 Zwei Einstellungen entscheiden, ob überhaupt ein Byte ankommt:
 
 - **CORS** für die Domain der Web-App. Ohne das lehnt der Browser jede
   Kachelanfrage ab, ohne dass die Karte einen Fehler zeigt — sie bleibt
-  einfach leer.
-- **Range-Requests** müssen durchgereicht werden. Genau darauf beruht das
-  Verfahren: Der Browser lädt nie die ganze Datei, sondern die Bytes des
-  sichtbaren Ausschnitts.
+  einfach leer. Nachmessen mit gesetztem `Origin`, nicht ohne:
 
-Danach eine eigene Domain vor den Eimer hängen (`tiles.knoellchenfrei.de`) und
-die Web-App darauf zeigen lassen — Buildzeit, nicht Laufzeit:
+  ```bash
+  curl -s -D- -o /dev/null -r 0-99 -H 'Origin: https://knoellchenfrei.de' \
+    https://tiles.knoellchenfrei.de/aktuell/berlin.pmtiles | grep -i access-control
+  ```
+
+- **Range-Requests** müssen durchgereicht werden — darauf beruht das ganze
+  Verfahren. Die richtige Antwort ist `206`, nicht `200`.
+
+Die Regel ist bewusst eng: Sie lässt nur `https://knoellchenfrei.de` zu. Wer
+Bilder aufnimmt oder lokal gegen echte Kacheln bauen will, lädt das Archiv
+herunter und liefert es selbst aus, statt die Regel aufzumachen — der Weg steht
+in [todo.md](todo.md).
+
+### Die Adresse ist ein Verzeichnis
 
 ```
-VITE_TILES_URL=https://tiles.knoellchenfrei.de/v20260904/berlin.pmtiles
+VITE_TILES_URL=https://tiles.knoellchenfrei.de/aktuell/
 ```
 
-### Was dann anders ist
+**Nie eine Datei.** Bis zum 7. September stand dort ein voller Pfad auf
+`berlin.pmtiles`, und der landete unabhängig von der geladenen Stadt im
+Kartenstil: In Hamburg, Frankfurt und München lag der Ausschnitt außerhalb des
+Archivs, und die Karte blieb leer — so, dass es nach „lädt noch" aussah statt
+nach einem Fehler. Eine gesetzte Variable war damit schlechter als keine. Die
+App hängt `<stadt>.pmtiles` selbst an, und `vite.config.ts` hält den Build an,
+wenn der Wert auf `.pmtiles` endet.
 
-| | Rasterkacheln (heute) | PMTiles (danach) |
+### Was dadurch anders ist
+
+| | Rasterkacheln | PMTiles |
 | --- | --- | --- |
 | Wer sieht die Nutzer-IPs | openstreetmap.org | niemand außer Cloudflare |
 | Beschriftung | im Bild eingebrannt, englisch gemischt | Vektor, auf Deutsch |
 | Aussehen | fremdbestimmt, nachträglich abgedunkelt | eigener Stil, passt zur Oberfläche |
 | Kosten | keine, aber nicht gedeckt | keine, und gedeckt |
 
-Der Stil kommt aus `protomaps-themes-base` und wird erst nachgeladen, wenn
+Der Stil kommt aus `@protomaps/basemaps` (Styles 5.7.2; das alte
+`protomaps-themes-base` ist abgekündigt) und wird erst nachgeladen, wenn
 `VITE_TILES_URL` gesetzt ist — sonst läge er in jedem Bündel, auch in dem der
-Artifact-Fassung, die gar keine Kacheln laden darf.
+Artifact-Fassung, die gar keine Kacheln laden darf. Die Kachelversion läuft
+getrennt davon (Tiles 4.15.2); die beiden Stränge gehören zusammen, ein
+Stil-Update erzwingt keinen neuen Kachelbau.
+
+**Die Schriften kommen weiterhin von `protomaps.github.io`** und sind damit der
+letzte fremde Abruf der Karte. Ein Sprite gibt es nicht mehr — FreiFahren hat
+auch keins.
 
 ## Wann sich Live-Abruf lohnt — und wann nicht
 

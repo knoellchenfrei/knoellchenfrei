@@ -1,0 +1,105 @@
+name: Kacheln
+
+# Warum das überhaupt ein Workflow ist: Protomaps hält seine Tagesarchive nur
+# ein knappes Fenster vor — gemessen am 6. September 2026 antworteten 20260904
+# und 20260901, alles ab 20260828 abwaerts nicht mehr. Ein Kachelbau, der von
+# Hand läuft, fällt genau dann aus, wenn niemand hinsieht, und die Karte
+# zeigt Monate alte Straßen. Der Bau selbst dauert Minuten und lädt nicht das
+# globale Archiv, sondern nur die Kacheln im Rahmen jeder Stadt.
+#
+# Wöchentlich und nicht taeglich: Die Archive sind zusammen rund 220 MB, und
+# OSM-Daten ändern sich in einer Woche nicht so, dass es jemandem auffiele.
+on:
+  schedule:
+    # Sonntags um 03:41 UTC. Krumme Minute mit Absicht — zur vollen Stunde
+    # steht GitHubs Warteschlange am laengsten.
+    - cron: '41 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      staedte:
+        description: 'Nur diese Städte (leer = alle)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  # Zwei Laeufe, die dieselben Objekte schreiben, sind kein Gewinn.
+  group: kacheln
+  cancel-in-progress: false
+
+jobs:
+  bauen:
+    name: PMTiles bauen und nach R2 laden
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+
+      # Nur die Pakete, die das Skript braucht: `city-bbox` liest die Rahmen
+      # aus core, `wrangler` lädt hoch.
+      - run: pnpm install --frozen-lockfile
+        working-directory: app
+
+      # Die pmtiles-CLI gibt es nicht als Action und nicht in apt. Version
+      # festgenagelt, nicht "latest": Ein Werkzeug, das sich unter dem
+      # Workflow aendert, macht aus einem grünen Lauf einen zufaelligen.
+      - name: pmtiles-CLI installieren
+        env:
+          PMTILES_VERSION: 1.31.2
+        run: |
+          curl -sSfL -o /tmp/pmtiles.tar.gz \
+            "https://github.com/protomaps/go-pmtiles/releases/download/v${PMTILES_VERSION}/go-pmtiles_${PMTILES_VERSION}_Linux_x86_64.tar.gz"
+          tar -xzf /tmp/pmtiles.tar.gz -C /tmp pmtiles
+          sudo install -m 755 /tmp/pmtiles /usr/local/bin/pmtiles
+          pmtiles version
+
+      - name: Archive bauen und hochladen
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_R2_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          STAEDTE: ${{ inputs.staedte }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_R2_TOKEN fehlt. Der Deploy-Token kann absichtlich kein R2 — dieser Workflow braucht einen eigenen mit 'Workers R2 Storage:Edit'."
+            exit 1
+          fi
+          # Über die Umgebung und nicht als ${{ }} direkt in die Zeile: Eine
+          # Eingabe, die die Shell zu sehen bekommt, ist eine Eingabe, die die
+          # Shell ausfuehren kann. Und sie wird geprüft, statt geglaubt.
+          for stadt in $STAEDTE; do
+            case "$stadt" in
+              berlin|hamburg|frankfurt|muenchen) ;;
+              *) echo "::error::Unbekannte Stadt: $stadt"; exit 2 ;;
+            esac
+          done
+          # shellcheck disable=SC2086
+          ./app/packages/ingest/scripts/build-tiles.sh $STAEDTE --hochladen
+
+      # Nachgemessen statt geglaubt: Ein 206 auf den Kopf der Datei ist der
+      # Beweis, dass das Archiv liegt UND Range-Requests beantwortet. Ohne
+      # beides lädt der Browser kein einziges Kachelbyte, und der Workflow
+      # wäre grün dabei.
+      - name: Nachmessen, dass die Archive ausgeliefert werden
+        run: |
+          fehler=0
+          for stadt in berlin hamburg frankfurt muenchen; do
+            code="$(curl -s -o /dev/null -r 0-99 -w '%{http_code}' \
+              "https://tiles.knoellchenfrei.de/aktuell/${stadt}.pmtiles")"
+            if [ "$code" = "206" ]; then
+              echo "  ok   ${stadt}: $code"
+            else
+              echo "::error::${stadt} antwortet ${code} statt 206"
+              fehler=1
+            fi
+          done
+          exit "$fehler"

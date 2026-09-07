@@ -579,16 +579,52 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       5.7.2 sind getrennte Versionsstränge und passen zusammen; die Archive
       mussten nicht neu gebaut werden.
 
-- [ ] **Der Kachelbau läuft von Hand.** Protomaps' Tagesarchive verfallen nach
-      wenigen Tagen (siehe CLAUDE.md), der Bau dauert Minuten und braucht
-      `pmtiles` lokal — deshalb steht er nicht im Deploy. Für den Dauerbetrieb
-      wäre ein Workflow nach Zeitplan richtig, der baut, hochlädt und
-      `VITE_TILES_URL` auf den neuen Ordner setzt. Zwei Bedingungen dafür: Er
-      braucht einen Token mit R2-Schreibrecht im CI (heute hat der CI-Token
-      bewusst nur zwei Rechte), und er muss **anhalten**, wenn ein Stadtarchiv
-      fehlt, statt es auszulassen — sonst ist genau der Fehler wieder da, der
-      gerade behoben wurde. Die alten Ordner `v<datum>/` bleiben liegen und
-      gehören dann auch aufgeräumt.
+- [x] **Der Kachelbau läuft als Workflow** — seit dem 7. September,
+      `.github/workflows/kacheln.yml`, sonntags um 03:41 UTC und auf Knopfdruck.
+
+      Warum das überhaupt drängte: Protomaps hält seine Tagesarchive nur ein
+      knappes Fenster vor. Ein Bau, der von Hand läuft, fällt genau dann aus,
+      wenn niemand hinsieht, und die Karte zeigt Monate alte Straßen.
+
+      Die Sache, an der es hing, war nicht der Bau, sondern der Schritt
+      danach: Bisher landete jedes Archiv unter `v<datum>/`, und **jemand
+      musste die Variable `VITE_TILES_URL` umsetzen und neu ausrollen**. Das
+      kann ein Workflow nicht — GitHubs eigenes `GITHUB_TOKEN` darf keine
+      Repository-Variablen schreiben, dafür bräuchte es einen zusätzlichen
+      persönlichen Token.
+
+      Der Ausweg ist ein **zweiter, stabiler Pfad**: Jedes Archiv geht jetzt
+      nach `v<datum>/` **und** nach `aktuell/`, und die App zeigt auf
+      `aktuell/`. Damit braucht ein neuer Bau weder eine Variable noch einen
+      Deploy. Die Versionsordner bleiben liegen — das ist der Rückweg, wenn
+      ein Archiv kaputt ist:
+
+      ```bash
+      gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/v<datum>/'
+      ```
+
+      **Was das kostet**, damit es niemand später als Überraschung findet: Ein
+      Browser, der die Seite offen hat, während ein Archiv ersetzt wird, hält
+      den Kopf der alten Datei im Speicher; die Sprungadressen darin zeigen
+      dann ins Leere, bis jemand neu lädt. Das Fenster ist eine Minute in der
+      Woche. Der Preis dafür, es auszuschließen, wäre ein Deploy je
+      Kachelbau. Ein Zwischenspeicher kommt nicht dazu: Cloudflare cacht die
+      Objekte nicht, `cf-cache-status: DYNAMIC`, nachgemessen.
+
+      Der Workflow misst am Ende nach, statt zu glauben: `206` auf den Kopf
+      jeder der vier Dateien. Ohne Range-Requests lädt der Browser kein
+      einziges Kachelbyte, und ein Workflow ohne diese Prüfung wäre dabei
+      grün.
+
+- [ ] **Ein eigener R2-Token für den Kachel-Workflow** —
+      `CLOUDFLARE_R2_TOKEN` als Repository-Secret, mit **einem** Recht:
+      *Workers R2 Storage: Edit*. Ohne ihn bricht der Workflow in der ersten
+      Zeile ab und sagt das auch.
+
+      Warum nicht der vorhandene `CLOUDFLARE_API_TOKEN`: Der rollt aus und
+      kann absichtlich nur *Workers Scripts* und *Cloudflare Pages*. Ihm R2
+      dazuzugeben hiesse, den Token zu verbreitern, der bei jedem Push läuft
+      — für einen Workflow, der einmal die Woche läuft.
 
 - [ ] **Der Worker hat keinen einzigen Test.** `packages/core` steht bei
       99,9 % Zeilen, `apps/api/src/worker.ts` bei null — und dort sind am
