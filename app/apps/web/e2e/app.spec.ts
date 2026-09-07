@@ -42,6 +42,14 @@ async function dismissPrompt(page: Page): Promise<void> {
   if ((await later.count()) > 0) await later.click()
 }
 
+/** Öffnet die Einstellungen. Weiter oben als früher: zwei Gruppen brauchen sie. */
+async function openSettings(page: Page) {
+  await page.getByRole('button', { name: 'Einstellungen' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Einstellungen' })
+  await expect(sheet).toBeVisible()
+  return sheet
+}
+
 async function openPanel(page: Page): Promise<void> {
   const body = page.locator('.sidebar__body')
   if (!(await body.isVisible())) await page.locator('.panel-toggle').click()
@@ -77,6 +85,51 @@ test.describe('was ausserhalb der Zonen steht', () => {
     const text = await page.locator('#root').innerText()
     expect(text).not.toContain('hier ist Parken gebührenfrei')
     expect(text).not.toContain('Gebühren fallen nicht an')
+  })
+})
+
+test.describe('die Nutzungsstatistik', () => {
+  /**
+   * Ohne `VITE_API_BASE` ist `track` ein No-op — die Testsuite baut ohne den
+   * Wert, sähe also nie einen Aufruf. Deshalb wird der Endpunkt hier
+   * abgefangen und geprüft, **was** hinausginge.
+   */
+  test('schickt ohne eingerichteten Server gar nichts', async ({ page }) => {
+    const anfragen: string[] = []
+    await page.route('**/events', async (route) => {
+      anfragen.push(route.request().postData() ?? '')
+      await route.fulfill({ status: 200, body: '{"written":0}' })
+    })
+    await ready(page)
+    const box = await page.locator('.map').boundingBox()
+    await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
+    await page.waitForTimeout(1500)
+    expect(anfragen).toEqual([])
+  })
+
+  // Der Widerspruch nach Art. 21 DSGVO. Er steht in den Einstellungen, weil
+  // die Rechtsgrundlage das berechtigte Interesse ist — und dazu gehört, dass
+  // man ihn ausüben kann, ohne jemanden zu fragen.
+  test('lässt sich in den Einstellungen abschalten', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    const schalter = sheet.getByRole('checkbox', { name: /mitzählen/i })
+    await expect(schalter).toBeVisible()
+    await expect(schalter).toBeChecked()
+    await schalter.uncheck()
+    await expect(schalter).not.toBeChecked()
+
+    const gemerkt = await page.evaluate(() =>
+      localStorage.getItem('knoellchenfrei.statistik.aus.v1')
+    )
+    expect(gemerkt).toBe('1')
+  })
+
+  test('sagt, was gezählt wird und was nicht', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await expect(sheet).toContainText('Keine Koordinaten')
+    await expect(sheet).toContainText('keine Kennung')
   })
 })
 
@@ -647,13 +700,6 @@ test.describe('Herkunft', () => {
 
 test.describe('die weiteren Städte', () => {
   /** Öffnet die Einstellungen und liefert das Dialog-Locator zurück. */
-  async function openSettings(page: Page) {
-    await page.getByRole('button', { name: 'Einstellungen' }).click()
-    const sheet = page.getByRole('dialog', { name: 'Einstellungen' })
-    await expect(sheet).toBeVisible()
-    return sheet
-  }
-
   test('bietet jede Stadt an und markiert die aktuelle', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)

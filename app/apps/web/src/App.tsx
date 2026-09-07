@@ -10,6 +10,7 @@ import {
   buildHeatmap,
   heatActivity,
   isChargeable,
+  isUncertainAt,
   quietDayNote,
   markFor,
   withinCitySession,
@@ -45,6 +46,7 @@ import { SightingPanel } from './components/SightingPanel.js'
 import { TowInfo } from './components/TowInfo.js'
 import { ZonePanel } from './components/ZonePanel.js'
 import { seedMarks, seedSightings } from './seed.js'
+import { track } from './track.js'
 import {
   countVisit,
   hideInstall,
@@ -92,6 +94,20 @@ function describeZone(properties: ZoneProperties, now: number): string {
   return `Zone ${properties.zone}, ${properties.district}: ${
     paid ? 'gebührenpflichtig' : 'gerade keine Gebühr'
   }. Details im Seitenbereich.`
+}
+
+/**
+ * Was die App über eine Zone gesagt hat — als eine von vier Antworten.
+ *
+ * Für die Statistik, und deshalb bewusst grob: Es zählt, **ob** die App etwas
+ * zu sagen hatte, nicht was genau. Die Rechnung steht in `core` und wird hier
+ * nicht nachgebaut.
+ */
+function zoneAnswer(properties: ZoneProperties, now: number): 'frei' | 'pflichtig' | 'unsicher' | 'quelldefekt' {
+  const zone = toParkingZone(properties)
+  if (properties.sourceDefect !== null) return 'quelldefekt'
+  if (isUncertainAt(zone, now)) return 'unsicher'
+  return isChargeable(zone, now) ? 'pflichtig' : 'frei'
 }
 
 const POI_LABELS: Record<PoiKind, string> = {
@@ -654,6 +670,9 @@ export function App() {
             const hit = loaded.find((zone) => zone.properties.zone === id)
             if (hit !== undefined) {
               setSelected(hit.properties)
+              track('zone.open', hit.properties.zone)
+              track('zone.answer', zoneAnswer(hit.properties, Date.now()))
+              track('zone.source', 'karte')
               setAnnouncement(describeZone(hit.properties, Date.now()))
               setAnchor([event.lngLat.lng, event.lngLat.lat])
               setError(null)
@@ -876,6 +895,13 @@ export function App() {
         setLocating(false)
         const hit = zoneAt(zones, point)
         setSelected(hit?.properties ?? null)
+        track('locate', 'use')
+        if (hit === null) track('zone.outside')
+        else {
+          track('zone.open', hit.properties.zone)
+          track('zone.answer', zoneAnswer(hit.properties, Date.now()))
+          track('zone.source', 'standort')
+        }
         if (hit !== null) setAnnouncement(describeZone(hit.properties, Date.now()))
         // Die einzige Stelle, an der der Stadtvorschlag entsteht. Sie hat die
         // Position schon; ein zweiter `getCurrentPosition`-Aufruf nur für den
@@ -944,6 +970,7 @@ export function App() {
     if (start === 'melden') setReporting(true)
     else if (start === 'standort') locate()
     else if (start === 'kontrollen') setShowHeat(true)
+    if (start === 'melden' || start === 'kontrollen') track('app.open', start)
   }, [locate])
 
   const park = useCallback(() => {
@@ -990,6 +1017,19 @@ export function App() {
     if (!sessionRestored) return
     saveSession(session)
   }, [sessionRestored, session])
+
+  // `park.start` hängt an der Sitzung, nicht am Knopf: Der Knopf wird auch
+  // gedrückt, wenn die Position fehlt und gar nichts entsteht.
+  const parkGezaehlt = useRef(false)
+  useEffect(() => {
+    if (session === null) {
+      parkGezaehlt.current = false
+      return
+    }
+    if (parkGezaehlt.current) return
+    parkGezaehlt.current = true
+    track('park.start')
+  }, [session])
 
   useEffect(() => {
     // Only the local fallback persists here; the shared store is authoritative
@@ -1115,6 +1155,9 @@ export function App() {
 
   const focusZone = useCallback((zone: LoadedZone) => {
     setSelected(zone.properties)
+    track('zone.open', zone.properties.zone)
+    track('zone.answer', zoneAnswer(zone.properties, Date.now()))
+    track('zone.source', 'suche')
     setAnnouncement(describeZone(zone.properties, Date.now()))
     setPanelOpen(true)
     setError(null)
@@ -1393,7 +1436,12 @@ export function App() {
 
       {feedbackOpen && feedback !== null && (
         <FeedbackSheet
-          onSend={(kind, text) => feedback.send(kind, text)}
+          onSend={async (kind, text) => {
+            await feedback.send(kind, text)
+            // Erst nach dem Senden: Ein Entwurf, der nie ankommt, ist keine
+            // Rückmeldung.
+            track('feedback', 'send')
+          }}
           onClose={() => setFeedbackOpen(false)}
         />
       )}

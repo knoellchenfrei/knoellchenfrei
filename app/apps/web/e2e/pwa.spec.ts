@@ -301,9 +301,11 @@ test.describe('die Sicherheits-Kopfzeilen', () => {
     // Ohne `'self'` bleibt die Karte schwarz: MapLibre 6 lädt seinen Worker
     // als eigene Datei, nicht als Blob.
     expect(csp).toContain("worker-src 'self' blob:")
-    // Schriften und Symbole der Vektorkarte kommen von dort — der Abfluss
-    // steht so auch in der Datenschutzerklärung.
-    expect(csp).toContain('https://protomaps.github.io')
+    // Umgekehrte Zusicherung seit dem 7. September: `protomaps.github.io` darf
+    // **nicht** mehr dastehen. Die Schriften liegen im eigenen Eimer, und eine
+    // erlaubte Herkunft, die niemand mehr braucht, ist eine zu viel — sie
+    // stünde auch weiterhin als Empfänger in der Datenschutzerklärung.
+    expect(csp).not.toContain('protomaps.github.io')
 
     expect(text).toContain('X-Content-Type-Options: nosniff')
     expect(text).toContain('Referrer-Policy: no-referrer')

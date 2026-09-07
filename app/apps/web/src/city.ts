@@ -25,6 +25,7 @@
 import { BERLIN, CITIES, cityByKey, type City } from '@knoellchenfrei/core'
 
 import { availableCities } from './data-source.js'
+import { trackNow } from './track.js'
 
 const STORAGE_KEY = 'knoellchenfrei:city'
 
@@ -66,6 +67,10 @@ export const CITY: City = fromStorage() ?? fromBuild() ?? BERLIN
  * verloren zu haben.
  */
 export function switchCity(city: City): void {
+  // Vor dem Neuladen, und sofort hinaus: Ein gepuffertes Ereignis wäre nach
+  // `location.reload()` weg, und der Städtewechsel ist eine der Zahlen, um die
+  // es geht. `trackNow` schickt mit `keepalive`, das überlebt den Neuaufbau.
+  trackNow('city.switch', city.key)
   try {
     localStorage.setItem(STORAGE_KEY, city.key)
   } catch {

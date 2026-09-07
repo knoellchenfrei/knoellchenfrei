@@ -970,3 +970,30 @@ body {
 }
 .callout--beta { border-color: rgba(253, 230, 138, 0.35); }
 .callout--beta .callout__mark { color: #fbbf24; }
+
+/* Der Schalter für die Nutzungsstatistik. Bewusst kein eigener Baustein: eine
+   Beschriftung mit Kästchen und einem Satz darunter, in der Machart der
+   übrigen Einstellungen. */
+.schalter {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.55rem 0;
+  cursor: pointer;
+}
+
+.schalter input {
+  margin-top: 0.2rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--accent, #f28c28);
+  flex: none;
+}
+
+.schalter__hinweis {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted, #9aa3ad);
+}

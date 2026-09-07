@@ -15,9 +15,10 @@ E-Mail: ⟨Adresse⟩
 
 ## 2. Was diese App verarbeitet — und was nicht
 
-Die App hat **keine Konten, kein Login, keine Zahlungsdaten und kein Tracking**.
-Es gibt keine Analyse-Werkzeuge, keine Werbe-IDs und keine Cookies zu
-Werbezwecken.
+Die App hat **keine Konten, kein Login und keine Zahlungsdaten**.
+Es gibt **keine fremden Analyse-Werkzeuge**, keine Werbe-IDs und keine Cookies zu
+Werbezwecken. Seit dem 7. September zählt die App mit, **was** benutzt wird — nicht **wer** es benutzt; wie das gebaut ist und wie man widerspricht, steht in
+Abschnitt 2.10.
 
 ### 2.1 Standort
 
@@ -44,6 +45,7 @@ Im `localStorage` des Browsers liegen **neun** Einträge. Hier stand bis zum
 | `knoellchenfrei.visits.v1` | zuletzt angezeigte Besuchszahlen |
 | `knoellchenfrei.locationAsked.v1` | ob der Standort-Vordialog schon erschien |
 | `knoellchenfrei.installHidden.v1` | ob der Installationshinweis weggeklickt wurde |
+| `knoellchenfrei.statistik.aus.v1` | ob der Nutzungsstatistik widersprochen wurde |
 | `knoellchenfrei:city` | die gewählte Stadt |
 | `knoellchenfrei:city-suggestion-dismissed` | Städte, für die „hier bleiben" gewählt wurde |
 
@@ -173,6 +175,50 @@ IP-Adresse rekonstruierbar. Er wird nach Ablauf des Rate-Limit-Zeitfensters auf
 
 Rechtsgrundlage: berechtigtes Interesse am störungsfreien Betrieb,
 Art. 6 Abs. 1 lit. f DSGVO.
+
+### 2.10 Nutzungsstatistik
+
+**Was gezählt wird.** Wenn in der App etwas passiert — sie wird geöffnet, eine
+Zone angesehen, der Standort freigegeben, eine Stadt gewechselt —, erhöht der
+Server einen Zähler. Eine Zeile lautet zum Beispiel:
+
+> 7. September, 14 Uhr, Berlin, „App geöffnet": **12**
+
+Mehr steht nicht darin. Es gibt **keine Kennung, keine Sitzung und keine
+Reihenfolge**: Was in welcher Abfolge geschah, verlässt das Gerät nicht — die
+Ereignisse werden vorher zusammengezählt.
+
+**Ort oder Zeit, nie beides.** Ereignisse mit Ortsbezug — welche Zone angesehen
+wurde, in welche Stadt gewechselt — tragen **keine Uhrzeit**, sondern nur den
+Tag. Alle anderen tragen die Stunde, aber keinen Ort. Der Grund: Bei wenigen
+Nutzenden wäre „14 Uhr, Zone X, einmal" ein einzelnes Ereignis mit Ort **und**
+Zeit, und das wäre kein Zähler mehr.
+
+**Was ausdrücklich nicht erhoben wird:**
+
+- **Keine Koordinaten.** Die feinste Ortsangabe ist die Zone, und die ohne
+  Uhrzeit.
+- **Keine Minute.** Nur die Stunde, und nur ohne Ort.
+- **Keine IP-Adresse.** Der Server sieht sie beim Empfang, speichert sie nicht —
+  auch nicht gehasht.
+- **Kein Referrer, kein Browserkennzeichen, keine Bildschirmgröße**, kein
+  Freitext. Eigenschaften des Geräts werden nicht ausgelesen.
+- **Nichts auf dem Gerät.** Die Zählungen liegen bis zum Senden im
+  Arbeitsspeicher; wer die Seite schließt, hinterlässt nichts.
+
+**Kein neuer Empfänger.** Die Zahlen liegen in derselben Datenbank in der EU wie
+die Meldungen. Es ist kein fremder Dienst beteiligt.
+
+**Aufbewahrung:** 90 Tage, dann gelöscht.
+
+**Rechtsgrundlage:** Art. 6 Abs. 1 lit. f DSGVO — das berechtigte Interesse zu
+wissen, ob und wie das Angebot benutzt wird. Da kein Zugriff auf Informationen
+im Endgerät stattfindet, greift § 25 TDDDG nicht.
+
+**Widerspruch (Art. 21 DSGVO):** In den Einstellungen steht der Schalter
+„Anonym mitzählen, was benutzt wird". Wer ihn ausschaltet, sendet nichts mehr —
+ohne Rückfrage und ohne Begründung. Ein Gerät, das
+`navigator.globalPrivacyControl` meldet, wird von vornherein nicht gezählt.
 
 ## 3. Empfänger und Auftragsverarbeiter
 

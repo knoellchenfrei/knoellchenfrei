@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App.js'
 import { ErrorBoundary } from './components/ErrorBoundary.js'
 import { registerServiceWorker, startInstallWatch } from './pwa.js'
+import { CITY } from './city.js'
+import { setTrackCity, track } from './track.js'
 import { installVectorBasemap, TILES_BASE } from './map-style.js'
 // MapLibre's stylesheet must come first: it sets `.maplibregl-map { position:
 // relative }`, which has the same specificity as our `.map` rule and would
@@ -46,6 +48,12 @@ maplibregl.setWorkerUrl(
 // Vor dem Rendern: Chrome verwirft sein Installationsangebot, wenn beim
 // Eintreffen niemand zuhört, und das ist eine Frage von Millisekunden.
 startInstallWatch()
+
+// Die Statistik braucht die geladene Stadt, bekommt sie aber hereingereicht
+// statt sie zu importieren — sonst entstünde ein Kreis mit `city.ts`, das
+// beim Städtewechsel seinerseits zählt.
+setTrackCity(CITY.key)
+track('app.open')
 
 // Ebenfalls vor dem Rendern, und nur wenn eigene Kacheln eingerichtet sind:
 // MapLibre kennt `pmtiles://` nicht von sich aus. Wird der Leser erst nach der

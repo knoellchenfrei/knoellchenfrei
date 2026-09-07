@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { HISTORY_DAYS } from '@knoellchenfrei/core'
 
 import { CITY, selectableCities, switchCity } from '../city.js'
+import { setStatistikAus, statistikAus } from '../track.js'
 import { InstallRow, useInstallState } from './InstallHint.js'
 
 interface Props {
@@ -213,6 +214,11 @@ export function SettingsSheet({
 
   const install = useInstallState()
 
+  // Einmal beim Öffnen gelesen, danach im Zustand: `localStorage` bei jedem
+  // Rendern anzufassen wäre teuer und in eingebetteten Zusammenhängen ein
+  // Wurf.
+  const [statistik, setStatistik] = useState(() => !statistikAus())
+
   useEffect(() => closeRef.current?.focus(), [])
 
   useEffect(() => {
@@ -305,6 +311,27 @@ export function SettingsSheet({
         <div className="install">
           <InstallRow state={install} />
         </div>
+
+        <h3 className="sheet__label">Nutzungsstatistik</h3>
+        <label className="schalter">
+          <input
+            type="checkbox"
+            checked={statistik}
+            onChange={(event) => {
+              const an = event.target.checked
+              setStatistikAus(!an)
+              setStatistik(an)
+            }}
+          />
+          <span>
+            Anonym mitzählen, was benutzt wird
+            <span className="schalter__hinweis">
+              Gezählt werden Tag, Stunde, Stadt und was in der App passiert — bei Zonen ohne
+              Uhrzeit. Keine Koordinaten, keine Kennung, keine Sitzung, kein Verlauf. Die Zahlen
+              bleiben in derselben Datenbank in der EU wie die Meldungen.
+            </span>
+          </span>
+        </label>
 
         <h3 className="sheet__label">Häufige Fragen</h3>
         <div className="faq">
