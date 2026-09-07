@@ -474,6 +474,25 @@ kann** — also spätestens, wenn die App öffentlich ist und jemand außer dem
 Betreiber sie einsetzt. Dann gehören Tag, Release und CHANGELOG zusammen
 eingeführt, nicht einzeln.
 
+## Die Kontrolldichte ist voreingestellt an
+
+*7. September 2026.*
+
+Von den sechs Ebenen startet genau eine eingeschaltet. Der Grund ist nicht
+Geschmack, sondern was sie zeigt: Ladepunkte, Carsharing, P+R und
+Behindertenparkplätze stehen in jeder Karte, die Kontrolldichte **nirgends
+sonst**. Sie ist der Grund, warum es diese App über einen Tarifrechner hinaus
+gibt.
+
+Dagegen sprach die übliche Regel, eine Oberfläche nichts einschalten zu lassen,
+worum niemand gebeten hat. Sie trägt hier nicht: Der Ebenen-Streifen ist auf
+dem Handy zugeklappt, und wer eine Ebene erst suchen muss, findet sie nicht.
+
+**Ohne Daten kostet es nichts.** `heat.hasPattern` bleibt falsch, solange zu
+wenige Meldungen da sind — dann steht der Schalter auf „an" über einer Fläche,
+die leer bleibt, und die Tafel daneben sagt, warum. Aus fünf Meldungen eine
+Karte zu färben sähe nach Wissen aus und wäre Rauschen.
+
 ## R2-CORS ohne `localhost`
 
 *7. September 2026, Audit-Punkt M-050.*

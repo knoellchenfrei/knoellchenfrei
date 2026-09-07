@@ -242,13 +242,24 @@ Umlautdomains so verlangen.
       7. September: `knoellchenfrei.de`, `knoellchenfrei.org`,
       `knoelchenfrei.de`, `knöllchenfrei.de` und `knölchenfrei.de` sind eigene
       Zonen und `active`.
-
 - [x] **Weiterleitungen laufen, und zwar bei Cloudflare** — alle vier
       Nebendomains antworten mit `301` auf `https://knoellchenfrei.de/`, mit
       gültigem Zertifikat. Nachgemessen am 7. September, auch für die beiden
       Punycode-Formen `xn--knllchenfrei-5ib.de` und `xn--knlchenfrei-sfb.de`.
-
 - [x] `.org` hängt nicht mehr — die Zone ist `active` und leitet weiter.
+## 3. Umzug ins neue Repository — erledigt am 6. September 2026
+
+Entschieden und umgesetzt: **`github.com/knoellchenfrei/knoellchenfrei`** —
+Organisation und Repository gleich benannt, klein geschrieben, wie bei
+`github.com/FreiFahren/FreiFahren`.
+
+Warum nicht `knoellchenfrei/app`: Repository-Namen wandern in Verzeichnisse, in
+CI-Konfigurationen und in `git remote -v`, und dort fällt das Präfix der
+Organisation weg. Ein Ordner namens `app` auf der Platte sagt nichts. Die
+Doppelnennung in der Adresse ist der Preis dafür, dass der Name überall dort
+noch trägt, wo er allein steht. Getrennte Repositories brauchen wir absehbar
+nicht: Der Kachel-Bau und der Telegram-Worker teilen sich Typen und
+Deploy-Werkzeug mit dem Rest und gehören als Pakete in dasselbe Monorepo.
 
 - [x] Organisation `knoellchenfrei` auf GitHub angelegt.
 - [x] Repository `knoellchenfrei` darin angelegt, öffentlich.
@@ -337,6 +348,27 @@ Was am neuen Repository noch offen ist — **du**:
       durchgereicht. Nachgemessen mit gesetztem `Origin`: `206` auf den Kopf
       jeder der vier Dateien unter `aktuell/`. Der Bau läuft seit dem
       7. September wöchentlich als Workflow.
+- [x] **Schneidet alle vier Städte, nicht nur Berlin** — die Rahmen kommen aus
+      `core/city.ts`, nicht als zweite Zahlenreihe im Skript.
+
+Warum das nicht warten durfte: Die Kacheln kamen von `tile.openstreetmap.org`.
+Deren Nutzungsrichtlinie deckt ausgelieferte Anwendungen nicht ab, und die
+IP-Adressen aller Nutzer gingen an einen Dritten, über den die
+Datenschutzerklärung Auskunft geben muss. **Seit dem 7. September ist das
+erledigt**; die Rasterkacheln sind nur noch der Rückfall für Bauten ohne
+`VITE_TILES_URL` — lokal und in der Testsuite. Der letzte fremde Abruf sind
+die Schriften von `protomaps.github.io`. Details in
+[hosting.md](hosting.md#4-eigene-kartenkacheln).
+
+## 5. Weitere Städte — vier laufen — **ich**
+
+Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
+weiteren Städten in
+[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md). Hamburg ist seit
+dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
+**vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
+angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat;
+Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016).
 
 - [x] **Stadt als Konfiguration statt als Konstante.** `core/city.ts` trägt
       Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze, Bundesland und
@@ -739,11 +771,23 @@ warten, bis der Worker steht.
       Schalterbrett liegen und für öffentliche Repositories nichts kosten:
       **Secret Scanning** und **Push Protection**. `einrichten.sh` prüft alle
       drei jetzt selbst, statt sie zu glauben.
-
 - [x] **GitHub Pages ist aus** — am 7. September nachgemessen: `/repos/…/pages`
       antwortet `404`, es gibt keine Seite mehr. Musste weg, weil sich dort
       kein Riegel davorsetzen lässt; der Beta-Zugang läuft über eine
       Pages-**Funktion**, und die gibt es bei GitHub Pages nicht.
+## 8. Der Worker kennt zwei Städte — erledigt am 6. September 2026
+
+Beim Durchsehen von [hosting.md](hosting.md) aufgefallen, und es wäre erst
+aufgefallen, wenn der Worker scharf geht: Die App schaltet seit dem
+6. September zwischen Berlin und Hamburg um, der Worker nicht. `Env.CITY`
+wählte **eine** Stadt (ohne Wert: Berlin), `withinCity` wies alles andere ab,
+`schema.sql` hatte keine Stadtspalte. Eine Hamburger Meldung bekam
+**`422 position outside Berlin`** — in der App sähe das aus, als sei das
+Melden kaputt.
+
+**Geworden ist es eine Spalte `city`, keine Datenbank je Stadt.** FreiFahren
+fährt je Stadt eine eigene D1 *und* einen eigenen Worker; für zwei Städte auf
+dem Free Tier ist das n-mal Betrieb ohne Gegenwert.
 
 - [x] **Stadt aus der Position, nicht aus der Konfiguration.** Neu in
       `core/city.ts`: `cityAt(lon, lat)` gibt die erste Stadt zurück, deren

@@ -200,8 +200,13 @@ test.describe('Ebenen und Sonderziele', () => {
     await charging.click()
     await expect(charging).toHaveClass(/chip--on/)
     // The count badge on the collapsed toggle reflects active layers.
+    //
+    // **Zwei**, nicht eine: Die Kontrolldichte ist seit dem 7. September von
+    // Anfang an eingeschaltet. Sie ist die einzige Ebene, die etwas zeigt, das
+    // es nirgends sonst gibt — und der Streifen ist auf dem Handy zugeklappt,
+    // wer sie erst suchen muss, findet sie nicht.
     await page.locator('.chip--toggle').click()
-    await expect(page.locator('.chip__count')).toHaveText('1')
+    await expect(page.locator('.chip__count')).toHaveText('2')
 
     await page.locator('.chip--toggle').click()
     await charging.click()
@@ -496,7 +501,7 @@ test.describe('Kontrolldichte', () => {
     await expect(page.locator(`${heatPanel} .demo-note`)).toContainText('Beispielmuster')
   })
 
-  test('zeichnet die Ebene erst, wenn sie eingeschaltet ist', async ({ page }) => {
+  test('ist von Anfang an eingeschaltet und lässt sich abschalten', async ({ page }) => {
     await ready(page)
     await openPanel(page)
     const visible = async (): Promise<string> =>
@@ -505,10 +510,12 @@ test.describe('Kontrolldichte', () => {
         return map?.getLayoutProperty('heat-density', 'visibility') ?? 'missing'
       })
 
-    await page.locator(`${heatPanel} button`).click()
+    // Der Knopf steht auf „Ausblenden", weil die Ebene bereits liegt.
     await expect(page.locator(`${heatPanel} button`)).toHaveText('Ausblenden')
     await page.locator(`${heatPanel} button`).click()
     await expect(page.locator(`${heatPanel} button`)).toHaveText('Auf der Karte')
+    await page.locator(`${heatPanel} button`).click()
+    await expect(page.locator(`${heatPanel} button`)).toHaveText('Ausblenden')
     // The evaluate above needs the map on window; where it is not exposed the
     // button state is still the contract the user sees.
     expect(['visible', 'none', 'missing']).toContain(await visible())

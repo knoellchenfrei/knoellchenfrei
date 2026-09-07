@@ -157,7 +157,20 @@ export function App() {
   // Kept apart from `sightings` on purpose — different shape, different
   // retention, and nothing links a mark back to the report that made it.
   const [marks, setMarks] = useState<HeatMark[]>([])
-  const [showHeat, setShowHeat] = useState(false)
+  /**
+   * Die Kontrolldichte ist **eingeschaltet**, die übrigen Ebenen nicht.
+   *
+   * Sie ist der Grund, warum es diese App gibt, und die einzige Ebene, die
+   * etwas zeigt, das man nirgends sonst bekommt — Ladepunkte und
+   * Behindertenparkplätze stehen in jeder Karte. Wer sie erst suchen muss,
+   * findet sie nicht: Der Ebenen-Streifen ist auf dem Handy zugeklappt.
+   *
+   * Ohne Daten kostet das nichts. `heat.hasPattern` bleibt falsch, solange zu
+   * wenige Meldungen da sind, und dann zeichnet die Ebene ohnehin nichts —
+   * der Schalter steht dann auf „an" über einer Fläche, die leer bleibt, und
+   * die Tafel daneben sagt, warum.
+   */
+  const [showHeat, setShowHeat] = useState(true)
   // True while the heatmap is drawn from generated data rather than reports.
   const [seeded, setSeeded] = useState(false)
   // Same for the sighting list. Separate flags on purpose: sightings expire
