@@ -1,7 +1,7 @@
 /**
  * Amtliche Quellen, nach Stadt.
  *
- * Drei Städte, drei Behörden — und drei Unterschiede, die jeder einzeln einen
+ * Vier Städte, vier Behörden — und drei Unterschiede, die jeder einzeln einen
  * halben Tag kosten, wenn man sie erst im Datenbau bemerkt:
  *
  * 1. **Ausgabeformat.** Berlin liefert `application/json`, Hamburg kennt das
@@ -116,6 +116,114 @@ const HAMBURG_SOURCES: readonly Source[] = [
 ]
 
 /**
+ * München — Landeshauptstadt München, DL-DE/BY-2.0.
+ *
+ * Zahlen und Typnamen sind am 7. September 2026 mit `resultType=hits` gegen den
+ * Dienst selbst geprüft, nicht aus Metadaten übernommen.
+ *
+ * Zwei Dienste auf **einem** Server: `mor_wfs` (Mobilitätsreferat) führt 68
+ * Ebenen und darunter alles zum Parken; die Verwaltungsgrenzen liegen im
+ * Arbeitsbereich `gsm_wfs` (GeodatenService). Gefunden über den offenen
+ * Datenkatalog der Stadt (`opendata.muenchen.de/api/3/action/package_search`),
+ * nicht durch Raten von Endpunkten — dasselbe Vorgehen wie bei Frankfurts
+ * Stadtteilen. Die Sammel-Adresse `/geoserver/ows` antwortet mit
+ * `ServiceUnavailable: Service WFS is disabled`; jeder Arbeitsbereich muss
+ * einzeln angefragt werden.
+ *
+ * Die Lizenz ist für **jede** Ebene einzeln aus ihrem ISO-Metadatensatz
+ * geprüft (`MetadataURL` aus `GetCapabilities`, `/metadata/srv/api/records/…`).
+ * Alle nennen `dl-de-by-2.0`; die Parkebenen den Quellenvermerk
+ * `Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de`,
+ * die Stadtbezirke abweichend den GeodatenService. Beides steht in
+ * `docs/staedte.md`.
+ *
+ * Bewusst NICHT abgerufen: `ruhver_els_saeule_point` (592 Ladesäulen) neben
+ * `ruhver_els_standort_point` (369 Standorte) — dieselben Orte, nur feiner
+ * gezählt; zwei Punkte übereinander sind auf der Karte kein Gewinn. Und die
+ * 40 übrigen Ebenen des Dienstes (Radwege, Ampeln, Baustellen, Bushaltestellen
+ * …) beantworten andere Fragen als „was kostet Parken hier".
+ */
+const MUENCHEN_MOR = 'https://geoportal.muenchen.de/geoserver/mor_wfs/ows'
+
+const MUENCHEN_DEFAULTS = {
+  // GeoServer wie in Berlin und Frankfurt: `application/json`. Hamburgs
+  // `application/geo+json` steht in `GetCapabilities` gar nicht erst.
+  outputFormat: 'application/json',
+  // `DefaultCRS` ist EPSG:25832 — ohne `srsName` kämen also UTM-Meter.
+  // `wfsUrl` setzt ihn; die Antwort ist dann `[11.573, 48.156]`, also
+  // `[lon, lat]` wie in Berlin und Frankfurt und anders als in Hamburg.
+  axisOrder: 'lon,lat',
+} as const
+
+const MUENCHEN_SOURCES: readonly Source[] = [
+  {
+    key: 'zones',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:ruhver_prm_gebiete_poly',
+    expectedFeatures: 82,
+    ...MUENCHEN_DEFAULTS,
+  },
+  // Die eigentliche Sachauskunft, und die größte Datei des Projekts: 6,5 MB.
+  // Wie in Frankfurt hängen Zeiten nicht am Gebiet, sondern eine Ebene tiefer
+  // — hier an der einzelnen Straßenseite. Ohne sie wüsste die App von einem
+  // Gebiet nur, dass es existiert.
+  {
+    key: 'sides',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:ruhver_parkseiten_line',
+    expectedFeatures: 13714,
+    ...MUENCHEN_DEFAULTS,
+  },
+  // Anders als Hamburg und Frankfurt liefert München die Umweltzone mit —
+  // als 12 Polygone, nicht als eines: die Zone selbst und elf Transferflächen.
+  {
+    key: 'lowEmissionZone',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:miv_umweltzone_poly',
+    expectedFeatures: 12,
+    ...MUENCHEN_DEFAULTS,
+  },
+  {
+    key: 'accessible',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:behindertenparkplaetze',
+    expectedFeatures: 556,
+    ...MUENCHEN_DEFAULTS,
+  },
+  {
+    key: 'parkAndRide',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:park_ride_standorte',
+    expectedFeatures: 25,
+    ...MUENCHEN_DEFAULTS,
+  },
+  {
+    key: 'charging',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:ruhver_els_standort_point',
+    expectedFeatures: 369,
+    ...MUENCHEN_DEFAULTS,
+  },
+  {
+    key: 'carsharing',
+    service: MUENCHEN_MOR,
+    typeName: 'mor_wfs:ruhver_carsharing',
+    expectedFeatures: 710,
+    ...MUENCHEN_DEFAULTS,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile: Ohne Hintergrundkarte schweben die
+  // Gebiete sonst im Nichts. Anderer Arbeitsbereich, gleiche Lizenz, anderer
+  // Quellenvermerk — siehe oben.
+  {
+    key: 'districts',
+    service: 'https://geoportal.muenchen.de/geoserver/gsm_wfs/ows',
+    typeName: 'gsm_wfs:vablock_stadtbezirk',
+    expectedFeatures: 27,
+    ...MUENCHEN_DEFAULTS,
+  },
+]
+
+/**
  * Frankfurt am Main — Stadt Frankfurt am Main, DL-DE/BY-2.0.
  *
  * Zahlen und Typnamen sind am 7. September 2026 gegen die Dienste selbst
@@ -190,6 +298,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
   frankfurt: FRANKFURT_SOURCES,
+  muenchen: MUENCHEN_SOURCES,
 }
 
 /**
