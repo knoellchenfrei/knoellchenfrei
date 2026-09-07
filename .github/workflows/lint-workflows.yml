@@ -49,7 +49,7 @@ jobs:
                   bad.append(f'{path}: {error}')
                   print(f'FAIL {path}\n{error}')
 
-          # Gültiges YAML reicht nicht: GitHub wertet `${{ … }}` an **jeder**
+          # Gültiges YAML reicht nicht: GitHub wertet die Ausdruck-Klammern an **jeder**
           # Stelle der Datei aus, auch in einem Kommentar innerhalb eines
           # `run:`-Blocks. Ein leerer Ausdruck ist dort ein Syntaxfehler, und
           # der Lauf scheitert nach null Sekunden mit „This run likely failed
@@ -62,6 +62,6 @@ jobs:
               for nummer, zeile in enumerate(path.read_text().splitlines(), 1):
                   if leer.search(zeile):
                       bad.append(f'{path}:{nummer}: leerer Ausdruck')
-                      print(f'FAIL {path}:{nummer}: leerer ${{{{ }}}} — GitHub wertet das aus, auch im Kommentar')
+                      print(f'FAIL {path}:{nummer}: leerer Ausdruck — GitHub wertet die Klammern aus, auch im Kommentar')
           sys.exit(1 if bad else 0)
           PY

@@ -91,7 +91,12 @@ wiederholt.
   failed because of a workflow file issue"* — ohne Zeilennummer, ohne Log, ohne
   Job, und im Lauf steht statt des Workflow-Namens der Dateipfad. `js-yaml`
   findet das nicht, die Datei ist gültiges YAML. `lint-workflows.yml` sucht
-  seitdem danach.
+  seitdem danach — und trat dabei prompt in dieselbe Falle: Die Fundmeldung
+  enthielt die Klammern als Beispiel, diesmal maskiert für Pythons
+  f-string (`${{{{ }}}}`), und GitHub las die erste Hälfte davon wieder als
+  Ausdruck. **In dieser Datei darf die Zeichenfolge gar nicht vorkommen**, auch
+  nicht maskiert, auch nicht in einer Fehlermeldung. Wer über sie schreiben
+  will, umschreibt sie.
 - **Keine mehrzeiligen Commit-Nachrichten in einem `run: |`-Block einer
   Workflow-Datei.** Das bricht zweimal aus dem YAML-Blockskalar aus und hat
   zweimal kaputte Workflows gepusht. Zwei `-m`-Flags benutzen.
