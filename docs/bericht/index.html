@@ -1118,12 +1118,207 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 
 
 <section>
+  <h2>Sechster Nachtrag</h2>
+  <div class="col">
+    <h3>Die zweite Nacht: erst prüfen, dann zwei Städte</h3>
+    <p>Der Auftrag für die Nacht kam in zwei Sätzen. Erst ein
+    <strong>Audit, nur lesend</strong> — sechs Blickwinkel, jeder Befund mit
+    Beleg, keine Korrektur, Geheimnisse geschwärzt. Dann: „Mit Opus 5
+    implementierst du die App für andere Städte. Analysiere erst, welche Städte
+    coole Daten bereitstellen, und setz das um, analog Hamburg. Immer testen.
+    Du hast Prokura." Ich war ab da auf Fable 5.1 und habe orchestriert;
+    gebaut haben fünf Agenten auf Opus 5, einer nach dem anderen, jeder mit
+    der ganzen Prüfkette vor dem Commit.</p>
+
+    <h3>Das Audit: 102 Befunde, einer kritisch</h3>
+    <p>Sechs Agenten gleichzeitig — Dokumentation, Konsistenz, Ausfall und
+    Wiederherstellung, Sicherheit, Recht, Open Source — über 176 Dateien,
+    zusammengeführt und dedupliziert auf <strong>102 Befunde</strong>: 1
+    kritisch, 10 hoch, 31 mittel, 40 niedrig, 20 zur Kenntnis. Dazu sechs
+    Stellen, an denen zwei Agenten sich widersprachen; die stehen als
+    Widersprüche im Bericht, nicht als Mehrheitsentscheid. Der kritische Punkt
+    ist kein Code: die fünf Domains ohne Auto-Renew beim Registrar. Was sich in
+    einer Viertelstunde beheben ließ, ist behoben — veraltete Verweise in der
+    Todo-Liste, ein Beitragsleitfaden mit den Zahlen von vor drei Tagen, der
+    Bot-Name (er heißt <code>@knoellchen_bot</code>, fünf Dokumente sagten
+    etwas anderes), eine <code>package.json</code> im Wurzelverzeichnis, die
+    jedem <code>npm install</code> pnpm 12 statt der festgelegten 10.33
+    beschert hätte. Und die 22 <code>uses:</code>-Zeilen der Workflows hängen
+    jetzt an Commit-SHAs statt an beweglichen Tags — ob die SHAs stimmen, hat
+    der nächste CI-Lauf bewiesen, nicht ich.</p>
+    <p>Der ganze Bericht liegt unter <code>audit/REPORT.md</code>; was davon
+    Betreiberkonto oder Anwalt braucht, steht in <code>docs/todo.md</code>.</p>
+
+    <h3>24 Städte, zwei davon brauchbar</h3>
+    <p>Ein Rechercheagent hat sechzehn Städte gegen ihre Dienste abgerufen und
+    acht kurz geprüft — Abrufe, nicht Metadaten. Das Ergebnis ist ernüchternder
+    als die Portale versprechen.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Stadt</th><th>Befund</th><th>Folge</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Frankfurt am Main</td><td>Die einzige Großstadt, deren Feed Geometrie, Betrag (<code>2 €/h</code>, <code>4 €/h</code>), Zeiten und Höchstparkdauer maschinenlesbar und aktuell liefert — geändert am 4. September, drei Tage vor dem Abruf. Dieselbe Lizenz wie Hamburg.</td><td><strong>angeschlossen</strong></td></tr>
+        <tr><td class="k">München</td><td>Nach Berlin der detaillierteste Datensatz Deutschlands: 13.714 Straßenseiten mit Regeltext. Aber <strong>kein einziger Betrag</strong> in 291 Schreibweisen — der Tarif steht in einer PDF.</td><td><strong>angeschlossen</strong>, Tarif ehrlich als „nicht angegeben"</td></tr>
+        <tr><td class="k">Köln</td><td>Auf dem Papier alles, sogar die bequemste Lizenz. Aber das Gebührenfeld nennt 1,50 und 3,00 €/h; die Stadt selbst schreibt 2,50 und 5,00 — der Datensatz ist zwei Erhöhungen alt und heißt intern noch <code>psa_2016.csv</code>.</td><td>erst nach Rückfrage beim Amt</td></tr>
+        <tr><td class="k">Stuttgart, Leipzig, Bremen, Hannover, Nürnberg, Münster, Potsdam, Freiburg</td><td>Kein Parkdatensatz. Nicht „schwer zu finden" — keiner.</td><td>—</td></tr>
+        <tr><td class="k">Hamburg, nebenbei</td><td>Ein zweiter Feed, den wir nicht nutzen: 2.003 Parkscheinautomaten mit Zeiten <em>je Wochentag als Feld</em> statt als Satz. Er bestätigt unabhängig die vertauschten Achsen und den <code>9999</code>-Platzhalter.</td><td>offen, in der Todo-Liste</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Frankfurt: der Tarif hängt am Automaten</h3>
+    <p>Das ist die eine Eigenheit, die alles bestimmt. Die 42 Bewohnerparkbereiche
+    tragen nichts als eine Nummer; Betrag, Geltungszeit und Höchstparkdauer
+    stehen an den 921 Parkscheinautomaten. Was für einen Bereich gilt, entsteht
+    also erst, indem man die Automaten <em>darin</em> zusammenlegt — mit allen
+    Widersprüchen, die dabei sichtbar werden. Der Agent hat beide Wege
+    gemessen: Das Attribut <code>bewohnerparkzone</code> ordnet 503 Automaten
+    21 Bereichen zu, Punkt-in-Polygon 808 Automaten 27 Bereichen, und die 21
+    sind eine echte Teilmenge der 27. Dazu 13 Widersprüche und zwei Automaten,
+    die auf einen Bereich zeigen, in dem sie nicht stehen. Die Geometrie hat
+    gewonnen. 15 Bereiche fallen weg, weil kein einziger Automat darin steht;
+    das Flag <code>mitparkraumbewirtschaftung</code>, das so etwas sagen sollte,
+    sagt es nachweislich nicht — 16 nicht geflaggte Bereiche haben zusammen 245
+    Automaten.</p>
+    <p>Die Stadtteile hat der Parken-Dienst nicht; sechs geratene Endpunkte
+    brachten sechsmal 404. Gefunden wurden die 46 über den Metadatenkatalog der
+    Stadt, samt Lizenz und Quellenvermerk — zehn Minuten, die einen Rückfall auf
+    „Stadtname als Bezirk" ersparen.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Plausible Zahlen, keine Grade</span>
+    <p>Ohne <code>srsName</code> antwortet Frankfurts WFS stillschweigend in
+    UTM: <code>[477189.85, 5550859.91]</code>. Kein Fehler, keine Warnung — auf
+    der Karte sähe es nach „leer" aus. Unser Abruf setzt den Parameter für alle
+    Städte, und der Datenbau bricht trotzdem ab, sobald ein Wert über 180 Grad
+    ankommt. Eine Konfiguration, deren Fehlen man nicht bemerkt, gehört geprüft,
+    nicht geglaubt. Und noch einer aus derselben Familie: <code>bewohnerparkzone</code>
+    stand im Interface als Zeichenkette und ist im Feed eine <strong>Zahl</strong>.
+    TypeScript prüft eine gelesene JSON-Datei nicht. Der Datenbau brach mit
+    <code>claimed.trim is not a function</code> ab — ein Glücksfall, denn hätte
+    er nur verglichen, wäre <code>19 === '19'</code> stillschweigend immer falsch
+    gewesen und alle 921 Automaten „ohne Bereich" geblieben, bei einer Zahl im
+    Log, die plausibel aussieht.</p>
+  </div>
+
+  <div class="col">
+    <h3>München: eine kleine Grammatik, und ein Feiertag, der an der Stadt hängt</h3>
+    <p>Berlin hat 18 Schreibweisen der Zeiten, Hamburg 10, Frankfurt 30 —
+    München <strong>291</strong>, und sie sind zusammengesetzt:
+    <code>Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr, Eingeschränktes
+    Halteverbot 8:30-16 Uhr, Mischparken 19-23 Uhr</code> ist <em>ein</em> Wert.
+    Der Parser dafür ist keine Zeile regulärer Ausdruck, sondern eine kleine
+    Grammatik: Klauseln an Regelphrasen trennen, je Klausel Tage und Zeiten
+    lesen, „an Schultagen" ausdrücklich <em>nicht</em> auflösen. 7 von 18
+    Regelgruppen tragen zur Antwort bei; die anderen 11 — Halteverbote
+    0–24 Uhr, E-Parken, Carsharing, Taxi, Baustelle — würden aus der App eine
+    Halteverbotskarte machen. 12.365 der 13.714 Straßenseiten hängen an einem
+    der 82 Gebiete; 1.307 liegen außerhalb, und 40 nennen zwei Gebiete, die es
+    als Polygon nicht gibt — vermutlich in Vorbereitung, das ist eine der drei
+    Rückfragen an die Stadt.</p>
+    <p>Wo keine Tage stehen, gilt Montag bis Samstag: Sonntag kommt in genau 4
+    der 291 Texte vor, und dort ausgeschrieben. Sieben Tage anzunehmen hieße,
+    sonntags stadtweit zu kassieren. Das ist eine Annahme aus dem Feed selbst,
+    und sie steht als solche in der Doku, nicht als Tatsache.</p>
+    <p><strong>Mariä Himmelfahrt.</strong> Der erste Nachtrag hatte den
+    Fallstrick schon benannt: In Bayern gilt der 15. August nur „in Gemeinden
+    mit überwiegend katholischer Bevölkerung" — Art. 1 Abs. 1 Nr. 2 des
+    Feiertagsgesetzes, und welche das sind, stellt das Landesamt für Statistik
+    fest. Dessen Gemeindeabfrage führt München mit <em>ja</em> (402.058 zu
+    147.912) und Nürnberg mit <em>nein</em>. Eine Tabelle je Bundesland hätte
+    also für die zweitgrößte Stadt des Landes zwangsläufig unrecht. Der Eintrag
+    hängt jetzt an der Stadt, nicht am Land, und ein Datum, das nicht
+    <code>MM-TT</code> ist, wirft — ein Tippfehler wie <code>15-08</code> passte
+    sonst auf keinen Schlüssel und bewirkte stillschweigend nichts.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">„frei" in Freitag</span>
+    <p>176 der 291 Münchner Texte brachen beim ersten Lauf ab. Die Klauseln
+    wurden an Phrasen wie <code>Mischparken</code> und <code>frei</code>
+    zerschnitten — und <code>frei</code> fand das „Frei" in <strong>Freitag</strong>.
+    Eine Ebene tiefer dasselbe: <code>Mi</code> las „mit", <code>So</code> las
+    „sonst", <code>Mo</code> las „(Motorradparken)". Die naheliegende Wortgrenze
+    <code>\b</code> geht nicht, weil die Quelle <code>Mischparken13-23 Uhr</code>
+    ohne Leerzeichen schreibt. Richtig ist eine Grenze, die Ziffern erlaubt und
+    Buchstaben nicht. Beide Fälle brachen laut ab; der leise wäre eine Klausel
+    gewesen, deren Fenster plötzlich am Sonntag hängt.</p>
+  </div>
+
+  <div class="col">
+    <h3>Was mit der vierten Stadt fällig wurde</h3>
+    <p>Mit zwei Städten war die Liste in den Einstellungen ein Umschalter. Mit
+    vieren ist sie die einzige Stelle, an der jemand überhaupt erfährt, dass
+    seine Stadt dabei ist. Deshalb jetzt, nach FreiFahrens Vorbild:
+    <strong>„Dein Standort liegt in München. Zonen und Meldungen zeigt die App
+    gerade für Berlin."</strong> — mit „hier bleiben" und „wechseln", aus der
+    Position, die die App ohnehin hat, ohne zweite Berechtigungsabfrage, und
+    die Ablehnung wird je Stadt gemerkt. Die FAQ ist je Stadt gefiltert; die
+    Münchner Frage „Warum steht kein Preis da?" bekommt die ehrliche Antwort.
+    Und nebenbei fand der Agent, was niemand bestellt hatte: Die
+    Beispiel-Sichtungen waren Berliner Koordinaten, fest im Code — in München
+    lagen sie 500 km neben der Karte, und die Kontrollliste nannte dreimal
+    „Außerhalb der Zonen".</p>
+
+    <h3>Beschuss mit Unfug</h3>
+    <p>Zum Schluss ein Agent nur für die Testabdeckung — nicht, um Zeilen zu
+    färben, sondern um alle vier Zeitparser, drei Gebührenparser, den
+    Telegram-Parser und die Sichtungsprüfung mit Zufallszeichenketten zu
+    beschießen: Jeder darf nur seinen eigenen Fehler werfen oder ein gültiges
+    Ergebnis liefern. Drei echte Fehler, alle mit Regressionstest:</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Fehler</th><th>Was passiert wäre</th></tr></thead>
+      <tbody>
+        <tr><td class="k"><code>0,00 Euro</code> war ein Preis</td><td>In allen drei Gebührenparsern ergab ein Nullbetrag <code>exact</code> mit 0 Cent und damit <code>priced: true</code> — der einzige Weg, an der Sperre vorbei ein „0,00 €" auf den Schirm zu bringen. In Frankfurt hätte er die Spanne eines ganzen Bereichs auf „0,00–4,00 €" heruntergezogen. Jetzt bricht der Datenbau ab. Kein Abzug der vier Städte enthält einen Nullbetrag.</td></tr>
+        <tr><td class="k"><code>Fr-Mo</code> warf die falsche Klasse</td><td>Eine umgedrehte Tagesspanne ist Feed-Inhalt, kein Programmfehler; der Parser warf ein blankes <code>Error</code> ohne die Rohzeile, und wer auf <code>ScheduleParseError</code> prüfte, hätte einen Absturz statt einer unlesbaren Zeile gesehen.</td></tr>
+        <tr><td class="k"><code>reportedAt: NaN</code></td><td>Ergab <code>score: NaN</code>. Der Status fiel nur zufällig richtig aus, weil jeder Vergleich mit NaN falsch ist. Ein unlesbarer Zeitstempel ist jetzt unendlich alt.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>23:25</th><th>03:50</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Städte</td><td class="n">2</td><td class="n">4</td></tr>
+        <tr><td class="k">Zonen und Gebiete</td><td class="n">248</td><td class="n">357</td></tr>
+        <tr><td class="k">Bundesländer im Feiertagskalender</td><td class="n">2</td><td class="n">4, plus ein Feiertag an der Stadt</td></tr>
+        <tr><td class="k">Parser für Zeiten</td><td class="n">2</td><td class="n">4 — nie ein gemeinsamer</td></tr>
+        <tr><td class="k">Unit-Tests</td><td class="n">190</td><td class="n">463</td></tr>
+        <tr><td class="k">End-to-End</td><td class="n">107</td><td class="n">128</td></tr>
+        <tr><td class="k">Coverage, Zeilen / Zweige</td><td class="n">96,1 % / 90,4 %</td><td class="n">99,9 % / 96,1 %</td></tr>
+        <tr><td class="k">Regressionstests für gefundene Fehler</td><td class="n">24</td><td class="n">30</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Was die Zahl 128 verschweigt: <code>CLAUDE.md</code> nannte 107, und der
+    Frankfurt-Agent hat nachgemessen — es waren 108. Um eins daneben, seit
+    Tagen, in einer Datei, die „nachgemessen statt geschätzt" predigt. Steht
+    jetzt richtig, und die Zahl kommt aus <code>--list</code>, nicht aus dem
+    Gedächtnis.</p>
+    <p>Jede Stadt ist nach demselben Ablauf durchgegangen: Typprüfung, alle
+    Unit-Tests, Web-Build, Artifact, die volle End-to-End-Suite — und zwar
+    zweimal, einmal beim Agenten vor seinem Commit und einmal bei mir vor dem
+    Push. Kein Commit ist rausgegangen, solange etwas rot war; die vier
+    Workflows waren auf jedem gepushten Stand grün, und alle vier Städte sind
+    ausgeliefert.</p>
+  </div>
+</section>
+
+<section>
   <h2>Offen</h2>
   <div class="col">
     <h3>Was noch aussteht</h3>
-    <p>Fast kein Punkt davon ist Code. Was übrig ist, sind Konten, Unterschriften
-    und sieben Menschen — und zwei Aufgaben, die an gesperrten Adressen hängen,
-    nicht an fehlender Zeit.</p>
+    <p>Fast kein Punkt davon ist Code. Was übrig ist, sind Konten, Unterschriften,
+    sieben Menschen — und seit dieser Nacht fünf Fragen an zwei Ämter, die nur
+    ein Mensch mit einer Absenderadresse stellen kann.</p>
   </div>
   <div class="scroll">
     <table>
@@ -1136,8 +1331,11 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
         <tr><td class="k">Organisationsbild und Vorschaubild hochladen</td><td><span class="chip user">du</span></td><td>für beide kennt die GitHub-API keinen Endpunkt</td></tr>
         <tr><td class="k">Impressum und Datenschutz ausformulieren</td><td><span class="chip agent">ich</span></td><td>wartet auf Verein und Dienstleister</td></tr>
         <tr><td class="k">Startseite nach dem Vorbild von <span class="mono">freifahren.org</span></td><td><span class="chip agent">ich</span></td><td>wartet auf den Verein — vorher trägt sie nichts</td></tr>
-        <tr><td class="k">München als dritte Stadt prüfen</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
-        <tr><td class="k">Produktname entberlinern (Titel, Manifest, Überschrift)</td><td><span class="chip agent">ich</span></td><td>—</td></tr>
+        <tr><td class="k">Rückfragen an Frankfurt und München</td><td><span class="chip user">du</span></td><td>zwei an <span class="mono">SVA.GDI@stadt-frankfurt.de</span>, drei an <span class="mono">gb1-23.mor@muenchen.de</span> — Wortlaut in <code>docs/todo.md</code>; braucht eine Absenderadresse, die keine private ist</td></tr>
+        <tr><td class="k">Telegram-Gruppen <span class="mono">_F</span> und <span class="mono">_M</span> anlegen</td><td><span class="chip user">du</span></td><td>Bilder liegen bereit; erst, wenn die Städte freigeschaltet werden</td></tr>
+        <tr><td class="k">Köln nachfragen, wann <span class="mono">psa_2016.csv</span> aktualisiert wird</td><td><span class="chip user">du</span></td><td>2.315 Automaten unter DL-DE/Zero — den Anruf wert</td></tr>
+        <tr><td class="k">Alle vier Städte im Deploy neu bauen</td><td><span class="chip agent">ich</span></td><td>heute nur Berlin; ein wöchentlicher Job je Stadt mit <code>continue-on-error</code></td></tr>
+        <tr><td class="k">Heatmap-Raster ist Berlin</td><td><span class="chip agent">ich</span></td><td>Zellen in München 9 % breiter; ein Wechsel ändert gespeicherte Schlüssel, deshalb erst mit Migrationsplan</td></tr>
         <tr><td class="k">Telegram Stufe 2: Gruppen mitlesen</td><td><span class="chip agent">ich</span></td><td>braucht einen Missbrauchsfilter</td></tr>
       </tbody>
     </table>
@@ -1225,6 +1423,28 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
     </table>
   </div>
 
+  <div class="col">
+    <h3>Dieselbe Sitzung, die Nacht danach — bis 03:50</h3>
+    <p>Die Messung um 23:25 war ein Zwischenstand; die Sitzung lief weiter, mit
+    dem Audit, der Recherche und den zwei Städten. Hier der Zuwachs aus
+    derselben Buchhaltung — die Differenz zweier <code>get_session</code>-Abrufe,
+    keine Schätzung.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>Wert</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="k">Laufzeit</td><td class="n">4 h 25 min</td><td>23:25 bis 03:50; die Sitzung insgesamt 14 h 29 min</td></tr>
+        <tr><td class="k">Commits</td><td class="n">19</td><td>Audit 3, Recherche 1, Frankfurt 5, München 4, Bilder 1, Oberfläche 2, Tests 3; 213 versionierte Dateien</td></tr>
+        <tr><td class="k">Modell</td><td class="n">claude-fable-5-1</td><td>ab dem Audit, auf Wunsch gewechselt; die fünf Bau-Agenten liefen auf <code>claude-opus-5</code></td></tr>
+        <tr><td class="k">Agenten</td><td class="n">11</td><td>sechs fürs Audit gleichzeitig, danach fünf nacheinander — Recherche, Frankfurt, München, Oberfläche, Tests</td></tr>
+        <tr><td class="k">Tokens</td><td class="n">213.071.411</td><td>davon <strong>95,8 % Cache-Lesevorgänge</strong>; geschrieben 7,7 Mio., ausgegeben 1,1 Mio. — mehr Ausgabe als am ganzen Tag davor, weil fünf Agenten Code geschrieben haben</td></tr>
+        <tr><td class="k">Kosten</td><td class="n">206,23 $</td><td>10,85 $ je Commit — fünfmal teurer als am Tag davor. Der Preis der Parallelität: sechs Audit-Agenten lesen dasselbe Repository sechsmal.</td></tr>
+        <tr><td class="k">Sitzung gesamt</td><td class="n">375,28 $</td><td>481.911.413 Tokens seit 13:21</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="note">
     <span class="lbl">Was die Zahlen nicht sagen</span>
     <p>Die teuerste Stunde dieses Tages steht in keiner Spalte: ein
@@ -1246,15 +1466,16 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
 </section>
 
 <footer>
-  <p>Stand 7. September 2026, kurz nach eins. Der Hauptteil beschreibt die Nacht
+  <p>Stand 7. September 2026, kurz vor vier. Der Hauptteil beschreibt die Nacht
   und den Tag bis 12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>;
-  die fünf Nachträge alles danach — Umzug, zweite Stadt, Abhängigkeiten, den
-  Abend, an dem das Ganze zum ersten Mal wirklich lief, und die Nacht, in der
-  die Domains ankamen und die Karte uns gehörte. Alles liegt jetzt in
+  die sechs Nachträge alles danach — Umzug, zweite Stadt, Abhängigkeiten, den
+  Abend, an dem das Ganze zum ersten Mal wirklich lief, die Nacht, in der die
+  Domains ankamen und die Karte uns gehörte, und die zweite Nacht mit dem
+  Audit, Frankfurt und München. Alles liegt in
   <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
   beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
   Repository geblieben. Die Prüfläufe stammen aus dem Abschlusslauf gegen den
-  Endstand: 190 Unit-Tests, 107 End-to-End, 96,1 % Coverage.</p>
+  Endstand: 463 Unit-Tests, 128 End-to-End, 99,9 % Coverage.</p>
   <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
   <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
   die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die

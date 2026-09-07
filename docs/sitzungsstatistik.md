@@ -1,8 +1,10 @@
 # Sitzungsstatistik
 
 Zwei Sitzungen, gemessen statt geschätzt: der **Umbau** vom 5./6. September und
-die **Fortsetzung** am Nachmittag desselben Tages, in der das Projekt umzog und
-Hamburg dazukam. Die zweite steht [ganz unten](#die-fortsetzung-umzug-und-zweite-stadt).
+die **Fortsetzung** ab dem Nachmittag desselben Tages, in der das Projekt umzog,
+Hamburg dazukam — und in der Nacht darauf Frankfurt und München. Die zweite
+steht [weiter unten](#die-fortsetzung-umzug-und-zweite-stadt), dreimal
+gemessen: um 16:21, um 23:25 und um 03:50.
 
 Diese Datei ist beim Umzug aus `herbeus/parkingzone` mitgekommen; gepflegt wird
 sie hier.
@@ -381,3 +383,46 @@ es ausgeführt und jeden Punkt gemeldet hat. Das ist die Währung, in der
 schlecht geprüfte Arbeit abgerechnet wird, und sie taucht in keiner Abrechnung
 auf. Wer diese Datei für eine Kostenrechnung liest, sollte die Zeile
 mitdenken.
+
+## Dieselbe Sitzung, die Nacht danach — 03:50 Uhr
+
+Auch 23:25 Uhr war ein Zwischenstand. Danach kamen das Read-only-Audit, die
+Städte-Recherche, Frankfurt, München, der Standort-Vorschlag und ein Agent nur
+für die Testabdeckung. Zahlen wie oben aus `get_session` →
+`external_metadata.usage`; der Zuwachs ist die Differenz zweier Abrufe.
+
+| Kennzahl | 23:25 Uhr | **03:50 Uhr** | Zuwachs in der Nacht |
+| --- | --- | --- | --- |
+| Laufzeit | 10 h 04 min | **14 h 29 min** | 4 h 25 min |
+| Kosten | 169,05 $ | **375,28 $** | 206,23 $ |
+| Tokens gesamt | 268,84 Mio. | **481,91 Mio.** | 213,07 Mio. |
+| davon Cache-Lesevorgänge | 265,76 Mio. (98,9 %) | **469,86 Mio. (97,5 %)** | 204,1 Mio. (95,8 %) |
+| Cache-Schreibvorgänge | 2,47 Mio. | **10,15 Mio.** | 7,68 Mio. |
+| Eingabe / Ausgabe | 130.487 / 473.125 | **318.735 / 1.575.891** | 188.248 / 1.102.766 |
+| Verhältnis gelesen : geschrieben | 107 : 1 | **46 : 1** | 27 : 1 |
+| Agenten | 1 | **12** | 11 |
+| Modell | `claude-opus-5` | `claude-fable-5-1` als Orchestrator | ab 23:35 auf Wunsch gewechselt; die fünf Bau-Agenten auf `claude-opus-5` |
+
+**Die Nacht hat mehr ausgegeben als der ganze Tag davor** — 1,10 Mio.
+Ausgabe-Tokens gegen 0,47 Mio. — und das Verhältnis gelesen : geschrieben ist
+von 107 : 1 auf 27 : 1 gefallen. Der Grund ist derselbe wie bei den Kosten je
+Commit (10,85 $ gegen 2,11 $ am Tag): Fünf Agenten haben Code geschrieben
+statt einer Kette aus kleinen Schritten, und sechs Audit-Agenten haben
+dasselbe Repository sechsmal gelesen. Parallelität kostet Kontext, Kontext
+kostet Geld; dafür lagen 24 Städte, 102 Befunde und zwei angeschlossene
+Städte am Morgen vor.
+
+### Was die Nacht geliefert hat
+
+| | |
+| --- | --- |
+| Audit | 6 Reports, 102 Befunde dedupliziert (1 kritisch, 10 hoch), 4 davon behoben, 22 Actions auf SHAs gepinnt |
+| Recherche | 24 Städte, 16 per Abruf geprüft; Kölns Gebührenfeld als veraltet belegt; Hamburgs zweiter Feed gefunden |
+| Frankfurt | 27 Bereiche aus 808 Automaten, 46 Stadtteile, `HE` mit landesgebundenem Fronleichnam |
+| München | 82 Gebiete aus 12.365 Straßenseiten, 291 Schreibweisen, Mariä Himmelfahrt an der Stadt, 5 Nebenebenen mit Lizenzbeleg |
+| Oberfläche | Standort-Vorschlag, FAQ je Stadt, Beispieldaten je Stadt, Gruppenbilder `F`/`M` |
+| Gefundene Fehler | 8 im eigenen Bestand, jeder mit Test: Feldtyp der Fixture, `isUncertainAt`, `seed.ts`, drei Nullbeträge, `Fr-Mo`, `reportedAt: NaN` |
+| Unit-Tests | 190 → **463** |
+| End-to-End-Tests | 107 → **128** (108 waren es wirklich — die 107 in `CLAUDE.md` waren um eins daneben) |
+| Coverage | 96,1 % → **99,9 %** Zeilen, 90,4 % → 96,1 % Zweige, 100 % Funktionen |
+| Commits | 19, alle mit grüner CI und vollem E2E-Lauf davor |
