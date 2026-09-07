@@ -1,0 +1,1250 @@
+{
+ "repo": "knoellchenfrei/knoellchenfrei",
+ "commit": "fceadca5221c20dbde4084c450c0f8c777333c23",
+ "generated": "2026-09-06T23:42:24Z",
+ "total": 176,
+ "by_class": {
+  "ci": 9,
+  "config": 20,
+  "doc": 16,
+  "legal": 5,
+  "iac": 3,
+  "code": 82,
+  "other": 2,
+  "asset": 39
+ },
+ "files": [
+  {
+   "path": ".github/ISSUE_TEMPLATE/bug.yml",
+   "bytes": 1150,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/ISSUE_TEMPLATE/config.yml",
+   "bytes": 212,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/ISSUE_TEMPLATE/data.yml",
+   "bytes": 717,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/dependabot.yml",
+   "bytes": 4845,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T17:00:11+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/pull_request_template.md",
+   "bytes": 502,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/workflows/ci.yml",
+   "bytes": 2966,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/workflows/deploy.yml",
+   "bytes": 6426,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-07T01:03:00+02:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/workflows/lint-workflows.yml",
+   "bytes": 1476,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T16:40:26+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".github/workflows/pages.yml",
+   "bytes": 1825,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "ci"
+  },
+  {
+   "path": ".gitignore",
+   "bytes": 1518,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T23:14:29+00:00",
+   "class": "config"
+  },
+  {
+   "path": "CLAUDE.md",
+   "bytes": 18338,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T22:44:03+02:00",
+   "class": "doc"
+  },
+  {
+   "path": "CODE_OF_CONDUCT.md",
+   "bytes": 818,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "legal"
+  },
+  {
+   "path": "CONTRIBUTING.md",
+   "bytes": 2393,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "LICENSE",
+   "bytes": 1517,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "legal"
+  },
+  {
+   "path": "README.md",
+   "bytes": 17506,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T22:44:03+02:00",
+   "class": "doc"
+  },
+  {
+   "path": "SECURITY.md",
+   "bytes": 7592,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "legal"
+  },
+  {
+   "path": "app/.gitignore",
+   "bytes": 128,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/api/migrations/0001_schema.sql",
+   "bytes": 6822,
+   "mime": "application/sql",
+   "last_commit": "2026-09-06T19:53:10+00:00",
+   "class": "iac"
+  },
+  {
+   "path": "app/apps/api/package.json",
+   "bytes": 381,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/api/r2-cors.json",
+   "bytes": 480,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T23:28:48+02:00",
+   "class": "iac"
+  },
+  {
+   "path": "app/apps/api/src/worker.ts",
+   "bytes": 31970,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T19:05:21+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/api/tsconfig.json",
+   "bytes": 180,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/api/wrangler.toml",
+   "bytes": 2067,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T19:53:10+00:00",
+   "class": "iac"
+  },
+  {
+   "path": "app/apps/web/e2e/app.spec.ts",
+   "bytes": 26671,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/e2e/pwa.spec.ts",
+   "bytes": 12217,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T22:44:03+02:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/index.html",
+   "bytes": 1348,
+   "mime": "text/html",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "other"
+  },
+  {
+   "path": "app/apps/web/package.json",
+   "bytes": 779,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/web/playwright.config.ts",
+   "bytes": 1676,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/public/apple-touch-icon.png",
+   "bytes": 1696,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/berlin/districts.geojson",
+   "bytes": 147626,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/berlin/meta.json",
+   "bytes": 359,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/web/public/data/berlin/poi.geojson",
+   "bytes": 270837,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/berlin/umweltzone.geojson",
+   "bytes": 4195,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/berlin/zones.geojson",
+   "bytes": 175793,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/hamburg/districts.geojson",
+   "bytes": 157797,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/hamburg/meta.json",
+   "bytes": 427,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/web/public/data/hamburg/poi.geojson",
+   "bytes": 42,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/hamburg/umweltzone.geojson",
+   "bytes": 42,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/data/hamburg/zones.geojson",
+   "bytes": 181217,
+   "mime": "application/geo+json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/icon-192.png",
+   "bytes": 3232,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/icon-512.png",
+   "bytes": 9428,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/icon-maskable-512.png",
+   "bytes": 5349,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/icon.svg",
+   "bytes": 344,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/manifest.webmanifest",
+   "bytes": 2248,
+   "mime": "application/manifest+json",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "other"
+  },
+  {
+   "path": "app/apps/web/public/screenshots/desktop.png",
+   "bytes": 273938,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/public/screenshots/handy.png",
+   "bytes": 104114,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "app/apps/web/scripts/make-brand.mjs",
+   "bytes": 9572,
+   "mime": "text/javascript",
+   "last_commit": "2026-09-06T20:22:28+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/scripts/make-docs-images.mjs",
+   "bytes": 4327,
+   "mime": "text/javascript",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/scripts/make-icons.mjs",
+   "bytes": 4108,
+   "mime": "text/javascript",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/scripts/make-screenshots.mjs",
+   "bytes": 3570,
+   "mime": "text/javascript",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/App.tsx",
+   "bytes": 59348,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/city.ts",
+   "bytes": 3210,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/BetaBadge.tsx",
+   "bytes": 433,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/ErrorBoundary.tsx",
+   "bytes": 1338,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/FeedbackSheet.tsx",
+   "bytes": 5831,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/HeatPanel.tsx",
+   "bytes": 8548,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/InstallHint.tsx",
+   "bytes": 3403,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/LiveStats.tsx",
+   "bytes": 1491,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/LocationPrompt.tsx",
+   "bytes": 1982,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/ParkingTimer.tsx",
+   "bytes": 3210,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/QuietDayNote.tsx",
+   "bytes": 1714,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/ReportSheet.tsx",
+   "bytes": 8115,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/SearchBox.tsx",
+   "bytes": 2191,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/SettingsSheet.tsx",
+   "bytes": 12217,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/SightingPanel.tsx",
+   "bytes": 4021,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/TowInfo.tsx",
+   "bytes": 1911,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/UpdateBar.tsx",
+   "bytes": 770,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/components/ZonePanel.tsx",
+   "bytes": 7131,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/data-source.ts",
+   "bytes": 2853,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/feedback.ts",
+   "bytes": 2052,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/format.ts",
+   "bytes": 3578,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/globals.d.ts",
+   "bytes": 258,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/main.tsx",
+   "bytes": 1954,
+   "mime": "text/plain",
+   "last_commit": "2026-09-06T17:24:28+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/map-style.ts",
+   "bytes": 4363,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T14:41:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/presence.ts",
+   "bytes": 7853,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/pwa.ts",
+   "bytes": 5904,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/seed.ts",
+   "bytes": 4241,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/sighting-backend.ts",
+   "bytes": 12490,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T19:07:44+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/storage.ts",
+   "bytes": 6644,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/styles.css",
+   "bytes": 36364,
+   "mime": "text/css",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/sw-template.js",
+   "bytes": 4591,
+   "mime": "text/javascript",
+   "last_commit": "2026-09-06T22:44:03+02:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/types.ts",
+   "bytes": 1177,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/useZoneStatus.ts",
+   "bytes": 1718,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/src/zones.ts",
+   "bytes": 3012,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/apps/web/tsconfig.json",
+   "bytes": 262,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/apps/web/vite.config.ts",
+   "bytes": 6572,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T17:32:01+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/package.json",
+   "bytes": 553,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/core/package.json",
+   "bytes": 268,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/core/src/berlin-time.ts",
+   "bytes": 1975,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/city.ts",
+   "bytes": 7697,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T19:05:21+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/feedback.ts",
+   "bytes": 1742,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/geo.ts",
+   "bytes": 3079,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/hamburg.ts",
+   "bytes": 8800,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/heatmap.ts",
+   "bytes": 13077,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/holidays.ts",
+   "bytes": 6291,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T14:41:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/index.ts",
+   "bytes": 388,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/parse-fee.ts",
+   "bytes": 2827,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/parse-schedule.ts",
+   "bytes": 6160,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/quiet-day.ts",
+   "bytes": 4836,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/sighting.ts",
+   "bytes": 5238,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/tariff.ts",
+   "bytes": 8312,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/src/telegram.ts",
+   "bytes": 4896,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T19:05:21+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/city.test.ts",
+   "bytes": 7681,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T19:05:21+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/feedback.test.ts",
+   "bytes": 1930,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/fixtures/hh-bewohnerparkgebiete-2026-09-06.json",
+   "bytes": 55217,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/core/test/fixtures/parkzonen-2026-09-06.json",
+   "bytes": 27708,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/core/test/fixtures/zone-geometry-sample.json",
+   "bytes": 9452,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/core/test/geo-real.test.ts",
+   "bytes": 1812,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/geo.test.ts",
+   "bytes": 2198,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/hamburg.test.ts",
+   "bytes": 9932,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/hardening.test.ts",
+   "bytes": 3962,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T14:41:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/heatmap.test.ts",
+   "bytes": 10189,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/holidays.test.ts",
+   "bytes": 2874,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T14:41:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/parse-real-data.test.ts",
+   "bytes": 3333,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/quiet-day.test.ts",
+   "bytes": 4060,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T14:41:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/sighting.test.ts",
+   "bytes": 3999,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/tariff.test.ts",
+   "bytes": 4738,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T14:41:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/test/telegram.test.ts",
+   "bytes": 6210,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T19:05:21+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/core/tsconfig.json",
+   "bytes": 115,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/core/vitest.config.ts",
+   "bytes": 447,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/package.json",
+   "bytes": 557,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/packages/ingest/scripts/build-tiles.sh",
+   "bytes": 5765,
+   "mime": "text/x-sh",
+   "last_commit": "2026-09-06T20:08:52+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/build-artifact.ts",
+   "bytes": 4511,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/build-badges.ts",
+   "bytes": 4112,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/build-data-hamburg.ts",
+   "bytes": 10843,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/build-data.ts",
+   "bytes": 12222,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/fetch.ts",
+   "bytes": 3175,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/simplify.ts",
+   "bytes": 4245,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/src/sources.ts",
+   "bytes": 7063,
+   "mime": "text/vnd.trolltech.linguist",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/packages/ingest/tsconfig.json",
+   "bytes": 152,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/pnpm-lock.yaml",
+   "bytes": 105219,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/pnpm-workspace.yaml",
+   "bytes": 2002,
+   "mime": "application/yaml",
+   "last_commit": "2026-09-06T17:00:11+00:00",
+   "class": "config"
+  },
+  {
+   "path": "app/scripts/fetch-parkzonen.sh",
+   "bytes": 1131,
+   "mime": "text/x-sh",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "code"
+  },
+  {
+   "path": "app/tsconfig.base.json",
+   "bytes": 348,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "config"
+  },
+  {
+   "path": "docs/architecture.md",
+   "bytes": 10534,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/badges/build.svg",
+   "bytes": 554,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/badges/coverage.svg",
+   "bytes": 557,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T15:40:37+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/badges/data.svg",
+   "bytes": 573,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/badges/e2e.svg",
+   "bytes": 558,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T22:44:03+02:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/badges/licence.svg",
+   "bytes": 544,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/badges/security.svg",
+   "bytes": 559,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/badges/tests.svg",
+   "bytes": 566,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T19:07:44+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/bericht/index.html",
+   "bytes": 85837,
+   "mime": "text/html",
+   "last_commit": "2026-09-07T01:34:22+02:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/brand/org-avatar-512.png",
+   "bytes": 4926,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/org-avatar.svg",
+   "bytes": 328,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/social-preview-1280x640.png",
+   "bytes": 38861,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/social-preview.svg",
+   "bytes": 940,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-berlin-512.png",
+   "bytes": 9770,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T20:22:28+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-berlin.svg",
+   "bytes": 681,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T20:22:28+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-bot-512.png",
+   "bytes": 4551,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T20:11:50+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-bot.svg",
+   "bytes": 337,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T20:11:50+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-dach-512.png",
+   "bytes": 4508,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T20:11:50+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-dach.svg",
+   "bytes": 337,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T20:11:50+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-hamburg-512.png",
+   "bytes": 8870,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T20:11:50+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/brand/telegram-hamburg.svg",
+   "bytes": 682,
+   "mime": "image/svg+xml",
+   "last_commit": "2026-09-06T20:11:50+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/data-sources.md",
+   "bytes": 12381,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T18:45:03+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/datenschutz.md",
+   "bytes": 8656,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "legal"
+  },
+  {
+   "path": "docs/entscheidungen.md",
+   "bytes": 23745,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T23:13:24+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/hosting.md",
+   "bytes": 24891,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-07T00:31:26+02:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/ideen-2012.md",
+   "bytes": 5897,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/images/mobile-start.png",
+   "bytes": 441596,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/images/mobile-timer.png",
+   "bytes": 420389,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/images/mobile-zone.png",
+   "bytes": 444071,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/images/overview.png",
+   "bytes": 269897,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/images/zone-detail.png",
+   "bytes": 263798,
+   "mime": "image/png",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "asset"
+  },
+  {
+   "path": "docs/impressum.md",
+   "bytes": 2976,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:23:08+00:00",
+   "class": "legal"
+  },
+  {
+   "path": "docs/marke.md",
+   "bytes": 10185,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T20:27:02+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/neue-sitzung.md",
+   "bytes": 3281,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T13:50:20+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/oeffentlich-machen.md",
+   "bytes": 9829,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T19:53:10+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/org-profil.md",
+   "bytes": 2397,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/sitzungsstatistik.md",
+   "bytes": 17126,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T23:29:16+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/staedte.md",
+   "bytes": 17221,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T16:01:24+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "docs/todo.md",
+   "bytes": 32148,
+   "mime": "text/markdown",
+   "last_commit": "2026-09-06T20:22:28+00:00",
+   "class": "doc"
+  },
+  {
+   "path": "package.json",
+   "bytes": 50,
+   "mime": "application/json",
+   "last_commit": "2026-09-06T22:44:03+02:00",
+   "class": "config"
+  },
+  {
+   "path": "scripts/einrichten.sh",
+   "bytes": 56466,
+   "mime": "text/x-sh",
+   "last_commit": "2026-09-06T23:14:29+00:00",
+   "class": "code"
+  },
+  {
+   "path": "scripts/umzug.sh",
+   "bytes": 4000,
+   "mime": "text/x-sh",
+   "last_commit": "2026-09-06T13:50:20+00:00",
+   "class": "code"
+  }
+ ]
+}
