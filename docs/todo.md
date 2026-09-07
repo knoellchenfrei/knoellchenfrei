@@ -560,12 +560,20 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       | Client, Puffer, Widerspruch | `apps/web/src/track.ts` |
       | Seite | `apps/web/statistik/` |
 
-      **Was offen bleibt:** Zwei Gegenproben auf der Seite (`app.open` muss
-      mindestens so groß sein wie die neuen `visits`-Zeilen; die Meldungen aus
-      `marks` müssen zur Tageszahl passen) — sie sind der einzige Hinweis
-      darauf, dass Bündel nie ankommen. Und `@cloudflare/vitest-pool-workers`
-      für den Endpunkt: Der `node:sqlite`-Test deckt das SQL ab, nicht die
-      Bindings.
+      **Die Gegenprobe steht** — sie ist die einzige Zahl auf der Seite, die
+      etwas über die Seite selbst sagt: `app.open` muss mindestens so groß sein
+      wie die Zahl der Besuchszeilen, denn jedes Gerät, das eine anlegt, hat
+      die App geöffnet. Bleiben Bündel liegen, sinken sonst einfach alle
+      Zahlen, und das sieht aus wie weniger Nutzung. Sie reicht **zwei Tage**
+      weit: `visits` wird nach zwei Tagen gelöscht, `events` nach 90 — ein
+      Vergleich über 28 Tage verglich eine volle Zahl mit einer leeren.
+
+      Die zweite geplante Gegenprobe entfällt: Sie sollte Meldungen aus `marks`
+      gegen `sighting.report` halten, und dieses Ereignis gibt es bewusst
+      nicht — es stünde schon in `marks`.
+
+      **Offen bleibt `@cloudflare/vitest-pool-workers`** für den Endpunkt: Der
+      `node:sqlite`-Test deckt das SQL ab, nicht die Bindings.
 
 - [ ] **`D1:Edit` für den Deploy-Token.** Seit dem 7. September wendet der
       Deploy die D1-Migrationen an, bevor er den Worker ausrollt — vorher

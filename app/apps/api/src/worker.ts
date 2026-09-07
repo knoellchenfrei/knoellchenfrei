@@ -716,6 +716,8 @@ async function rollupStats(env: Env): Promise<void> {
         " WHERE day >= ? AND hour = -1 AND name = 'zone.open' GROUP BY city, value" +
         ') GROUP BY city, zone ORDER BY city, n DESC'
     ).bind(STATS_MIN_ZONE, seit),
+    // Die Gegenprobe. Siehe unten, warum sie nur zwei Tage weit reicht.
+    env.DB.prepare('SELECT day, COUNT(*) AS n FROM visits GROUP BY day ORDER BY day').bind(),
   ])
 
   // `batch` liefert ein Feld in derselben Reihenfolge; `noUncheckedIndexedAccess`
@@ -724,6 +726,34 @@ async function rollupStats(env: Env): Promise<void> {
   const tage = zeilen<{ day: string; n: number }>(0)
   const summe = (ab: string): number =>
     tage.filter((zeile) => zeile.day >= ab).reduce((s, zeile) => s + zeile.n, 0)
+
+  /**
+   * Die Gegenprobe: Stimmen die Zahlen überhaupt?
+   *
+   * Nichts sonst sagt, ob die Bündel ankommen. Bleibt ein Aufruf still liegen
+   * — eine geänderte CORS-Regel, ein Fehler im Client, ein volles Tagesbudget
+   * —, sinken die Zahlen einfach, und das sieht aus wie weniger Nutzung.
+   *
+   * `visits` zählt Geräte je Tag und wird über einen ganz anderen Weg
+   * geschrieben (`POST /visits`, alle zwei Minuten, eine Zeile je Gerät).
+   * **Jedes Gerät, das eine Zeile anlegt, hat die App geöffnet** — also muss
+   * `app.open` mindestens so groß sein wie die Zahl der Zeilen. Ist es das
+   * nicht, kommen Ereignisse nicht an.
+   *
+   * Sie reicht nur **zwei Tage** weit, und das ist keine Nachlässigkeit:
+   * `visits` wird nach zwei Tagen gelöscht, `events` nach 90. Ein Vergleich
+   * über 28 Tage verglich eine volle Zahl mit einer leeren und meldete jedes
+   * Mal Alarm.
+   */
+  const besuche = zeilen<{ day: string; n: number }>(5)
+  const gestern = berlinDay(now - 86_400_000)
+  const probe = besuche
+    .filter((zeile) => zeile.day >= gestern)
+    .map((zeile) => ({
+      day: zeile.day,
+      geraete: zeile.n,
+      oeffnungen: tage.find((eintrag) => eintrag.day === zeile.day)?.n ?? 0,
+    }))
 
   const stand = {
     erzeugtAm: new Date(now).toISOString(),
@@ -735,6 +765,7 @@ async function rollupStats(env: Env): Promise<void> {
     proStadt: zeilen(2),
     proName: zeilen(3),
     proZone: zeilen(4),
+    probe,
   }
   await env.CACHE.put(STATS_KEY, JSON.stringify(stand))
 }

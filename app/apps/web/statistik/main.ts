@@ -26,6 +26,7 @@ interface Stand {
   proStadt: (Zeile & { city: string })[]
   proName: (Zeile & { name: string })[]
   proZone: (Zeile & { city: string; zone: string })[]
+  probe?: { day: string; geraete: number; oeffnungen: number }[]
 }
 
 const API_BASE = ((): string | undefined => {
@@ -177,6 +178,36 @@ function zeichnen(stand: Stand): HTMLElement {
       )
     )
   )
+
+  /**
+   * Die Gegenprobe — die einzige Zahl auf dieser Seite, die etwas über die
+   * Seite selbst sagt.
+   *
+   * Bleiben Bündel liegen, sinken alle anderen Zahlen einfach, und das sieht
+   * aus wie weniger Nutzung. Hier steht es als Vergleich da: Jedes Gerät, das
+   * eine Besuchszeile angelegt hat, hat die App geöffnet — `Öffnungen` muss
+   * also mindestens so groß sein wie `Geräte`.
+   */
+  const probe = stand.probe ?? []
+  if (probe.length > 0) {
+    const kasten = el('div')
+    for (const tag of probe) {
+      const stimmt = tag.oeffnungen >= tag.geraete
+      const zeile = el('p', stimmt ? 'probe' : 'probe probe--schief')
+      const datum = new Date(`${tag.day}T12:00:00`).toLocaleDateString('de-DE')
+      zeile.textContent = stimmt
+        ? `${datum}: ${tag.oeffnungen} Öffnungen bei ${tag.geraete} Geräten — plausibel.`
+        : `${datum}: nur ${tag.oeffnungen} Öffnungen bei ${tag.geraete} Geräten — da kommen Zählungen nicht an.`
+      kasten.append(zeile)
+    }
+    wurzel.append(
+      abschnitt(
+        'Stimmen die Zahlen?',
+        kasten,
+        'Verglichen wird gegen die Besuchszählung, die über einen ganz anderen Weg geschrieben wird. Nur zwei Tage weit: Besuchszeilen werden nach zwei Tagen gelöscht, Zählungen nach 90.'
+      )
+    )
+  }
 
   const nicht = el('section', 'block')
   nicht.append(el('h2', undefined, 'Was hier nicht steht'))

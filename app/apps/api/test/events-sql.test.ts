@@ -209,6 +209,50 @@ describe('die Auswertung', () => {
   })
 })
 
+describe('die Gegenprobe', () => {
+  /**
+   * Sie ist die einzige Zahl, die etwas über die Statistik selbst sagt.
+   * Bleiben Bündel liegen, sinken alle anderen Zahlen einfach — und das sieht
+   * aus wie weniger Nutzung statt nach einem Fehler.
+   */
+  it('vergleicht Öffnungen mit Besuchszeilen', () => {
+    db.exec(
+      'CREATE TABLE visits (id TEXT PRIMARY KEY, day TEXT NOT NULL, seen_at INTEGER NOT NULL)'
+    )
+    for (const id of ['a', 'b', 'c']) {
+      db.prepare('INSERT INTO visits (id, day, seen_at) VALUES (?, ?, ?)').run(
+        id,
+        '2026-09-07',
+        1
+      )
+    }
+    bündel('2026-09-07', [['app.open', 9, 'berlin', '', 5]])
+
+    const geraete = (
+      db.prepare('SELECT COUNT(*) AS n FROM visits WHERE day = ?').get('2026-09-07') as {
+        n: number
+      }
+    ).n
+    const oeffnungen = zahl('2026-09-07', 'app.open')
+    expect(geraete).toBe(3)
+    expect(oeffnungen).toBe(5)
+    // Jedes Gerät, das eine Zeile anlegt, hat die App geöffnet.
+    expect(oeffnungen).toBeGreaterThanOrEqual(geraete)
+  })
+
+  it('schlägt an, wenn Zählungen fehlen', () => {
+    db.exec(
+      'CREATE TABLE visits (id TEXT PRIMARY KEY, day TEXT NOT NULL, seen_at INTEGER NOT NULL)'
+    )
+    for (const id of ['a', 'b', 'c', 'd']) {
+      db.prepare('INSERT INTO visits (id, day, seen_at) VALUES (?, ?, ?)').run(id, '2026-09-07', 1)
+    }
+    bündel('2026-09-07', [['app.open', 9, 'berlin', '', 1]])
+    const geraete = 4
+    expect(zahl('2026-09-07', 'app.open')).toBeLessThan(geraete)
+  })
+})
+
 describe('die Zusicherungen im Schema', () => {
   it('weist eine unmögliche Stunde ab', () => {
     expect(() => bündel('2026-09-07', [['app.open', 24, 'berlin', '', 1]])).toThrow()
