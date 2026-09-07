@@ -11,8 +11,8 @@
 Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
-Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg und
-Frankfurt am Main**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
+Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg, Frankfurt am
+Main und München**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
 die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
@@ -22,11 +22,11 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Bewohnerparkgebiete in Hamburg, 27 Bewohnerparkbereiche in Frankfurt. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
-| **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". |
+| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Bewohnerparkgebiete in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
-| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. Frankfurt liefert davon die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen; die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
+| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
 | **Ordnungsamt** | Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. |
 | **Live-Zahlen** | Wie viele die App gerade offen haben, wie viele heute, wie viele Meldungen aktiv sind. Nur was zählbar ist — sonst gar nichts. |
 | **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
@@ -63,7 +63,7 @@ den Funktionsumfang — sie zieht als kommentiertes Dokument mit um:
 
 ## Daten
 
-Drei Länder, vier Dienste, zwei Lizenzen — und der Unterschied ist keine
+Vier Länder, sechs Dienste, zwei Lizenzen — und der Unterschied ist keine
 Formalie:
 
 | | Quelle | Lizenz | Bestand |
@@ -71,10 +71,11 @@ Formalie:
 | **Berlin** | [GDI Berlin](https://gdi.berlin.de), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 103 Zonen, 45.917 Abschnitte, **210.527 bewirtschaftete Stellplätze**, 1.499 Orte, 97 Ortsteile |
 | **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Bewohnerparkgebiete, 104 Stadtteile |
 | **Frankfurt am Main** | [Stadt Frankfurt](https://geowebdienste.frankfurt.de/Parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Stadt Frankfurt am Main, www.frankfurt.de` | 27 von 42 Bewohnerparkbereichen, 921 Parkscheinautomaten als Sachdatenquelle, 458 Behindertenparkplätze, 46 Stadtteile |
+| **München** | [Landeshauptstadt München](https://geoportal.muenchen.de/geoserver/mor_wfs/ows), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de`, je Ebene aus dem ISO-Metadatensatz belegt | 82 Parkraummanagementgebiete, 13.714 Straßenseiten als Sachdatenquelle, **95.903 Stellplätze**, 1.660 Orte, Umweltzone, 25 Stadtbezirke |
 
 Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
-Oberfläche: Eine Hamburg- oder Frankfurt-Ansicht ohne Quellenangabe verletzt
-die Lizenz, eine Berlin-Ansicht ohne sie nicht.
+Oberfläche: Eine Hamburg-, Frankfurt- oder München-Ansicht ohne Quellenangabe
+verletzt die Lizenz, eine Berlin-Ansicht ohne sie nicht.
 
 Vollständige Liste mit Endpunkten, Lizenzen und geprüften Negativbefunden:
 [docs/data-sources.md](docs/data-sources.md).
@@ -159,11 +160,42 @@ Metadaten:
   `<a href=…>`-Element in einem Attributwert — fremde Eingabe in der Form, die
   am ehesten irgendwo als Markup landet.
 
+### München schreibt die Regel als Satz
+
+Die drei anderen Städte legen je Aussage ein Feld an. München legt einen Satz
+an, und zwar in **291** verschiedenen Fassungen — Berlin hat 18, Hamburg 10,
+Frankfurt 30:
+
+```
+Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr,
+Eingeschränktes Halteverbot 8:30-16 Uhr, Mischparken 19-23 Uhr
+```
+
+Das ist **ein** Feldwert. `core/muenchen.ts` ist deshalb eine kleine Grammatik
+statt eines regulären Ausdrucks, und drei Entscheidungen darin sind teurer als
+sie aussehen:
+
+- **Ohne Tagesangabe gilt Montag bis Samstag.** 3.909 Abschnitte sagen nur
+  `Mischparken 9-23 Uhr`. Alle sieben Tage anzunehmen hieße, in ganz München
+  sonntags Gebühren zu verlangen. Der Beleg steht im Feed: Sonntag kommt in
+  genau vier Texten vor, und dort ausgeschrieben.
+- **`sonst Mischparken` bekommt kein Fenster.** Das Komplement der genannten
+  Zeiten wäre „gebührenpflichtig von 20 bis 7 Uhr und den ganzen Sonntag";
+  gemeint ist die gewöhnliche Regelung des Gebiets. Die Quelle sagt *welche*
+  Regel gilt, nicht *wann*.
+- **Sieben von achtzehn Regelgruppen zählen.** Die übrigen elf sind
+  Halteverbote, Taxi-, Bus-, Behinderten-, Carsharing- und Ladeplätze — 5.255
+  von 13.714 Abschnitten. Wer sie mitnähme, baute eine Halteverbotskarte.
+
+Und einen Betrag nennt der Feed **nirgends**: Weder `€` noch `Euro` steht in
+den 291 Texten. Alle 82 Gebiete bekommen `Fee.unknown`, und die App sagt das,
+statt 2 € aus der Gebührenordnung abzuschreiben.
+
 Jeder Feed hat deshalb **seinen eigenen Parser**, keinen gemeinsamen:
 `parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg,
-`frankfurt.ts` ist Frankfurt. Sie teilen sich außer der Domäne nichts, und ein
-Parser für alle wäre bei jeder Änderung an einer Stadt für die anderen
-gefährlich.
+`frankfurt.ts` ist Frankfurt, `muenchen.ts` ist München. Sie teilen sich außer
+der Domäne nichts, und ein Parser für alle wäre bei jeder Änderung an einer
+Stadt für die anderen gefährlich.
 
 ## Ordnungsamt-Meldungen
 
@@ -196,11 +228,15 @@ Zwei Dateien darin tragen die Mehrstädtigkeit: `core/city.ts` hält jede
 Stadtgrenze **genau einmal** — vorher stand sie an sechs Stellen als Zahlenpaar,
 und laufen zwei davon auseinander, nimmt die App eine Meldung an, die der Server
 danach verwirft, ohne dass im Log etwas nach einem Fehler aussieht.
-`core/holidays.ts` kennt Berlin, Hamburg und Hessen; ein Bundesland ohne
-hinterlegte Tabelle wirft, statt eine leere Menge zu liefern — sonst forderte
-die App an Karfreitag zum Zahlen auf. Hessen hat die Tabelle umgebaut:
-Fronleichnam ist beweglich **und** nicht bundesweit, und die alte Struktur
-konnte nur das eine oder das andere.
+`core/holidays.ts` kennt Berlin, Hamburg, Hessen und Bayern; ein Bundesland
+ohne hinterlegte Tabelle wirft, statt eine leere Menge zu liefern — sonst
+forderte die App an Karfreitag zum Zahlen auf. Zwei Städte haben die Tabelle
+umgebaut: Hessen, weil Fronleichnam beweglich **und** nicht bundesweit ist und
+die alte Struktur nur das eine oder das andere konnte. Und München, weil Mariä
+Himmelfahrt in Bayern **gemeindeweise** gilt — in 1.708 der 2.056 Gemeinden,
+also in München und nicht in Nürnberg. Ein Feiertag, der an der Stadt hängt und
+nicht am Land, passt in kein `Record<Land, …>`; `City.holidays` trägt ihn
+seitdem.
 
 ## Entwickeln
 

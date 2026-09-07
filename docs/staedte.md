@@ -1,8 +1,8 @@
 # Weitere Städte: was dafür an Daten da sein muss
 
-> **Stand 7. September 2026:** Angeschlossen sind **drei** Städte — Berlin,
-> Hamburg und Frankfurt am Main. Dieses Dokument hieß einmal „Zweite Stadt";
-> die Frage, die es beantwortet, ist dieselbe geblieben.
+> **Stand 7. September 2026:** Angeschlossen sind **vier** Städte — Berlin,
+> Hamburg, Frankfurt am Main und München. Dieses Dokument hieß einmal „Zweite
+> Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.
@@ -105,7 +105,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | --- | --- | --- | --- | --- | --- |
 | **Berlin** | WFS, Zonen und Abschnitte | im selben Feed | im selben Feed | DL-DE/Zero-2.0 | **geprüft** |
 | **Hamburg** | 146 Bewohnerparkgebiete als WFS | je Gebiet, als „3,50 € je Stunde" | je Gebiet, zehn Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
-| **München** | Datensatz „Parkraummanagementgebiete" als Polygone im Open-Data-Portal, dazu 76 Parklizenzgebiete im GeoPortal | offen | offen | Portal ist auf offene Lizenzen ausgelegt | **belegt** |
+| **München** | 82 Parkraummanagementgebiete und 13.714 Straßenseiten als WFS | **nirgends** — nur in der Gebührenordnung | je Straßenseite, als Fließtext, 291 Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
 | **Frankfurt / Rhein-Main** | Regionalverband stellt Karten und Geodaten als WFS bereit | offen | offen | als Open Data ausgewiesen | **Hinweis** |
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
@@ -114,7 +114,10 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen
 beiden Kandidaten, für die ein konkreter Datensatz benannt ist.** Alles
-darunter ist ein Portal, in dem noch niemand nachgesehen hat.
+darunter ist ein Portal, in dem noch niemand nachgesehen hat. (Frankfurt hat
+sich seitdem als vierter Eintrag mit benanntem Datensatz erwiesen; die
+Rangliste stammt vom 6. September 2026 und ist von der ausführlichen Recherche
+in [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md) überholt.)
 
 ## Empfehlung
 
@@ -417,6 +420,314 @@ oder das andere. `REGIONAL` trägt seitdem je Land zwei Listen — feste Daten u
 Oster-Abstände. Berlin und Hamburg bekommen dadurch nichts dazu; Tests halten
 das fest.
 
+## München im Einzelnen
+
+Abgerufen und Feld für Feld angesehen am 7. September 2026 — Stufe **geprüft**,
+angeschlossen als **vierte Stadt**.
+
+| | |
+| --- | --- |
+| **Dienst** | `https://geoportal.muenchen.de/geoserver/mor_wfs/ows`, WFS 2.0.0, GeoServer |
+| **Typnamen** | `mor_wfs:ruhver_prm_gebiete_poly` (82 Gebiete), `mor_wfs:ruhver_parkseiten_line` (13.714 Straßenseiten) |
+| **Verwaltungsgrenzen** | `gsm_wfs:vablock_stadtbezirk` (25 Bezirke, 27 Polygone) — anderer Arbeitsbereich, gleicher Server |
+| **Ausgabeformat** | `application/json` |
+| **Achsenreihenfolge** | `[lon, lat]` wie Berlin und Frankfurt |
+| **`DefaultCRS`** | EPSG:25832 — `srsName` ist Pflicht |
+| **Lizenz** | DL-DE/Namensnennung 2.0, je Ebene aus dem ISO-Metadatensatz geprüft |
+| **Ansprechpartner** | MOR-GB1, `gb1-23.mor@muenchen.de` |
+
+### Die Eigenheit, die alles bestimmt: die Regel ist ein Satz
+
+Berlin, Hamburg und Frankfurt legen je Aussage ein Feld an. München legt einen
+Satz an:
+
+```
+Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr,
+Eingeschränktes Halteverbot 8:30-16 Uhr, Mischparken 19-23 Uhr
+```
+
+Das ist **ein** Wert von `parkregel_beschreibung`. Es gibt **291** verschiedene;
+zum Vergleich: Berlin 18, Hamburg 10, Frankfurt 30. Sie sind zusammengesetzt aus
+Klauseln, die Regelart, Höchstparkdauer, ein bis vier Zeitspannen und eine
+Tagesangabe in beliebiger Kombination tragen. Ein regulärer Ausdruck bekommt das
+nicht; `core/muenchen.ts` ist deshalb eine kleine Grammatik.
+
+Getrennt wird **an den Regelphrasen, nicht am Komma**. Das Komma taugt nicht als
+Trenner: In `8-14 Uhr Montag, Dienstag, Donnerstag, Hauptbahnhoftarif
+Kurzzeitparken 2h` trennt es dreimal eine Wochentagsliste und einmal zwei
+Regeln.
+
+### Entscheidung 1: ohne Tagesangabe gilt Montag bis Samstag
+
+Die folgenreichste Festlegung. 3.909 der 13.714 Abschnitte tragen schlicht
+`Mischparken 9-23 Uhr`, ohne ein Wort über Wochentage. Alle sieben Tage
+anzunehmen hieße, in ganz München sonntags Gebühren zu verlangen.
+
+Montag bis Samstag steht dort nicht als Ortskenntnis, sondern als Befund aus dem
+Feed selbst, ausgezählt über alle 291 Texte:
+
+- Wo Tage genannt werden, hängt die gewöhnliche Neun-bis-dreiundzwanzig an
+  Montag bis Freitag **und an Samstag** (`Mischparken 18-23 Uhr Montag bis
+  Freitag und 9-23 Uhr Samstag`, 85-mal allein in dieser Form).
+- **Sonntag steht in genau vier Texten**, und dort ausgeschrieben: `Montag bis
+  Sonntag` (Blaue Zone Messestadt Riem), `Samstag bis Sonntag`, `(Fr-So)`,
+  `Samstag und Sonntag`. Der Feed *kann* Sonntag sagen und tut es, wo er ihn
+  meint.
+- `werktags` heißt Montag bis Samstag, nicht Montag bis Freitag — der Feed
+  schreibt an 27 Stellen `werktags Montag bis Freitag`, und die Einengung wäre
+  überflüssig, wenn `werktags` schon Montag bis Freitag hieße.
+
+Ein Test hält fest, dass ein Sonntagsfenster nur dort entsteht, wo der Text den
+Sonntag auch nennt. Im ausgelieferten Abzug ist das genau **ein** Gebiet:
+Messestadt.
+
+### Entscheidung 2: `sonst Mischparken` bekommt kein Fenster
+
+25 Abschnitte lauten `Eingeschränktes Halteverbot 7-20 Uhr, sonst Mischparken`.
+Naheliegend wäre, `sonst` als Komplement der vorher genannten Zeiten zu lesen —
+und es wäre falsch: Das Komplement hieße „gebührenpflichtig von 20 bis 7 Uhr und
+den ganzen Sonntag". Gemeint ist „außerhalb des Halteverbots gilt die
+gewöhnliche Mischparken-Regelung des Gebiets", also 9–23 Uhr. Die Quelle sagt
+*welche* Regel gilt, nicht *wann*.
+
+Solche Klauseln bekommen deshalb `timing: 'otherwise'` und keine Fenster. Das
+kostet nichts: Jedes der 82 Gebiete trägt seine gewöhnlichen Zeiten aus
+Abschnitten, die sie ausschreiben — keines bleibt ohne Fenster.
+
+### Entscheidung 3: Zuordnung über das Attribut, nicht über die Geometrie
+
+Das **Gegenteil** von Frankfurt, und nachgemessen am Abzug vom 7. September:
+
+| | über `prm_name` | über Punkt-in-Polygon |
+| --- | --- | --- |
+| zugeordnete Abschnitte | **12.365** von 13.714 | 12.364 |
+| erreichte Gebiete | 82 von 82 | 82 von 82 |
+| Abschnitte, die der andere Weg nicht findet | 43 | 0 |
+
+Beide Wege sind sich 12.363-mal einig und **einmal** uneins. Die Geometrie
+findet nichts, was das Attribut nicht auch findet, und verliert 43 Abschnitte,
+deren Linienmitte knapp neben dem Polygon liegt — bei einer Straße *auf* der
+Gebietsgrenze ist das der Normalfall.
+
+Der Unterschied zu Frankfurt ist kein Widerspruch, sondern eine andere Bedeutung
+desselben Feldtyps: Frankfurts `bewohnerparkzone` sagt, zu welchem **Ausweis**
+ein Automat gehört, nicht wo er steht. Münchens `prm_name` sagt, in welchem
+Gebiet die Straßenseite **liegt**. Der Datenbau rechnet die Geometrie trotzdem
+als Gegenprobe und schreibt die Zahlen ins Log.
+
+1.307 Abschnitte tragen gar keinen Gebietsnamen — sie liegen außerhalb der 82
+Gebiete. 42 weitere nennen einen Namen, zu dem es kein Polygon gibt:
+`Milbertshofen` (25), `Riesenfeld` (15), `Carsharing auf Privatdrund` (1, Tippfehler
+der Quelle) und `E-LIS privat` (1). Die ersten beiden sind vermutlich Gebiete in
+Vorbereitung; eine Rückfrage dazu steht in [todo.md](todo.md).
+
+### Entscheidung 4: sieben von achtzehn Regelgruppen zählen
+
+`parkregel_gruppe` ist die Antwort der Stadt darauf, was ein Abschnitt
+hauptsächlich ist. Aufgenommen werden sieben Gruppen mit zusammen **8.458**
+Abschnitten:
+
+| Gruppe | Abschnitte |
+| --- | --- |
+| Mischparken | 4.351 |
+| Bewohnerparken | 1.968 |
+| Mischparken mit Parkscheibe | 887 |
+| Eingeschränktes Halteverbot temporär | 430 |
+| Kurzzeitparken | 378 |
+| Altstadt und HBF | 274 |
+| Absolutes Halteverbot temporär | 170 |
+
+Ausgelassen sind **5.255**: `Absolutes Halteverbot (0-24 Uhr)` (1.916),
+`E-Parken` (1.171), `Carsharing` (901), `Behindertenparken` (825),
+`Eingeschränktes Halteverbot (0-24 Uhr)` (188), `Taxi` (149), `keine Regelung
+0 - 24 Uhr` (85), `Baustelle` (10), `Busparken` (8) und
+`Kraftfahrzeugparken allgemein` (2). Wer sie mitnähme, baute eine
+Halteverbotskarte.
+
+Der teuerste Einzelfall dabei kommt 1.171-mal vor:
+
+```
+E-Ladeinfrastruktur AC (Normalladen 22kW) nur E-Fahrzeuge
+im Ladezustand 8-20 Uhr 4h mit Parkscheibe
+```
+
+Das schließende „mit Parkscheibe" ist grammatisch eine Parkscheiben-Klausel —
+und der Abschnitt ist trotzdem ein Ladeplatz. Ohne die Gruppenliste zählte er
+bei den Stellplätzen mit, stünde unter „Zeiten laut Quelle" ganz oben und
+verdürbe den Anteil der Höchstparkdauer.
+
+Die **Fenster** eines Gebiets entstehen dagegen aus *allen* Abschnitten:
+`Behindertenparkplatz 8-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr` sagt
+wahr, dass dort abends Gebühren fällig sind. Die Gruppenliste entscheidet, was
+*gezählt* wird, nicht was *gilt*.
+
+### Entscheidung 5: kein Betrag, und keiner erfunden
+
+In keinem der 291 Regeltexte steht `€`, `Euro` oder `EUR`. Der Tarif — 2 € je
+Stunde im Parklizenzgebiet, Altstadt- und Hauptbahnhoftarif abweichend — steht
+ausschließlich in der Gebührenordnung, und die ist eine PDF-Auskunft, keine
+Datenquelle. Alle 82 Gebiete bekommen deshalb `Fee = { kind: 'unknown' }`, und
+das Panel sagt „Die Quelle nennt für dieses Gebiet keinen Tarif."
+
+`Fee.unknown` gab es schon für Hamburgs Parkscheibengebiete; München ist die
+erste Stadt, in der es für **jedes** Gebiet gilt. Ein E2E-Test hält fest, dass
+im Panel `Tarif nicht angegeben` steht und nirgends `0,00 €`.
+
+### Was das Modell nicht ausdrücken kann
+
+Drei Sorten landen in `unmodelledRules` und damit als Hinweis ins Panel:
+
+- **`an Schultagen` / `an nicht Schultagen`** — 15 Abschnitte in 10 Gebieten.
+  Ein Schulkalender ist keine Feiertagstabelle; er ist je Land und Jahr anders
+  und steht nirgends in dieser Quelle.
+- **`(zeitliche Einschränkung unbekannt)`** — die Quelle sagt selbst, dass sie
+  die Zeit nicht kennt.
+- **Zeitangaben ohne Anfang oder Ende** — `Mischparken mit Parkscheibe 3h bis
+  19Uhr`, `Bewohner frei ab 18 Uhr`. Einen Anfang dazuzuerfinden wäre eine
+  Lesart, die die Quelle nicht deckt.
+
+Das hat einen **Fehler im Bestand** aufgedeckt: `isUncertainAt` in `tariff.ts`
+fragte nur, ob `unmodelledRules` irgendetwas enthält, und die einzige
+Zusatzregel bis dahin war Berlins „Advents-Sa". An einem Adventssamstag hätte
+die App über jedem Münchner Gebiet mit Schultagsregel „unsicher" gezeigt — und
+in der Erklärung den Adventssamstag genannt. Die Funktion filtert seitdem auf
+Regeln, die Advent überhaupt erwähnen; der Satz im Panel nennt die Regel
+wörtlich und verweist im Übrigen auf die Beschilderung.
+
+### Die Werte im Einzelnen
+
+**Gebiet** (`ruhver_prm_gebiete_poly`, 82 Zeilen):
+
+| Feld | Werte |
+| --- | --- |
+| `name` | 82 verschiedene Namen, keine Nummern: `TU-Viertel`, `Glockenbachviertel`, `Südliche Au` |
+| `status` | `in Betrieb` (82) — geplante und aufgehobene führt der Feed nicht |
+| `massnahme` | `Lizenzgebiet in Betrieb` (77), `Parkraumbewirtschaftung` (3), `in Betrieb mit Altstadttarif` (2) |
+| `ueberwachung` | `KVÜ` (68), `Polizei` (14) |
+| `eroeffnung` | `TT.MM.JJJJ`, ältestes 01.01.2000 |
+| `einzeluebersicht_link` | PDF bei muenchenunterwegs.de; in 3 von 82 leer |
+
+**Straßenseite** (`ruhver_parkseiten_line`, 13.714 Zeilen):
+
+| Feld | Werte |
+| --- | --- |
+| `angebot` | Stellplätze als **Zeichenkette** (`"5"`), 44-mal `null` |
+| `parkregel_beschreibung` | 291 Schreibweisen, 1-mal `null` |
+| `parkregel_gruppe` | 18 Gruppen, 1-mal `null` |
+| `prm_name` | Gebietsname, 1.307-mal `null` |
+| `strasse` | Straßenname, abgekürzt (`Falkenstr.`) |
+
+Dass `angebot` eine Zeichenkette ist und keine Zahl, steht als Test gegen die
+Fixture — nach dem Frankfurter Vorfall, bei dem ein Interface eine Zahl als
+Zeichenkette behauptete und der Vergleich stillschweigend immer falsch war.
+
+### Die Falle, die keine Fehlermeldung gibt
+
+Dieselbe wie in Frankfurt: `DefaultCRS` ist EPSG:25832. Ohne `srsName` in der
+Anfrage antwortet der Dienst in UTM-Metern — plausible Zahlen, nur keine Grade.
+`wfsUrl` setzt den Parameter, und `assertDegrees` im Datenbau misst nach, statt
+es zu glauben.
+
+Zwei weitere, die diesmal dazukamen:
+
+- Die Sammel-Adresse `/geoserver/ows` antwortet mit `ServiceUnavailable: Service
+  WFS is disabled`. Jeder Arbeitsbereich muss einzeln angefragt werden
+  (`/geoserver/mor_wfs/ows`, `/geoserver/gsm_wfs/ows`).
+- Die Parkseiten sind 6,5 MB. Der 180-Sekunden-Zeitausschnitt in `fetch.ts`
+  reicht; Paging über `count`/`startIndex` war nicht nötig.
+
+### Die Stadtbezirke: gesucht und gefunden
+
+Der Parken-Dienst führt keine Verwaltungsgrenzen — seine 68 Ebenen sind
+Mobilität, keine Verwaltung. Gefunden wurden die Bezirke wie in Frankfurt über
+den **Katalog**, nicht durch Raten von Adressen: Der offene Datenkatalog der
+Stadt hat eine CKAN-Schnittstelle
+(`https://opendata.muenchen.de/api/3/action/package_search?q=stadtbezirk`), und
+der Datensatz „Stadtbezirke" nennt den WFS
+`gsm_wfs:vablock_stadtbezirk` samt Lizenz und Quellenvermerk.
+
+25 Bezirke in 27 Polygonen: Thalkirchen-Obersendling-Forstenried-Fürstenried-Solln
+und Untergiesing-Harlaching sind je zweiteilig. Jedes der 82 Gebiete trifft einen
+Bezirk; das Panel zeigt ihn über dem Gebietsnamen, damit „Südliche Au" verortet
+ist.
+
+Die Bezirke liefern auch die **Box**: 11,3565–11,7285 / 48,0568–48,2510, nach
+außen gerundet. Aus der Parkebene genommen (11,4037–11,7108 / 48,0698–48,2264)
+hätte sie Aubing, Lochhausen und Feldmoching aus der Meldegrenze geworfen — dort
+wird nur nicht bewirtschaftet.
+
+### Was mitkommt und was nicht
+
+München ist die erste Stadt seit Berlin, die **alle vier POI-Arten** bedient,
+ohne dass die Karte etwas Neues lernen müsste — 1.660 Punkte:
+
+| Ebene | Punkte | Lizenzbeleg |
+| --- | --- | --- |
+| `behindertenparkplaetze` | 556 | Record `f784c10e-…`, DL-DE/BY-2.0 |
+| `ruhver_carsharing` | 710 | Record `7a5ed64c-…`, DL-DE/BY-2.0 |
+| `ruhver_els_standort_point` | 369 | Record `971c0d43-…`, DL-DE/BY-2.0 |
+| `park_ride_standorte` | 25 | Record `a35c138d-…`, DL-DE/BY-2.0 |
+| `miv_umweltzone_poly` | 12 Flächen | Record `45abe976-…`, DL-DE/BY-2.0 |
+
+Jeder dieser Records wurde einzeln über den `MetadataURL` aus
+`GetCapabilities` abgerufen und gelesen; ohne Beleg wäre keine Ebene
+aufgenommen worden. Alle nennen denselben Quellenvermerk wie die beiden
+Parkebenen. **Eine Abweichung:** Der Metadatensatz der *Stadtbezirke*
+(`efd5be0b-…`) nennt statt `opendata.muenchen.de` den GeodatenService
+(`Datenquelle: Landeshauptstadt München - GeodatenService,
+https://www.muenchen.de/rathaus/Stadtverwaltung/Kommunalreferat/geodatenservice`).
+`City.attribution` trägt einen Vermerk, und das ist der der Parkdaten; der
+zweite steht hier, damit er nicht verlorengeht.
+
+**Bewusst nicht abgerufen:** `ruhver_els_saeule_point` (592 Ladesäulen) neben
+den 369 Standorten — dieselben Orte, nur feiner gezählt, und zwei Punkte
+übereinander sind auf der Karte kein Gewinn. `ruhver_carsharing_station`
+(197 stationsbasierte Plätze) neben den 710 allgemeinen aus demselben Grund.
+Und die 40 übrigen Ebenen des Dienstes (Radwege, Ampeln, Baustellen,
+Bushaltestellen) beantworten andere Fragen als „was kostet Parken hier".
+
+**Die Umweltzone** kommt als **12 Polygone**, nicht als eines: die Zone selbst
+und elf „Transferflächen" — Parkplätze am Rand, etwa die Olympiaparkharfe. Alle
+kommen mit; sie gehören zur Regelung. München ist damit nach Berlin die zweite
+Stadt mit Umweltzonen-Geometrie im Abzug.
+
+**Stellplätze** gibt es: 95.903 in den 82 Gebieten, aus `angebot` summiert.
+Das ist die erste Stellplatzzahl seit Berlin.
+
+### Feiertage: Bayern, und der Feiertag, der an der Stadt hängt
+
+Bayern hat **zwölf** landesweite gesetzliche Feiertage: die neun bundesweiten
+plus Heilige Drei Könige, Fronleichnam und Allerheiligen. Wörtlich, Art. 1
+Abs. 1 Nr. 1 des Bayerischen Feiertagsgesetzes (BayFTG,
+<https://www.gesetze-bayern.de/Content/Document/BayFTG-1>, abgerufen am
+7. September 2026).
+
+Und dann Nummer 2: gesetzlicher Feiertag ist „in Gemeinden mit überwiegend
+katholischer Bevölkerung Mariä Himmelfahrt". Absatz 3: „Das Landesamt für
+Statistik stellt nach dem Ergebnis der letzten Volkszählung fest, in welchen
+Gemeinden entweder mehr katholische oder mehr evangelische Einwohner ihren
+Wohnsitz hatten." Absatz 2 gibt zusätzlich der Stadt Augsburg den 8. August
+(Friedensfest).
+
+Das passt in kein `Record<Land, …>`: In Bayern gilt der 15. August in 1.708 der
+2.056 Gemeinden und in den übrigen 348 nicht. Eine Ländertabelle hätte
+zwangsläufig für München oder für Nürnberg unrecht.
+
+**Nachgeprüft, nicht angenommen.** Die Gemeindeabfrage des Bayerischen
+Landesamts für Statistik
+(<https://www.statistik.bayern.de/statistik/gebiet_bevoelkerung/zensus/himmelfahrt/>,
+abgerufen am 7. September 2026) führt:
+
+| Gemeinde | Schlüssel | Feiertag | katholisch | evangelisch |
+| --- | --- | --- | --- | --- |
+| München, Landeshauptstadt | 09162000 | **ja** | 402.058 | 147.912 |
+
+Nürnberg steht in derselben Abfrage mit „nein". Der Eintrag gehört also an die
+Stadt: `City` hat dafür ein optionales Feld `holidays` bekommen, und
+`holidaysFor(land, jahr, extraFixed)` nimmt es entgegen. Für Berlin, Hamburg und
+Frankfurt ändert sich nichts — Tests halten das fest, und ein Zusatzdatum, das
+nicht die Form `MM-TT` hat, wirft, statt stillschweigend nichts zu bewirken.
+
 ## Was am Code dafür zu tun ist
 
 Der Stand heute, aus [oeffentlich-machen.md](oeffentlich-machen.md):
@@ -470,10 +781,27 @@ Feiertage nicht ausdrücken. Fronleichnam ist beides zugleich. Die Tabelle träg
 seitdem je Land zwei Listen. Dieselbe Erweiterung brauchen Nordrhein-Westfalen
 und Bayern auch, sie ist also nicht für Hessen allein gemacht.
 
+München hat **zwei** Punkte hinzugefügt, und beide waren echte Lücken im
+Modell, nicht Fleißarbeit:
+
+4. **Ein Feiertag kann an der Stadt hängen, nicht am Land.** Mariä Himmelfahrt
+   gilt in Bayern gemeindeweise; die Ländertabelle konnte das gar nicht
+   ausdrücken. `City` trägt jetzt ein optionales `holidays`, `holidaysFor` und
+   `isHoliday` nehmen es als dritten Parameter, `ParkingZone.extraHolidays`
+   reicht es durch. Für BE, HH und HE ändert sich dadurch nichts. Dieselbe
+   Erweiterung braucht Augsburg (Friedensfest) — sie ist also nicht für München
+   allein gemacht.
+5. **`unmodelledRules` war stillschweigend „Advent".** Der Fehler und seine
+   Behebung stehen oben bei „Was das Modell nicht ausdrücken kann". Er wäre
+   ohne eine vierte Stadt nicht aufgefallen, weil bis dahin jede Zusatzregel im
+   Bestand wirklich eine Adventsregel war.
+
 Was noch offen ist: ein Standort-Vorschlag beim ersten Öffnen („Du scheinst
-in Frankfurt zu sein — wechseln?"), wie FreiFahren ihn als `cityLocationPrompt`
+in München zu sein — wechseln?"), wie FreiFahren ihn als `cityLocationPrompt`
 hat. Bei zwei Städten reichte der Umschalter; seit der dritten ist die Liste in
-den Einstellungen die einzige Stelle, an der jemand die Stadt findet.
+den Einstellungen die einzige Stelle, an der jemand die Stadt findet — mit vier
+Einträgen wird sie langsam zu einer, die man einmal sehen muss, um sie zu
+kennen.
 
 ## Prüfliste je Stadt
 
@@ -515,6 +843,24 @@ Stand für Frankfurt am Main, am 7. September 2026 abgerufen:
 
 Frankfurt fällt an keiner Stelle durch und ist angeschlossen. Die zwei
 Rückfragen, die dabei offengeblieben sind, stehen in [todo.md](todo.md).
+
+Stand für München, am 7. September 2026 abgerufen:
+
+- [x] Geometrie — 82 Parkraummanagementgebiete, dazu 25 Stadtbezirke als Kontext.
+- [x] Lizenz — DL-DE/Namensnennung 2.0, je Ebene aus dem ISO-Metadatensatz
+      belegt, mit wörtlichem Quellenvermerk.
+- [x] Maschinell abrufbar — WFS 2.0.0 mit `application/json`.
+- [ ] Tarif — **nein.** In keinem der 291 Regeltexte steht ein Betrag; er
+      steht nur in der Gebührenordnung. Alle 82 Gebiete: `Fee.unknown`.
+- [x] Zeiten — je Straßenseite, als Fließtext mit 291 Schreibweisen.
+- [x] Aktualisierung — `AS_NEEDED`; GeoPortal-Stand 2026-05-27.
+- [x] Ansprechpartner — MOR-GB1, `gb1-23.mor@muenchen.de`.
+
+München fällt an **einer** Stelle durch — dem Tarif — und ist trotzdem
+angeschlossen: Die Prüfliste fragt nach dem Betrag, weil eine App ohne ihn
+schlechter ist, nicht weil sie ohne ihn falsch wäre. „Gebührenpflichtig, Betrag
+nicht in der Quelle" ist eine brauchbare Antwort; eine geratene wäre es nicht.
+Die Rückfragen dazu stehen in [todo.md](todo.md).
 
 Zu jeder Stadt, die durchfällt, gehört ein Eintrag in
 [data-sources.md](data-sources.md) — Negativbefunde sind Arbeitsergebnisse und

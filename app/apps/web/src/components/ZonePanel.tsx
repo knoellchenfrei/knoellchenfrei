@@ -188,11 +188,19 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
         </p>
       )}
 
+      {/*
+        Der Satz stand hier als „An Adventssamstagen gelten längere Zeiten" —
+        und das ist Berlins Zusatzregel, nicht die aller Städte. München
+        schreibt „an Schultagen" und „zeitliche Einschränkung unbekannt" in
+        `unmodelledRules`; über Advent zu reden wäre dort schlicht das falsche
+        Thema. Die Regel steht jetzt wörtlich da, und der zweite Satz sagt, was
+        in jedem dieser Fälle gilt: die Beschilderung.
+      */}
       {!uncertain && properties.unmodelledRules.length > 0 && (
         <p className="warn">
           Zusatzregel, die hier nicht berechnet wird:{' '}
-          <strong>{properties.unmodelledRules.join(', ')}</strong>. An Adventssamstagen gelten
-          längere Zeiten als oben angezeigt.
+          <strong>{properties.unmodelledRules.join(', ')}</strong>. Wann sie greift, sagt die
+          Quelle nicht — dann gilt der Automat oder das Schild vor Ort.
         </p>
       )}
 

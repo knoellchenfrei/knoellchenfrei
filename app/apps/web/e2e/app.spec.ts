@@ -549,6 +549,7 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet.getByRole('button', { name: 'Berlin' })).toBeDisabled()
     await expect(sheet.getByRole('button', { name: 'Hamburg' })).toBeEnabled()
     await expect(sheet.getByRole('button', { name: 'Frankfurt am Main' })).toBeEnabled()
+    await expect(sheet.getByRole('button', { name: 'München' })).toBeEnabled()
   })
 
   // Der eigentliche Punkt: Nach dem Wechsel stehen ANDERE Daten auf der Karte.
@@ -622,6 +623,71 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet).toContainText('Datenlizenz Deutschland Namensnennung 2.0')
     await expect(sheet).toContainText('verlangt')
     await expect(sheet).toContainText('Stadt Frankfurt am Main, www.frankfurt.de')
+  })
+
+  // Und dasselbe fuer die vierte Stadt. Muenchen ist der interessanteste der
+  // vier Faelle: Seine Gebiete heissen nicht "19" oder "N10", sondern
+  // "Glockenbachviertel" -- ein Treffer darauf beweist andere Daten, ohne dass
+  // man den Stadtteil dazunehmen muesste.
+  test('switches to München and loads München zones', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'München' }).click()
+
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    await page.locator('.search__input').fill('Glockenbach')
+    await expect(page.locator('.search__results button').first()).toBeVisible({ timeout: 15_000 })
+    await page.locator('.search__results button').first().click()
+
+    await openPanel(page)
+    // Ueber die Kennung, nicht ueber die Klasse: `.panel__title` tragen auch
+    // die Sichtungs- und die Heatmap-Karte, und Playwrights Strict Mode bricht
+    // bei drei Treffern ab.
+    await expect(page.locator('#zone-panel-title')).toContainText('Glockenbachviertel')
+    await expect(page.locator('.panel__eyebrow').first()).toContainText(
+      'Ludwigsvorstadt-Isarvorstadt'
+    )
+    await expect(page.locator('.provenance')).toContainText('München')
+  })
+
+  // Der eine Satz, den nur Muenchen ausloest: Die Quelle nennt fuer kein
+  // einziges der 82 Gebiete einen Betrag. „0,00 €" waere dort die falscheste
+  // aller Antworten -- sie hiesse „hier ist nichts zu beachten", und wer ohne
+  // Ticket steht, zahlt trotzdem.
+  test('says that München states no tariff, instead of quoting nothing', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'München' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    await page.locator('.search__input').fill('Glockenbach')
+    await expect(page.locator('.search__results button').first()).toBeVisible({ timeout: 15_000 })
+    await page.locator('.search__results button').first().click()
+    await openPanel(page)
+
+    // Dieselbe Vorsicht wie oben: `.panel` gibt es viermal auf der Seite.
+    const zonePanel = page.getByRole('region', { name: /^Parkzone / })
+    await expect(zonePanel.locator('.facts')).toContainText('Tarif nicht angegeben')
+    await expect(zonePanel).not.toContainText('0,00 €')
+  })
+
+  test('names the München licence as a condition and the source verbatim', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'München' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    sheet = await openSettings(page)
+    await expect(sheet).toContainText('Datenlizenz Deutschland Namensnennung 2.0')
+    await expect(sheet).toContainText('verlangt')
+    await expect(sheet).toContainText(
+      'Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de'
+    )
   })
 
   // Berlin darf nicht als Nebenwirkung verlorengehen: Der Wechsel muss in

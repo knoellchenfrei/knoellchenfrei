@@ -7,7 +7,7 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 
 Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
 kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
-Angeschlossen sind Berlin, Hamburg und Frankfurt am Main.
+Angeschlossen sind Berlin, Hamburg, Frankfurt am Main und München.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.
 Vorbild in Aufbau, Hosting und Haltung ist
 [FreiFahren](https://github.com/FreiFahren/FreiFahren).
@@ -20,11 +20,11 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 281 Unit-Tests
+pnpm --filter @knoellchenfrei/core test                # 370 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 112 End-to-End-Tests
+cd apps/web && npx playwright test                  # 118 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -39,7 +39,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=281 E2E_COUNT=112 npx tsx src/build-badges.ts
+TEST_COUNT=370 E2E_COUNT=118 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -101,17 +101,20 @@ wiederholt.
   Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,
   nimmt die App eine Meldung an, die der Server danach verwirft, und niemand
   erfährt, warum.
-- **Ein Feed, ein Parser — nie ein gemeinsamer.** Die drei Dienste teilen sich
+- **Ein Feed, ein Parser — nie ein gemeinsamer.** Die vier Dienste teilen sich
   außer der Domäne nichts: andere Felder, andere Schreibweisen, anderes
   Ausgabeformat, andere Achsenreihenfolge. Berlin schreibt `Mo-Sa 9-20 Uhr` und
   `2,00 Euro`, Hamburg `werktags 9-20 Uhr` und `3,50 € je Stunde`, Frankfurt
-  `Mo-Sa 9-20` ohne „Uhr" und `2 €/h`. Ein Parser für alle wäre bei jeder
-  Änderung an einer Stadt für die anderen gefährlich.
-  `parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg,
-  `frankfurt.ts` ist Frankfurt.
+  `Mo-Sa 9-20` ohne „Uhr" und `2 €/h`, München
+  `Mischparken 18-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag` und gar
+  keinen Betrag. Ein Parser für alle wäre bei jeder Änderung an einer Stadt für
+  die anderen gefährlich. `parse-schedule.ts`/`parse-fee.ts` sind Berlin,
+  `hamburg.ts` ist Hamburg, `frankfurt.ts` ist Frankfurt, `muenchen.ts` ist
+  München.
 - **Die Achsenreihenfolge steht in der Konfiguration, nie in einer Heuristik.**
   Auf dieselbe Anfrage (`urn:ogc:def:crs:EPSG::4326`) antwortet Berlin mit
-  `[lon, lat]`, Hamburg mit `[lat, lon]` und Frankfurt wieder mit `[lon, lat]`.
+  `[lon, lat]`, Hamburg mit `[lat, lon]`, Frankfurt und München wieder mit
+  `[lon, lat]`.
   In Hamburg sind beide Zahlen zweistellig und plausibel — geraten landen die
   Gebiete im Golf von Guinea, und die Karte sieht dabei nur leer aus, nicht
   kaputt.
@@ -122,7 +125,8 @@ wiederholt.
   aus. `wfsUrl` setzt den Parameter für alle Städte, und `assertDegrees` im
   Frankfurter Datenbau bricht trotzdem ab, sobald ein Wert über 180 bzw. 90
   ankommt. Eine Konfiguration, deren Fehlen man nicht bemerkt, gehört geprüft
-  und nicht geglaubt.
+  und nicht geglaubt. Münchens GeoServer verhält sich genauso; `assertDegrees`
+  steht deshalb auch in seinem Datenbau.
 - **Ein Feldtyp über einer JSON-Datei ist eine Behauptung, kein Beweis.**
   `FrankfurtAutomatProperties.bewohnerparkzone` stand als `string | null` da
   und ist im Feed eine **Zahl**. TypeScript prüft eine gelesene JSON-Datei
@@ -145,6 +149,58 @@ wiederholt.
   nichts und verlangen trotzdem etwas; wer ohne Scheibe steht, zahlt.
   `Fee` hat dafür `disc` und `unknown`, und `CostEstimate.priced` zwingt die
   Oberfläche, etwas anderes zu sagen als „0,00 €".
+- **Eine Regelphrase braucht eine Wortgrenze auf BEIDEN Seiten — und `\b`
+  taugt nur auf der vorderen.** Münchens Regeltexte werden an Phrasen wie
+  `Mischparken` und `frei` in Klauseln zerschnitten. Ohne hintere Grenze fand
+  `frei` das „Frei" in **Freitag**: `Mischparken 18-23 Uhr Montag bis Freitag`
+  zerfiel in zwei Klauseln, die zweite hieß „frei" und hatte den Rest „tag",
+  und die erste verlor ihre Tagesangabe. 176 der 291 Texte brachen daran ab.
+  Dasselbe eine Ebene tiefer bei den Wochentagsabkürzungen: Mit `i`-Flag las
+  `Mi` das „mi" in **mit**, `Fr` das „fr" in **free floating**, `So` das „so"
+  in **sonst**, `Mo` das „Mo" in **(Motorradparken)**. Und `\b` als hintere
+  Grenze geht nicht, weil die Quelle `Mischparken13-23 Uhr` ohne Leerzeichen
+  schreibt — zwischen `n` und `1` steht keine Wortgrenze. Richtig ist
+  `(?![\p{L}])`: Ziffer erlaubt, Buchstabe nicht. Beide Fälle brachen laut ab;
+  der leise wäre eine Klausel gewesen, deren Fenster plötzlich am Sonntag hängt.
+- **In einer Endungs-Alternative steht die lange Endung vor der kurzen.**
+  `Schultag(?:e|en|s)?` liest bei „Schultagen" nur „Schultage" und lässt ein
+  „n" liegen — dreizehn Abschnitte sind genau daran abgebrochen.
+  `(?:en|es|e|s)` ist richtig. Reguläre Ausdrücke nehmen die erste passende
+  Alternative, nicht die längste.
+- **Im `u`-Modus sind `\-` und `\/` ungültige Escapes.** Eine
+  Maskier-Funktion, die wie üblich `[.*+?^${}()|[\]\\/-]` ersetzt, lässt einen
+  `RegExp` mit `u`-Flag gar nicht erst entstehen: `SyntaxError: Invalid regular
+  expression: … Invalid escape`. Beide Zeichen brauchen außerhalb einer
+  Zeichenklasse keine Maskierung. Aufgefallen an `Duales Parken Sommer/Winter`
+  und `E-Carsharing`.
+- **Ein Feiertag kann an der Stadt hängen statt am Land.** Mariä Himmelfahrt
+  gilt nach Art. 1 Abs. 1 Nr. 2 BayFTG „in Gemeinden mit überwiegend
+  katholischer Bevölkerung" — in 1.708 der 2.056 bayerischen Gemeinden, also in
+  München und nicht in Nürnberg; Augsburg hat zusätzlich das Friedensfest.
+  `Record<Land, …>` kann das nicht ausdrücken und hätte für die eine oder die
+  andere Stadt zwangsläufig unrecht. Deshalb `City.holidays`,
+  `holidaysFor(land, jahr, extraFixed)` und `ParkingZone.extraHolidays`. Ein
+  Zusatzdatum, das nicht `MM-TT` ist, **wirft** — ein Tippfehler wie `15-08`
+  passte sonst auf keinen Schlüssel und bewirkte stillschweigend nichts.
+  Belegt wird so etwas gegen die amtliche Feststellung, hier die
+  Gemeindeabfrage des Bayerischen Landesamts für Statistik, nicht gegen ein
+  Gefühl.
+- **Eine Zusatzregel ist nicht automatisch die, die man kennt.**
+  `isUncertainAt` in `tariff.ts` fragte nur, ob `unmodelledRules` irgendetwas
+  enthält — und bis München war jede solche Regel Berlins „Advents-Sa". München
+  schreibt „Regelung nur an Schultagen" hinein; an einem Adventssamstag hätte
+  die App über jedem Münchner Gebiet damit „unsicher" gezeigt und in der
+  Erklärung den Adventssamstag genannt. Die Funktion filtert seitdem auf
+  Regeln, die Advent überhaupt erwähnen (`adventRulesOf`), und der Satz im
+  Panel nennt die Regel wörtlich statt eine Jahreszeit.
+- **Bei einem Feed, der aus mehreren Ebenen besteht, entscheidet die
+  Ebenen-Gruppe, WAS gezählt wird, und der Parser, WAS gilt.** Münchens
+  `E-Ladeinfrastruktur … 4h mit Parkscheibe` endet auf eine echte
+  Parkscheiben-Klausel und ist trotzdem ein Ladeplatz — 1.171-mal. Ohne den
+  Filter über `parkregel_gruppe` zählte er bei den Stellplätzen mit und stünde
+  unter „Zeiten laut Quelle" ganz oben. Umgekehrt liefern
+  Behindertenparkplätze mit Abendfenster sehr wohl ein gültiges
+  Gebührenfenster für das Gebiet. Zwei Fragen, zwei Filter.
 - **Ein fehlendes Feld ist kein Beweis, dass es das Feld nicht gibt.**
   `get_session` → `external_metadata.usage` (Tokens und Kosten der Sitzung)
   wird **mit Verzug** geschrieben: um 16:02 fehlte der Block, um 16:21 war er
@@ -276,7 +332,7 @@ wiederholt.
 | [docs/hosting.md](docs/hosting.md) | Cloudflare, Worker, D1, Telegram, PMTiles — mit Befehlen |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
-| [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg und Frankfurt im Einzelnen |
+| [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg, Frankfurt und München im Einzelnen |
 | [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
 | [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |

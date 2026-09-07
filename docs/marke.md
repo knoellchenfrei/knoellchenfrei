@@ -17,6 +17,7 @@ cd app/apps/web && node scripts/make-brand.mjs
 | `brand/telegram-bot-512.png` | Bot `@knoellchen_bot` | 512 × 512 |
 | `brand/telegram-berlin-512.png` | Gruppe `@knoellchenfrei_B` | 512 × 512 |
 | `brand/telegram-hamburg-512.png` | Gruppe `@knoellchenfrei_HH` | 512 × 512 |
+| _fehlt noch_ | Gruppen `@knoellchenfrei_F` und `@knoellchenfrei_M` | 512 × 512, siehe [todo.md](todo.md) |
 | `brand/*.svg` | Die Quellen dazu | — |
 
 ## Telegram: vier Bilder, und warum sie so aussehen
@@ -36,19 +37,21 @@ nicht nach Zuschnitt aus, sondern nach einem schlecht gezeichneten Buchstaben.
 | **Berlin** `@knoellchenfrei_B` | Marke plus Kennzeichen `B` | Klein verschmilzt das Kürzel zu einem Punkt und stört nicht; groß beantwortet es die Frage, in welcher Gruppe man ist. |
 | **Hamburg** `@knoellchenfrei_HH` | Marke plus Kennzeichen `HH` | dasselbe |
 | **Frankfurt am Main** `@knoellchenfrei_F` | Marke plus Kennzeichen `F` | dasselbe. Ein Buchstabe wie Berlin — die Stadt heißt auf dem Kennzeichen `F`, nicht `FFM` |
+| **München** `@knoellchenfrei_M` | Marke plus Kennzeichen `M` | dasselbe. Wieder ein Buchstabe — `M`, nicht `MUC`; das ist der Flughafencode, nicht das Kennzeichen |
 
 Ausgeschriebene Städtenamen wären bei dieser Größe unlesbar — ein Wort, das
 niemand entziffert, ist Dekoration.
 
 **Das Kfz-Kennzeichen, nicht der Ländercode.** Berlin ist `B`, Hamburg `HH`,
-Frankfurt am Main `F` — das, was auf jedem Auto steht, und die App handelt von
-Autos. **Nicht zu verwechseln** mit `Land` in `core/holidays.ts`: Dort heißt
+Frankfurt am Main `F`, München `M` — das, was auf jedem Auto steht, und die App
+handelt von Autos. **Nicht zu verwechseln** mit `Land` in `core/holidays.ts`: Dort heißt
 Berlin `BE`, weil das der ISO-Code des Bundeslands ist und der
 Feiertagskalender daran hängt. Zwei Kürzel für dieselbe Stadt, und sie meinen
 Verschiedenes — ein `B` im Feiertagskalender wäre ein Fehler, ein `BE` auf dem
 Gruppenbild wäre falsches Deutsch für Autofahrer. Bei Frankfurt fallen die
 beiden am weitesten auseinander: Das Kennzeichen ist `F`, das Bundesland `HE`,
-und die Stadt heißt weder so noch so. Das Kürzel sitzt in einem Kreis mit einem
+und die Stadt heißt weder so noch so. München fällt genauso auseinander: `M`
+gegen `BY`. Das Kürzel sitzt in einem Kreis mit einem
 Ring in der Flächenfarbe; der erste Entwurf hatte ihn auf dem Schaft des P
 sitzen, und die zwei Buchstaben liefen rechts aus ihm heraus.
 
@@ -195,10 +198,11 @@ stehen, nicht danach. FreiFahren macht es mit einem Stadtkürzel:
 | `@knoellchenfrei_B` | Community Berlin |
 | `@knoellchenfrei_HH` | Community Hamburg |
 | `@knoellchenfrei_F` | Community Frankfurt am Main |
+| `@knoellchenfrei_M` | Community München |
 | `@knoellchen_bot` | Meldebot, Stufe 1 aus [todo.md](todo.md#6-telegram--du-token-dann-ich) |
 
 Am 6. September 2026 waren die ersten **vier frei**, am 7. September auch
-`@knoellchenfrei_F` (geprüft über `t.me/<name>`: Ein vergebener Name liefert
-Titel und Beschreibung, ein freier nur den Platzhalter
+`@knoellchenfrei_F` und `@knoellchenfrei_M` (geprüft über `t.me/<name>`: Ein
+vergebener Name liefert Titel und Beschreibung, ein freier nur den Platzhalter
 „Telegram: Contact @…"). Begründung, warum sie trotzdem jetzt belegt werden
 sollten, in [entscheidungen.md](entscheidungen.md#telegram-und-der-name).

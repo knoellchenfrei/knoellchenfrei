@@ -130,7 +130,66 @@ Frankfurt heißt das „nicht in diesem Abzug", nicht „gibt es nicht".
 Vollständige Feldanalyse in
 [staedte.md](staedte.md#frankfurt-am-main-im-einzelnen).
 
-## Geprüft und nicht verfügbar## Geprüft und nicht verfügbar
+## Verwendet — München
+
+Abgerufen am 7. September 2026 von der **Landeshauptstadt München** über
+`geoportal.muenchen.de`, WFS 2.0.0 (GeoServer). Acht Ebenen aus **zwei**
+Arbeitsbereichen desselben Servers:
+
+| Ebene | Arbeitsbereich / Typname | Umfang |
+| --- | --- | --- |
+| Parkraummanagementgebiete | `mor_wfs:ruhver_prm_gebiete_poly` | 82 Polygone, alle „in Betrieb" |
+| Parkseiten | `mor_wfs:ruhver_parkseiten_line` | 13.714 Linien — Regel, Stellplätze, Gebietsname |
+| Umweltzone | `mor_wfs:miv_umweltzone_poly` | 12 Flächen (Zone + 11 Transferflächen) |
+| Behindertenparkplätze | `mor_wfs:behindertenparkplaetze` | 556 Punkte, als POI |
+| Carsharing | `mor_wfs:ruhver_carsharing` | 710 Flächen, als POI |
+| Ladeinfrastruktur | `mor_wfs:ruhver_els_standort_point` | 369 Punkte, als POI |
+| Park und Ride | `mor_wfs:park_ride_standorte` | 25 Anlagen, als POI |
+| Stadtbezirke | `gsm_wfs:vablock_stadtbezirk` | 25 Bezirke in 27 Polygonen, als Kartenkontext |
+
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0)**,
+wie Hamburg und Frankfurt — und hier **je Ebene einzeln geprüft**: Zu jedem
+Typnamen führt `GetCapabilities` einen `MetadataURL` auf einen ISO-Datensatz im
+GeoNetwork der Stadt, und jeder dieser acht Datensätze wurde abgerufen und
+gelesen. Alle nennen `dl-de-by-2.0`. Der Quellenvermerk der sieben
+Mobilitätsebenen lautet wörtlich:
+
+```
+Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de
+```
+
+Die Stadtbezirke weichen ab und nennen den GeodatenService:
+`Datenquelle: Landeshauptstadt München - GeodatenService,
+https://www.muenchen.de/rathaus/Stadtverwaltung/Kommunalreferat/geodatenservice`.
+`City.attribution` trägt einen Vermerk, und das ist der der Parkdaten.
+
+Fünf Dinge, die man erst im Feed sieht:
+
+- **Die Regel ist ein Satz, kein Feld.** `parkregel_beschreibung` hat **291**
+  verschiedene Werte, zusammengesetzt aus bis zu vier Klauseln mit eigenen
+  Zeiten und Tagesangaben. Berlin hat 18 Schreibweisen, Hamburg 10,
+  Frankfurt 30.
+- **Ein Betrag steht nirgends.** Weder `€` noch `Euro` noch `EUR` kommt in den
+  291 Texten vor. Der Tarif steht nur in der Gebührenordnung; alle 82 Gebiete
+  bekommen `Fee.unknown`.
+- **Ohne `srsName` antwortet der Dienst in EPSG:25832**, wie Frankfurt. Mit
+  `srsName=urn:ogc:def:crs:EPSG::4326` kommen `[lon, lat]`.
+- **Die Sammel-Adresse `/geoserver/ows` ist abgeschaltet** — sie antwortet mit
+  `ServiceUnavailable: Service WFS is disabled`. Jeder Arbeitsbereich muss
+  einzeln angefragt werden.
+- **`angebot` ist eine Zeichenkette**, nicht eine Zahl: `"5"`, 44-mal `null`.
+
+Nicht abgerufen: `ruhver_els_saeule_point` (592 Ladesäulen; dieselben Orte wie
+die 369 Standorte, nur feiner gezählt), `ruhver_carsharing_station` (197
+stationsbasierte Plätze neben den 710 allgemeinen) und die 40 übrigen Ebenen
+des Dienstes — Radwege, Ampeln, Baustellen, Bushaltestellen. Nicht
+*ausgeliefert* werden die **1.307 Straßenseiten ohne Gebietsnamen** (sie liegen
+außerhalb der 82 Gebiete) und 42 weitere, die auf ein Gebiet zeigen, zu dem es
+kein Polygon gibt.
+
+Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
+
+## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
 sie nicht erneut untersucht werden:
@@ -239,6 +298,16 @@ curl -s "https://geowebdienste.frankfurt.de/Parken?service=WFS&version=2.0.0\
 curl -s "https://geowebdienste.frankfurt.de/Parken?service=WFS&version=2.0.0\
 &request=GetFeature&typeNames=opendata:Parkscheinautomaten\
 &outputFormat=application/json&srsName=urn:ogc:def:crs:EPSG::4326&count=1" | head -c 200
+
+# München: dieselbe UTM-Falle wie Frankfurt, und die Ebenen einzeln zählen
+curl -s "https://geoportal.muenchen.de/geoserver/mor_wfs/ows?service=WFS&version=2.0.0\
+&request=GetFeature&typeNames=mor_wfs:ruhver_parkseiten_line&resultType=hits" \
+  | grep -o 'numberMatched="[0-9]*"'
+
+# München: die Lizenz einer Ebene aus ihrem ISO-Metadatensatz lesen. Die
+# Adresse steht als MetadataURL im GetCapabilities der Ebene.
+curl -s "https://geoportal.muenchen.de/metadata/srv/api/records/\
+752539b9-7f8c-4be4-a051-0d893bb3749b/formatters/xml" | grep -o 'dl-de-by-2.0'
 
 # CORS-Header nachmessen
 curl -sD- -o /dev/null -H "Origin: https://example.com" \

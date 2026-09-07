@@ -20,6 +20,11 @@ export function toParkingZone(properties: ZoneProperties): ParkingZone {
     id: properties.zone,
     name: properties.zone,
     land: CITY.land,
+    // Feiertage, die nur in dieser Stadt gelten. In Bayern ist Mariä
+    // Himmelfahrt gemeindeweise geregelt: In München ist der 15. August
+    // gesetzlicher Feiertag, in Nürnberg nicht. Ohne diese Zeile stünde in
+    // München an einem Feiertag „gebührenpflichtig".
+    ...(CITY.holidays === undefined ? {} : { extraHolidays: CITY.holidays }),
     fee: properties.fee,
     windows: properties.windows,
     ...(maxStay === undefined ? {} : { maxStayMinutes: maxStay }),
