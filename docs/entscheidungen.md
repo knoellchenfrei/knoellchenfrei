@@ -268,6 +268,15 @@ Doku verlangt, dass sich die Verzeichnisse zweier Einträge desselben
 `actions/upload-artifact` — sie laufen mit Repository-Rechten. Eine veraltete
 Action ist genau die Art Abhängigkeit, die niemand mitzählt.
 
+**Actions sind auf den Commit gepinnt, nicht auf den Major-Tag.** Seit dem
+7. September steht in jedem `uses:` die 40-stellige SHA, dahinter als
+Kommentar die Version (`# v7.0.1`). Ein Tag wie `v7` ist beweglich — wer ihn
+verschieben kann, verschiebt damit, was mit Repository-Rechten in unserer CI
+läuft; das war ein Audit-Finding (M-012/M-013 in `audit/REPORT.md`). Dependabot
+versteht das Format und bumpt weiterhin, jetzt SHA samt Kommentar. Aufgelöst
+wurden die SHAs per `git ls-remote --tags` — die GitHub-API ist aus dieser
+Umgebung auf die eigenen Repositories beschränkt.
+
 **Was Dependabot nicht kann und hier auch nicht soll:** den Pin
 `packageManager: pnpm@10.33.0` heben (keine Abhängigkeit, sondern eine
 Festlegung), und die Sicherheitswarnungen einschalten — die hängen an zwei
