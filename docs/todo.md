@@ -529,105 +529,22 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       dieses Konto kennt beide."* Vorher stand dort „war nicht zu prüfen".
       Die R2-CORS-Regel ohne `localhost` ist damit auch angewendet (M-050).
 
-- [ ] **Einmal wirklich zurückspielen.** Der Weg in [notfall.md](notfall.md)
-      ist hergeleitet, nicht gemessen — dieselbe Lage wie beim
-      Einrichtungsskript vor dem 6. September, und das meldete beim ersten
-      echten Lauf acht Dinge falsch. Eine halbe Stunde gegen eine
-      Wegwerf-Datenbank: sichern, neue D1 anlegen, einspielen, App dagegen
-      laufen lassen.
-- [x] **Kacheln für alle vier Städte** — am 7. September gebaut und
-      ausgeliefert. Der Fehler lag nicht bei DNS oder R2 (`206` auf den
-      Range-Request, die Adresse stimmte immer), sondern eine Ebene höher:
-      `VITE_TILES_URL` zeigte auf **eine Datei**, und `map-style.ts` hängte
-      genau die in den Stil — unabhängig von der geladenen Stadt.
+- [x] **Einmal wirklich zurückgespielt** — am 7. September, und der Weg trägt.
+      `sichern.sh` erzeugt den Abzug (4 KB), eine Wegwerf-Datenbank
+      `knoellchenfrei-probe` nimmt ihn auf, und die Zeilen stimmen danach
+      **exakt** überein: 21 `visits`, 1 `feedback`, 0 `marks`, 0 `sightings`,
+      0 `votes`, 1 Migration. Die Wegwerf-Datenbank ist wieder weg.
 
-      Drei Änderungen: Die Rahmen kommen jetzt aus `core/city.ts` statt als
-      zweite Zahlenreihe im Skript (das war zugleich Audit-Punkt M-034);
-      `build-tiles.sh` baut und lädt ein Archiv je Stadt nach
-      `v<datum>/<stadt>.pmtiles`; die Variable zeigt auf das **Verzeichnis**,
-      und die App hängt `<stadt>.pmtiles` selbst an. Ein Wert, der noch auf
-      eine Datei zeigt, hält den Build an — ein stiller Rückfall auf Berlin
-      wäre die schlechteste Antwort.
+      Die eine Frage, die vorher offen war: Was macht
+      `d1 migrations apply` gegen eine zurückgespielte Datenbank? Antwort
+      gemessen: **„No migrations to apply"** — die mitgesicherte
+      `d1_migrations` verhindert einen zweiten Lauf. Die Reihenfolge in
+      `notfall.md` stimmt also.
 
-      | Stadt | Archiv |
-      | --- | --- |
-      | Berlin | 89 MB |
-      | Hamburg | 65 MB |
-      | Frankfurt am Main | 32 MB |
-      | München | 32 MB |
-
-- [x] **Die Vektorkarte zeichnete nicht — und hatte es nie.** Am 7. September
-      gefunden und behoben. Die Ursache lag weder bei PMTiles noch beim Archiv,
-      beim Stil oder bei CORS, sondern eine Ebene tiefer: **MapLibre 6 startet
-      zur Laufzeit einen Worker aus einer eigenen Datei**, deren Adresse es sich
-      selbst zusammensetzt (`new URL('./maplibre-gl-worker.mjs',
-      import.meta.url)`). Der Dateiname steht dabei in einer Variablen — kein
-      Bundler kann ihn statisch erkennen, rolldown legte die Datei also gar
-      nicht ab. Die Anfrage lief in die SPA-Rückfalladresse und bekam
-      **`index.html` mit `200 OK` und `text/html`** zurück.
-
-      Warum das so lange unsichtbar blieb: kein 404, kein
-      `map.on('error')`, keine Konsolenmeldung. Der Worker startete einfach
-      nicht, und ohne ihn parst MapLibre **weder Vektorkacheln noch GeoJSON**.
-      Nach dem Kopf des Archivs (`bytes=0-16383`) forderte deshalb niemand mehr
-      eine Kachel an — genau das Bild, das oben in der Messtabelle steht und
-      wie ein PMTiles-Problem aussah. Die eine Messung, die gefehlt hat, war
-      die banalste: *Gibt es die Datei, die der Browser holen will?*
-
-      Der Fehler traf mehr als den Hintergrund. Auch die **Parkzonen** wurden
-      nie gezeichnet — sie kommen als GeoJSON und gehen durch denselben Worker.
-      Sichtbar war davon nur, dass `withMapReady` in `App.tsx` jedes Mal in
-      seinen 10-Sekunden-Rückfall lief; das steht seit Wochen als Eigenheit in
-      `CLAUDE.md` und war in Wahrheit dieser Fehler.
-
-      | Behoben durch | |
-      | --- | --- |
-      | `apps/web/src/main.tsx` | `setWorkerUrl` mit einer Adresse aus `?worker&url` — Vite bündelt den Worker samt `maplibre-gl-shared.mjs` und legt ihn ab |
-      | `packages/ingest/src/build-artifact.ts` | bettet denselben Worker als Zeichenkette ein und bricht ab, wenn er fehlt; im Artifact wird daraus ein Blob |
-      | `e2e/app.spec.ts` | prüft den `content-type` der Worker-Antwort, nicht ihren Status — `200` sagt hier nichts |
-
-      Der Umstieg auf `@protomaps/basemaps` 5.7.2 (Audit-Punkt M-049) war
-      **nicht** die Ursache, ist aber trotzdem richtig und mit erledigt: Das
-      alte `protomaps-themes-base` ist abgekündigt. Tiles 4.15.2 und Styles
-      5.7.2 sind getrennte Versionsstränge und passen zusammen; die Archive
-      mussten nicht neu gebaut werden.
-
-- [x] **Der Kachelbau läuft als Workflow** — seit dem 7. September,
-      `.github/workflows/kacheln.yml`, sonntags um 03:41 UTC und auf Knopfdruck.
-
-      Warum das überhaupt drängte: Protomaps hält seine Tagesarchive nur ein
-      knappes Fenster vor. Ein Bau, der von Hand läuft, fällt genau dann aus,
-      wenn niemand hinsieht, und die Karte zeigt Monate alte Straßen.
-
-      Die Sache, an der es hing, war nicht der Bau, sondern der Schritt
-      danach: Bisher landete jedes Archiv unter `v<datum>/`, und **jemand
-      musste die Variable `VITE_TILES_URL` umsetzen und neu ausrollen**. Das
-      kann ein Workflow nicht — GitHubs eigenes `GITHUB_TOKEN` darf keine
-      Repository-Variablen schreiben, dafür bräuchte es einen zusätzlichen
-      persönlichen Token.
-
-      Der Ausweg ist ein **zweiter, stabiler Pfad**: Jedes Archiv geht jetzt
-      nach `v<datum>/` **und** nach `aktuell/`, und die App zeigt auf
-      `aktuell/`. Damit braucht ein neuer Bau weder eine Variable noch einen
-      Deploy. Die Versionsordner bleiben liegen — das ist der Rückweg, wenn
-      ein Archiv kaputt ist:
-
-      ```bash
-      gh variable set VITE_TILES_URL --body 'https://tiles.knoellchenfrei.de/v<datum>/'
-      ```
-
-      **Was das kostet**, damit es niemand später als Überraschung findet: Ein
-      Browser, der die Seite offen hat, während ein Archiv ersetzt wird, hält
-      den Kopf der alten Datei im Speicher; die Sprungadressen darin zeigen
-      dann ins Leere, bis jemand neu lädt. Das Fenster ist eine Minute in der
-      Woche. Der Preis dafür, es auszuschließen, wäre ein Deploy je
-      Kachelbau. Ein Zwischenspeicher kommt nicht dazu: Cloudflare cacht die
-      Objekte nicht, `cf-cache-status: DYNAMIC`, nachgemessen.
-
-      Der Workflow misst am Ende nach, statt zu glauben: `206` auf den Kopf
-      jeder der vier Dateien. Ohne Range-Requests lädt der Browser kein
-      einziges Kachelbyte, und ein Workflow ohne diese Prüfung wäre dabei
-      grün.
+      Der Schlüssel liegt jetzt unter `~/.knoellchenfrei-sicherung-schluessel`.
+      **Er gehört in den Passwortmanager** — ohne Kopie dort verliert man mit
+      dem Rechner Schlüssel und Sicherung im selben Moment, und die Sicherung
+      ist dann Rauschen.
 
 - [ ] **Ein eigener R2-Token für den Kachel-Workflow** —
       `CLOUDFLARE_R2_TOKEN` als Repository-Secret, mit **einem** Recht:

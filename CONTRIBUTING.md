@@ -3,12 +3,20 @@
 ## Schnellstart
 
 ```bash
+corepack enable    # holt pnpm in der festgelegten Version
 cd app
 pnpm install
-pnpm test          # 190 Unit-Tests
+pnpm test          # 541 Unit-Tests
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
 ```
+
+**`corepack enable` ist nicht schmückend.** Mit einem zu alten pnpm meldet der
+Install nur `WARN Ignoring broken lockfile … not compatible with current pnpm`
+— und löst danach **frisch auf**: Die Festschreibung ist weg, und der Lauf
+sieht erfolgreich aus. Deshalb steht `engines.pnpm: ">=10"` in
+`app/package.json`; damit bricht pnpm ab, statt still etwas anderes zu bauen.
+Die genaue Version liest corepack aus `packageManager`.
 
 ## Grundsätze
 

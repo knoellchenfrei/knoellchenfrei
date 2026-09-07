@@ -203,13 +203,31 @@ Ehrlichkeit an der Stelle, an der sie am meisten wert ist:
 
 - **Der Wiederaufbau ist nie durchgespielt worden.** `einrichten.sh` lief
   einmal gegen ein leeres Konto (6. September) und meldete dabei acht Dinge
-  falsch. Gegen ein *verlorenes* Konto lief es nie.
-- **Es gibt noch keine Sicherung.** `./scripts/sichern.sh --pruefen` sagt das
-  auch — geprüft am 7. September, es gibt keine. Der Betreiber-Token hat
-  seitdem `D1:Edit`, der erste Lauf ist also nur noch ein Befehl. Viel steht
-  auch nicht darin: `feedback` und `marks` sind leer, `/marks` antwortet
-  `{"marks":[]}`. Genau deshalb kostet der erste Lauf nichts und beweist den
-  Weg.
-- **Ein Zurückspielen ist nie erprobt worden.** Der Weg oben ist hergeleitet,
-  nicht gemessen. Ein Probelauf gegen eine Wegwerf-Datenbank wäre eine halbe
-  Stunde und die einzige Art, das zu ändern.
+  falsch. Gegen ein *verlorenes* Konto lief es nie. Der Teil, der am meisten
+  wehgetan hätte — die Daten —, ist inzwischen erprobt, siehe unten.
+- **Sicherung und Zurückspielen sind erprobt** — am 7. September, einmal
+  vollständig durchgespielt statt hergeleitet:
+
+  | Schritt | Ergebnis |
+  | --- | --- |
+  | `./scripts/sichern.sh` | 4 KB unverschlüsselt, verschlüsselt nach `sicherungen/` |
+  | Wegwerf-Datenbank `knoellchenfrei-probe`, `--jurisdiction eu` | angelegt |
+  | Abzug eingespielt | 120 Zeilen geschrieben, 6 Tabellen |
+  | Zeilen verglichen | **identisch**: 21 `visits`, 1 `feedback`, 0 `marks`, 0 `sightings`, 0 `votes`, 1 Migration |
+  | `d1 migrations apply` danach | „No migrations to apply" — die mitgesicherte `d1_migrations` verhindert einen zweiten Lauf |
+  | Wegwerf-Datenbank gelöscht | ja |
+
+  Die letzte Zeile ist die, die vorher offen war: Der Abzug enthält
+  `CREATE TABLE` **und** den Migrationsstand. In eine frische Datenbank
+  eingespielt kommt danach nichts durcheinander — die Reihenfolge in Schritt 4
+  oben stimmt also.
+
+  **Der Schlüssel liegt unter `~/.knoellchenfrei-sicherung-schluessel`** und ist
+  seit dem 7. September vorhanden. Er ist das Einzige, was die Sicherungen
+  wieder lesbar macht: Ohne Kopie im Passwortmanager verliert man mit dem
+  Rechner beides im selben Moment.
+
+  Viel steht in der Sicherung noch nicht — eine Rückmeldung, 21 Besuchszeilen,
+  keine Kontrollmarken. Genau deshalb war jetzt der richtige Zeitpunkt: Der
+  Probelauf kostete nichts und beweist den Weg, bevor etwas darin steht, das
+  wehtut.
