@@ -151,7 +151,14 @@ export function parseHamburgFee(raw: string | null | undefined): Fee {
 
   const match = HAMBURG_AMOUNT.exec(text)
   if (match === null) throw new HamburgParseError(raw, 'kein erkennbarer Betrag je Stunde')
-  return { kind: 'exact', centsPerHour: Number(match[1]) * 100 + Number(match[2]) }
+  const centsPerHour = Number(match[1]) * 100 + Number(match[2])
+  // Dieselbe Begründung wie in `parse-fee.ts`: „0,00 € je Stunde“ wäre ein
+  // `exact` mit 0 Cent und damit `priced: true` — ein Preis von null, den die
+  // Oberfläche ausschreiben dürfte. Hamburg hat für „kostenlos, aber Scheibe“
+  // das Wort „Parkscheibe“ und für „Quelle sagt nichts“ den Strich; ein
+  // Nullbetrag ist keins von beidem und gehört gemeldet.
+  if (centsPerHour === 0) throw new HamburgParseError(raw, 'ein Betrag von 0,00 € ist kein Tarif')
+  return { kind: 'exact', centsPerHour }
 }
 
 /**

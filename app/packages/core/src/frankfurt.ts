@@ -203,7 +203,14 @@ export function parseFrankfurtFee(raw: string | null | undefined): Fee {
 
   const match = FRANKFURT_AMOUNT.exec(text)
   if (match === null) throw new FrankfurtParseError(raw, 'kein erkennbarer Betrag je Stunde')
-  return { kind: 'exact', centsPerHour: Number(match[1]) * 100 + Number(match[2] ?? 0) }
+  const centsPerHour = Number(match[1]) * 100 + Number(match[2] ?? 0)
+  // Dieselbe Begruendung wie in `parse-fee.ts`: `0 €/h` waere ein `exact` mit
+  // 0 Cent, also `priced: true` — und `mergeFrankfurtFees` zoege damit die
+  // Spanne eines ganzen Bereichs auf „0,00-4,00 €“ herunter, genau das, was der
+  // Test „ignores machines that state no rate at all“ verhindern soll. Ein
+  // stummer Automat traegt den Strich, keine Null.
+  if (centsPerHour === 0) throw new FrankfurtParseError(raw, 'ein Betrag von 0 € ist kein Tarif')
+  return { kind: 'exact', centsPerHour }
 }
 
 /**

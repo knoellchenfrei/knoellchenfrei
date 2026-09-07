@@ -97,7 +97,15 @@ const FUTURE_TOLERANCE_MS = 60_000
 export function confidenceOf(sighting: Sighting, options: ConfidenceOptions): Confidence {
   const halfLifeMs = options.halfLifeMs ?? DEFAULT_HALF_LIFE_MS
   const maxAgeMs = options.maxAgeMs ?? DEFAULT_MAX_AGE_MS
-  const rawAgeMs = options.now - sighting.reportedAt
+  // Ein `reportedAt`, das keine endliche Zahl ist, ergab `ageMs: NaN` und
+  // `score: NaN`. Der Status fiel dabei zufällig richtig aus — jeder Vergleich
+  // mit NaN ist falsch, also landete er auf 'expired' —, aber die zugesicherte
+  // Spanne 0..1 galt nicht mehr, und `ageMs` war in der Ausgabe unbrauchbar.
+  // Gefunden beim Beschuss mit Zufallswerten. Unlesbar alt ist die ehrliche
+  // Lesart eines unlesbaren Zeitstempels, also unendlich alt.
+  const rawAgeMs = Number.isFinite(sighting.reportedAt)
+    ? options.now - sighting.reportedAt
+    : Number.POSITIVE_INFINITY
   const ageMs = Math.max(0, rawAgeMs)
 
   // A timestamp in the future used to clamp to age zero and score near 1

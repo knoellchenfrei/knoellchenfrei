@@ -528,3 +528,24 @@ describe('a Frankfurt area in the shared tariff model', () => {
     }
   })
 })
+
+describe('parseFrankfurtFee an der Null', () => {
+  /**
+   * Ein Nullbetrag ist kein Tarif — dieselbe Begründung wie in Berlin und
+   * Hamburg. Hier wiegt sie sogar schwerer: `mergeFrankfurtFees` bildet die
+   * Spanne eines Bereichs aus allen seinen Automaten, und ein einziger
+   * Automat mit `0 €/h` zöge sie auf „0,00-4,00 €" herunter. Genau das
+   * verhindert der Test „ignores machines that state no rate at all" für den
+   * stummen Automaten; über die Null wäre er zu umgehen gewesen.
+   */
+  it('weist 0 €/h ab, statt einen Preis von null zu melden', () => {
+    expect(() => parseFrankfurtFee('0 €/h')).toThrow(FrankfurtParseError)
+    expect(() => parseFrankfurtFee('0,00 €/h')).toThrow(/kein Tarif/)
+  })
+
+  it('lässt den stummen Automaten weiter „unbekannt" sein', () => {
+    expect(parseFrankfurtFee('')).toEqual({ kind: 'unknown' })
+    expect(parseFrankfurtFee('-')).toEqual({ kind: 'unknown' })
+    expect(parseFrankfurtFee(null)).toEqual({ kind: 'unknown' })
+  })
+})

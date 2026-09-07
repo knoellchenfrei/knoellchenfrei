@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest'
 import { adventSaturdays, isAdventSaturday } from '../src/holidays.js'
 import { berlinWallClock } from '../src/berlin-time.js'
 import { parseSchedule } from '../src/parse-schedule.js'
-import { confidenceOf } from '../src/sighting.js'
+import { activeSightings, confidenceOf } from '../src/sighting.js'
 import {
   adventRulesOf,
   estimateCost,
@@ -135,5 +135,48 @@ describe('Advent Saturdays', () => {
     expect(isUncertainAt(muenchen, Date.UTC(2026, 11, 5, 15))).toBe(false)
     expect(adventRulesOf(muenchen)).toEqual([])
     expect(adventRulesOf(spandau)).toEqual(['Advents-Sa 9 -17 Uhr'])
+  })
+})
+
+/**
+ * Zweite Runde, gefunden beim Beschuss mit Zufallswerten (`fuzz.test.ts`).
+ * Wieder gilt: Jeder Test hier ist einmal fehlgeschlagen.
+ */
+describe('confidence with a broken timestamp', () => {
+  const base = { id: 'x', lat: 52.5, lon: 13.4, confirmations: 2, disputes: 0 }
+
+  /**
+   * `reportedAt: NaN` ergab `score: NaN` und `ageMs: NaN`.
+   *
+   * Der Status fiel dabei zufällig richtig auf 'expired' — jeder Vergleich mit
+   * NaN ist falsch, also fiel er durch beide Schwellen. Die zugesicherte Spanne
+   * 0..1 galt trotzdem nicht mehr, und `ageMs` war in der Ausgabe unbrauchbar:
+   * Die Oberfläche schreibt daraus „vor 12 Min." und hätte „vor NaN Min."
+   * geschrieben.
+   */
+  it('behandelt einen unlesbaren Zeitstempel als unendlich alt, nicht als NaN', () => {
+    for (const reportedAt of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const result = confidenceOf({ ...base, reportedAt }, { now: 1_757_000_000_000 })
+      expect(Number.isFinite(result.score), String(reportedAt)).toBe(true)
+      expect(result.score).toBe(0)
+      expect(result.status).toBe('expired')
+      expect(result.ageMs).toBeGreaterThanOrEqual(0)
+    }
+  })
+
+  it('hält eine solche Sichtung aus der aktiven Liste heraus', () => {
+    const broken = { ...base, reportedAt: Number.NaN }
+    expect(activeSightings([broken], { now: 1_757_000_000_000 })).toEqual([])
+  })
+
+  // Gegenstück zum bestehenden Test über nicht endliche Bestätigungen: Der
+  // zweite Zähler wird genauso geklammert, und beide kommen aus fremden Clients.
+  it('rechnet auch mit einem nicht endlichen Widerspruch weiter', () => {
+    const result = confidenceOf(
+      { ...base, reportedAt: 0, disputes: Number.NaN },
+      { now: 0 }
+    )
+    expect(Number.isFinite(result.score)).toBe(true)
+    expect(result.score).toBeGreaterThan(0)
   })
 })

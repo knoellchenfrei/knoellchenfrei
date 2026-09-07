@@ -257,3 +257,57 @@ describe('a Hamburg zone in the shared tariff model', () => {
     expect(berlinWallClock(sundayNoon).minuteOfDay).toBe(12 * 60)
   })
 })
+
+describe('Hamburger Parser an den Rändern', () => {
+  // Wie in Berlin: Minuten über 59 würden stillschweigend in die nächste
+  // Stunde rollen — aus „9:75" würde 10:15, eine Zeit, die niemand geschrieben
+  // hat.
+  it('weist Minuten über 59 ab, statt sie in die nächste Stunde zu rollen', () => {
+    expect(() => parseHamburgSchedule('täglich 9:75-20:00 Uhr')).toThrow(HamburgParseError)
+    expect(() => parseHamburgSchedule('werktags 9:00-20:75 Uhr')).toThrow(/Minuten über 59/)
+  })
+
+  it('weist eine Stunde jenseits des Tages ab', () => {
+    expect(() => parseHamburgSchedule('täglich 25-30 Uhr')).toThrow(/unplausible Spanne/)
+    expect(() => parseHamburgSchedule('täglich 0-0 Uhr')).toThrow(/unplausible Spanne/)
+  })
+
+  // Anfang gleich Ende ist keine Spanne über Mitternacht, sondern entweder
+  // „immer" oder „nie" — und welches davon, sagt der Feed nicht.
+  it('weist eine Spanne ab, deren Enden gleich sind', () => {
+    expect(() => parseHamburgSchedule('täglich 9-9 Uhr')).toThrow(/Anfang und Ende sind gleich/)
+  })
+
+  it('begrenzt auch die Gebührenangabe auf 120 Zeichen', () => {
+    expect(parseHamburgFee(`3,50 € je Stunde${' '.repeat(104)}`)).toEqual({
+      kind: 'exact',
+      centsPerHour: 350,
+    })
+    try {
+      parseHamburgFee(`3,50 € je Stunde${' '.repeat(105)}`)
+      expect.unreachable('hätte werfen müssen')
+    } catch (error) {
+      expect(error).toBeInstanceOf(HamburgParseError)
+      expect((error as HamburgParseError).raw).toHaveLength(40)
+    }
+  })
+
+  /**
+   * Ein Nullbetrag ist kein Tarif — dieselbe Begründung wie in Berlin.
+   *
+   * Hamburg hat für „kostenlos, aber Scheibe" das Wort `Parkscheibe` und für
+   * „die Quelle sagt nichts" den Strich. `0,00 € je Stunde` wäre keins von
+   * beidem, ergäbe aber `priced: true` und damit ein „0,00 €" auf dem Schirm.
+   */
+  it('weist einen Nullbetrag ab, statt kostenlos zu melden', () => {
+    expect(() => parseHamburgFee('0,00 € je Stunde')).toThrow(/kein Tarif/)
+    expect(parseHamburgFee('Parkscheibe')).toEqual({ kind: 'disc' })
+    expect(parseHamburgFee('-')).toEqual({ kind: 'unknown' })
+  })
+
+  it('weist eine Minutenzahl ab, die keine ist', () => {
+    expect(() => parseHamburgMaxStay('zwei Stunden')).toThrow(/keine Minutenzahl/)
+    expect(() => parseHamburgMaxStay('120 min')).toThrow(HamburgParseError)
+    expect(() => parseHamburgMaxStay('123456')).toThrow(HamburgParseError)
+  })
+})

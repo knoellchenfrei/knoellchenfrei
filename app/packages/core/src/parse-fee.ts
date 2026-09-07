@@ -62,6 +62,17 @@ export function parseFee(raw: string): Fee {
   AMOUNT.lastIndex = 0
   const amounts = [...text.matchAll(AMOUNT)].map((m) => toCents(m[1] as string, m[2] as string))
 
+  // Null Cent ist kein Tarif, sondern der einzige Weg, an `CostEstimate.priced`
+  // vorbei ein „0,00 €“ auf den Schirm zu bringen: `exact` mit 0 Cent liefert
+  // `priced: true`, und genau das soll die Oberfläche nie sagen dürfen (siehe
+  // `tariff.ts`). Gefunden beim Beschuss mit Zufallszeichenketten — „0,00 Euro“
+  // ergab bis dahin klaglos einen Preis von null. Was ein Nullbetrag im Feed
+  // bedeutete, weiß niemand; im Berliner Abzug steht keiner. Also laut
+  // abbrechen statt still beziffern, wie Frankfurt es mit „0 h“ hält.
+  if (amounts.includes(0)) {
+    throw new FeeParseError(raw, 'an amount of 0,00 is not a tariff')
+  }
+
   if (amounts.length === 1) {
     return { kind: 'exact', centsPerHour: amounts[0] as number }
   }

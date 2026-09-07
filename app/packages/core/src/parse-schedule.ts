@@ -65,13 +65,23 @@ export class ScheduleParseError extends Error {
   }
 }
 
-function expandDays(from: string, to: string | undefined): Weekday[] {
+/**
+ * `raw` nur, um im Fehlerfall die richtige Klasse werfen zu koennen.
+ *
+ * Gefunden beim Beschuss mit Zufallszeichenketten: `Fr-Mo 9-20 Uhr` warf ein
+ * blankes `Error`, kein `ScheduleParseError` — und eine umgedrehte Tagesspanne
+ * ist Feed-Inhalt, kein Fehler des Parsers. Wer `catch (e) { if (e instanceof
+ * ScheduleParseError) ... }` schreibt, haette genau diese eine Feed-Schreibweise
+ * als Absturz statt als unlesbare Zeile behandelt, und `raw` fehlte im Fehler
+ * obendrein.
+ */
+function expandDays(raw: string, from: string, to: string | undefined): Weekday[] {
   const start = DAY_TOKENS.indexOf(from as (typeof DAY_TOKENS)[number])
-  if (start < 0) throw new Error(`unknown day token ${from}`)
+  if (start < 0) throw new ScheduleParseError(raw, `unknown day token ${from}`)
   if (to === undefined) return [DAY_TO_WEEKDAY[start] as Weekday]
 
   const end = DAY_TOKENS.indexOf(to as (typeof DAY_TOKENS)[number])
-  if (end < start) throw new Error(`inverted day range ${from}-${to}`)
+  if (end < start) throw new ScheduleParseError(raw, `inverted day range ${from}-${to}`)
   return DAY_TOKENS.slice(start, end + 1).map(
     (_, offset) => DAY_TO_WEEKDAY[start + offset] as Weekday
   )
@@ -127,7 +137,7 @@ export function parseSchedule(raw: string): ParsedSchedule {
       throw new ScheduleParseError(raw, `implausible time range ${fromHour}-${toHour}`)
     }
 
-    const weekdays = expandDays(dayFrom as string, dayTo)
+    const weekdays = expandDays(raw, dayFrom as string, dayTo)
 
     if (advents !== undefined) {
       // "Advents-Sa" restricts a window to Advent Saturdays. ChargeWindow has no
