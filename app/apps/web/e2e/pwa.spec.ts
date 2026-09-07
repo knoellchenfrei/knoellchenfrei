@@ -288,6 +288,33 @@ test.describe('die geschlossene Beta', () => {
  * Protokoll steht nichts, was nach einem Fehler aussieht. Genau dieser Fall
  * ist beim Bauen aufgetreten: `worker-src blob:` allein sperrte MapLibre 6 aus.
  */
+test.describe('die Statistikseite', () => {
+  test('ist eine eigene Seite und lädt weder React noch die Karte', async ({ page }) => {
+    const antwort = await page.goto('/statistik/')
+    expect(antwort?.status()).toBe(200)
+    await expect(page.locator('#statistik')).toBeVisible()
+    // Ohne `VITE_API_BASE` gibt es nichts auszuwerten, und die Seite sagt das
+    // — statt eine leere Auswertung zu zeichnen.
+    await expect(page.locator('#statistik')).toContainText('keinen Server')
+  })
+
+  // Der Dienst am Nutzer und die Zusicherung in einem: Was die Seite über sich
+  // selbst behauptet, steht auch in der Datenschutzerklärung.
+  test('sagt Suchmaschinen, dass sie wegbleiben sollen', async ({ page }) => {
+    await page.goto('/statistik/')
+    const robots = page.locator('meta[name="robots"]')
+    await expect(robots).toHaveAttribute('content', /noindex/)
+  })
+
+  // Der Service Worker nimmt jeden Pfad, der auf `/` endet — `/statistik/`
+  // wäre sonst ab dem zweiten Besuch eingefroren, und zwar unsichtbar.
+  test('wird vom Service Worker nicht eingefroren', async ({ page }) => {
+    const antwort = await page.request.get('/sw.js')
+    const quelle = await antwort.text()
+    expect(quelle).toContain("path.startsWith('/statistik')")
+  })
+})
+
 test.describe('die Sicherheits-Kopfzeilen', () => {
   test('_headers entsteht und nennt die nötigen Herkünfte', async ({ page }) => {
     const response = await page.request.get('/_headers')

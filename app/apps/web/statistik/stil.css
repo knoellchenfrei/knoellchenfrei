@@ -1,0 +1,73 @@
+/* Eigener Stil, bewusst nicht der der App: Diese Seite hat keine Karte, keine
+   Tafeln und keine Bedienelemente — sie zeigt Zahlen. Die Farben sind
+   dieselben, damit sie erkennbar dazugehört. */
+:root {
+  color-scheme: dark;
+  --grund: #0f1216;
+  --flaeche: #171b21;
+  --linie: #262c34;
+  --text: #e6e9ed;
+  --leise: #9aa3ad;
+  --akzent: #f28c28;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 1.5rem 1rem 4rem;
+  background: var(--grund);
+  color: var(--text);
+  font: 15px/1.55 system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+.seite { max-width: 46rem; margin: 0 auto; }
+
+h1 { font-size: 1.5rem; margin: 0 0 1.25rem; }
+h2 { font-size: 1.05rem; margin: 0 0 0.6rem; }
+
+.kopf { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+
+.kopf__karte {
+  flex: 1 1 8rem;
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: 0.7rem;
+  padding: 0.9rem 1rem;
+}
+
+.kopf__zahl { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.kopf__label { color: var(--leise); font-size: 0.82rem; margin-top: 0.15rem; }
+
+.block {
+  background: var(--flaeche);
+  border: 1px solid var(--linie);
+  border-radius: 0.7rem;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.hinweis { color: var(--leise); font-size: 0.82rem; margin: -0.2rem 0 0.8rem; }
+
+.balken__zeile {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 3.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.16rem 0;
+}
+
+.balken__label { color: var(--leise); font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.balken__spur { background: #11151a; border-radius: 0.25rem; height: 0.85rem; overflow: hidden; }
+.balken__fuellung { background: var(--akzent); height: 100%; border-radius: 0.25rem; }
+.balken__zahl { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+
+.nicht { margin: 0; padding-left: 1.1rem; color: var(--leise); font-size: 0.88rem; }
+.nicht li { margin-bottom: 0.35rem; }
+
+.leer { color: var(--leise); }
+.fuss { color: var(--leise); font-size: 0.8rem; margin-top: 1.5rem; }
+
+@media (max-width: 30rem) {
+  .balken__zeile { grid-template-columns: 5.5rem 1fr 3rem; }
+}

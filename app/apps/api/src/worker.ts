@@ -655,6 +655,90 @@ async function recordEvents(
   return json({ written: angenommen.length }, { status: 200 }, cors)
 }
 
+/** Wie viele Tage die Statistikseite zeigt. */
+const STATS_DAYS = 28
+/**
+ * Ab wie vielen Zählungen eine Zone beim Namen genannt wird.
+ *
+ * Darunter geht sie in eine Sammelzeile „andere". Das ist die eine Stelle, an
+ * der aus Zahlen wieder ein Ort werden könnte: Eine Zone, die in 28 Tagen
+ * **einmal** angesehen wurde, beschreibt einen einzelnen Menschen. Die Schwelle
+ * steht deshalb im SQL und nicht in der Anzeige — was die Antwort nicht
+ * enthält, kann auch niemand auslesen.
+ */
+const STATS_MIN_ZONE = 5
+/** Der Schlüssel im KV. Die Version steht drin, damit ein Formatwechsel nichts umbenennt. */
+const STATS_KEY = 'stats:v1'
+
+/**
+ * Rechnet die Statistik **einmal je Stunde** aus und legt sie ins KV.
+ *
+ * Warum nicht bei jeder Anfrage: D1 rechnet **gelesene** Zeilen gegen ein
+ * eigenes Tagesbudget ab. Fünf `GROUP BY`-Abfragen über 28 Tage lesen je
+ * Aufruf fünfstellig viele Zeilen; bei einem öffentlichen Endpunkt mit
+ * Neuladen wäre das Budget vor dem Mittag weg. So kostet die Auswertung
+ * **24 Läufe am Tag**, unabhängig davon, wie oft jemand hinsieht.
+ */
+async function rollupStats(env: Env): Promise<void> {
+  const now = Date.now()
+  const seit = berlinDay(now - (STATS_DAYS - 1) * 86_400_000)
+  const seit7 = berlinDay(now - 6 * 86_400_000)
+  const heute = berlinDay(now)
+
+  const ergebnisse = await env.DB.batch([
+    env.DB.prepare(
+      "SELECT day, SUM(n) AS n FROM events WHERE day >= ? AND name = 'app.open' GROUP BY day ORDER BY day"
+    ).bind(seit),
+    // `hour >= 0` ist Pflicht: Ortsereignisse liegen auf -1 und stünden sonst
+    // als 25. Balken im Tagesgang.
+    env.DB.prepare(
+      "SELECT hour, SUM(n) AS n FROM events WHERE day >= ? AND hour >= 0 AND name = 'app.open'" +
+        ' GROUP BY hour ORDER BY hour'
+    ).bind(seit),
+    env.DB.prepare(
+      "SELECT city, SUM(n) AS n FROM events WHERE day >= ? AND name = 'app.open' GROUP BY city ORDER BY n DESC"
+    ).bind(seit),
+    env.DB.prepare(
+      'SELECT name, SUM(n) AS n FROM events WHERE day >= ? GROUP BY name ORDER BY n DESC'
+    ).bind(seit),
+    // Die k-Schwelle: Was seltener vorkommt, wird zu ''. Die Stadtsumme bleibt
+    // exakt — es wird zusammengefasst, nicht weggelassen.
+    //
+    // Das Ergebnis heisst `zone` und nicht `value`, und das ist kein Geschmack:
+    // Hiesse es wie die Quellspalte, löste SQLite `GROUP BY value` gegen die
+    // **innere** Spalte auf statt gegen den `CASE`-Ausdruck. Die seltenen
+    // Zonen blieben dann einzeln stehen, jede mit ihrer eigenen Zeile und dem
+    // leeren Namen — die Schwelle wäre wirkungslos und sähe trotzdem so aus,
+    // als wirkte sie. Gefunden hat es der Test gegen SQLite.
+    env.DB.prepare(
+      'SELECT city, CASE WHEN roh >= ? THEN value ELSE \'\' END AS zone, SUM(roh) AS n FROM (' +
+        " SELECT city, value, SUM(n) AS roh FROM events" +
+        " WHERE day >= ? AND hour = -1 AND name = 'zone.open' GROUP BY city, value" +
+        ') GROUP BY city, zone ORDER BY city, n DESC'
+    ).bind(STATS_MIN_ZONE, seit),
+  ])
+
+  // `batch` liefert ein Feld in derselben Reihenfolge; `noUncheckedIndexedAccess`
+  // macht daraus `T | undefined`, deshalb der Zugriff über eine Funktion.
+  const zeilen = <T>(index: number): T[] => (ergebnisse[index]?.results ?? []) as T[]
+  const tage = zeilen<{ day: string; n: number }>(0)
+  const summe = (ab: string): number =>
+    tage.filter((zeile) => zeile.day >= ab).reduce((s, zeile) => s + zeile.n, 0)
+
+  const stand = {
+    erzeugtAm: new Date(now).toISOString(),
+    tage: STATS_DAYS,
+    schwelle: STATS_MIN_ZONE,
+    kopf: { heute: summe(heute), tage7: summe(seit7), tage28: summe(seit) },
+    proTag: tage,
+    proStunde: zeilen(1),
+    proStadt: zeilen(2),
+    proName: zeilen(3),
+    proZone: zeilen(4),
+  }
+  await env.CACHE.put(STATS_KEY, JSON.stringify(stand))
+}
+
 /** Deckelt, was eine Person in einer Stunde abladen kann. */
 const FEEDBACK_LIMIT_PER_HOUR = 4
 /** Rückmeldungen sind kein Betriebsdatum — nach drei Monaten sind sie erledigt. */
@@ -1042,6 +1126,28 @@ export default {
       return listMarks(env, choice.city, cors)
     }
     if (path === '/visits' && request.method === 'POST') return recordVisit(request, env, cors)
+    // Öffentlich, und zwar mit Absicht: Der Worker liegt **nicht** hinter dem
+    // Beta-Riegel — die Seite tut es, die Adressen des Workers nicht. Ein
+    // Endpunkt, der nur „hinter dem Riegel" gedacht ist, wäre eine Annahme,
+    // die nicht trägt. Deshalb steckt die k-Schwelle im Rollup und nicht in
+    // der Anzeige.
+    if (path === '/stats' && request.method === 'GET') {
+      const stand = await env.CACHE.get(STATS_KEY)
+      if (stand === null) {
+        // Noch kein Lauf: leer und ehrlich, nicht auf Verdacht gerechnet.
+        return json({ erzeugtAm: null, leer: true }, { status: 200 }, {
+          ...cors,
+          'Cache-Control': 'public, max-age=60',
+        })
+      }
+      return new Response(stand, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=300',
+          ...cors,
+        },
+      })
+    }
     if (path === '/events' && request.method === 'POST') return recordEvents(request, env, cors)
     if (path === '/feedback' && request.method === 'POST') return createFeedback(request, env, cors)
     if (path === '/sightings' && request.method === 'POST') {
@@ -1093,6 +1199,10 @@ export default {
     )
       .bind(Date.now() - 3_600_000)
       .run()
+    // Nach dem Löschen, nicht davor: Der Stand soll die Zahlen zeigen, die
+    // danach noch da sind.
+    await rollupStats(env)
+
     // Die Nutzungsstatistik: 90 Tage. Eine Zahl, die älter ist als ein
     // Quartal, beantwortet keine Frage, die dieses Projekt hat. Das Tagesbudget
     // hält nur zwei Tage — es ist ein Zähler, kein Bestand.

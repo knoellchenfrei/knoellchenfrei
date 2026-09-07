@@ -333,6 +333,15 @@ export function SettingsSheet({
           </span>
         </label>
 
+        <p className="hours">
+          {/* Mit Schrägstrich am Ende: Ohne ihn antwortet Pages mit einer
+              Umleitung, und die kostet einen zusätzlichen Abruf. */}
+          <a href="/statistik/" target="_blank" rel="noreferrer">
+            Zahlen ansehen
+          </a>{' '}
+          — was gezählt wurde, offen einsehbar.
+        </p>
+
         <h3 className="sheet__label">Häufige Fragen</h3>
         <div className="faq">
           {faqFor(CITY.key).map((entry) => (

@@ -547,6 +547,26 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       dem Rechner Schlüssel und Sicherung im selben Moment, und die Sicherung
       ist dann Rauschen.
 
+- [x] **Nutzungsstatistik gebaut** — 7. September, in drei Teilen: Katalog und
+      Endpunkt, Client mit Ausschalter, Auswertung und Seite. Der Plan lief
+      zweimal über einen zweiten Kopf, und die Prüfung hat drei echte Fehler
+      gefunden, bevor sie gebaut wurden.
+
+      | Teil | Wo |
+      | --- | --- |
+      | Katalog, Auflösungsregel, Prüfung | `core/events.ts`, `core/zone-keys.generated.ts` |
+      | Zählwerk und Tagesbudget | `migrations/0002_events.sql` |
+      | Endpunkt, Rollup, Auswertung | `apps/api/src/worker.ts` |
+      | Client, Puffer, Widerspruch | `apps/web/src/track.ts` |
+      | Seite | `apps/web/statistik/` |
+
+      **Was offen bleibt:** Zwei Gegenproben auf der Seite (`app.open` muss
+      mindestens so groß sein wie die neuen `visits`-Zeilen; die Meldungen aus
+      `marks` müssen zur Tageszahl passen) — sie sind der einzige Hinweis
+      darauf, dass Bündel nie ankommen. Und `@cloudflare/vitest-pool-workers`
+      für den Endpunkt: Der `node:sqlite`-Test deckt das SQL ab, nicht die
+      Bindings.
+
 - [ ] **`D1:Edit` für den Deploy-Token.** Seit dem 7. September wendet der
       Deploy die D1-Migrationen an, bevor er den Worker ausrollt — vorher
       wurde eine neue Migration im Repository **nie** angewendet, und der

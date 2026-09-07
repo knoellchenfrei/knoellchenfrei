@@ -141,6 +141,74 @@ describe('das Tagesbudget', () => {
   })
 })
 
+describe('die Auswertung', () => {
+  const STATS_MIN_ZONE = 5
+
+  /** Die k-Schwelle, wörtlich wie im Worker. */
+  const zonen = (seit: string) =>
+    db
+      .prepare(
+        "SELECT city, CASE WHEN roh >= ? THEN value ELSE '' END AS zone, SUM(roh) AS n FROM (" +
+          ' SELECT city, value, SUM(n) AS roh FROM events' +
+          " WHERE day >= ? AND hour = -1 AND name = 'zone.open' GROUP BY city, value" +
+          ') GROUP BY city, zone ORDER BY city, n DESC'
+      )
+      .all(STATS_MIN_ZONE, seit) as { city: string; zone: string; n: number }[]
+
+  /**
+   * Regression, und der Test hat den Fehler gefunden, nicht das Lesen:
+   *
+   * Die Spalte hiess zuerst `value` wie die Quellspalte. SQLite löst
+   * `GROUP BY value` dann gegen die **innere** Spalte auf statt gegen den
+   * `CASE`-Ausdruck — die seltenen Zonen blieben einzeln stehen, jede mit
+   * ihrer eigenen Zeile und leerem Namen. Die Schwelle war wirkungslos und sah
+   * dabei aus, als wirkte sie: In der Antwort stand überall `''`.
+   */
+  it('nennt eine Zone erst ab der Schwelle beim Namen', () => {
+    bündel('2026-09-07', [
+      ['zone.open', -1, 'berlin', '34', 9],
+      ['zone.open', -1, 'berlin', '29', 1],
+      ['zone.open', -1, 'berlin', '7', 2],
+    ])
+    const ergebnis = zonen('2026-09-01')
+    expect(ergebnis.find((z) => z.zone === '34')?.n).toBe(9)
+    expect(ergebnis.find((z) => z.zone === '29')).toBeUndefined()
+    // Die seltenen landen zusammengefasst in einer Zeile — weggelassen wird
+    // nichts, sonst stimmte die Stadtsumme nicht mehr.
+    expect(ergebnis.find((z) => z.zone === '')?.n).toBe(3)
+  })
+
+  it('lässt die Stadtsumme trotz Schwelle exakt', () => {
+    bündel('2026-09-07', [
+      ['zone.open', -1, 'muenchen', 'Volkartstraße', 1],
+      ['zone.open', -1, 'muenchen', 'Ridlerstraße', 2],
+      ['zone.open', -1, 'muenchen', 'TU-Viertel', 8],
+    ])
+    const summe = zonen('2026-09-01')
+      .filter((z) => z.city === 'muenchen')
+      .reduce((s, z) => s + z.n, 0)
+    expect(summe).toBe(11)
+  })
+
+  // Ortsereignisse liegen auf -1. Ohne den Filter stünde dort ein 25. Balken,
+  // und er trüge ausgerechnet die Zahlen mit Ortsbezug.
+  it('lässt Ortsereignisse aus dem Tagesgang heraus', () => {
+    bündel('2026-09-07', [
+      ['zone.open', -1, 'berlin', '34', 5],
+      ['app.open', 8, 'berlin', '', 3],
+      ['app.open', 9, 'berlin', '', 4],
+    ])
+    const tagesgang = db
+      .prepare(
+        "SELECT hour, SUM(n) AS n FROM events WHERE day >= ? AND hour >= 0 AND name = 'app.open'" +
+          ' GROUP BY hour ORDER BY hour'
+      )
+      .all('2026-09-01') as { hour: number; n: number }[]
+    expect(tagesgang).toEqual([{ hour: 8, n: 3 }, { hour: 9, n: 4 }])
+    expect(tagesgang.some((z) => z.hour < 0)).toBe(false)
+  })
+})
+
 describe('die Zusicherungen im Schema', () => {
   it('weist eine unmögliche Stunde ab', () => {
     expect(() => bündel('2026-09-07', [['app.open', 24, 'berlin', '', 1]])).toThrow()

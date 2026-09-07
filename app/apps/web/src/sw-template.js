@@ -45,6 +45,11 @@ const SHELL = [
  */
 function isCacheable(url) {
   const path = url.pathname
+  // **Die Statistikseite nicht.** `path.endsWith('/')` fängt sonst auch
+  // `/statistik/`, und die Seite zeigte ab dem zweiten Besuch den Stand des
+  // ersten — eingefroren im Schnappschuss, ohne dass es jemand sähe. Sie ist
+  // die eine Seite, deren ganzer Zweck aktuelle Zahlen sind.
+  if (path.startsWith('/statistik')) return false
   return (
     path.endsWith('/') ||
     path.endsWith('/index.html') ||

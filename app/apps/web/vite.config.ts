@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
@@ -268,6 +268,23 @@ export default defineConfig({
     target: 'es2022',
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
+      // Zwei Seiten — aber **nur** im gewöhnlichen Build.
+      //
+      // Die Statistikseite ist ein eigener Eingang: kein React, keine Karte,
+      // und das App-Bündel wächst um null Byte. Im Artifact-Build darf sie
+      // nicht dabei sein, und das ist keine Geschmacksfrage:
+      // `inlineDynamicImports` verträgt genau **einen** Eingang, und der
+      // Artifact-Bau bräche mit „Invalid value for option
+      // output.inlineDynamicImports" ab. Ausserdem hätte sie dort nichts zu
+      // zeigen — ein Artifact hat keinen Server, den es fragen könnte.
+      ...(singleBundle
+        ? {}
+        : {
+            input: {
+              index: resolve(import.meta.dirname, 'index.html'),
+              statistik: resolve(import.meta.dirname, 'statistik/index.html'),
+            },
+          }),
       output: singleBundle
         ? { inlineDynamicImports: true }
         : // MapLibre is by far the largest dependency and changes rarely;
