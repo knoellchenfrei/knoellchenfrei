@@ -1,4 +1,8 @@
-# Zweite Stadt: was dafür an Daten da sein muss
+# Weitere Städte: was dafür an Daten da sein muss
+
+> **Stand 7. September 2026:** Angeschlossen sind **drei** Städte — Berlin,
+> Hamburg und Frankfurt am Main. Dieses Dokument hieß einmal „Zweite Stadt";
+> die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.
@@ -232,6 +236,187 @@ Mittelpunkt gegen die **unvereinfachten** Stadtteilgrenzen zu — vereinfachte
 wandern um Dutzende Meter, und ein Gebiet an der Grenze bekäme den Nachbarn
 zugeschrieben. 145 von 145 treffen.
 
+## Frankfurt am Main im Einzelnen
+
+Abgerufen und Feld für Feld angesehen am 7. September 2026 — Stufe **geprüft**.
+Angeschlossen seither auch: `core/frankfurt.ts` liest den Feed,
+`ingest/build-data-frankfurt.ts` baut ihn.
+
+| | |
+| --- | --- |
+| **Bewohnerparken** | `https://geowebdienste.frankfurt.de/Parken`, Typname `opendata:Bewohnerparken`, **42** Polygone |
+| **Parkscheinautomaten** | derselbe Dienst, `opendata:Parkscheinautomaten`, **921** Punkte |
+| **Behindertenparkplätze** | derselbe Dienst, `opendata:Behindertenparkplaetze`, **458** Punkte |
+| **Stadtteile** | `https://geowebdienste.frankfurt.de/WFS_Stadtgebietsgliederung`, Typname `Stadtgebietsgliederung:Stadtteile`, **46** |
+| Ausgabeformat | `application/json` im Parken-Dienst (GeoServer), `GEOJSON` im Stadtteil-Dienst (MapServer). **Nicht** `application/geo+json` wie Hamburg — darauf antwortet der Parken-Dienst mit `ows:ExceptionReport` |
+| Achsenreihenfolge | `[lon, lat]`, wie Berlin und anders als Hamburg |
+| Herausgeber | Stadt Frankfurt am Main |
+| Lizenz | Datenlizenz Deutschland **Namensnennung** 2.0, Quellenvermerk wörtlich `Stadt Frankfurt am Main, www.frankfurt.de` |
+| Ansprechpartner | Straßenverkehrsamt, `SVA.GDI@stadt-frankfurt.de` |
+
+### Die Eigenheit, die alles bestimmt
+
+**Die Sachdaten hängen nicht am Polygon.** Ein Bewohnerparkbereich sieht so
+aus:
+
+```json
+{ "name": null, "description": null, "nummer": 0,
+  "vti_url": "<a href=\"/wir-fuer-sie/bewohnerparken/regelungsbereich-0\" …>weitere Informationen</a>",
+  "mitparkraumbewirtschaftung": null }
+```
+
+Kein Tarif, keine Zeit, keine Höchstparkdauer, nicht einmal ein Name — `name`
+und `description` sind in **allen 42** Bereichen `null`. Das alles steht an den
+Parkscheinautomaten:
+
+```json
+{ "bewohnerparkzone": null, "strassenname": "Alte Mainzer Gasse 4",
+  "maximal_parkdauer": "1 h", "gebuehrenzone": "4 €/h",
+  "gebuehrenzeit": "Mo-Sa 9-20" }
+```
+
+Was für einen Bereich gilt, entsteht also erst durch Zusammenlegen der
+Automaten darin. Genau daran hängen die drei Entscheidungen unten.
+
+### Entscheidung 1: Zuordnung über die Geometrie, nicht über das Attribut
+
+Der Feed bietet beides an — `bewohnerparkzone` am Automaten zeigt auf `nummer`
+am Bereich. Ausgezählt am Abzug vom 7. September 2026:
+
+| | über `bewohnerparkzone` | über Punkt-in-Polygon |
+| --- | --- | --- |
+| zugeordnete Automaten | 503 von 921 | **808** von 921 |
+| erreichte Bereiche | 21 von 42 | **27** von 42 |
+| Automaten, die auf einen Bereich zeigen, in dem sie nicht stehen | 2 | — |
+
+Dazu **13** Automaten, bei denen beide Wege etwas liefern und sich
+widersprechen (fünfmal Attribut 20 gegen Polygon 19, dreimal 7 gegen 9, …).
+Die 21 über das Attribut erreichten Bereiche sind eine *echte Teilmenge* der
+27 geometrischen: Das Attribut findet nichts, was der Punkt nicht auch findet,
+und lässt 305 Automaten und sechs Bereiche liegen.
+
+Der Grund dahinter ist inhaltlich, nicht technisch: `bewohnerparkzone` sagt, zu
+welchem **Bewohnerparkausweis** ein Automat gehört, nicht, wo er steht. Die
+Frage dieser App ist „was gilt an der Stelle, an der ich stehe" — und die
+beantwortet der Punkt. Die 42 Polygone überlappen sich nicht; kein Automat
+fällt in zwei Bereiche.
+
+### Entscheidung 2: ausgelassen wird nach Daten, nicht nach dem Flag
+
+15 der 42 Bereiche enthalten keinen einzigen Automaten und werden ausgelassen —
+dasselbe Kriterium wie Hamburgs „ohne Zeitangabe": Ein Polygon ohne Antwort ist
+schlechter als kein Polygon, weil es aussieht wie eine bewirtschaftete Fläche
+und über sie nichts weiß.
+
+Naheliegend wäre `mitparkraumbewirtschaftung` gewesen — Frankfurts Gegenstück
+zu Hamburgs `geplant_aktiv`. Nachgemessen decken sich die beiden **nicht**:
+
+| | Bereiche | davon mit Automaten |
+| --- | --- | --- |
+| `mitparkraumbewirtschaftung = 1` | 11 | **11** |
+| `mitparkraumbewirtschaftung = null` | 31 | **16** |
+
+Alle geflaggten Bereiche haben Automaten — aber 16 weitere haben ebenfalls
+welche, zusammen 245 Stück. Wer dem Flag folgte, würfe sie weg und behauptete
+damit, dort werde nicht bewirtschaftet, während dort Automaten stehen. Das
+Flag ist also nicht „wird bewirtschaftet". Was es ist, weiß nur die Stadt; die
+Rückfrage steht in [todo.md](todo.md).
+
+### Entscheidung 3: die Höchstparkdauer ist keine Gebietsregel
+
+`maximal_parkdauer` steht je Automat, und in 19 der 27 übernommenen Bereiche
+stehen mehrere Werte nebeneinander — oft `1 h` neben `-`, also neben „keine".
+`maxStayMinutes` bleibt für Frankfurt deshalb **null**; die App geht den Weg,
+den Berlin schon geht: Wert, Anteil und alle Ausprägungen. Sie als Gebietsregel
+auszugeben wäre genau der Fehler, der in Berlin schon einmal passiert ist.
+
+Ein Nebenbefund: `-` heißt „keine", nicht null Minuten. 579 der 921 Automaten
+tragen den Strich.
+
+### Die Werte im Einzelnen
+
+| Feld | Werte |
+| --- | --- |
+| `gebuehrenzone` | `2 €/h` (699), `4 €/h` (221), leer (1) |
+| `gebuehrenzeit` | **30** Schreibweisen, alle auf einem Muster: Tagesangabe, Stundenspanne ohne Minuten, optional eine zweite Klausel. Häufigste: `Mo-Fr 7-19` (351), `Mo-Fr 7-22` (206), `Mo-Sa 9-20` (105). Sonderfälle: `Mo-Fr 8-18 Sa 8-14`, `Tgl. 9-18`, `Mo-So 0-24`, und **einmal** `Mo-Fr 9-17, Sa 9-14` mit Komma statt Leerzeichen |
+| `maximal_parkdauer` | `-` (579), `1 h` (242), `2 h` (74), `3 h` (22), `4 h`/`5 h` (je 2) |
+| `bewohnerparkzone` | 21 verschiedene Nummern **als Zahl**, 418-mal `null` |
+
+Zwei Bereiche (15 und 18) tragen beide Tarife nebeneinander. Sie bekommen
+`Fee.range`, wie Berlins Zonen 41–43 — auf einen Wert zu reduzieren
+verschätzte jemanden dort um 100 %.
+
+### Die Falle, die keine Fehlermeldung gibt
+
+**Ohne `srsName` antwortet der Dienst stillschweigend in EPSG:25832.**
+Dieselbe Anfrage liefert dann `[477189.85, 5550859.91]` — plausible Zahlen, nur
+keine Grade. `wfsUrl` setzt den Parameter für alle Städte; `assertDegrees` im
+Datenbau prüft die Antwort trotzdem noch einmal, weil ein Wegfall auf der Karte
+nur nach „leer" aussähe und nicht nach kaputt.
+
+### Die Stadtteile: gesucht und gefunden
+
+Der Parken-Dienst führt **keine** Verwaltungsgrenzen; sein `GetCapabilities`
+kennt genau die drei Typnamen oben. Gesucht wurde dann so:
+
+| Versuch | Antwort |
+| --- | --- |
+| `https://geowebdienste.frankfurt.de/Parken?…GetCapabilities` | 200, drei Typnamen, keine Grenzen |
+| `…/Stadtteile`, `…/Verwaltungsgrenzen`, `…/Ortsbezirke`, `…/Stadtgrenze`, `…/Grenzen`, `…/opendata`, `…/geoserver/ows` als WFS-Endpunkte geraten | je **404** |
+| `https://geowebdienste.frankfurt.de/` | 302 auf `https://geoportal.frankfurt.de/info/` |
+| von dort `https://geodatenkatalog.frankfurt.de/` (GeoNetwork) | 200; die Suche nach „Stadtteil OR Ortsbezirk OR Stadtbezirk" liefert 31 Treffer |
+| daraus `https://geowebdienste.frankfurt.de/WFS_Stadtgebietsgliederung` | 200, acht Ebenen, darunter `Stadtgebietsgliederung:Stadtteile` mit 46 Features |
+
+Der ISO-Metadatensatz dieser Ebene nennt dieselbe Lizenz und denselben
+Quellenvermerk wie der Parken-Dienst; Zugang „Öffentlicher Zugang nicht
+beschränkt", fachlich zuständig `rbs.statistik@stadt-frankfurt.de`. Sie ist
+damit brauchbar, und `district = 'Frankfurt am Main'` als Rückfall war nicht
+nötig: **27 von 27** Bereichen treffen einen Stadtteil.
+
+Der Dienst läuft auf MapServer und will das Ausgabeformat `GEOJSON` — sein
+`GetCapabilities` listet weder `application/json` noch `application/geo+json`.
+`DefaultCRS` ist EPSG:25832; mit `srsName=urn:ogc:def:crs:EPSG::4326` kommen
+Grade in `[lon, lat]`.
+
+### Was mitkommt und was nicht
+
+**Die 458 Behindertenparkplätze kommen mit**, im selben POI-Schema wie Berlins
+(`kind: 'accessible'`, Beschriftung, Anzahl und Öffnungszeiten). Keine Änderung
+an der Oberfläche nötig.
+
+**Die 113 Automaten ohne Bereich kommen nicht mit.** Sie stehen in
+bewirtschafteten Straßen ohne Bewohnerparkbereich; für sie gibt es kein
+Polygon, und die Zonenabfrage deckt sie nicht ab. Das POI-Schema kennt vier
+Arten — `charging`, `carsharing`, `park_and_ride`, `accessible` — und keine
+passt; sie als eine davon auszugeben hieße, ein Symbol zu setzen, das etwas
+anderes behauptet. Eine fünfte Art wäre ein Umbau von Karte, Legende und
+Filtern. Der offene Punkt steht in [todo.md](todo.md).
+
+Zum Vergleich: Über das Attribut wären es **418** Automaten ohne Bereich
+gewesen. Die geometrische Zuordnung schrumpft die Lücke auf 113, also von 45 %
+auf 12 %.
+
+**Keine Stellplatzzahlen** — der Feed zählt keine Plätze, `spaces` bleibt null.
+
+**Keine Umweltzonen-Geometrie.** Frankfurt *hat* seit 2008 eine Umweltzone;
+dieser Dienst führt sie nur nicht. `absent: ["umweltzone", "segments"]` in
+`meta.json` heißt hier ausdrücklich **„nicht in diesem Abzug"**, nicht „gibt es
+nicht" — anders als bei Hamburg, wo es beides zugleich heißt.
+
+### Feiertage: Hessen
+
+Zehn gesetzliche: die neun bundesweiten plus **Fronleichnam** (Ostersonntag +
+60). Kein Reformationstag, kein Allerheiligen, kein Buß- und Bettag, keine
+gemeindeweise Regelung. Quelle: Hessisches Ministerium des Innern,
+<https://innen.hessen.de/buerger-staat/feiertage>, abgerufen am 7. September
+2026.
+
+Das war der Anlass für eine Strukturänderung in `core/holidays.ts`: Fronleichnam
+ist beweglich **und** nicht bundesweit, und die alte Tabelle konnte nur das eine
+oder das andere. `REGIONAL` trägt seitdem je Land zwei Listen — feste Daten und
+Oster-Abstände. Berlin und Hamburg bekommen dadurch nichts dazu; Tests halten
+das fest.
+
 ## Was am Code dafür zu tun ist
 
 Der Stand heute, aus [oeffentlich-machen.md](oeffentlich-machen.md):
@@ -275,13 +460,20 @@ Drei Aufgaben waren das. Zwei sind erledigt:
    nicht kennen, und ein Fehler bricht den *Datenbau* der eigenen Stadt ab —
    die andere baut weiter.
 
-Und die zweite Stadt selbst ist angeschlossen: Zonendaten liegen je Stadt unter
+Und die Städte selbst sind angeschlossen: Zonendaten liegen je Stadt unter
 `apps/web/public/data/<stadt>/`, der Browser holt sie zur Laufzeit, und in den
 Einstellungen lässt sich wechseln — eine Stadt zur Zeit, wie bei FreiFahren.
 
+Frankfurt hat den drei Punkten oben nichts hinzugefügt, was Arbeit gewesen
+wäre — bis auf **einen**: `holidays.ts` konnte landesbezogene *bewegliche*
+Feiertage nicht ausdrücken. Fronleichnam ist beides zugleich. Die Tabelle trägt
+seitdem je Land zwei Listen. Dieselbe Erweiterung brauchen Nordrhein-Westfalen
+und Bayern auch, sie ist also nicht für Hessen allein gemacht.
+
 Was noch offen ist: ein Standort-Vorschlag beim ersten Öffnen („Du scheinst
-in Hamburg zu sein — wechseln?"), wie FreiFahren ihn als `cityLocationPrompt`
-hat. Bei zwei Städten reicht der Umschalter; ab der dritten nicht mehr.
+in Frankfurt zu sein — wechseln?"), wie FreiFahren ihn als `cityLocationPrompt`
+hat. Bei zwei Städten reichte der Umschalter; seit der dritten ist die Liste in
+den Einstellungen die einzige Stelle, an der jemand die Stadt findet.
 
 ## Prüfliste je Stadt
 
@@ -309,6 +501,20 @@ Stand für Hamburg, nach dem Abschnitt oben — alles abgerufen, nicht abgeschri
 - [ ] Ansprechpartner — nicht ermittelt. Der einzige offene Punkt.
 
 Hamburg fällt an keiner Stelle durch und ist angeschlossen.
+
+Stand für Frankfurt am Main, am 7. September 2026 abgerufen:
+
+- [x] Geometrie — 42 Bewohnerparkbereiche, dazu 46 Stadtteile als Kontext.
+- [x] Lizenz — DL-DE/Namensnennung 2.0, mit wörtlichem Quellenvermerk.
+- [x] Maschinell abrufbar — WFS 2.0.0 mit `application/json` bzw. `GEOJSON`.
+- [x] Tarif — **nicht** am Bereich, sondern an 921 Parkscheinautomaten, als
+      `2 €/h` / `4 €/h`.
+- [x] Zeiten — ebenfalls am Automaten, 30 Schreibweisen auf einem Muster.
+- [x] Aktualisierung — `asNeeded`; Portal-Metadaten geändert am 4. September 2026.
+- [x] Ansprechpartner — Straßenverkehrsamt, `SVA.GDI@stadt-frankfurt.de`.
+
+Frankfurt fällt an keiner Stelle durch und ist angeschlossen. Die zwei
+Rückfragen, die dabei offengeblieben sind, stehen in [todo.md](todo.md).
 
 Zu jeder Stadt, die durchfällt, gehört ein Eintrag in
 [data-sources.md](data-sources.md) — Negativbefunde sind Arbeitsergebnisse und

@@ -1,8 +1,9 @@
 # Datenquellen
 
 Alle in der App verwendeten Daten mit Herkunft, Lizenz und Abrufweg. Stand der
-Erhebung: 6. September 2026. Zwei Städte, zwei Behörden, **zwei verschiedene
-Lizenzen** — der Unterschied steht bei Hamburg.
+Erhebung: 6. September 2026 für Berlin und Hamburg, 7. September 2026 für
+Frankfurt am Main. Drei Städte, drei Behörden, **zwei verschiedene Lizenzen** —
+der Unterschied steht bei Hamburg.
 
 ## Verwendet
 
@@ -83,6 +84,51 @@ fehlen POI und Umweltzone: Die einen liegen in anderen Diensten, die andere
 gibt es in Hamburg nicht. `meta.json` führt beides unter `absent`.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#hamburg-im-einzelnen).
+
+## Verwendet — Frankfurt am Main
+
+Abgerufen am 7. September 2026 von der **Stadt Frankfurt am Main** über
+`geowebdienste.frankfurt.de`, WFS 2.0.0. Vier Ebenen aus **zwei** Diensten:
+
+| Ebene | Dienst / Typname | Umfang |
+| --- | --- | --- |
+| Bewohnerparken | `/Parken`, `opendata:Bewohnerparken` | 42 Polygone, davon 27 mit Automaten |
+| Parkscheinautomaten | `/Parken`, `opendata:Parkscheinautomaten` | 921 Punkte — Tarif, Zeiten, Höchstparkdauer |
+| Behindertenparkplätze | `/Parken`, `opendata:Behindertenparkplaetze` | 458 Punkte, als POI |
+| Stadtteile | `/WFS_Stadtgebietsgliederung`, `Stadtgebietsgliederung:Stadtteile` | 46, als Kartenkontext |
+
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0)**,
+wie Hamburg. Der Quellenvermerk steht im ISO-Metadatensatz wörtlich als
+`Stadt Frankfurt am Main, www.frankfurt.de` und wird genau so ausgeliefert —
+umformuliert erfüllt er die Bedingung nicht mehr sicher. Für die Stadtteil-Ebene
+gilt derselbe Vermerk; sie ist damit unter denselben Bedingungen nutzbar.
+
+Vier Dinge, die man erst im Feed sieht:
+
+- **Der Tarif hängt am Automaten, nicht am Bereich.** Ein Bewohnerparkbereich
+  trägt nichts als eine Nummer; `name` und `description` sind in allen 42
+  Bereichen `null`. Was gilt, entsteht aus den Automaten *im* Polygon.
+- **Ohne `srsName` antwortet der Dienst in EPSG:25832** — `[477189.85,
+  5550859.91]`, plausible Zahlen, nur keine Grade. Mit
+  `srsName=urn:ogc:def:crs:EPSG::4326` kommen `[lon, lat]` wie in Berlin.
+- **Das Ausgabeformat heißt `application/json`**, nicht `application/geo+json`
+  wie in Hamburg — darauf antwortet dieser Dienst mit einem
+  `ows:ExceptionReport`. Der Stadtteil-Dienst läuft dagegen auf MapServer und
+  nennt das Format `GEOJSON`.
+- **`vti_url` trägt HTML in einem Attributwert.** Ein vollständiges
+  `<a href=…>`-Element in einem Datenfeld; es wird über `stripHtml` zu Text
+  gemacht, bevor irgendetwas anderes es anfasst.
+
+Nicht abgerufen: nichts — der Parken-Dienst führt genau diese drei Typnamen.
+Nicht *ausgeliefert* werden dagegen die **113 Automaten, die in keinem
+Bewohnerparkbereich stehen** (über das Attribut `bewohnerparkzone` wären es
+418; die geometrische Zuordnung schrumpft die Lücke auf 12 %). Eine
+Umweltzonen-Geometrie fehlt ebenfalls — Frankfurt *hat* eine Umweltzone, dieser
+Dienst führt sie nur nicht. `meta.json` führt beides unter `absent`; bei
+Frankfurt heißt das „nicht in diesem Abzug", nicht „gibt es nicht".
+
+Vollständige Feldanalyse in
+[staedte.md](staedte.md#frankfurt-am-main-im-einzelnen).
 
 ## Geprüft und nicht verfügbar## Geprüft und nicht verfügbar
 
@@ -184,6 +230,15 @@ Jede Angabe in dieser Datei lässt sich nachvollziehen:
 curl -s "https://gdi.berlin.de/services/wfs/parkraumbewirtschaftung?service=WFS\
 &version=2.0.0&request=GetFeature\
 &typeNames=parkraumbewirtschaftung:parkzonen&resultType=hits" | grep -o 'numberMatched="[0-9]*"'
+
+# Frankfurt: OHNE srsName kommt UTM, MIT srsName kommen Grade. Der Unterschied
+# ist an den Zahlen zu sehen, nicht an einer Fehlermeldung.
+curl -s "https://geowebdienste.frankfurt.de/Parken?service=WFS&version=2.0.0\
+&request=GetFeature&typeNames=opendata:Parkscheinautomaten\
+&outputFormat=application/json&count=1" | head -c 200
+curl -s "https://geowebdienste.frankfurt.de/Parken?service=WFS&version=2.0.0\
+&request=GetFeature&typeNames=opendata:Parkscheinautomaten\
+&outputFormat=application/json&srsName=urn:ogc:def:crs:EPSG::4326&count=1" | head -c 200
 
 # CORS-Header nachmessen
 curl -sD- -o /dev/null -H "Origin: https://example.com" \

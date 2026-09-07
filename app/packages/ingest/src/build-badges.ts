@@ -106,7 +106,10 @@ const badges: [string, string][] = [
   ['e2e', badge('e2e', e2eCount === '' ? 'passing' : `${e2eCount} passing`, '#3fb950')],
   ['security', badge('security', 'audited', '#3fb950')],
   ['licence', badge('licence', 'MIT', '#0969da')],
-  ['data', badge('data', 'DL-DE/Zero-2.0', '#0969da')],
+  // Zwei Lizenzen, seit Hamburg und Frankfurt dazukamen: Berlin gibt unter
+  // DL-DE/Zero heraus, die beiden anderen unter DL-DE/Namensnennung. Nur die
+  // erste zu nennen liesse die Bedingung weg, die die anderen beiden stellen.
+  ['data', badge('data', 'DL-DE Zero + BY 2.0', '#0969da')],
 ]
 
 for (const [name, svg] of badges) {

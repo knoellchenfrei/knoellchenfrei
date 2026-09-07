@@ -11,9 +11,9 @@
 Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
-Eine PWA auf den amtlichen Geodaten der Städte. **Berlin und Hamburg**,
-umschaltbar in den Einstellungen — eine Stadt zur Zeit, die Daten der anderen
-werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
+Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg und
+Frankfurt am Main**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
+die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
 ![Übersicht über Berlin mit Parkzonen, Umweltzone und Ladepunkten](docs/images/overview.png)
@@ -22,11 +22,11 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Bewohnerparkgebiete in Hamburg. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Bewohnerparkgebiete in Hamburg, 27 Bewohnerparkbereiche in Frankfurt. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
-| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. Hamburg liefert diese Ebenen nicht mit; die App blendet sie dort aus, statt eine leere Karte als Ergebnis auszugeben. |
+| **Umfeld** | 385 Ladepunkte, 84 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. Frankfurt liefert davon die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen; die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
 | **Ordnungsamt** | Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. |
 | **Live-Zahlen** | Wie viele die App gerade offen haben, wie viele heute, wie viele Meldungen aktiv sind. Nur was zählbar ist — sonst gar nichts. |
 | **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
@@ -63,17 +63,18 @@ den Funktionsumfang — sie zieht als kommentiertes Dokument mit um:
 
 ## Daten
 
-Zwei Länder, zwei Dienste, zwei Lizenzen — und der Unterschied ist keine
+Drei Länder, vier Dienste, zwei Lizenzen — und der Unterschied ist keine
 Formalie:
 
 | | Quelle | Lizenz | Bestand |
 | --- | --- | --- | --- |
 | **Berlin** | [GDI Berlin](https://gdi.berlin.de), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 103 Zonen, 45.917 Abschnitte, **210.527 bewirtschaftete Stellplätze**, 1.499 Orte, 97 Ortsteile |
 | **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Bewohnerparkgebiete, 104 Stadtteile |
+| **Frankfurt am Main** | [Stadt Frankfurt](https://geowebdienste.frankfurt.de/Parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Stadt Frankfurt am Main, www.frankfurt.de` | 27 von 42 Bewohnerparkbereichen, 921 Parkscheinautomaten als Sachdatenquelle, 458 Behindertenparkplätze, 46 Stadtteile |
 
 Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
-Oberfläche: Eine Hamburg-Ansicht ohne Quellenangabe verletzt die Lizenz, eine
-Berlin-Ansicht ohne sie nicht.
+Oberfläche: Eine Hamburg- oder Frankfurt-Ansicht ohne Quellenangabe verletzt
+die Lizenz, eine Berlin-Ansicht ohne sie nicht.
 
 Vollständige Liste mit Endpunkten, Lizenzen und geprüften Negativbefunden:
 [docs/data-sources.md](docs/data-sources.md).
@@ -134,10 +135,35 @@ davon still falsch geht:
 - **Platzhalter in der Höchstparkdauer:** `0` und `9999` heißen beide
   „unbegrenzt". Ungeprüft übernommen stünde in der App „6 Tage 22 Stunden".
 
-Beide Feeds haben deshalb **eigene Parser**, keinen gemeinsamen:
-`parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg. Sie
-teilen sich außer der Domäne nichts, und ein Parser für beide wäre bei jeder
-Änderung an einer Stadt für die andere gefährlich.
+### Frankfurt sagt nichts über seine Bereiche — die Automaten tun es
+
+Ein Bewohnerparkbereich trägt dort **nur eine Nummer**: `name` und
+`description` sind in allen 42 Bereichen `null`, Tarif und Zeiten stehen an den
+921 Parkscheinautomaten. Vier Befunde, jeder aus dem Feed und nicht aus den
+Metadaten:
+
+- **Der Punkt entscheidet, nicht das Attribut.** Ein Automat trägt ein Feld
+  `bewohnerparkzone`; darüber lassen sich 503 der 921 Automaten und 21 der 42
+  Bereiche zuordnen. Über Punkt-in-Polygon sind es **808** und **27** — und die
+  21 sind eine echte Teilmenge der 27. Dazu 13 Widersprüche und zwei Automaten,
+  die auf einen Bereich zeigen, in dem sie nicht stehen. Das Feld sagt, zu
+  welchem Bewohnerausweis ein Automat gehört, nicht, wo er steht.
+- **Ohne `srsName` antwortet der Dienst in UTM** — `[477189.85, 5550859.91]`,
+  plausible Zahlen, nur keine Grade. Der Datenbau prüft das noch einmal selbst,
+  weil es auf der Karte nur nach „leer" aussähe.
+- **Das Flag `mitparkraumbewirtschaftung` ist nicht „wird bewirtschaftet".**
+  Es steht in 11 der 42 Bereiche auf 1; **16 weitere** haben trotzdem Automaten,
+  zusammen 245 Stück. Ausgelassen wird deshalb nach Daten: 15 Bereiche ohne
+  einen einzigen Automaten.
+- **`vti_url` trägt HTML in einem Datenfeld.** Ein vollständiges
+  `<a href=…>`-Element in einem Attributwert — fremde Eingabe in der Form, die
+  am ehesten irgendwo als Markup landet.
+
+Jeder Feed hat deshalb **seinen eigenen Parser**, keinen gemeinsamen:
+`parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg,
+`frankfurt.ts` ist Frankfurt. Sie teilen sich außer der Domäne nichts, und ein
+Parser für alle wäre bei jeder Änderung an einer Stadt für die anderen
+gefährlich.
 
 ## Ordnungsamt-Meldungen
 
@@ -170,9 +196,11 @@ Zwei Dateien darin tragen die Mehrstädtigkeit: `core/city.ts` hält jede
 Stadtgrenze **genau einmal** — vorher stand sie an sechs Stellen als Zahlenpaar,
 und laufen zwei davon auseinander, nimmt die App eine Meldung an, die der Server
 danach verwirft, ohne dass im Log etwas nach einem Fehler aussieht.
-`core/holidays.ts` kennt Berlin und Hamburg; ein Bundesland ohne hinterlegte
-Tabelle wirft, statt eine leere Menge zu liefern — sonst forderte die App an
-Karfreitag zum Zahlen auf.
+`core/holidays.ts` kennt Berlin, Hamburg und Hessen; ein Bundesland ohne
+hinterlegte Tabelle wirft, statt eine leere Menge zu liefern — sonst forderte
+die App an Karfreitag zum Zahlen auf. Hessen hat die Tabelle umgebaut:
+Fronleichnam ist beweglich **und** nicht bundesweit, und die alte Struktur
+konnte nur das eine oder das andere.
 
 ## Entwickeln
 
@@ -273,8 +301,8 @@ zuerst beantwortet.
 ## Lizenz
 
 Code: [MIT](LICENSE). Berliner Geodaten: DL-DE/Zero-2.0, keine Namensnennung
-erforderlich. Hamburger Geodaten: DL-DE/Namensnennung-2.0 — dort ist die
-Quellenangabe Bedingung, nicht Höflichkeit. Kartenkacheln:
+erforderlich. Hamburger und Frankfurter Geodaten: DL-DE/Namensnennung-2.0 —
+dort ist die Quellenangabe Bedingung, nicht Höflichkeit. Kartenkacheln:
 © OpenStreetMap-Mitwirkende, ODbL — auch deren Namensnennung in der App ist
 Lizenzbedingung.
 

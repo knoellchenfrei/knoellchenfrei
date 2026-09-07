@@ -289,13 +289,14 @@ Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen an einen Dritten,
 über den unsere Datenschutzerklärung Auskunft geben muss. Details in
 [hosting.md](hosting.md).
 
-## 5. Zweite Stadt — Hamburg läuft, München offen — **ich**
+## 5. Weitere Städte — Hamburg und Frankfurt laufen, München offen — **ich**
 
-Analyse der Datenlage in [staedte.md](staedte.md). Hamburg ist seit dem
-6. September angeschlossen: 145 Gebiete, umschaltbar in den Einstellungen.
-Danach München — die einzige weitere Stadt, für die ein konkreter Datensatz
-belegt ist. Alles darunter ist bisher nur ein Portal, in dem noch niemand
-nachgesehen hat.
+Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
+weiteren Städten in
+[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md). Hamburg ist seit
+dem 6. September angeschlossen, Frankfurt am Main seit dem 7. — drei Städte,
+umschaltbar in den Einstellungen. Als nächstes München, die letzte Stadt aus
+der Recherche, für die ein tragfähiger Datensatz belegt ist.
 
 - [x] **Stadt als Konfiguration statt als Konstante.** `core/city.ts` trägt
       Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze, Bundesland und
@@ -304,9 +305,13 @@ nachgesehen hat.
       **sechs** Stellen als Zahlenpaar im Code — die Doku hatte drei behauptet.
       Ein unbekannter Stadtschlüssel wirft, statt auf Berlin zurückzufallen.
 - [x] **Feiertagskalender je Bundesland.** `holidaysFor(land, jahr)`; belegt
-      sind BE (8. März) und HH (Reformationstag). Ein Land ohne Tabelle wirft.
-      Die zwölf übrigen fehlen bewusst — sie gehören nur mit Beleg hinein, und
-      die amtlichen Seiten sind aus dieser Umgebung gesperrt.
+      sind BE (8. März), HH (Reformationstag) und HE (Fronleichnam). Ein Land
+      ohne Tabelle wirft. Die dreizehn übrigen fehlen bewusst — sie gehören nur
+      mit Beleg hinein.
+- [x] **Landesbezogene *bewegliche* Feiertage.** Fronleichnam ist beweglich
+      (Ostersonntag + 60) **und** nicht bundesweit; die alte Tabelle konnte nur
+      das eine oder das andere. `REGIONAL` trägt seitdem je Land zwei Listen.
+      Dieselbe Erweiterung brauchen Nordrhein-Westfalen und Bayern.
 - [x] **Prüfliste aus [staedte.md](staedte.md) für Hamburg abgearbeitet.**
       Hamburg fällt an keiner Stelle durch: zwei WFS mit Adresse und Typname,
       DL-DE/Namensnennung 2.0, Tarif und Zeiten laut Metadaten im Datensatz.
@@ -325,13 +330,55 @@ nachgesehen hat.
       Stadt zur Zeit, Daten je Stadt unter `public/data/<stadt>/`, zur Laufzeit
       nachgeladen. Die frühere Begründung für einen Build je Stadt war falsch —
       `loadData` hat die Dateien schon immer geholt.
+- [x] **Frankfurt am Main angeschlossen.** Abgerufen, geparst und ausgeliefert
+      am 7. September 2026: 27 von 42 Bewohnerparkbereichen, 921
+      Parkscheinautomaten als Sachdatenquelle, 458 Behindertenparkplätze als
+      POI, 46 Stadtteile als Kartenkontext. Die eine Eigenheit, an der alles
+      hängt: Tarif, Zeiten und Höchstparkdauer stehen am **Automaten**, nicht
+      am Bereich — ein Polygon trägt nichts als eine Nummer. Einzelheiten mit
+      Zahlen in [staedte.md](staedte.md#frankfurt-am-main-im-einzelnen).
 - [ ] **Standort-Vorschlag beim ersten Öffnen.** FreiFahren fragt „Switch to
-      {{city}}? Your location looks like you are in {{city}}." Sinnvoll, sobald
-      es mehr als zwei Städte gibt; bei zweien reicht der Umschalter.
-- [ ] **München als dritte Stadt.** Der Datensatz ist benannt, aber nicht
-      geprüft. Vorher ist die Feiertagstabelle zu klären: Mariä Himmelfahrt
-      gilt in Bayern **gemeindeweise**, für München also an der Stadt und nicht
-      am Land.
+      {{city}}? Your location looks like you are in {{city}}." Mit der dritten
+      Stadt ist die Liste in den Einstellungen die einzige Stelle, an der
+      jemand die Stadt findet — damit ist der Punkt fällig, nicht mehr nur
+      sinnvoll.
+- [ ] **Zwei Rückfragen an Frankfurt**, `SVA.GDI@stadt-frankfurt.de`
+      (Straßenverkehrsamt). Beide sind aus dem Feed **nicht** zu beantworten,
+      und beide ändern etwas an der Anzeige:
+      1. **Was bedeutet `mitparkraumbewirtschaftung = null`** — „nein" oder
+         „unbekannt"? Heute wird nach Daten ausgelassen (kein Automat im
+         Polygon), weil das Flag nachweislich nicht „wird bewirtschaftet"
+         heißt: 16 Bereiche ohne Flag enthalten zusammen 245 Automaten.
+      2. **Gibt es eine Ebene, die die 113 Automaten ohne Bewohnerparkbereich
+         einem bewirtschafteten Gebiet zuordnet?** Für sie gibt es heute kein
+         Polygon, und die Zonenabfrage deckt sie nicht ab.
+      Die Stadtteil-Frage aus der Recherche hat sich erledigt: Die Ebene liegt
+      in `WFS_Stadtgebietsgliederung`, unter derselben Lizenz. Der Suchweg
+      steht in [staedte.md](staedte.md#die-stadtteile-gesucht-und-gefunden).
+- [ ] **Fünfte POI-Art für Parkscheinautomaten.** Das Schema kennt
+      `charging`, `carsharing`, `park_and_ride` und `accessible`; für die 113
+      Frankfurter Automaten ohne Bereich passt keine, und eine davon zu
+      missbrauchen hieße, ein Symbol zu setzen, das etwas anderes behauptet.
+      Eine fünfte Art wäre ein Umbau von Karte, Legende und Filtern — lohnt
+      sich erst, wenn eine zweite Stadt sie auch braucht.
+- [ ] **`pages.yml` baut nur Berlin.** Hamburgs und Frankfurts Daten liegen
+      committet im Repository und werden im Deploy nicht neu gebaut. Das ist
+      heute richtig — die Daten ändern sich über Monate —, aber es heißt auch:
+      Ein Feed-Wechsel fällt erst auf, wenn jemand von Hand abruft. Ein
+      wöchentlicher Job mit `continue-on-error` je Stadt wäre der nächste
+      Schritt.
+- [ ] **Die FAQ in den Einstellungen ist Berlin.** „Warum kassiert sonntags nur
+      eine einzige Zone?", „Von 45.917 Abschnitten tragen 747 einen Wert" —
+      beides stimmt und beides gilt nur für Berlin. Mit drei Städten gehört die
+      Liste je Stadt gefiltert oder umformuliert.
+- [ ] **München als vierte Stadt.** Der Datensatz ist inzwischen geprüft
+      (Recherche vom 7. September): 82 Parkraummanagementgebiete plus 13.714
+      Straßenseiten-Linien, DL-DE/BY-2.0. Zwei Dinge sind dort schwerer als in
+      Frankfurt: Es gibt **keinen Tarif** im Feed — alle 82 Gebiete bekämen
+      `Fee.unknown` —, und die Zeiten stehen in 292 Schreibweisen mit
+      zusammengesetzten Klauseln. Vorher ist die Feiertagstabelle zu klären:
+      Mariä Himmelfahrt gilt in Bayern **gemeindeweise**, für München also an
+      der Stadt und nicht am Land.
 - [x] **Produktname entberlinert.** Die App heißt jetzt überall
       `knoellchenfrei`; die `h1` nennt die geladene Stadt dazu. Der interne
       Paketname `@knoellchenfrei/*` bleibt: Ihn umzubenennen wäre Aufwand ohne

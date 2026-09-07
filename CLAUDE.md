@@ -5,8 +5,9 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 
 ## Was das ist
 
-Eine PWA, die für Berliner Parkzonen sagt, ob gerade Gebührenpflicht gilt, was
-es kostet und wie lange man stehen darf — aus dem amtlichen WFS der GDI Berlin.
+Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
+kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
+Angeschlossen sind Berlin, Hamburg und Frankfurt am Main.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.
 Vorbild in Aufbau, Hosting und Haltung ist
 [FreiFahren](https://github.com/FreiFahren/FreiFahren).
@@ -19,11 +20,11 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 190 Unit-Tests
+pnpm --filter @knoellchenfrei/core test                # 281 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 107 End-to-End-Tests
+cd apps/web && npx playwright test                  # 112 End-to-End-Tests
 ```
 
 `pnpm test` im Wurzelverzeichnis läuft über alle Pakete, aber nur `core` hat
@@ -38,7 +39,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=190 E2E_COUNT=107 npx tsx src/build-badges.ts
+TEST_COUNT=281 E2E_COUNT=112 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -100,16 +101,46 @@ wiederholt.
   Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,
   nimmt die App eine Meldung an, die der Server danach verwirft, und niemand
   erfährt, warum.
-- **Zwei Feeds, zwei Parser — nie ein gemeinsamer.** Berlins und Hamburgs
-  Dienste teilen sich außer der Domäne nichts: andere Felder, andere
-  Schreibweisen, anderes Ausgabeformat, andere Achsenreihenfolge. Ein Parser
-  für beide wäre bei jeder Änderung an einer Stadt für die andere gefährlich.
-  `parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg.
+- **Ein Feed, ein Parser — nie ein gemeinsamer.** Die drei Dienste teilen sich
+  außer der Domäne nichts: andere Felder, andere Schreibweisen, anderes
+  Ausgabeformat, andere Achsenreihenfolge. Berlin schreibt `Mo-Sa 9-20 Uhr` und
+  `2,00 Euro`, Hamburg `werktags 9-20 Uhr` und `3,50 € je Stunde`, Frankfurt
+  `Mo-Sa 9-20` ohne „Uhr" und `2 €/h`. Ein Parser für alle wäre bei jeder
+  Änderung an einer Stadt für die anderen gefährlich.
+  `parse-schedule.ts`/`parse-fee.ts` sind Berlin, `hamburg.ts` ist Hamburg,
+  `frankfurt.ts` ist Frankfurt.
 - **Die Achsenreihenfolge steht in der Konfiguration, nie in einer Heuristik.**
   Auf dieselbe Anfrage (`urn:ogc:def:crs:EPSG::4326`) antwortet Berlin mit
-  `[lon, lat]` und Hamburg mit `[lat, lon]`. In Hamburg sind beide Zahlen
-  zweistellig und plausibel — geraten landen die Gebiete im Golf von Guinea,
-  und die Karte sieht dabei nur leer aus, nicht kaputt.
+  `[lon, lat]`, Hamburg mit `[lat, lon]` und Frankfurt wieder mit `[lon, lat]`.
+  In Hamburg sind beide Zahlen zweistellig und plausibel — geraten landen die
+  Gebiete im Golf von Guinea, und die Karte sieht dabei nur leer aus, nicht
+  kaputt.
+- **`srsName` ist Pflicht, und das Ergebnis wird nachgemessen.** Frankfurts WFS
+  antwortet **ohne** den Parameter stillschweigend in EPSG:25832:
+  `[477189.85, 5550859.91]` — plausible Zahlen, nur keine Grade. Kein Fehler,
+  keine Warnung, kein leeres Ergebnis; auf der Karte sähe es nur nach „leer"
+  aus. `wfsUrl` setzt den Parameter für alle Städte, und `assertDegrees` im
+  Frankfurter Datenbau bricht trotzdem ab, sobald ein Wert über 180 bzw. 90
+  ankommt. Eine Konfiguration, deren Fehlen man nicht bemerkt, gehört geprüft
+  und nicht geglaubt.
+- **Ein Feldtyp über einer JSON-Datei ist eine Behauptung, kein Beweis.**
+  `FrankfurtAutomatProperties.bewohnerparkzone` stand als `string | null` da
+  und ist im Feed eine **Zahl**. TypeScript prüft eine gelesene JSON-Datei
+  nicht; der Datenbau brach mit `claimed.trim is not a function` ab — ein
+  Glücksfall, denn er *wollte* trimmen. Hätte er nur verglichen, wäre
+  `19 === '19'` stillschweigend immer falsch gewesen, alle 921 Automaten wären
+  „ohne Bereich" geblieben, und die Zahl im Log hätte plausibel ausgesehen.
+  Jede Annahme über eine Fixture gehört deshalb in einen Test gegen die
+  Fixture, nicht nur ins Interface.
+- **Fehlt eine Ebene im Dienst, ist sie nicht weg — sie liegt woanders.**
+  Frankfurts Parken-Dienst führt keine Verwaltungsgrenzen; sein
+  `GetCapabilities` kennt genau drei Typnamen. Endpunkte zu raten
+  (`/Stadtteile`, `/Verwaltungsgrenzen`, …) brachte sechsmal 404. Gefunden
+  wurden die 46 Stadtteile über den **Metadatenkatalog** der Stadt: Die
+  Wurzel des Dienst-Hosts leitet auf ein Geoportal um, das auf einen
+  GeoNetwork-Katalog zeigt, dessen Suche den zweiten WFS nennt — samt Lizenz
+  und Quellenvermerk. Der Weg dauert zehn Minuten und ersetzt einen Rückfall
+  auf „Stadtname als Bezirk".
 - **Kein Betrag ist nicht null Euro.** Hamburgs Parkscheibengebiete kosten
   nichts und verlangen trotzdem etwas; wer ohne Scheibe steht, zahlt.
   `Fee` hat dafür `disc` und `unknown`, und `CostEstimate.priced` zwingt die
@@ -231,7 +262,7 @@ wiederholt.
 - **`packages/core` bleibt frei von Frameworks und ohne Laufzeit-Abhängigkeiten.**
   Alles, was fremde Eingaben zerlegt, gehört dorthin — dort lässt es sich mit
   Unfug beschießen. Der Telegram-Parser ist das jüngste Beispiel.
-- **Berlin darf nicht fest verdrahtet werden.** Eine zweite Stadt ist stehende
+- **Berlin darf nicht fest verdrahtet werden.** Eine weitere Stadt ist stehende
   Anforderung. Was heute noch Berlin-spezifisch ist, steht in
   [docs/oeffentlich-machen.md](docs/oeffentlich-machen.md).
 
@@ -245,7 +276,8 @@ wiederholt.
 | [docs/hosting.md](docs/hosting.md) | Cloudflare, Worker, D1, Telegram, PMTiles — mit Befehlen |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
-| [docs/staedte.md](docs/staedte.md) | Zweite Stadt: Datenlage, Prüfliste, Hamburg im Einzelnen |
+| [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg und Frankfurt im Einzelnen |
+| [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
 | [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |
 | [SECURITY.md](SECURITY.md) | Bedrohungsmodell und Maßnahmen |
