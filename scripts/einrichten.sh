@@ -259,7 +259,11 @@ schritt_werkzeuge() {
   # node, curl, openssl und git bringt jedes brauchbare System mit — fehlen
   # sie, ist das kein Fall fuer ein Projektskript.
   local fehlend=''
-  for werkzeug in node curl openssl git; do
+  # python3 steht mit drin, weil das Skript ihn dreizehnmal braucht — fuer
+  # jede JSON-Auswertung. Er fehlte in dieser Liste, und ohne ihn scheiterten
+  # die Aufrufe einzeln und unverstaendlich statt einmal und deutlich
+  # (Audit-Punkt M-062).
+  for werkzeug in node curl openssl git python3; do
     if command -v "$werkzeug" >/dev/null 2>&1; then
       ok "$werkzeug $("$werkzeug" --version 2>/dev/null | head -1)"
     else
@@ -616,10 +620,31 @@ Berlin und Hamburg. Verbindlich ist immer die Beschilderung vor Ort.
 
 /hilfe erklärt es nochmal."
 
+# tg_api <token> <methode> [json]
+#
+# Weder Token noch Nutzdaten stehen in der Kommandozeile: `ps` zeigt jedem
+# lokalen Nutzer die Argumente fremder Prozesse, und der Bot-Token ist der
+# Schluessel zum Bot (Audit-Punkt M-051). Die Adresse kommt deshalb ueber eine
+# curl-Konfiguration auf der Standardeingabe, die Nutzdaten ueber eine Datei
+# mit Rechten 600.
+#
+# Alle Telegram-Aufrufe laufen hierueber. Vorher stand `getMe` zweimal roh
+# daneben, obwohl es diesen Helfer schon gab (Audit-Punkt M-068).
 tg_api() {
-  # tg_api <token> <methode> <json>
-  curl -sS -X POST "https://api.telegram.org/bot$1/$2" \
-    -H 'Content-Type: application/json' -d "$3"
+  local token="$1" methode="$2" json="${3:-}" tmp='' ergebnis=''
+  if [ -n "$json" ]; then
+    tmp="$(mktemp -t knoellchenfrei-tg)" || return 1
+    chmod 600 "$tmp"
+    printf '%s' "$json" > "$tmp"
+    ergebnis="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$token" "$methode" \
+      | curl -sS --max-time 20 -X POST --config - \
+          -H 'Content-Type: application/json' --data "@$tmp")"
+    rm -f "$tmp"
+  else
+    ergebnis="$(printf 'url = "https://api.telegram.org/bot%s/%s"\n' "$token" "$methode" \
+      | curl -sS --max-time 20 --config -)"
+  fi
+  printf '%s' "$ergebnis"
 }
 
 tg_ok() { printf '%s' "$1" | grep -q '"ok":true'; }
@@ -658,7 +683,7 @@ bot_profil_setzen() {
   # `/setprivacy` **Enable** heisst "Privatsphaere an" und ergibt
   # `can_read_all_group_messages: false`.
   local zustand
-  zustand="$(curl -sS --max-time 20 "https://api.telegram.org/bot$token/getMe" | python3 -c "
+  zustand="$(tg_api "$token" getMe | python3 -c "
 import sys, json
 try: d = json.load(sys.stdin)
 except Exception: raise SystemExit
@@ -752,7 +777,7 @@ schritt_telegram() {
   # haette am 6. September sofort gezeigt, dass der Bot @knoellchen_bot heisst
   # und nicht @knoellchenfrei_bot, wie ueberall in der Doku stand.
   local wer
-  wer="$(curl -sS --max-time 20 "https://api.telegram.org/bot$token/getMe" | python3 -c "
+  wer="$(tg_api "$token" getMe | python3 -c "
 import sys, json
 try: d = json.load(sys.stdin)
 except Exception: raise SystemExit
@@ -782,9 +807,8 @@ print(('@' + r['username']) if d.get('ok') and r.get('username') else '')" 2>/de
   # Telegram jede Bearbeitung, jeden Beitritt und jede Reaktion an den Worker,
   # sobald der Bot in einer Gruppe liegt.
   local antwort
-  antwort="$(curl -sS -X POST "https://api.telegram.org/bot$token/setWebhook" \
-    -H 'Content-Type: application/json' \
-    -d "{\"url\":\"$basis/telegram\",\"secret_token\":\"$geheim\",\"allowed_updates\":[\"message\"]}")"
+  antwort="$(tg_api "$token" setWebhook \
+    "{\"url\":\"$basis/telegram\",\"secret_token\":\"$geheim\",\"allowed_updates\":[\"message\"]}")"
   if printf '%s' "$antwort" | grep -q '"ok":true'; then
     ok "Webhook angemeldet: $basis/telegram"
   else
@@ -1351,18 +1375,27 @@ schritt_github() {
   fi
 
   # --- GitHub Pages -----------------------------------------------------
-  if printf '%s' "$json" | grep -q '"has_pages":true'; then
-    ok "GitHub Pages ist an"
+  #
+  # Umgedreht am 7. September: Pages gehoert AUS. Bis dahin schaltete dieses
+  # Skript es ein und meldete "aus" als Mangel. Der Grund fuer die Kehrtwende
+  # hat nichts mit GitHub zu tun — vor GitHub Pages laesst sich kein
+  # Zugangsriegel setzen, und eine zweite offene Tuer macht die erste sinnlos
+  # (Audit-Punkt M-006). Der Riegel steht vor Cloudflare Pages, und dort liegt
+  # auch knoellchenfrei.de.
+  #
+  # Wenn die App oeffentlich wird, ist das hier wieder eine Ueberlegung wert —
+  # aber dann als Entscheidung, nicht als Ueberbleibsel.
+  if ! printf '%s' "$json" | grep -q '"has_pages":true'; then
+    ok "GitHub Pages ist aus — so soll es sein, solange die Beta laeuft"
   elif [ "$NUR_PRUEFEN" = ja ]; then
-    fehlt "GitHub Pages aus"; offen_merken
+    schlimm "GitHub Pages ist AN: zweiter, ungeschuetzter Zugang zur Beta"
+    adresse "https://github.com/$REPO_SLUG/settings/pages"
+    offen_merken
   else
-    # Quelle *GitHub Actions*, kein Zweig — der Workflow baut und liefert.
-    # Und ausdrücklich keine eigene Domain: knoellchenfrei.de gehört zu
-    # Cloudflare Pages, und ein Hostname liegt nur an einer Stelle.
-    if gh api -X POST "repos/$REPO_SLUG/pages" -f build_type=workflow >/dev/null 2>&1; then
-      ok "GitHub Pages eingeschaltet (Quelle: Actions, ohne eigene Domain)"
+    if gh api -X DELETE "repos/$REPO_SLUG/pages" >/dev/null 2>&1; then
+      ok "GitHub Pages abgeschaltet"
     else
-      fehlt "ließ sich nicht einschalten"
+      schlimm "GitHub Pages liess sich nicht abschalten — Quelle auf None setzen"
       adresse "https://github.com/$REPO_SLUG/settings/pages"
       offen_merken
     fi

@@ -1,0 +1,8 @@
+# Wer angefragt wird, wenn jemand etwas ändert.
+#
+# Ein Eintrag, weil es eine Person gibt — das ist keine Bescheidenheit, sondern
+# der Bus-Faktor, und er steht als offener Punkt in docs/todo.md und
+# docs/notfall.md. Die Datei ist trotzdem da: Ohne sie fragt GitHub niemanden,
+# und ein Beitrag von aussen bliebe liegen, bis jemand zufaellig hinsieht
+# (Audit-Punkt M-059).
+*       @herbeus

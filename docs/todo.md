@@ -421,6 +421,20 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
       hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
       Das war Audit-Punkt M-031.
+- [ ] **R2-CORS neu anwenden** — die Regeldatei ist geändert, der Eimer noch
+      nicht. `app/apps/api/r2-cors.json` erlaubte `localhost` am Produktiv-Eimer
+      (Audit-Punkt M-050); die Zeilen sind raus, aber das Anwenden scheiterte
+      an derselben Grenze wie die Ressourcenprüfung: `wrangler r2 bucket cors`
+      zählt erst die Konten auf und verlangt dafür `User → Memberships → Read`.
+
+      ```bash
+      cd app && pnpm --filter @knoellchenfrei/api exec wrangler \
+        r2 bucket cors set knoellchenfrei-tiles --file apps/api/r2-cors.json
+      ```
+
+      Geht mit demselben Token, das auch [den Wiederanlauf prüfbar
+      macht](#) — siehe den Punkt „Ein Token, das lesen darf".
+
 - [x] **Lizenzen aufgeräumt** — am 7. September, Audit-Punkte M-021, M-023,
       M-058 und M-016. `LICENSE` ist wieder reines MIT (der deutsche
       Datenanhang liess GitHub `NOASSERTION` melden), die Datenlizenzen aller

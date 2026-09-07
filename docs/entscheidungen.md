@@ -442,3 +442,36 @@ es hat.
 - **Ein Lesepfad für Freitext-Feedback.** Nur der Betreiber liest es. In einem
   Artifact ist das gar nicht ausdrückbar — dessen Regeln lassen „alle schreiben,
   einer liest" nicht zu —, deshalb gibt es Feedback nur mit eigenem Worker.
+
+## Kein CHANGELOG, kein Release-Tag — vorerst
+
+*7. September 2026, Audit-Punkt M-032.*
+
+Der Befund stimmt: Es gibt keine Releases, keine Tags und keine
+Änderungsübersicht. Ein CHANGELOG wäre trotzdem falsch, solange die
+Auslieferung „jeder Push auf `main`" heißt. Er hätte keine Version, auf die er
+sich bezieht, und dupliziert dann die Commit-Historie in einer Datei, die
+niemand pflegt — genau die Sorte Dokument, von der dieses Audit ein Dutzend
+gefunden hat.
+
+Was stattdessen gilt: Die Commit-Nachrichten tragen die Begründung, und
+`docs/entscheidungen.md` trägt die Entscheidungen. Beides ist näher an der
+Wahrheit als eine Liste, die aus beidem abgeschrieben wird.
+
+**Wiedervorlage, sobald es eine Version gibt, auf die sich jemand berufen
+kann** — also spätestens, wenn die App öffentlich ist und jemand außer dem
+Betreiber sie einsetzt. Dann gehören Tag, Release und CHANGELOG zusammen
+eingeführt, nicht einzeln.
+
+## R2-CORS ohne `localhost`
+
+*7. September 2026, Audit-Punkt M-050.*
+
+`app/apps/api/r2-cors.json` erlaubte `http://localhost:5173` und `:4173` am
+**Produktiv**-Eimer. Begründet war das nirgends, und nötig ist es nicht: Ohne
+gesetzte `VITE_TILES_URL` fällt die App lokal auf die Rasterkacheln von
+OpenStreetMap zurück, holt also gar nichts aus R2.
+
+Wer lokal doch gegen die echten Kacheln entwickeln will, trägt seinen Origin
+vorübergehend ein und nimmt ihn wieder heraus. Eine dauerhafte Ausnahme für
+einen Rechner, der nicht existiert, ist keine.

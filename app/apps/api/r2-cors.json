@@ -5,14 +5,23 @@
         "origins": [
           "https://knoellchenfrei.pages.dev",
           "https://knoellchenfrei.de",
-          "https://www.knoellchenfrei.de",
-          "http://localhost:5173",
-          "http://localhost:4173"
+          "https://www.knoellchenfrei.de"
         ],
-        "methods": ["GET", "HEAD"],
-        "headers": ["range", "if-match"]
+        "methods": [
+          "GET",
+          "HEAD"
+        ],
+        "headers": [
+          "range",
+          "if-match"
+        ]
       },
-      "exposeHeaders": ["etag", "content-range", "content-length", "accept-ranges"],
+      "exposeHeaders": [
+        "etag",
+        "content-range",
+        "content-length",
+        "accept-ranges"
+      ],
       "maxAgeSeconds": 3600
     }
   ]
