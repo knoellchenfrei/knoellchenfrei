@@ -173,13 +173,14 @@ function securityHeaders(singleBundle: boolean): Plugin {
       }
       const api = herkunft(process.env.VITE_API_BASE)
       const kacheln = herkunft(process.env.VITE_TILES_URL)
-      // Schriften und Symbole der Vektorkarte, siehe `map-style.ts`. Der
-      // Abfluss steht so auch in der Datenschutzerklärung.
-      const protomaps = 'https://protomaps.github.io'
+      // `protomaps.github.io` stand hier bis zum 7. September für die Schriften
+      // der Vektorkarte. Sie liegen jetzt im eigenen Eimer neben den Kacheln,
+      // also darf die Adresse aus der Richtlinie verschwinden — eine erlaubte
+      // Herkunft, die niemand mehr braucht, ist eine zu viel.
       const osm = 'https://tile.openstreetmap.org'
 
-      const verbinden = ["'self'", api, kacheln, protomaps].filter((wert) => wert !== '')
-      const bilder = ["'self'", 'data:', 'blob:', osm, protomaps, kacheln].filter(
+      const verbinden = ["'self'", api, kacheln].filter((wert) => wert !== '')
+      const bilder = ["'self'", 'data:', 'blob:', osm, kacheln].filter(
         (wert) => wert !== '',
       )
 

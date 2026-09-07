@@ -42,3 +42,4 @@ sicherungen/
 
 # Lokal gebaute PMTiles-Archive (hunderte MB, gehoeren nach R2)
 app/packages/ingest/.kacheln/
+app/packages/ingest/.schriften/

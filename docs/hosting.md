@@ -645,9 +645,14 @@ Artifact-Fassung, die gar keine Kacheln laden darf. Die Kachelversion läuft
 getrennt davon (Tiles 4.15.2); die beiden Stränge gehören zusammen, ein
 Stil-Update erzwingt keinen neuen Kachelbau.
 
-**Die Schriften kommen weiterhin von `protomaps.github.io`** und sind damit der
-letzte fremde Abruf der Karte. Ein Sprite gibt es nicht mehr — FreiFahren hat
-auch keins.
+**Die Schriften liegen seit dem 7. September im selben Eimer** — unter
+`glyphs/{fontstack}/{range}.pbf`, gespiegelt von
+`packages/ingest/scripts/schriften-spiegeln.sh`. Damit macht die Vektorkarte
+keinen einzigen fremden Abruf mehr. Gespiegelt werden die drei Schnitte, die
+der Stil wirklich benutzt (nachgemessen an seinen 71 Ebenen), und von den 256
+Unicode-Bereichen die 131, in denen etwas steht: 11 MB. Ein fehlender leerer
+Bereich kostet eine 404 im Protokoll und kein Zeichen auf der Karte. Ein Sprite
+gibt es nicht — FreiFahren hat auch keins.
 
 ## Wann sich Live-Abruf lohnt — und wann nicht
 

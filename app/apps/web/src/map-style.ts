@@ -83,22 +83,33 @@ const BACKGROUND = {
  *
  * `dark` passt zur restlichen Oberfläche, `de` beschriftet auf Deutsch.
  */
-function vectorStyle(url: string): StyleSpecification {
+function vectorStyle(url: string, base: string): StyleSpecification {
   return {
     version: 8,
     // Ohne Glyphen bleibt jede Beschriftung leer — der häufigste Fehler beim
     // Umstieg von Raster auf Vektor.
-    glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
+    //
+    // Seit dem 7. September aus dem **eigenen** Eimer, nicht mehr von
+    // `protomaps.github.io`. Das war der letzte fremde Abruf, den die Karte
+    // noch machte: Die IP-Adresse jedes Betrachters ging an GitHub, und die
+    // Datenschutzerklärung musste einen Empfänger nennen, den niemand braucht
+    // (Audit-Punkt M-017). FreiFahren liefert seine Schriften aus demselben
+    // Grund selbst aus.
+    //
+    // Gespiegelt werden die drei Schnitte, die dieser Stil wirklich benutzt —
+    // nachgemessen an den 71 Ebenen, nicht geraten — und von den 256
+    // Unicode-Bereichen nur die 131, in denen etwas steht. Ein fehlender
+    // leerer Bereich kostet eine 404 im Protokoll und kein Zeichen auf der
+    // Karte. Das Skript dazu ist `packages/ingest/scripts/schriften-spiegeln.sh`.
+    glyphs: `${base}glyphs/{fontstack}/{range}.pbf`,
     // Kein `sprite`. FreiFahren hat auch keins — nachgesehen in ihrem
     // ausgelieferten Stil (`tiles.freifahren.org/styles/berlin.json`, 89
     // Ebenen, kein Sprite). Vier der 71 Ebenen tragen ein `icon-image` und
     // zeichnen ihr Symbol dann nicht; das ist der Preis, und er ist klein
     // gegen eine weitere Adresse, an die die IP jedes Betrachters geht.
     //
-    // Die Schriften kommen noch von protomaps.github.io. Das ist der letzte
-    // fremde Abruf der Karte und steht als offener Punkt in `docs/todo.md`:
-    // FreiFahren liefert sie vom eigenen Server aus, und der Weg dahin ist
-    // derselbe wie bei den Kacheln — eine Datei mehr in R2.
+    // Seit die Schriften mit im eigenen Eimer liegen, macht die Vektorkarte
+    // **keinen einzigen fremden Abruf** mehr.
     sources: {
       protomaps: {
         type: 'vector',
@@ -122,7 +133,9 @@ export function baseStyle(withTiles: boolean): StyleSpecification {
   // Beides oder keins: Ohne die nachgeladenen Ebenen ergäbe der Vektorstil eine
   // leere Karte, und dann sind die Rasterkacheln das bessere Ergebnis.
   const archiv = tilesUrlFor(CITY.key)
-  if (archiv !== undefined && vectorLayers !== null) return vectorStyle(archiv)
+  if (archiv !== undefined && TILES_BASE !== undefined && vectorLayers !== null) {
+    return vectorStyle(archiv, TILES_BASE)
+  }
 
   return {
     version: 8,

@@ -3,6 +3,7 @@
 ## Schnellstart
 
 ```bash
+nvm use            # liest .nvmrc — Node 22, dieselbe Zahl wie in der CI
 corepack enable    # holt pnpm in der festgelegten Version
 cd app
 pnpm install

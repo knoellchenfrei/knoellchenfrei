@@ -953,6 +953,19 @@ Was noch offen ist:
       trägt. Ein E2E-Test schaltet auf Hamburg und prüft, dass dort weder
       „Polizei Berlin" noch eine `030`-Nummer auftaucht.
 
+- [x] **`.nvmrc` mit `22`** — am 7. September, Vorschlag des Betreibers. Eine
+      Zeile, und `nvm use` wird zum Selbstläufer.
+
+      Er trifft eine Lücke, die am selben Abend entstanden ist: `corepack
+      enable` steht seitdem im Schnellstart von `CONTRIBUTING.md`, damit war
+      die **pnpm**-Hälfte des Satzes „so wird die Umgebung richtig aufgesetzt"
+      abgedeckt und die **Node**-Hälfte nicht. `engines.node` sagt zwar
+      `>=22`, aber niemand liest `engines`, bevor etwas schiefgeht.
+
+      Nachgemessen, dass die Zahl stimmt: Alle vier Workflows stehen auf
+      `node-version: 22`. Läuft das auseinander, baut die CI etwas anderes als
+      der Rechner — und das fällt erst am Unterschied auf.
+
 - [ ] Ladepunkt-Belegung, sobald die Lizenzfrage bei der SenMVKU geklärt ist.
 - [x] **Drei Dependabot-PRs, die Code brauchten — alle drei erledigt** am
       6. September, mit 105 grünen E2E-Tests. Die Ursachen, als Historie:

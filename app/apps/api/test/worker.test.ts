@@ -192,6 +192,65 @@ describe('der Telegram-Webhook', () => {
   })
 })
 
+describe('/events', () => {
+  const bündel = (body: unknown) =>
+    post('/events', { body: JSON.stringify(body) })
+
+  it('weist eine unbekannte Stadt ab, statt auf Berlin zu fallen', async () => {
+    const response = await worker.fetch(bündel({ city: 'paris', events: [] }), umgebung())
+    expect(response.status).toBe(400)
+  })
+
+  it('nimmt ein leeres Bündel an, ohne die Datenbank anzufassen', async () => {
+    const response = await worker.fetch(bündel({ city: 'berlin', events: [] }), umgebung())
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ written: 0 })
+  })
+
+  it('weist ein zu großes Bündel ab', async () => {
+    const events = Array.from({ length: 30 }, () => ({ name: 'app.open', value: '', n: 1 }))
+    const response = await worker.fetch(bündel({ city: 'berlin', events }), umgebung())
+    expect(response.status).toBe(413)
+  })
+
+  // Die Liste im Client ist eine Bequemlichkeit, keine Grenze: Hier kommt an,
+  // was jemand schickt, und nicht, was die App vorgesehen hat.
+  it('verwirft unbekannte Namen und Ausprägungen stillschweigend', async () => {
+    const response = await worker.fetch(
+      bündel({
+        city: 'berlin',
+        events: [
+          { name: 'ausgedacht', value: '', n: 1 },
+          { name: 'zone.open', value: 'Fantasiestraße', n: 1 },
+          { name: 'zone.answer', value: 'karte', n: 1 },
+        ],
+      }),
+      umgebung()
+    )
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ written: 0 })
+  })
+
+  it('braucht dieselbe Herkunftsprüfung wie jede andere Schreibstelle', async () => {
+    const response = await worker.fetch(
+      post('/events', {
+        headers: { 'Content-Type': 'application/json', Origin: 'https://boese.de' },
+        body: JSON.stringify({ city: 'berlin', events: [] }),
+      }),
+      umgebung()
+    )
+    expect(response.status).toBe(403)
+  })
+
+  it('schreibt ohne CLIENT_SALT gar nicht — wie jede POST-Route', async () => {
+    const response = await worker.fetch(
+      bündel({ city: 'berlin', events: [] }),
+      umgebung({ CLIENT_SALT: '' })
+    )
+    expect(response.status).toBe(503)
+  })
+})
+
 describe('unbekannte Wege', () => {
   it('enden in 404, nicht in einem Fehler', async () => {
     const response = await worker.fetch(new Request('https://api.example/gibtsnicht'), umgebung())

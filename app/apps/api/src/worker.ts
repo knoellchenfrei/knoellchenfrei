@@ -18,11 +18,18 @@
  */
 
 import {
+  ALL_ZONE_KEYS,
   BERLIN,
+  berlinWallClock,
   CITIES,
   cityAt,
   cityByKey,
+  clampEventCount,
   countingWindowStart,
+  EVENTS_PER_REQUEST,
+  hourFor,
+  isEventName,
+  isEventValue,
   isFeedbackKind,
   markFor,
   originAllowed,
@@ -533,6 +540,121 @@ async function recordVisit(
   return json({ today: counts?.today ?? 0, online: counts?.online ?? 0 }, { status: 200 }, cors)
 }
 
+/**
+ * Obergrenze für **angenommene** Ereignisse der Nutzungsstatistik an einem Tag.
+ *
+ * Warum es sie braucht: `/events` ist eine offene Adresse, und D1 zählt jedes
+ * `ON CONFLICT DO UPDATE` als geschriebene Zeile. Die Grenze bei `visits`
+ * zählt nur *neue* Zeilen und hilft hier deshalb nicht — ohne dieses Budget
+ * schriebe ein Aufrufer unbegrenzt auf bestehende Zeilen, und wenn das freie
+ * Tagesbudget fällt, fallen die Meldungen mit.
+ *
+ * 5.000 sind rund fünf Prozent des freien Budgets. Für den geschlossenen Test
+ * ist das reichlich; wenn die Zahl je zu klein wird, sagt es die Statistikseite
+ * selbst, weil sie exakt auf der Grenze steht.
+ */
+const EVENTS_PER_DAY = 5_000
+
+/**
+ * Nimmt gezählte Ereignisse entgegen — ein Zählwerk, kein Protokoll.
+ *
+ * Drei Dinge entscheidet **der Server**, nicht der Aufrufer, und jedes davon
+ * wäre sonst eine Behauptung:
+ *
+ *  1. **Tag und Stunde**, aus `Date.now()`. Ein Client-Stempel wäre
+ *     rückdatierbar — dieselbe Falle, gegen die `/visits` seine
+ *     `stale day`-Regel hat.
+ *  2. **Die Auflösung.** Ereignisse, deren Ausprägung ein Ort ist, bekommen
+ *     `hour = -1`; nur die anderen bekommen die Stunde. Ort **oder** Zeit, nie
+ *     beides — sonst wäre eine Zeile bei kleinen Zahlen ein Einzelereignis mit
+ *     Ort und Zeit, und sie stünde neben `sightings` und `marks` in derselben
+ *     Datenbank.
+ *  3. **Was überhaupt gezählt werden darf.** Name und Ausprägung gegen den
+ *     Katalog in `core`, die Zonenkennung gegen die erzeugte Liste. Die
+ *     Prüfung im Client ist eine Bequemlichkeit, keine Grenze.
+ *
+ * Gespeichert wird nichts, was auf eine Person zeigt: keine Kennung, keine
+ * Sitzung, keine Reihenfolge, keine IP — auch nicht gehasht. Deshalb steht hier
+ * auch kein `clientHash`: Er wäre für nichts anderes da, als ein Pseudonym zu
+ * schaffen, das es sonst nicht gäbe.
+ */
+async function recordEvents(
+  request: Request,
+  env: Env,
+  cors: Record<string, string>
+): Promise<Response> {
+  const blocked = rejectsCrossSite(request, env)
+  if (blocked !== null) return blocked
+
+  let payload: { city?: unknown; events?: unknown } | null
+  try {
+    payload = (await request.json()) as typeof payload
+  } catch {
+    return json({ error: 'invalid JSON' }, { status: 400 }, cors)
+  }
+
+  // `cityByKey` wirft bei einem unbekannten Schlüssel, statt still auf Berlin
+  // zurückzufallen — die Regel des Projekts. Hier wird daraus eine 400.
+  let city
+  try {
+    city = cityByKey(String(payload?.city ?? ''))
+  } catch (error) {
+    return json({ error: (error as Error).message }, { status: 400 }, cors)
+  }
+
+  const roh = Array.isArray(payload?.events) ? payload.events : []
+  if (roh.length === 0) return json({ written: 0 }, { status: 200 }, cors)
+  if (roh.length > EVENTS_PER_REQUEST) {
+    return json({ error: 'too many events' }, { status: 413 }, cors)
+  }
+
+  const now = Date.now()
+  const day = berlinDay(now)
+  const hour = Math.floor(berlinWallClock(now).minuteOfDay / 60)
+  const listen = { zones: ALL_ZONE_KEYS, cities: CITIES.map((eine) => eine.key) }
+
+  const angenommen: { name: string; hour: number; value: string; n: number }[] = []
+  for (const eintrag of roh) {
+    const kandidat = eintrag as { name?: unknown; value?: unknown; n?: unknown }
+    const name = kandidat.name
+    if (!isEventName(name)) continue
+    const value = typeof kandidat.value === 'string' ? kandidat.value : ''
+    if (!isEventValue(name, value, listen)) continue
+    angenommen.push({ name, hour: hourFor(name, hour), value, n: clampEventCount(kandidat.n) })
+  }
+  if (angenommen.length === 0) return json({ written: 0 }, { status: 200 }, cors)
+
+  // Erst lesen — **eine** Zeile über den Primärschlüssel. Eine Summe über den
+  // ganzen Tag im Prädikat läse bei jedem einzelnen Ereignis die ganze
+  // Tagesmenge; D1 rechnet gelesene Zeilen gegen ein eigenes Budget ab, und
+  // das wäre die teure Hälfte.
+  const stand = await env.DB.prepare('SELECT n FROM event_budget WHERE day = ?')
+    .bind(day)
+    .first<{ n: number }>()
+  // Voller Tag: 200 mit `written: 0`, nicht 429. Der Aufrufer soll seinen
+  // Puffer verwerfen und nicht wiederholen — ein Fehler hier wäre nicht seiner.
+  if ((stand?.n ?? 0) >= EVENTS_PER_DAY) return json({ written: 0 }, { status: 200 }, cors)
+
+  const gesamt = angenommen.reduce((summe, e) => summe + e.n, 0)
+  await env.DB.batch([
+    // Reserviert das **Angenommene**, nicht das Geschriebene. Die Abweichung
+    // geht damit in die vorsichtige Richtung.
+    env.DB.prepare(
+      'INSERT INTO event_budget (day, n) VALUES (?, ?)' +
+        ' ON CONFLICT (day) DO UPDATE SET n = event_budget.n + excluded.n'
+    ).bind(day, gesamt),
+    ...angenommen.map((e) =>
+      env.DB.prepare(
+        'INSERT INTO events (day, hour, city, name, value, n) SELECT ?, ?, ?, ?, ?, ?' +
+          ' WHERE (SELECT n FROM event_budget WHERE day = ?) <= ?' +
+          ' ON CONFLICT (day, hour, city, name, value) DO UPDATE SET n = events.n + excluded.n'
+      ).bind(day, e.hour, city.key, e.name, e.value, e.n, day, EVENTS_PER_DAY)
+    ),
+  ])
+
+  return json({ written: angenommen.length }, { status: 200 }, cors)
+}
+
 /** Deckelt, was eine Person in einer Stunde abladen kann. */
 const FEEDBACK_LIMIT_PER_HOUR = 4
 /** Rückmeldungen sind kein Betriebsdatum — nach drei Monaten sind sie erledigt. */
@@ -920,6 +1042,7 @@ export default {
       return listMarks(env, choice.city, cors)
     }
     if (path === '/visits' && request.method === 'POST') return recordVisit(request, env, cors)
+    if (path === '/events' && request.method === 'POST') return recordEvents(request, env, cors)
     if (path === '/feedback' && request.method === 'POST') return createFeedback(request, env, cors)
     if (path === '/sightings' && request.method === 'POST') {
       return createSighting(request, env, cors)
@@ -970,6 +1093,16 @@ export default {
     )
       .bind(Date.now() - 3_600_000)
       .run()
+    // Die Nutzungsstatistik: 90 Tage. Eine Zahl, die älter ist als ein
+    // Quartal, beantwortet keine Frage, die dieses Projekt hat. Das Tagesbudget
+    // hält nur zwei Tage — es ist ein Zähler, kein Bestand.
+    await env.DB.prepare('DELETE FROM events WHERE day < ?')
+      .bind(berlinDay(Date.now() - 90 * 86_400_000))
+      .run()
+    await env.DB.prepare('DELETE FROM event_budget WHERE day < ?')
+      .bind(berlinDay(Date.now() - 2 * 86_400_000))
+      .run()
+
     await env.DB.prepare('DELETE FROM feedback WHERE created_at < ?')
       .bind(Date.now() - FEEDBACK_MAX_AGE_MS)
       .run()
