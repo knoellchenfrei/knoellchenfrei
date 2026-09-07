@@ -71,14 +71,19 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    > davor. Und zwei rote Läufe gingen schlicht auf meine Kappe: das
    > Pages-Projekt, das `pages deploy` nicht selbst anlegt, und Migrationen,
    > die ich hinter das Schema gehängt hatte statt davor.
-3. **Dependabot-Warnungen** und **Sicherheitsupdates** einschalten
-   (Punkt 7) — zwei Schalter, und genau die, die den dringenden Teil abdecken.
+3. ~~**Dependabot-Warnungen** und **Sicherheitsupdates** einschalten.~~
+   **Am 7. September erledigt**, zusammen mit Secret Scanning, Push Protection
+   und dem Meldeweg aus `SECURITY.md`.
 4. ~~**Auto-Renew** für die fünf Domains (Punkt 2).~~ **Am 7. September
    erledigt** — bei INWX aktiv, mit zwei Kalendereinträgen für 2027 als
    Rückversicherung. Es war der einzige Punkt auf dieser Liste, an dem ein
    Versäumnis nicht reparierbar gewesen wäre.
 5. **Telegram-Token** beim BotFather holen (Punkt 6) und die restlichen Namen
-   sichern, solange sie frei sind.
+   sichern, solange sie frei sind. — **Der einzige Punkt dieser Liste, der noch
+   offen ist**, zusammen mit dem R2-Token darunter.
+6. **`CLOUDFLARE_R2_TOKEN`** als Repository-Secret, ein Recht: *Workers R2
+   Storage: Edit*. Ohne ihn baut der Workflow *Kacheln* nichts, und die Karte
+   altert still vor sich hin.
 
 **Am 6. September abends erledigt** (nachgeprüft, nicht geglaubt):
 Organisationsbild, Vorschaubild des Repositories, Beschreibung und alle zwölf
@@ -91,11 +96,16 @@ Topics, die Profilseite der Organisation aus einem *öffentlichen*
 > installiert), aber kopflos in einem Container, den du weder siehst noch
 > bedienst: Es gibt keinen Weg, ein Passwort oder einen zweiten Faktor in
 > *diese* Sitzung einzugeben, und ins Chat gehören Zugangsdaten nicht. Über
-> die API geht es ebenfalls nicht, und zwar aus zwei getrennten Gründen:
-> `PATCH /repos/…` beantwortet der Egress-Proxy dieser Umgebung mit
+> die API ging es aus der Cloud-Sitzung ebenfalls nicht:
+> `PATCH /repos/…` beantwortete deren Egress-Proxy mit
 > **„Repository settings writes are not permitted through this proxy"**, und
 > für das **Organisationsbild** gibt es in der GitHub-API überhaupt keinen
-> Endpunkt — das kann nur die Weboberfläche. Was ich stattdessen getan habe:
+> Endpunkt — das kann nur die Weboberfläche.
+>
+> **Nachtrag vom 7. September:** Aus einer Sitzung auf deinem Rechner gilt die
+> Proxy-Sperre nicht. Secret Scanning, Push Protection und Private
+> Vulnerability Reporting sind dort genau so eingeschaltet worden. Beim
+> Organisationsbild bleibt es dabei — kein Endpunkt, kein Weg. Was ich stattdessen getan habe:
 > alles vorbereitet, was ohne dein Konto geht, und deinen Teil auf Klicks
 > reduziert (siehe Schritt 2 — der Cloudflare-Aufbau läuft als Workflow).
 
@@ -193,7 +203,7 @@ Reihenfolge zählt: Der Verein sollte stehen, **bevor** die App öffentlich
 beworben wird. Ein Impressum mit deiner Privatanschrift lässt sich später nicht
 mehr zurücknehmen — es steht dann in Archiven.
 
-## 2. Domains — bestellt, Rest offen — **du**
+## 2. Domains — erledigt, bis auf die Wiedervorlage 2027
 
 Am 6. September 2026 bestellt. Begründung der Auswahl in
 [entscheidungen.md](entscheidungen.md#name-und-adressen).
@@ -228,31 +238,17 @@ Umlautdomains so verlangen.
       ```bash
       whois knoellchenfrei.org | grep 'Registry Expiry'   # das einzige öffentliche Datum
       ```
-- [ ] **Cloudflare-Konto anlegen, alle fünf als eigene Zone hinzufügen**, dann
-      beim Registrar die Nameserver umstellen. Eigene Zone auch für die reinen
-      Weiterleitungen — sonst gibt es für sie kein Zertifikat, und
-      `https://knöllchenfrei.de` läuft in eine Warnung statt in ein Redirect.
-- [ ] **Weiterleitungen bei Cloudflare einrichten, nicht beim Registrar.**
-      Cloudflare *Redirect Rules* sind kostenlos und machen ein sauberes 301 auf
-      `https://knoellchenfrei.de/$1`. Registrar-Weiterleitungen arbeiten oft mit
-      Frames oder brechen auf der Apex-Domain bei HTTPS.
-- [ ] Falls `.org` länger hängt: im Registrar-Konto nachsehen, ob eine
-      Bestätigungsmail offen ist. Bei gTLDs ist eine unbestätigte
-      E-Mail-Adresse der häufigste Grund für ein stehendes „pending".
+- [x] **Cloudflare-Konto und fünf Zonen stehen** — nachgemessen am
+      7. September: `knoellchenfrei.de`, `knoellchenfrei.org`,
+      `knoelchenfrei.de`, `knöllchenfrei.de` und `knölchenfrei.de` sind eigene
+      Zonen und `active`.
 
-## 3. Umzug ins neue Repository — erledigt am 6. September 2026
+- [x] **Weiterleitungen laufen, und zwar bei Cloudflare** — alle vier
+      Nebendomains antworten mit `301` auf `https://knoellchenfrei.de/`, mit
+      gültigem Zertifikat. Nachgemessen am 7. September, auch für die beiden
+      Punycode-Formen `xn--knllchenfrei-5ib.de` und `xn--knlchenfrei-sfb.de`.
 
-Entschieden und umgesetzt: **`github.com/knoellchenfrei/knoellchenfrei`** —
-Organisation und Repository gleich benannt, klein geschrieben, wie bei
-`github.com/FreiFahren/FreiFahren`.
-
-Warum nicht `knoellchenfrei/app`: Repository-Namen wandern in Verzeichnisse, in
-CI-Konfigurationen und in `git remote -v`, und dort fällt das Präfix der
-Organisation weg. Ein Ordner namens `app` auf der Platte sagt nichts. Die
-Doppelnennung in der Adresse ist der Preis dafür, dass der Name überall dort
-noch trägt, wo er allein steht. Getrennte Repositories brauchen wir absehbar
-nicht: Der Kachel-Bau und der Telegram-Worker teilen sich Typen und
-Deploy-Werkzeug mit dem Rest und gehören als Pakete in dasselbe Monorepo.
+- [x] `.org` hängt nicht mehr — die Zone ist `active` und leitet weiter.
 
 - [x] Organisation `knoellchenfrei` auf GitHub angelegt.
 - [x] Repository `knoellchenfrei` darin angelegt, öffentlich.
@@ -326,7 +322,7 @@ Was am neuen Repository noch offen ist — **du**:
       jedem Push, der Deploy-Token kann nur Pages und Worker, und jeder Commit
       ist signiert nachvollziehbar.
 
-## 4. Eigene Kartenkacheln — **du** (R2), der Rest ist fertig
+## 4. Eigene Kartenkacheln — läuft, bis auf einen Token
 
 - [x] **MapLibre kann Vektorkacheln.** Ist `VITE_TILES_URL` gesetzt, zeichnet
       die App aus einem PMTiles-Archiv statt aus OSM-Rasterkacheln — mit
@@ -336,26 +332,11 @@ Was am neuen Repository noch offen ist — **du**:
 - [x] **Bau-Skript steht:** `app/packages/ingest/scripts/build-tiles.sh`.
       Schneidet Berlin aus dem globalen Tagesarchiv von Protomaps — kein
       eigener OSM-Import nötig.
-- [ ] **R2-Eimer anlegen**, Archiv hochladen, `tiles.knoellchenfrei.de`
-      davorhängen. Zwei Einstellungen entscheiden, ob überhaupt ein Byte
-      ankommt: CORS für die App-Domain und durchgereichte Range-Requests.
-      Schritte in [hosting.md](hosting.md#4-eigene-kartenkacheln).
-
-Warum das nicht warten sollte: Die Kacheln kommen zurzeit von
-`tile.openstreetmap.org`. Deren Nutzungsrichtlinie deckt ausgelieferte
-Anwendungen nicht ab, und die IP-Adressen aller Nutzer gehen an einen Dritten,
-über den unsere Datenschutzerklärung Auskunft geben muss. Details in
-[hosting.md](hosting.md).
-
-## 5. Weitere Städte — vier laufen — **ich**
-
-Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
-weiteren Städten in
-[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md). Hamburg ist seit
-dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
-**vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
-angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat;
-Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016).
+- [x] **R2 steht** — Eimer `knoellchenfrei-tiles` hinter
+      `tiles.knoellchenfrei.de`, CORS auf die eigene Domain, Range-Requests
+      durchgereicht. Nachgemessen mit gesetztem `Origin`: `206` auf den Kopf
+      jeder der vier Dateien unter `aktuell/`. Der Bau läuft seit dem
+      7. September wöchentlich als Workflow.
 
 - [x] **Stadt als Konfiguration statt als Konstante.** `core/city.ts` trägt
       Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze, Bundesland und
@@ -748,49 +729,21 @@ warten, bis der Worker steht.
       [org-profil.md](org-profil.md). Das ist die eigentliche Bedingung: Aus
       einem *privaten* `.github` rendert GitHub keine Profilseite, und man
       sieht dem Repository nicht an, dass es nichts tut.
-- [ ] Bewusst **nicht**: Sponsor-Knopf (dahinter steht kein Konto), private
-      E-Mail im Profil (kommt dort nicht wieder weg), Discussions (ein leeres
-      Forum wirkt verlassener als keins).
-- [ ] **Dependabot-Warnungen und Sicherheitsupdates einschalten.** *(Ob das
-      schon geschehen ist, kann ich nicht nachsehen: Der Egress-Proxy
-      beantwortet `GET /repos/…/vulnerability-alerts` und
-      `…/automated-security-fixes` mit 403. Bitte im Zweifel selbst
-      nachschauen.)*
-      `Settings → Advanced Security` → *Dependabot alerts* und
-      *Dependabot security updates*. Die Konfiguration in
-      `.github/dependabot.yml` steuert nur die **Versions**updates; die
-      Sicherheitsseite hängt an diesen beiden Schaltern und lässt sich nicht
-      aus dem Repository heraus setzen. Ohne sie fehlt genau der Teil, der
-      dringend ist.
-- [ ] **GitHub Pages abschalten** — *Settings → Pages → Build and deployment →
-      Source* auf **None**. Einen Tag lang lief die App zusätzlich unter
-      `https://knoellchenfrei.github.io/knoellchenfrei/`; der Workflow
-      `pages.yml` ist am 7. September gelöscht, es rollt also nichts mehr aus.
-      **Der zuletzt veröffentlichte Stand bleibt trotzdem abrufbar, bis dieser
-      Schalter umgelegt ist** — eine gelöschte Automatik nimmt nichts zurück,
-      was sie schon veröffentlicht hat.
+> **Bewusst nicht:** Sponsor-Knopf (dahinter steht kein Konto), private E-Mail
+> im Profil (kommt dort nicht wieder weg), Discussions (ein leeres Forum wirkt
+> verlassener als keins). Das ist eine Entscheidung und keine Aufgabe — sie
+> stand nur als offener Punkt in der Liste und sah dadurch aus wie einer.
+- [x] **Dependabot-Warnungen und Sicherheitsupdates sind an** — am
+      7. September eingeschaltet und nachgemessen
+      (`/vulnerability-alerts` → `204`). Mit dabei, weil sie am selben
+      Schalterbrett liegen und für öffentliche Repositories nichts kosten:
+      **Secret Scanning** und **Push Protection**. `einrichten.sh` prüft alle
+      drei jetzt selbst, statt sie zu glauben.
 
-      Der Grund ist der Beta-Riegel: Vor GitHub Pages lässt sich keiner setzen
-      (kein serverseitiger Code, keine Zugangsregel), und eine zweite offene
-      Tür macht die erste sinnlos. Das war Audit-Punkt M-006.
-
-      Damit ist auch alles hinfällig, was hier vorher zum Feld *Custom domain*
-      stand: `knoellchenfrei.de` gehört zu Cloudflare Pages, und dort steht der
-      Riegel.
-
-## 8. Der Worker kennt zwei Städte — erledigt am 6. September 2026
-
-Beim Durchsehen von [hosting.md](hosting.md) aufgefallen, und es wäre erst
-aufgefallen, wenn der Worker scharf geht: Die App schaltet seit dem
-6. September zwischen Berlin und Hamburg um, der Worker nicht. `Env.CITY`
-wählte **eine** Stadt (ohne Wert: Berlin), `withinCity` wies alles andere ab,
-`schema.sql` hatte keine Stadtspalte. Eine Hamburger Meldung bekam
-**`422 position outside Berlin`** — in der App sähe das aus, als sei das
-Melden kaputt.
-
-**Geworden ist es eine Spalte `city`, keine Datenbank je Stadt.** FreiFahren
-fährt je Stadt eine eigene D1 *und* einen eigenen Worker; für zwei Städte auf
-dem Free Tier ist das n-mal Betrieb ohne Gegenwert.
+- [x] **GitHub Pages ist aus** — am 7. September nachgemessen: `/repos/…/pages`
+      antwortet `404`, es gibt keine Seite mehr. Musste weg, weil sich dort
+      kein Riegel davorsetzen lässt; der Beta-Zugang läuft über eine
+      Pages-**Funktion**, und die gibt es bei GitHub Pages nicht.
 
 - [x] **Stadt aus der Position, nicht aus der Konfiguration.** Neu in
       `core/city.ts`: `cityAt(lon, lat)` gibt die erste Stadt zurück, deren
