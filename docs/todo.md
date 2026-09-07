@@ -505,41 +505,35 @@ warten, bis der Worker steht.
 
 ## 7. Auftritt — **du**, vorbereitet ist alles
 
-- [ ] **Zwei DNS-Einträge für `knoellchenfrei.de`** — der letzte Handgriff,
-      bis die App unter ihrer eigenen Adresse liegt. Am 7. September sind die
-      Custom Domains am Pages-Projekt angelegt; Cloudflare meldet zu beiden
-      `CNAME record not set`, und die Zone hat **keine** Einträge:
-      `knoellchenfrei.de` und `www.` lösen heute auf nichts auf. Das ist
-      Audit-Punkt M-038 — es war nie ein Fehler im Skript, der Schritt hat
-      schlicht nie stattgefunden.
-
-      Der Weg über die Weboberfläche macht beides in einem:
-      *Workers & Pages → knoellchenfrei → Custom domains* — dort steht zu jeder
-      der beiden Adressen ein Knopf, der den Eintrag selbst setzt. Von Hand
-      wären es unter *DNS → Records*:
+- [x] **`knoellchenfrei.de` liegt auf der App** — am 7. September erledigt,
+      Audit-Punkt M-038. Es war nie ein Fehler im Skript: Der Schritt hat
+      schlicht nie stattgefunden. Die Zone enthielt genau einen Eintrag
+      (`tiles.`), Apex und `www` fehlten, und die Custom Domains waren am
+      Pages-Projekt nicht eingetragen. Beides steht jetzt:
 
       | Typ | Name | Ziel | Proxy |
       | --- | --- | --- | --- |
-      | CNAME | `knoellchenfrei.de` (Wurzel, `@`) | `knoellchenfrei.pages.dev` | an |
-      | CNAME | `www` | `knoellchenfrei.pages.dev` | an |
+      | CNAME | `knoellchenfrei.de` | `knoellchenfrei.pages.dev` | an |
+      | CNAME | `www.knoellchenfrei.de` | `knoellchenfrei.pages.dev` | an |
 
-      **Warum das nicht das Skript erledigt hat:** Der API-Token dieser
-      Einrichtung darf Pages lesen und schreiben, aber kein DNS — nachgemessen,
-      `zones/…/dns_records` antwortet mit `Authentication error`. Den Token
-      dafür zu erweitern wäre die falsche Richtung (Audit-Punkt M-012 nennt ihn
-      ohnehin schon zu breit); zwei Klicks einmalig sind billiger als ein
-      dauerhaft weiterer Schlüssel.
+      Nachgemessen an der ausgelieferten Adresse: `knoellchenfrei.de` und
+      `www.` antworten mit `401`, das richtige Passwort mit `303` und danach
+      `200`; die vier Weiterleitungsdomains zeigen hierher
+      (`knoellchenfrei.org` → `301`).
 
-      Die vier übrigen Domains leiten bereits hierher um — nachgemessen:
-      `knoellchenfrei.org` antwortet `301` auf `https://knoellchenfrei.de/`.
-      Sie zeigen also ab dem Moment auf die App, in dem diese zwei Einträge
-      stehen.
+      **Zwei Schlüssel, und sie sind leicht zu verwechseln.** In der Umgebung
+      stand `CLOUDFLARE_API_TOKEN` mit dem Präfix `cfat_` — das ist das
+      OAuth-Token aus `wrangler login`, kein API-Token: `/user/tokens/verify`
+      antwortet darauf `Invalid API Token`, während Zonen- und Pages-Abrufe
+      funktionieren. Sein Geltungsbereich kennt kein DNS, und keine
+      Rechteänderung im Dashboard ändert daran etwas. Der API-Token liegt in
+      `~/.knoellchenfrei-cf-token` (Präfix `cfut_`) — den nimmt auch
+      `scripts/einrichten.sh` über `CF_TOKEN_DATEI`. Wer DNS über die API
+      anfassen will, braucht diesen, nicht jenen.
 
-Bilder, Beschreibungstexte und Namensschema stehen in
-[marke.md](marke.md); der Text der Org-Profilseite in
-[org-profil.md](org-profil.md). Nichts davon geht über die GitHub-App: Sie darf
-in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
-(`403 Resource not accessible by integration`).
+      Was danach noch dauert, ohne dass etwas kaputt ist: Der lokale Resolver
+      hält das alte `NXDOMAIN` eine Weile fest — `dig @1.1.1.1` und der Browser
+      sehen die Adresse längst, `curl` meldet noch `Could not resolve host`.
 
 - [x] **Bild der Organisation hochgeladen** — nachgeprüft am 6. September:
       `avatars.githubusercontent.com/u/325612516` liefert das blaue P,
