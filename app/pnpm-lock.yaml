@@ -40,8 +40,8 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
       maplibre-gl:
-        specifier: ^6.4.0
-        version: 6.4.0
+        specifier: ^6.6.0
+        version: 6.6.0
       pmtiles:
         specifier: 4.5.0
         version: 4.5.0
@@ -1453,8 +1453,8 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
 
-  maplibre-gl@6.4.0:
-    resolution: {integrity: sha512-pCgDUsaYFuZwIH37aV2qF4m03nZPlW79DlqC+cQ+48tpqiqW2SJyA7fEOcFrS5ilDK493f0X3LxiH17T5BqV7g==}
+  maplibre-gl@6.6.0:
+    resolution: {integrity: sha512-EQql6eZYPhbHvJpqY4AwoiuLkUfXFRBHk67S8mDtzNo1F/jAo7xAxunIzO7gJ1vwTcPMgrK9b64dqKHvnkTlDQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   miniflare@5.20260903.0-alpha:
@@ -2817,7 +2817,7 @@ snapshots:
     dependencies:
       semver: 7.8.5
 
-  maplibre-gl@6.4.0:
+  maplibre-gl@6.6.0:
     dependencies:
       '@mapbox/point-geometry': 1.1.0
       '@mapbox/tiny-sdf': 2.2.0
