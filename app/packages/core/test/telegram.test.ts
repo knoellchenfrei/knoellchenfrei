@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { BERLIN, CITIES, FRANKFURT, HAMBURG } from '../src/city.js'
+import { BERLIN, CITIES, FRANKFURT, HAMBURG, MUENCHEN } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 
 /**
@@ -161,11 +161,29 @@ describe('parseTelegramUpdate', () => {
     expect(parseTelegramUpdate(roemer, [BERLIN, HAMBURG]).intent.kind).toBe('unknown')
   })
 
+  // Wie bei Frankfurt: Die vierte Stadt braucht keinen Code im Parser. Und
+  // wie dort steht der Test trotzdem hier, weil "kommt automatisch mit" eine
+  // Behauptung ist, solange sie niemand nachgemessen hat.
+  it('reads a München location as a München report', () => {
+    const marienplatz = update({ ...SENDER, location: { longitude: 11.5755, latitude: 48.1372 } })
+    expect(parseTelegramUpdate(marienplatz, CITIES).intent).toEqual({
+      kind: 'report',
+      lon: 11.5755,
+      lat: 48.1372,
+      city: MUENCHEN,
+    })
+    expect(parseTelegramUpdate(marienplatz, [BERLIN, HAMBURG, FRANKFURT]).intent.kind).toBe(
+      'unknown'
+    )
+  })
+
   it('still refuses a location in no city at all', () => {
-    // München: eine echte Stadt, nur keine, die wir kennen. Sie darf nicht
-    // der ersten Stadt in der Liste zugeschlagen werden.
+    // Nürnberg: eine echte Stadt, nur keine, die wir kennen — und in
+    // demselben Bundesland wie München, das inzwischen dazugehört. Sie darf
+    // weder der ersten Stadt in der Liste noch der nächstgelegenen
+    // zugeschlagen werden.
     const parsed = parseTelegramUpdate(
-      update({ ...SENDER, location: { longitude: 11.5755, latitude: 48.1374 } }),
+      update({ ...SENDER, location: { longitude: 11.0775, latitude: 49.4539 } }),
       CITIES,
     )
     expect(parsed.intent.kind).toBe('unknown')

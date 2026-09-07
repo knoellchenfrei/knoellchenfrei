@@ -7,6 +7,7 @@ import {
   cityByKey,
   FRANKFURT,
   HAMBURG,
+  MUENCHEN,
   withinCity,
   withinCitySession,
 } from '../src/city.js'
@@ -16,6 +17,7 @@ describe('cityByKey', () => {
     expect(cityByKey('berlin')).toBe(BERLIN)
     expect(cityByKey('hamburg')).toBe(HAMBURG)
     expect(cityByKey('frankfurt')).toBe(FRANKFURT)
+    expect(cityByKey('muenchen')).toBe(MUENCHEN)
   })
 
   // Der Rückfall auf Berlin ist genau der Fehler, den diese Funktion nicht
@@ -72,10 +74,42 @@ describe('withinCity', () => {
   // Die Boxen dürfen sich nicht berühren. Täten sie es, gäbe es Punkte,
   // die zwei Städten gehören, und die Frage "welche Zonendaten gelten hier"
   // hätte zwei Antworten.
+  it('accepts the Marienplatz for München and refuses it for the other three', () => {
+    expect(withinCity(MUENCHEN, 11.5755, 48.1372)).toBe(true)
+    expect(withinCity(BERLIN, 11.5755, 48.1372)).toBe(false)
+    expect(withinCity(HAMBURG, 11.5755, 48.1372)).toBe(false)
+    expect(withinCity(FRANKFURT, 11.5755, 48.1372)).toBe(false)
+  })
+
+  // Die Box kommt aus dem Umriss der 25 Stadtbezirke, nicht aus der
+  // Parkebene: Im Westen und Norden wird nicht bewirtschaftet, und wer die
+  // Grenze von dort nähme, wiese eine Meldung aus Lochhausen als „außerhalb"
+  // ab, obwohl sie mitten in München liegt.
+  it('reaches Lochhausen in the west and Feldmoching in the north', () => {
+    expect(withinCity(MUENCHEN, 11.375, 48.185)).toBe(true) // Aubing-Lochhausen
+    expect(withinCity(MUENCHEN, 11.545, 48.235)).toBe(true) // Feldmoching
+  })
+
+  /**
+   * Keine zwei Boxen dürfen sich überlappen.
+   *
+   * `cityAt` nimmt die erste passende Stadt — das ist nur eindeutig, solange
+   * die Boxen disjunkt sind. Paarweise geprüft statt in einer Kette: Mit vier
+   * Städten sind es sechs Paare, und eine Kette aus drei Vergleichen ließe drei
+   * davon ungeprüft.
+   */
   it('keeps the boxes apart', () => {
-    expect(BERLIN.reportBounds.minLon).toBeGreaterThan(HAMBURG.reportBounds.maxLon)
-    expect(HAMBURG.reportBounds.minLon).toBeGreaterThan(FRANKFURT.reportBounds.maxLon)
-    expect(HAMBURG.reportBounds.minLat).toBeGreaterThan(FRANKFURT.reportBounds.maxLat)
+    const overlaps = (a: typeof BERLIN, b: typeof BERLIN): boolean =>
+      a.reportBounds.minLon <= b.reportBounds.maxLon &&
+      b.reportBounds.minLon <= a.reportBounds.maxLon &&
+      a.reportBounds.minLat <= b.reportBounds.maxLat &&
+      b.reportBounds.minLat <= a.reportBounds.maxLat
+    for (const a of CITIES) {
+      for (const b of CITIES) {
+        if (a === b) continue
+        expect(overlaps(a, b), `${a.key} / ${b.key}`).toBe(false)
+      }
+    }
   })
 
   it('refuses NaN and Infinity rather than letting them through a comparison', () => {
@@ -142,6 +176,17 @@ describe('Quellenangabe', () => {
     expect(FRANKFURT.attribution.licenceUrl).toBe('https://www.govdata.de/dl-de/by-2-0')
   })
 
+  it('keeps the München source note verbatim', () => {
+    // Woertlich aus den ISO-Metadatensaetzen beider Parkebenen, samt
+    // fuehrendem "Datenquelle:" und Halbgeviertstrich. Die Stadt schreibt den
+    // Vermerk so vor; ihn zu kuerzen waere schoener und nicht mehr derselbe.
+    expect(MUENCHEN.attribution.source).toBe(
+      'Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de'
+    )
+    expect(MUENCHEN.attribution.attributionRequired).toBe(true)
+    expect(MUENCHEN.attribution.licenceUrl).toBe('https://www.govdata.de/dl-de/by-2-0')
+  })
+
   it('names a licence and a link for every city', () => {
     for (const city of CITIES) {
       expect(city.attribution.licence.length).toBeGreaterThan(0)
@@ -151,10 +196,37 @@ describe('Quellenangabe', () => {
   })
 })
 
+/**
+ * Stadtspezifische Feiertage.
+ *
+ * Der Ausnahmefall, für den `City.holidays` überhaupt existiert: In Bayern
+ * gilt Mariä Himmelfahrt gemeindeweise. Drei der vier Städte brauchen das
+ * Feld nicht, und es fehlt bei ihnen auch — ein leeres Array wäre eine
+ * Behauptung, die niemand geprüft hat.
+ */
+describe('Feiertage der Stadt', () => {
+  it('gives München Mariä Himmelfahrt and the other three nothing', () => {
+    expect(MUENCHEN.holidays).toEqual(['08-15'])
+    expect(BERLIN.holidays).toBeUndefined()
+    expect(HAMBURG.holidays).toBeUndefined()
+    expect(FRANKFURT.holidays).toBeUndefined()
+  })
+
+  it('writes every city holiday as MM-TT, the form holidaysFor accepts', () => {
+    for (const city of CITIES) {
+      for (const date of city.holidays ?? []) expect(date, city.key).toMatch(/^\d{2}-\d{2}$/)
+    }
+  })
+})
+
 describe('cityAt', () => {
   // Der Fehler, den diese Funktion behebt: Der Worker war auf **eine** Stadt
   // konfiguriert und beantwortete genau diesen Punkt — den Hamburger
   // Rathausmarkt — mit `422 position outside Berlin`.
+  it('resolves the Marienplatz to München', () => {
+    expect(cityAt(11.5755, 48.1372)).toBe(MUENCHEN)
+  })
+
   it('resolves a Hamburg position to Hamburg instead of refusing it', () => {
     expect(cityAt(9.9924, 53.5503)).toBe(HAMBURG)
     expect(cityAt(13.3777, 52.5163)).toBe(BERLIN)
@@ -182,10 +254,14 @@ describe('cityAt', () => {
   it('returns undefined between the cities', () => {
     // Lüneburger Heide, ungefähr auf halbem Weg.
     expect(cityAt(10.4, 53.0)).toBeUndefined()
-    // München — eine echte Stadt, nur keine, die wir kennen.
-    expect(cityAt(11.5755, 48.1374)).toBeUndefined()
+    // Nürnberg — eine echte Stadt, nur keine, die wir kennen. Und die
+    // gleiche Prüfung wie vorher mit München, das inzwischen dazugehört: Ein
+    // Punkt in Bayern ist noch kein Punkt in München.
+    expect(cityAt(11.0775, 49.4539)).toBeUndefined()
     // Kassel, ebenfalls Hessen: Das Bundesland macht noch keine Stadt.
     expect(cityAt(9.4797, 51.3127)).toBeUndefined()
+    // Und dasselbe für Bayern: Augsburg ist nicht München.
+    expect(cityAt(10.8978, 48.3705)).toBeUndefined()
   })
 
   it('accepts a point just inside each city and refuses one just outside', () => {

@@ -1,0 +1,2339 @@
+{
+ "hinweis": "Alle verschiedenen Werte von parkregel_beschreibung und alle Gebiets-Attribute des Abzugs vom 7. September 2026. Ohne Geometrie: getestet wird das Zerlegen von Text, nicht das Zeichnen von Linien.",
+ "abgerufen": "2026-09-07",
+ "dienst": "https://geoportal.muenchen.de/geoserver/mor_wfs/ows",
+ "typnamen": [
+  "mor_wfs:ruhver_prm_gebiete_poly",
+  "mor_wfs:ruhver_parkseiten_line"
+ ],
+ "lizenz": "Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de",
+ "abschnitteGesamt": 13714,
+ "abschnitteOhneRegeltext": 1,
+ "regeln": [
+  {
+   "text": "Mischparken 9-23 Uhr",
+   "gruppe": "Mischparken",
+   "anzahl": 3909
+  },
+  {
+   "text": "Bewohnerparken 9-23 Uhr",
+   "gruppe": "Bewohnerparken",
+   "anzahl": 1968
+  },
+  {
+   "text": "Absolutes Halteverbot 0-24 Uhr",
+   "gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "anzahl": 1801
+  },
+  {
+   "text": "E-Ladeinfrastruktur AC (Normalladen 22kW) nur E-Fahrzeuge im Ladezustand 8-20 Uhr 4h mit Parkscheibe",
+   "gruppe": "E-Parken",
+   "anzahl": 1171
+  },
+  {
+   "text": "Carsharing free floating",
+   "gruppe": "Carsharing",
+   "anzahl": 847
+  },
+  {
+   "text": "Behindertenparkplatz 0-24 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 613
+  },
+  {
+   "text": "Parkscheibe 4h 9-23 Uhr, Bewohner frei",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 495
+  },
+  {
+   "text": "Mischparken 9-18 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Mischparken",
+   "anzahl": 398
+  },
+  {
+   "text": "Kurzzeitparken 2h 9-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 258
+  },
+  {
+   "text": "Altstadttarif 8-23 Uhr",
+   "gruppe": "Altstadt und HBF",
+   "anzahl": 231
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 0-24 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot (0-24 Uhr)",
+   "anzahl": 188
+  },
+  {
+   "text": "Taxi 0-24 Uhr",
+   "gruppe": "Taxi",
+   "anzahl": 146
+  },
+  {
+   "text": "Parkscheibe 2h 9-18 Uhr Montag bis Sonntag, sonst freies Parken, Blaue Zone Messestadt Riem",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 136
+  },
+  {
+   "text": "Kurzzeitparken 2h 9-23 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 99
+  },
+  {
+   "text": "0-24 Uhr keine Regelung",
+   "gruppe": "keine Regelung 0 - 24 Uhr",
+   "anzahl": 85
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr Montag bis Freitag, Mischparken 18-23 Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 85
+  },
+  {
+   "text": "Absolutes Halteverbot 0-24 Uhr, Hotel Anfahrtszone",
+   "gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "anzahl": 81
+  },
+  {
+   "text": "Behindertenparken allgemein (zeitliche Einschränkung unbekannt)",
+   "gruppe": "Behindertenparken",
+   "anzahl": 75
+  },
+  {
+   "text": "Parkscheibe 2h 9-18 Uhr Montag bis Freitag, sonst freies Parken",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 53
+  },
+  {
+   "text": "Parkscheibe 2h 9-23 Uhr, Bewohner frei",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 48
+  },
+  {
+   "text": "Behindertenparkplatz 0-24 Uhr (personenbezogen)",
+   "gruppe": "Behindertenparken",
+   "anzahl": 45
+  },
+  {
+   "text": "Parkscheibe 4h 9-18 Uhr, Bewohnerparken 18-23 Uhr Parken",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 45
+  },
+  {
+   "text": "Carsharing stationär",
+   "gruppe": "Carsharing",
+   "anzahl": 41
+  },
+  {
+   "text": "Hauptbahnhoftarif Kurzzeitparken 2h, mit Ausnahme frei",
+   "gruppe": "Altstadt und HBF",
+   "anzahl": 41
+  },
+  {
+   "text": "Mischparken 9-18 Uhr, sonst freies Parken",
+   "gruppe": "Mischparken",
+   "anzahl": 36
+  },
+  {
+   "text": "Mischparken mit Parkscheibe 2h 9-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 34
+  },
+  {
+   "text": "Behindertenparkplatz 8-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr Montag bis Freitag, Mischparken 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 28
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-20 Uhr, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 25
+  },
+  {
+   "text": "Parkscheibe 4h 9-18 Uhr Montag bis Freitag, sonst freies Parken",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 24
+  },
+  {
+   "text": "Absolutes Halteverbot 0-24 Uhr, Einsatzfahrzeuge u. Notdienst frei",
+   "gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "anzahl": 23
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr Montag bis Freitag und 8-14 Uhr Samstag, Hauptbahnhoftarif Kurzzeitparken 2h 18-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 21
+  },
+  {
+   "text": "Parkscheibe 1h 9-23 Uhr, Bewohner frei 18-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 19
+  },
+  {
+   "text": "Behindertenparkplatz 7-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr Montag bis Freitag, Mischparken 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 15
+  },
+  {
+   "text": "Behindertenparkplatz 9-18 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 14
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 13
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-17 Uhr, Mischparken 17-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 13
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 13
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 13
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr, Eingeschränktes Halteverbot 8:30-16 Uhr und 19-6:30 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 12
+  },
+  {
+   "text": "Eingeschränktes Halteverbot temporär (zeitliche Einschränkung unbekannt) ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 11
+  },
+  {
+   "text": "Baustelle erfasst (Regelung für Parkraumerfassung)",
+   "gruppe": "Baustelle",
+   "anzahl": 10
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr Montag bis Freitag und 7-14 Samstag, Mischparken 18-23 Uhr Montag bis Freitag und 14-23 Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 10
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 10
+  },
+  {
+   "text": "Parkscheibe 2h 9-18 Uhr werktags, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 10
+  },
+  {
+   "text": "Absolutes Halteverbot 0-24 Uhr, Krafträder frei (Motorradparken)",
+   "gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "anzahl": 9
+  },
+  {
+   "text": "E-Carsharing free floating",
+   "gruppe": "Carsharing",
+   "anzahl": 9
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags, Eingeschränktes Halteverbot 7-14 Uhr samstags, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 8
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr, Eingeschränktes Halteverbot 8:30-16 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Absolutes Halteverbot 7-17 Uhr, Bewohnerparken 17-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Absolutes Halteverbot 7-20 Uhr, Bewohnerparken 20-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Behindertenparkplatz 8-17 Uhr Montag bis Freitag, Mischparken 17-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 6
+  },
+  {
+   "text": "Behindertenparkplatz 8-17 Uhr, Mischparken 17-23 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 6
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags Montag bis Freitag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-20 Uhr, Bewohnerparken 20 -23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr, Mischparken 18-23 Uhr ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 6
+  },
+  {
+   "text": "Kurzzeitparken 3h 9-23 Uhr, Bewohner frei 18-23 Uhr",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 6
+  },
+  {
+   "text": "Parkscheibe 3h 9-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 6
+  },
+  {
+   "text": "Absolutes Halteverbot 6-23 Uhr Krankenhaus",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-20 Uhr werktags, sonst Mischparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Absolutes Halteverbot 7-14 Uhr Montag bis Freitag, Mischparken 14-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Absolutes Halteverbot 7-14 Uhr, Bewohnerparken 14-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Absolutes Halteverbot 7-16 Uhr Montag bis Freitag, Parkscheibe 4h 16-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Absolutes Halteverbot 7-20 Uhr, Altstadttarif 20-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-20 Uhr, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 5
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr, Eingeschränktes Halteverbot 8:30-16 Uhr, freies Parken 19-6:30 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Absolutes Halteverbot 7-19 Uhr, Hauptbahnhoftarif Kurzzeitparken 2h 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Absolutes Halteverbot 7-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "E-Carsharing stationär",
+   "gruppe": "Carsharing",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6:30-18 Uhr Montag bis Freitag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-10 Uhr werktags",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr Montag bis Freitag und 7-14 Uhr Samstag, Mischparken 18-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 7-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr und 15-17 Uhr; Mischparken 9-15 Uhr und 17-23 Uhr ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr Montag bis Freitag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr Montag bis Freitag, Eingeschränktes Halteverbot 8-14 Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 9-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 4
+  },
+  {
+   "text": "Kurzzeitparken 2h 9-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 4
+  },
+  {
+   "text": "Mischparken 9-18 Uhr (werktags), Kurzzeitparken 2h 18-23 Uhr (werktags), Bewohner frei",
+   "gruppe": "Mischparken",
+   "anzahl": 4
+  },
+  {
+   "text": "Absolutes Halteverbot 16-19 Uhr, Eingeschränktes Halteverbot 19-16 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr werktags,  Mischparken 18-23 Uhr werktags",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Absolutes Halteverbot 8-14 Uhr Montag, Dienstag, Donnerstag, Hauptbahnhoftarif Kurzzeitparken 2h 14-23 Uhr Montag, Dienstag, Donnerstag und 9-23 Uhr Mittwoch, Freitag, Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Absolutes Halteverbot 8-16 Uhr Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Absolutes Halteverbot Duales Parken Sommer/Winter",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Behindertenparkplatz 9-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 3
+  },
+  {
+   "text": "Behindertenparkplatz max. 2 Stunden 9-19 Uhr, Kurzzeitparken 2h 19-23 Uhr, Bewohner frei",
+   "gruppe": "Behindertenparken",
+   "anzahl": 3
+  },
+  {
+   "text": "Busparken 8-23 Uhr, Bewohner frei 18-23 Uhr",
+   "gruppe": "Busparken",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-9 Uhr, Mischparken 9-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6:30-19 Uhr, sonst frei ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr Montag bis Freitag und 7-14 Uhr Samstag, Bewohnerparken 18-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-15 Uhr Montag bis Freitag, Mischparken 15-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr Montag bis Freitag, Eingeschränktes Halteverbot 9-14 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 3
+  },
+  {
+   "text": "Kurzzeitparken 3h 9-23 Uhr, Bewohner frei",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 3
+  },
+  {
+   "text": "Parkscheibe 2h 9-23 Uhr Montag bis Freitag, Bewohner frei ab 18 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 3
+  },
+  {
+   "text": "Parkscheibe 4h 9-18 Uhr Montag bis Freitag, Bewohner frei, sonst freies Parken",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 3
+  },
+  {
+   "text": "Absolutes Halteverbot 0-24 Uhr, Lieferverkehr frei",
+   "gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-8:30 Uhr und 16-19 Uhr, Eingeschränktes Halteverbot 8:30-16 Uhr, Mischparken mit Parkscheibe 2h 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7-11 Uhr, Mischparken 11-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7-14 Uhr an Schultagen, Mischparken 14-23 Uhr und 9-23 Uhr an nicht Schultag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7-17 Uhr, Altstadttarif 17-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr Montag bis Freitag, Altstadttarif 18-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr, Mischparken mit Parkscheibe 4h 18-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7:30-14:30 an Schultagen, sonst Parkscheibe 4h, Bewohner frei",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 7:30-17 Uhr, Bewohnerparken 17-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 8-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 9-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 9-23 Uhr, Parken Dual, tagsüber Fahrradparken 9-23 Uhr, sonst freies Parken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Behindertenparkplatz 8-18 Uhr Montag bis Freitag und 9-14 Uhr Samstag, Mischparken 18-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Behindertenparkplatz 8-19 Uhr Montag bis Freitag, Mischparken 19-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Behindertenparkplatz 8-20 Uhr, Bewohnerparken 20-23 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Behindertenparkplatz 9-18 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 0-20 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 10-18 Uhr werktags Montag bis Freitag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-15 Uhr werktags, Mischparken 15-23 Uhr werktags , sonst frei ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-18 Uhr werktags, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-9 Uhr werktags, Kurzzeitparken 2h 9-18 Uhr, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6:30-13 Uhr Montag bis Freitag, Mischparken 13-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-12 Uhr, Mischparken 12-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-14 Uhr Montag bis Freitag, Mischparken 14-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-16 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-17 Uhr Montag bis Freitag, Bewohnerparken 17-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-17 Uhr, Mischparken 17-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr Montag bis Freitag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-20 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 7-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr, Parkscheibe 2h 9-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-14 Uhr, Kurzzeitparken 14-18 Uhr, Mischkurzzeitparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-16 Uhr Montag bis Freitag und 7:30-14 Uhr Samstag, Mischparken 16-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-17 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 8-12 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr werktags, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-19 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr werktags Dienstag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 2
+  },
+  {
+   "text": "Hauptbahnhoftarif Kurzzeitparken 1h 6-23 Uhr, Siónderparken Hauptbahnhof",
+   "gruppe": "Altstadt und HBF",
+   "anzahl": 2
+  },
+  {
+   "text": "Kraftfahrzeugparken allgemein",
+   "gruppe": "Kraftfahrzeugparken allgemein",
+   "anzahl": 2
+  },
+  {
+   "text": "Kurzzeitparken 2h 7-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Kurzzeitparken 2h 8-18 Uhr werktags Montag bis Freitag, Kurzzeitparken 2h 8-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Kurzzeitparken 2h 8-18 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Mischparken 9-22 Uhr, Taxi 22-6 Uhr",
+   "gruppe": "Mischparken",
+   "anzahl": 2
+  },
+  {
+   "text": "Mischparken mit Parkscheibe 0,5h 9-23 Uhr, Bewohner frei 19-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 2
+  },
+  {
+   "text": "Parkscheibe 2h 7-23 Uhr werktags Montag bis Freitag, Bewohner frei 19-23 Uhr werktags Montag bis Freitag, Parkscheibe 2h 7-14 Uhr werktags Samstag, Bewohner frei 14-23 Uhr werktags Samstag",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 2
+  },
+  {
+   "text": "Parkscheibe 4h 9-23 Uhr (werktags)",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 2
+  },
+  {
+   "text": "Taxi 8-18 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Taxi",
+   "anzahl": 2
+  },
+  {
+   "text": "Absolutes Halteverbot 13-20 Uhr Montag bis Freitag, Eingeschränktes Halteverbot 7-13 Uhr Montag bis Freitag, Mischparken 20-23 Uhr Montag bis Freitag, Mischparken 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 15-18 Uhr, Eingeschränktes Halteverbot 8-15 Uhr, Hauptbahnhoftarif Mischparken 18-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 15-19 Uhr Montag bis Freitag, Eingeschränktes Halteverbot 8:30-15 Uhr Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 16-19 Uhr werktags, Eingeschränktes Halteverbot 6:30-16 Uhr werktags, sonst Mischparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 16-19 Uhr, Kurzzeitparken 9-16 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 6-10 Uhr, Eingeschränktes Halteverbot 10-6 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 6-13 Uhr Samstag, Mischparken 13-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-14 Uhr Montag, Mittwoch und Freitag, sonst Parkscheibe 4h",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-18 Uhr, Kurzzeitparken 2h 18-23 Uhr, sonst Bewohnerparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 6:30-9 Uhr, Eingeschränktes Halteverbot 9-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-13 Uhr werktags Montag, Mittwoch, Freitag, sonst Bewohnerparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-13:30 Uhr Montag bis Freitag an Schultagen, Blaue Zone Messestadt Riem 13:30-18 Uhr Montag bis Freitag und 9-18 Uhr Samstag bis Sonntag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-14 Uhr Dienstag, Mittwoch, Freitag, Mischparken 14-23  Dienstag, Mittwoch, Freitag und 9-23 Montag, Donnerstag, Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-14 Uhr Montag, Mittwoch, Freitag, Bewohnerparken 14-23  Montag, Mittwoch, Freitag und 9-23 Dienstag, Donnerstag, Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-14 Uhr werktags Montag bis Freitag, sonst Parkscheibe 4h, Bewohner frei",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-16 Uhr Montag bis Freitag, Bewohnerparken 16-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-16 Uhr an Schultagen, Mischparken 16-23 Uhr und 9-23 Uhr an nicht Schultagen",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-17 Uhr an Schultagen, Mischparken 17-23 Uhr und 9-23 Uhr an nicht Schultagen",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-17 Uhr, Blaue Zone Messestadt Riem 17-18",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr Montag bis Freitag und 7-14 Uhr Samstag, Altstadttarif 18-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr werktags Montag bis Freitag an Schultagen, Mischparken 9-18 Uhr werktags Montag bis Freitag außerhalb von Schultagen, Mischparken 9-18 Uhr Samstag, Bewohnerparken 18-23 Uhr werktags ",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr werktags Montag bis Freitag, Absolutes Halteverbot 7-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-18 Uhr werktags Montag bis Freitag, sonst Parkscheibe 4h, Bewohner frei",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-20 Uhr, Taxiparken 20-7 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-21 Uhr, Altstadttarif 21-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-23 Uhr werktags ",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-9 Uhr und 15-16 Uhr an Schultagen, Mischparken 9-15 Uhr und 16-23 Uhr und 9-23 Uhr an nicht Schultagen",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7-9 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7:30-14:30 Uhr an Schultagen, sonst Bewohnerparken",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 7:30-16 Uhr an Schultagen, Mischparken 16-23 Uhr und 9-23 Uhr an nicht Schultagen",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 8-18 Uhr werktags Bus frei max. 20 min (gebührenfrei), Altstadttarif 18-23 Uhr werktags",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 9-17 Uhr, Mischparken 17-23 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 9-19 Uhr, Taxiparken 19-9 Uhr",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot 9:30-13:30 Uhr an Schultagen, Mischparken 13:30-23 Uhr und 9-23 Uhr an nicht Schultagen",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot Dienstag 13-16 Uhr, sonst 2h Parkscheibe ohne Bewohnerbevorrechtigung",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot Dienstag 15-19 Uhr, sonst 2h Parkscheibe ohne Bewohnerbevorrechtigung",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot Dienstag 7-13 Uhr, sonst 2h Parkscheibe ohne Bewohnerbevorrechtigung",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Absolutes Halteverbot Freitag 11-16:30 Uhr, sonst 2h Parkscheibe ohne Bewohnerbevorrechtigung",
+   "gruppe": "Absolutes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 11-20 Uhr (Fr-So), sonst frei",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 6-20 Uhr Montag bis Freitag, Mischparken 20-23 Uhr Montag bis Freitag, Mischparken 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 6-20 Uhr werktags",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 7:30-18 Uhr, Mischparken 18-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 8-18 Uhr Montag bis Freitag, Behindertenparkplatz 9-13 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 8-18 Uhr Montag bis Freitag, Hauptbahnhoftarif Kurzzeitparken 2h 18-23 Uhr Montag bis Freitag, Hauptbahnhoftarif Kurzzeitparken 2h 9-23 Uhr Samstag",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 8-18 Uhr Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 8-19 Uhr, Kurzzeitparken 2h 19-23 Uhr, Bewohner frei 19-23 Uhr",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Behindertenparkplatz 9-17 Uhr (werktags Mo-Fr), sonst Mischparken",
+   "gruppe": "Behindertenparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Busparken 0-24 Uhr",
+   "gruppe": "Busparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Busparken 2h 7-23 Uhr",
+   "gruppe": "Busparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Busparken 7-22 Uhr (gebührenfrei), Mischparken 22-23 Uhr",
+   "gruppe": "Busparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Busparken 9-19 Uhr, Mischparken 19-23 Uhr",
+   "gruppe": "Busparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Busparken mit Parkscheibe 2h 9-20 Uhr, Bewohnerparken 20-23 Uhr",
+   "gruppe": "Busparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 10-16 Uhr Dienstag bis Samstag, Mischparken 16-23 Uhr Dienstag bis Samstag und 9-23 Uhr Montag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 5-18 Uhr werktags, sonst Parkscheibe 4h",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-10 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-10 Uhr, Kurzzeitparken 10-18 Uhr, Mischkurzzeitparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-11 Uhr werktags, gebührenpflichtiges Kurzzeitparken 2h 11-18 Uhr werktags, Mischparken 18-23 Uhr werktags",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-11 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-12 Uhr Montag bis Freitag, Mischparken 12-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-16 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-18 Uhr Montag bis Freitag, Eingeschränktes Halteverbot 7-13 Uhr Samstag, Mischparken 18-23 Uhr Montag bis Freitag, Mischparken 13-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 6-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-18 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-21 Uhr und 14-16 Uhr werktags Montag bis Freitag, Parkscheibe 4h oder Bewohnerparken 21-23 Uhr werktags Montag bis Freitag, Parkscheibe 4h oder Bewohnerparken 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6-9 Uhr werktags Montag bis Freitag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6:30-14 Uhr, sonst Bewohner ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 6:30-19 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-12 Uhr Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-12 Uhr, Mischparken 12-18 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-16 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-16 Uhr werktags Montag bis Freitag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-16 Uhr, Mischparken 16-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-17 Uhr werktags Montag bis Donnerstag, Eingeschränktes Halteverbot 7-14 Uhr werktags Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-17 Uhr werktags Montag bis Freitag, sonst Parkscheibe 4h, Bewohner frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-17 Uhr, Blaue Zone Messestadt Riem 17-18 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr Montag bis Freitag und 7-14 Uhr Samstag, Altstadttarif 18-23 Uhr Montag bis Freitag und 14-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags Montag bis Freitag und 7-14 Samstag, Parkscheibe 1 Stunde 18-23 Uhr werktags und 14-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 7-12 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-18:30 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 7-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr Montag bis Freitag, Eingeschränktes 7-16 Uhr Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 7-12 Uhr werktags Samstag, sonst Mischparken mit Parkscheibe 4h",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-19 Uhr werktags, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr und 12-14:30, Bewohnerparken 9-12 Uhr und 14:30-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr und 14-16 Uhr werktags Montag bis Freitag, Parkscheibe 4h oder Bewohnerparken 16-23 Uhr werktags Montag bis Freitag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9 Uhr, Kurzzeitparken 9-18 Uhr, Mischkurzzeitparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7-9:30 Uhr, Kurzzeitparken 9:30-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-14 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-16:30 Uhr werktags Montag bis Donnerstag, Eingeschränktes Halteverbot 7:30-14 Uhr werktags Freitag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-17 Uhr werktags Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-18 Uhr werktags Montag bis Freitag, Mischparken 9-18  werktags Samstag, Bewohnerparken 18-23 werktags ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-19:30 Uhr werktags",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-8:30 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 14:30-16:30 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-9 Uhr und 14-16:30, Bewohnerparken 9-14 Uhr und 16:30-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-9 Uhr und 15-18 Uhr Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 7:30-9 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 14-17 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-10 Uhr und 15-17 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-12 Uhr Montag bis Freitag, Mischparken 12-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-13 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-14 Uhr werktags Montag bis Freitag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-14 Uhr, Kurzzeitparken 2h 14-23 Uhr",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-15 Uhr werktags Montag bis Donnerstag, Eingeschränktes Halteverbot 8-12 Uhr werktags Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-16 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-16:30 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-17:30 Uhr werktags Montag bis Freitag, sonst Mischparken mit Parkscheibe 4h",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 10-13 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 8-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-18:30 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 8-12 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-19 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 9-14 Uhr werktags Samstag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-19 Uhr werktags, Mischparken 19-23 Uhr werktags , sonst frei ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-20 Uhr werktags, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-9 Uhr und 14-15 Uhr Montag bis Freitag, sonst Mischparken ",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8-9 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 16-18 Uhr werktags Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 8:30-10:30 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-15 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-16 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-17 Uhr werktags Montag bis Freitag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr Montag bis Freitag, Mischparken 18-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr werktags Dienstag bis Freitag, Eingeschränktes Halteverbot 9-13 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 9-12 Uhr werktags Samstag, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18:30 Uhr Montag bis Freitag und 8:30-13 Uhr Samstag, Mischparken 18:30-23:00 Uhr Montag bis Freitag, Mischparken13-23 Uhr Samstag",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-18:30 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 9-14 Uhr werktags Samstag, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-19 Uhr, Kurzzeitparken 2h 19-23 Uhr, Bewohner frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-20 Uhr werktags Montag bis Freitag, Eingeschränktes Halteverbot 9-14 Uhr werktags Samstag, sonst Bewohnerparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9-20 Uhr werktags, sonst Mischparken",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Eingeschränktes Halteverbot 9:30-20 Uhr, sonst frei",
+   "gruppe": "Eingeschränktes Halteverbot temporär",
+   "anzahl": 1
+  },
+  {
+   "text": "Kurzzeitparken 0,5h 9-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Kurzzeitparken 2h 8-18 Uhr werktags Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Kurzzeitparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Mischparken 9-17 Uhr Montag bis Freitag, Taxi 17-5 Uhr Montag bis Freitag, Mischparken 9-15 Uhr Samstag, Taxi 15-5 Uhr Samstag und Sonntag",
+   "gruppe": "Mischparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Mischparken 9-17 Uhr, Eingeschränktes Halteverbot 17-24 Uhr",
+   "gruppe": "Mischparken",
+   "anzahl": 1
+  },
+  {
+   "text": "Mischparken mit Parkscheibe 3h bis 19Uhr, Abends freies Parken",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 1
+  },
+  {
+   "text": "Parkscheibe 0,5h 7-18 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 1
+  },
+  {
+   "text": "Parkscheibe 0,5h 7:30-9 Uhr und 15-17:30 Uhr Montag bis Freitag, sonst Bewohnerparken",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 1
+  },
+  {
+   "text": "Parkscheibe 0,5h 9-18 Uhr, Bewohnerparken 18-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 1
+  },
+  {
+   "text": "Parkscheibe 1h 9-18 Uhr, Mischparken 18-23 Uhr",
+   "gruppe": "Mischparken mit Parkscheibe",
+   "anzahl": 1
+  },
+  {
+   "text": "Taxi 8-14 Uhr Montag bis Freitag, Mischparken mit Parkscheibe 4h 14-23 Uhr Montag bis Freitag und 9-23 Uhr Samstag",
+   "gruppe": "Taxi",
+   "anzahl": 1
+  }
+ ],
+ "gebiete": [
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "TU-Viertel",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "04.12.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/TU-Viertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Volkartstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "05.10.2009",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Volkartstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Ridlerstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "26.06.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwanthalerh%C3%B6he/Einzel%C3%BCbersicht/Ridlerstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schönstraße Nord",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "31.07.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Untergiesing-Harlaching/Einzel%C3%BCbersicht/Sch%C3%B6nstra%C3%9Fe%20Nord.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Rotkreuzplatz Nord",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "22.11.2019",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Rotkreuzplatz%20Nord.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Franziskanerstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.04.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/Franziskanerstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "West Schwabing",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "22.01.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-West/Einzel%C3%BCbersicht/West%20Schwabing.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Grillparzerstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.06.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/Grillparzerstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Karolinenplatz",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "01.07.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Karolinenplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Franzosenviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.04.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/Franzosenviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Kirchenstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.04.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/Kirchenstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Klinikviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.06.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/Klinikviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Regerplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.06.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/Regerplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Albrechtstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.12.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Albrechtstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schwabing Mitte",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "26.10.2001",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Schwabing%20Mitte.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schleißheimer Straße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.12.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Schlei%C3%9Fheimer%20Stra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Giselastraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.02.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Giselastra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schönfeldviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "05.05.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Sch%C3%B6nfeldviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Westend",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "16.02.2009",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwanthalerh%C3%B6he/Einzel%C3%BCbersicht/Westend.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Glockenbachviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.02.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/Glockenbachviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Thalkirchen",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "15.12.2025",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling/Einzel%C3%BCbersicht/Thalkirchen.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Barbarastraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "03.11.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-West/Einzel%C3%BCbersicht/Barbarastra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Wettersteinplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "25.09.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Untergiesing-Harlaching/Einzel%C3%BCbersicht/Wettersteinplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Parkraumbewirtschaftung",
+   "name": "Messestadt",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.01.2005",
+   "einzeluebersicht_link": null
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Heßstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "06.07.2009",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/He%C3%9Fstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Bayernplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "22.01.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-West/Einzel%C3%BCbersicht/Bayernplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Tristanstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "12.07.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Tristanstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Alter Südfriedhof",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.02.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/Alter%20S%C3%BCdfriedhof.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Dreimühlenviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.07.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/Dreim%C3%BChlenviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Lindwurmstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "05.05.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/Lindwurmstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Tegernseer Landstr.",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.10.2011",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Obergiesing-Fasangarten/Einzel%C3%BCbersicht/Tegernseer%20Landstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "St.-Benno-Viertel",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "01.12.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/St-Benno-Viertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schwanthalerhöhe",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "02.01.2009",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwanthalerh%C3%B6he/Einzel%C3%BCbersicht/Schwanthalerh%C3%B6he.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Theresienhöhe",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "26.06.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwanthalerh%C3%B6he/Einzel%C3%BCbersicht/Theresienh%C3%B6he.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Innenstadtklinikum",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "04.02.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/Innenstadtklinikum.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "in Betrieb mit Altstadttarif",
+   "name": "Hauptbahnhof",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "14.04.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/Hauptbahnhof.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schönstraße Süd",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "31.07.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Untergiesing-Harlaching/Einzel%C3%BCbersicht/Sch%C3%B6nstra%C3%9Fe%20S%C3%BCd.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "St.-Martins-Platz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.11.2011",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Obergiesing-Fasangarten/Einzel%C3%BCbersicht/St-Martins-Platz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "St.-Pauls-Viertel",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "05.05.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/St-Pauls-Viertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Winzererstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "06.11.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-West/Einzel%C3%BCbersicht/Winzererstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Parkraumbewirtschaftung",
+   "name": "Domagpark",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.04.2019",
+   "einzeluebersicht_link": null
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Königsplatz",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "01.07.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/K%C3%B6nigsplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Kasernenviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "06.07.2009",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Kasernenviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Ebenau",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "25.09.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Ebenau%20Rosa-Luxemburg-Platz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Pinakotheken",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "05.05.2008",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Pinakotheken.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Herzog-Ernst-Platz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "26.06.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling/Einzel%C3%BCbersicht/Herzog-Ernst-Platz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Nördliches Lehel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.10.2004",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Altstadt-Lehel/Einzel%C3%BCbersicht/N%C3%B6rdliches%20Lehel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Südliche Au",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.07.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/S%C3%BCdliche%20Au.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Walchenseeplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "09.12.2022",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Obergiesing-Fasangarten/Einzel%C3%BCbersicht/Walchenseeplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Schyrenbad",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "14.06.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Untergiesing-Harlaching/Einzel%C3%BCbersicht/Schyrenbad.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Alte Heide",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "26.06.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Parkstadt%20Alte%20Heide.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Giesinger Bahnhof",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "09.12.2022",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Obergiesing-Fasangarten/Einzel%C3%BCbersicht/Giesinger%20Bahnhof.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Apostelblöcke",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "18.11.2022",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Apostelbl%C3%B6cke.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Seydlitzplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "24.11.2023",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Moosach/Einzel%C3%BCbersicht/Seydlitzplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Nördliche Passauerstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "28.07.2023",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling-Westpark/Einzel%C3%BCbersicht/N%C3%B6rdliche%20Passauerstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Eichendorffplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "28.07.2023",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling-Westpark/Einzel%C3%BCbersicht/Eichendorffplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Südliche Hansastraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "28.07.2023",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling-Westpark/Einzel%C3%BCbersicht/S%C3%BCdliche%20Hansastra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Pasing Süd",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "27.07.2026",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Pasing-Obermenzing/Einzel%C3%BCbersicht/Pasing-S%C3%BCd.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Parkraumbewirtschaftung",
+   "name": "Freiham",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "28.10.2025",
+   "einzeluebersicht_link": null
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Partnachplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "14.12.2025",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling-Westpark/Einzel%C3%BCbersicht/Partnachplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Südliches Lehel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.06.2001",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Altstadt-Lehel/Einzel%C3%BCbersicht/S%C3%BCdliches%20Lehel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Lerchenauer Straße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "12.07.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-West/Einzel%C3%BCbersicht/Lerchenauer-Str.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Gärtnerplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.12.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Ludwigsvorstadt-Isarvorstadt/Einzel%C3%BCbersicht/G%C3%A4rtnerplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Borstei",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "18.05.2009",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Moosach/Einzel%C3%BCbersicht/Borstei.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Mittleres Lehel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.10.2004",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Altstadt-Lehel/Einzel%C3%BCbersicht/Mittleres%20Lehel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Marsfeld",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "06.11.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Marsfeld.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Biederstein",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "02.07.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Biederstein.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Potsdamer Straße",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "02.07.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Potsdamer%20Stra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Kölner Platz",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "07.05.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/K%C3%B6lner%20Platz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Clemensstraße",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "02.04.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Clemensstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Altschwabing",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "28.06.2001",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Schwabing-Freimann/Einzel%C3%BCbersicht/Altschwabing.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Silberhornstr.",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.10.2011",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Obergiesing-Fasangarten/Einzel%C3%BCbersicht/Silberhornstra%C3%9Fe.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "St.-Vinzenz-Viertel",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "06.11.2020",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/St-Vinzenz-Viertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Rotkreuzplatz Süd",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "20.12.2019",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Neuhausen-Nymphenburg/Einzel%C3%BCbersicht/Rotkreuzplatz%20S%C3%BCd.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "in Betrieb mit Altstadttarif",
+   "name": "Altstadt",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.01.2000",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Altstadt-Lehel/Einzel%C3%BCbersicht/Altstadt%20-%20Blaue%20Zone.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Akademieviertel",
+   "ueberwachung": "Polizei",
+   "eroeffnung": "04.12.2007",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Maxvorstadt/Einzel%C3%BCbersicht/Akademieviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Nördliche Au",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "04.07.2005",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Au-Haidhausen/Einzel%C3%BCbersicht/N%C3%B6rdliche%20Au.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Margaretenplatz",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "03.05.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling/Einzel%C3%BCbersicht/Margaretenplatz.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Untergiesing",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "14.06.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Untergiesing-Harlaching/Einzel%C3%BCbersicht/Untergiesing.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Brudermühlviertel",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "03.05.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling/Einzel%C3%BCbersicht/Bruderm%C3%BChlviertel.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Untersendling",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "01.03.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling/Einzel%C3%BCbersicht/Untersendling.pdf"
+  },
+  {
+   "status": "in Betrieb",
+   "massnahme": "Lizenzgebiet in Betrieb",
+   "name": "Karwendelstraße",
+   "ueberwachung": "KVÜ",
+   "eroeffnung": "03.05.2010",
+   "einzeluebersicht_link": "https://muenchenunterwegs.de/downloads/Parklizenzgebiete/Stadtteile/Sendling/Einzel%C3%BCbersicht/Karwendelstra%C3%9Fe.pdf"
+  }
+ ],
+ "beispielAbschnitte": [
+  {
+   "angebot": "5",
+   "parkregel_beschreibung": "Mischparken 9-23 Uhr",
+   "parkregel_gruppe": "Mischparken",
+   "parkregel_id": 24,
+   "parkregel_name": "M 9-23",
+   "prm_name": "Südliche Au",
+   "strasse": "Falkenstr.",
+   "geoportal_class": "Mischparken"
+  },
+  {
+   "angebot": "12",
+   "parkregel_beschreibung": "Parkscheibe 4h 9-18 Uhr, Bewohnerparken 18-23 Uhr Parken",
+   "parkregel_gruppe": "Mischparken mit Parkscheibe",
+   "parkregel_id": 100,
+   "parkregel_name": "PS 4h 9-18, Bew 18-23",
+   "prm_name": "Herzog-Ernst-Platz",
+   "strasse": "Ganghoferstr.",
+   "geoportal_class": "Mischparken mit Parkscheibe"
+  },
+  {
+   "angebot": "14",
+   "parkregel_beschreibung": "Bewohnerparken 9-23 Uhr",
+   "parkregel_gruppe": "Bewohnerparken",
+   "parkregel_id": 8,
+   "parkregel_name": "Bew 9-23",
+   "prm_name": "Südliche Au",
+   "strasse": "Boosstr.",
+   "geoportal_class": "Bewohnerparken"
+  },
+  {
+   "angebot": "0",
+   "parkregel_beschreibung": "Absolutes Halteverbot 0-24 Uhr",
+   "parkregel_gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "parkregel_id": 13,
+   "parkregel_name": "AHV 0-24",
+   "prm_name": "Südliche Au",
+   "strasse": "Entenbachstr.",
+   "geoportal_class": "Absolutes Halteverbot"
+  },
+  {
+   "angebot": "5",
+   "parkregel_beschreibung": "Kurzzeitparken 2h 9-23 Uhr, Bewohnerparken 18-23 Uhr",
+   "parkregel_gruppe": "Kurzzeitparken",
+   "parkregel_id": 83,
+   "parkregel_name": "KZP 2h 9-23, Bew frei 18-23",
+   "prm_name": "Südliche Au",
+   "strasse": "Ohlmüllerstr.",
+   "geoportal_class": "Kurzzeitparken"
+  },
+  {
+   "angebot": "1",
+   "parkregel_beschreibung": "E-Ladeinfrastruktur AC (Normalladen 22kW) nur E-Fahrzeuge im Ladezustand 8-20 Uhr 4h mit Parkscheibe",
+   "parkregel_gruppe": "E-Parken",
+   "parkregel_id": 800,
+   "parkregel_name": "E-LIS",
+   "prm_name": "Bayernplatz",
+   "strasse": "Hiltenspergerstr.",
+   "geoportal_class": "E-Parken"
+  },
+  {
+   "angebot": "17",
+   "parkregel_beschreibung": "Altstadttarif 8-23 Uhr",
+   "parkregel_gruppe": "Altstadt und HBF",
+   "parkregel_id": 81,
+   "parkregel_name": "Altstadtregelung 8-23",
+   "prm_name": "Altstadt",
+   "strasse": "Maximilianspl.",
+   "geoportal_class": "Altstadttarif Altstadt und HBF"
+  },
+  {
+   "angebot": "1",
+   "parkregel_beschreibung": "Behindertenparkplatz 0-24 Uhr",
+   "parkregel_gruppe": "Behindertenparken",
+   "parkregel_id": 18,
+   "parkregel_name": "Beh 0-24",
+   "prm_name": "Eichendorffplatz",
+   "strasse": "Jean-Paul-Richter-Str.",
+   "geoportal_class": "Behindertenparken"
+  },
+  {
+   "angebot": "1",
+   "parkregel_beschreibung": "Carsharing free floating",
+   "parkregel_gruppe": "Carsharing",
+   "parkregel_id": 901,
+   "parkregel_name": "CS ff",
+   "prm_name": null,
+   "strasse": "Bad-Kreuther-Str.",
+   "geoportal_class": "Carsharing"
+  },
+  {
+   "angebot": "1",
+   "parkregel_beschreibung": "Eingeschränktes Halteverbot 0-24 Uhr",
+   "parkregel_gruppe": "Eingeschränktes Halteverbot (0-24 Uhr)",
+   "parkregel_id": 21,
+   "parkregel_name": "EHV 0-24",
+   "prm_name": "Hauptbahnhof",
+   "strasse": "Bayerstr.",
+   "geoportal_class": "Eingeschraenktes Halteverbot (0-24 Uhr)"
+  },
+  {
+   "angebot": "10",
+   "parkregel_beschreibung": "Absolutes Halteverbot 6:30-19 Uhr, Mischparken 19-23 Uhr",
+   "parkregel_gruppe": "Absolutes Halteverbot temporär",
+   "parkregel_id": 706,
+   "parkregel_name": "AHV 6:30-19, M 19-23",
+   "prm_name": "Südliches Lehel",
+   "strasse": "Steinsdorfstr.",
+   "geoportal_class": "Absolutes Halteverbot (auch temporär)"
+  },
+  {
+   "angebot": "3",
+   "parkregel_beschreibung": "Eingeschränktes Halteverbot 6:30-14 Uhr, sonst Bewohner ",
+   "parkregel_gruppe": "Eingeschränktes Halteverbot temporär",
+   "parkregel_id": 193,
+   "parkregel_name": "EHV 6:30-14, sonst Bew",
+   "prm_name": "Mittleres Lehel",
+   "strasse": "Liebigstr.",
+   "geoportal_class": "Eingeschränktes Halteverbot (auch temporär)"
+  },
+  {
+   "angebot": "7",
+   "parkregel_beschreibung": "Taxi 0-24 Uhr",
+   "parkregel_gruppe": "Taxi",
+   "parkregel_id": 16,
+   "parkregel_name": "Taxi 0-24",
+   "prm_name": "Südliches Lehel",
+   "strasse": "Isartorpl.",
+   "geoportal_class": "Taxi"
+  },
+  {
+   "angebot": "3",
+   "parkregel_beschreibung": "Busparken 7-22 Uhr (gebührenfrei), Mischparken 22-23 Uhr",
+   "parkregel_gruppe": "Busparken",
+   "parkregel_id": 19,
+   "parkregel_name": "Bus 7-22, M 22-23",
+   "prm_name": "Mittleres Lehel",
+   "strasse": "Karl-Scharnagl-Ring",
+   "geoportal_class": "Busparken"
+  },
+  {
+   "angebot": "5",
+   "parkregel_beschreibung": "0-24 Uhr keine Regelung",
+   "parkregel_gruppe": "keine Regelung 0 - 24 Uhr",
+   "parkregel_id": 12,
+   "parkregel_name": "FREI 0-24",
+   "prm_name": "Alte Heide",
+   "strasse": "Walter-Gropius-Str.",
+   "geoportal_class": ""
+  },
+  {
+   "angebot": "2",
+   "parkregel_beschreibung": "Baustelle erfasst (Regelung für Parkraumerfassung)",
+   "parkregel_gruppe": "Baustelle",
+   "parkregel_id": 999,
+   "parkregel_name": "Baustelle",
+   "prm_name": "Hauptbahnhof",
+   "strasse": "Landwehrstr.",
+   "geoportal_class": "Baustelle"
+  },
+  {
+   "angebot": "7",
+   "parkregel_beschreibung": "Kraftfahrzeugparken allgemein",
+   "parkregel_gruppe": "Kraftfahrzeugparken allgemein",
+   "parkregel_id": null,
+   "parkregel_name": null,
+   "prm_name": "Seydlitzplatz",
+   "strasse": "Seydlitzstr.",
+   "geoportal_class": ""
+  },
+  {
+   "angebot": null,
+   "parkregel_beschreibung": null,
+   "parkregel_gruppe": null,
+   "parkregel_id": null,
+   "parkregel_name": null,
+   "prm_name": "Altstadt",
+   "strasse": "Radlsteg",
+   "geoportal_class": ""
+  },
+  {
+   "angebot": null,
+   "parkregel_beschreibung": "Behindertenparkplatz 0-24 Uhr",
+   "parkregel_gruppe": "Behindertenparken",
+   "parkregel_id": 18,
+   "parkregel_name": "Beh 0-24",
+   "prm_name": null,
+   "strasse": "Reicherstorfferweg",
+   "geoportal_class": "Behindertenparken"
+  },
+  {
+   "angebot": "1",
+   "parkregel_beschreibung": "E-Ladeinfrastruktur AC (Normalladen 22kW) nur E-Fahrzeuge im Ladezustand 8-20 Uhr 4h mit Parkscheibe",
+   "parkregel_gruppe": "E-Parken",
+   "parkregel_id": 800,
+   "parkregel_name": "E-LIS",
+   "prm_name": null,
+   "strasse": "Wiesentfelser Str.",
+   "geoportal_class": "E-Parken"
+  },
+  {
+   "angebot": "0",
+   "parkregel_beschreibung": "Absolutes Halteverbot 0-24 Uhr",
+   "parkregel_gruppe": "Absolutes Halteverbot (0-24 Uhr)",
+   "parkregel_id": 13,
+   "parkregel_name": "AHV 0-24",
+   "prm_name": "Karolinenplatz",
+   "strasse": "Lenbachpl.",
+   "geoportal_class": "Absolutes Halteverbot"
+  }
+ ]
+}

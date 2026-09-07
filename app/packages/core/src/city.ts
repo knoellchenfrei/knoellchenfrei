@@ -26,7 +26,9 @@
  *   keinen Preis, ihre Zonen haben einen.
  *
  * Der Feiertagskalender steht in `holidays.ts` und hängt am Bundesland, nicht
- * an der Stadt: Zwei Städte in Nordrhein-Westfalen teilen ihn sich.
+ * an der Stadt: Zwei Städte in Nordrhein-Westfalen teilen ihn sich. Die eine
+ * Ausnahme trägt `holidays` unten — Bayern kennt Feiertage, die *gemeindeweise*
+ * gelten, und die passen in keine Ländertabelle.
  */
 
 import type { BoundingBox, Position } from './geo.js'
@@ -72,6 +74,22 @@ export interface City {
    */
   sessionBounds: BoundingBox
   attribution: Attribution
+  /**
+   * Feste Feiertage, die **nur in dieser Stadt** gelten, als `MM-TT`.
+   *
+   * Die Ausnahme von der Regel „Feiertage hängen am Land". Art. 1 Abs. 1 Nr. 2
+   * des Bayerischen Feiertagsgesetzes macht Mariä Himmelfahrt zum
+   * gesetzlichen Feiertag „in Gemeinden mit überwiegend katholischer
+   * Bevölkerung", Abs. 2 gibt Augsburg zusätzlich das Friedensfest. In Bayern
+   * gilt der 15. August damit in 1.708 der 2.056 Gemeinden und in den übrigen
+   * 348 nicht — eine Tabelle je Land kann das nicht ausdrücken, ohne für die
+   * eine oder die andere Hälfte falsch zu sein.
+   *
+   * Fehlt das Feld, gilt allein der Länderkalender. Für Berlin, Hamburg und
+   * Frankfurt ist das richtig: Keines der drei Länder kennt eine gemeindeweise
+   * Regelung.
+   */
+  holidays?: readonly string[]
 }
 
 /**
@@ -163,7 +181,59 @@ export const FRANKFURT: City = {
   },
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT]
+/**
+ * München — die vierte Stadt.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt aus den *Stadtbezirken*
+ * statt aus der Parkebene: `gsm_wfs:vablock_stadtbezirk` (25 Bezirke, 27
+ * Polygone) umschließt 11,3565–11,7285 / 48,0568–48,2510. Die Parkseiten
+ * reichen nur bis 11,4037–11,7108 / 48,0698–48,2264, weil im äußersten Westen
+ * (Aubing, Langwied) und im Norden (Feldmoching) nichts bewirtschaftet wird —
+ * wer die Box daraus nähme, wiese eine Meldung aus Lochhausen als „außerhalb"
+ * ab, obwohl sie mitten in München liegt. Nach außen gerundet steht der
+ * Bezirksumriss unten.
+ *
+ * Der Mittelpunkt ist der Marienplatz. Der Zoom ist Berlins und Hamburgs:
+ * 0,37° Länge liegt zwischen Frankfurts 0,40° bei Zoom 12 und Hamburgs 0,65°
+ * bei 11,5 — und die bewirtschafteten Gebiete liegen dicht um die Mitte, wo
+ * 11,5 sie alle zeigt.
+ */
+export const MUENCHEN: City = {
+  key: 'muenchen',
+  name: 'München',
+  land: 'BY',
+  center: [11.5755, 48.1372],
+  zoom: 11.5,
+  reportBounds: { minLon: 11.35, minLat: 48.05, maxLon: 11.73, maxLat: 48.26 },
+  sessionBounds: { minLon: 11.05, minLat: 47.85, maxLon: 12.05, maxLat: 48.5 },
+  attribution: {
+    // Wörtlich der Quellenvermerk aus dem ISO-Metadatensatz beider
+    // Parkebenen (`.../records/752539b9-…` und `.../records/1cb25196-…`,
+    // abgerufen am 7. September 2026). Bei DL-DE/Namensnennung ist er
+    // Lizenzbedingung; der Metadatensatz der Stadtbezirke nennt daneben den
+    // GeodatenService, das steht in `docs/staedte.md`.
+    source: 'Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
+    attributionRequired: true,
+  },
+  /**
+   * Mariä Himmelfahrt, und zwar belegt statt angenommen.
+   *
+   * Art. 1 Abs. 1 Nr. 2 BayFTG macht den 15. August nur „in Gemeinden mit
+   * überwiegend katholischer Bevölkerung" zum Feiertag; nach Abs. 3 stellt das
+   * Landesamt für Statistik fest, welche das sind. Dessen Gemeindeabfrage
+   * (<https://www.statistik.bayern.de/statistik/gebiet_bevoelkerung/zensus/himmelfahrt/>,
+   * abgerufen am 7. September 2026) führt „München, Landeshauptstadt",
+   * Gemeindeschlüssel 09162000, mit **ja** — 402.058 katholische gegen 147.912
+   * evangelische Einwohner nach dem Zensus. Nürnberg steht in derselben
+   * Abfrage mit „nein"; eine Bayern-weite Annahme wäre also für die
+   * zweitgrößte Stadt des Landes falsch gewesen.
+   */
+  holidays: ['08-15'],
+}
+
+export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.
