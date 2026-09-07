@@ -5,6 +5,7 @@ import {
   CITIES,
   cityAt,
   cityByKey,
+  FRANKFURT,
   HAMBURG,
   withinCity,
   withinCitySession,
@@ -14,6 +15,7 @@ describe('cityByKey', () => {
   it('finds a city by its key', () => {
     expect(cityByKey('berlin')).toBe(BERLIN)
     expect(cityByKey('hamburg')).toBe(HAMBURG)
+    expect(cityByKey('frankfurt')).toBe(FRANKFURT)
   })
 
   // Der Rückfall auf Berlin ist genau der Fehler, den diese Funktion nicht
@@ -51,11 +53,29 @@ describe('withinCity', () => {
     expect(withinCity(BERLIN, 9.9924, 53.5503)).toBe(false)
   })
 
-  // Die beiden Boxen dürfen sich nicht berühren. Täten sie es, gäbe es Punkte,
+  // Der Roemer. Frankfurt liegt westlich von Hamburg und suedlich davon --
+  // beide Achsen trennen, aber nur eine muss es tun.
+  it('accepts the Frankfurter Roemer for Frankfurt and refuses it for the other two', () => {
+    expect(withinCity(FRANKFURT, 8.6821, 50.1109)).toBe(true)
+    expect(withinCity(BERLIN, 8.6821, 50.1109)).toBe(false)
+    expect(withinCity(HAMBURG, 8.6821, 50.1109)).toBe(false)
+  })
+
+  // Der Grund, warum die Box aus dem Stadtteil-Umriss kommt und nicht aus der
+  // amtlichen Ausdehnung um den Roemer: Die haette 8,52 als Westrand ergeben,
+  // und Hoechst laege draussen. Wer dort meldet, bekaeme "ausserhalb".
+  it('reaches Hoechst in the west and Nieder-Erlenbach in the north', () => {
+    expect(withinCity(FRANKFURT, 8.5432, 50.0975)).toBe(true) // Hoechst, Bolongaropalast
+    expect(withinCity(FRANKFURT, 8.7053, 50.2189)).toBe(true) // Nieder-Erlenbach
+  })
+
+  // Die Boxen dürfen sich nicht berühren. Täten sie es, gäbe es Punkte,
   // die zwei Städten gehören, und die Frage "welche Zonendaten gelten hier"
   // hätte zwei Antworten.
-  it('keeps the two boxes apart', () => {
+  it('keeps the boxes apart', () => {
     expect(BERLIN.reportBounds.minLon).toBeGreaterThan(HAMBURG.reportBounds.maxLon)
+    expect(HAMBURG.reportBounds.minLon).toBeGreaterThan(FRANKFURT.reportBounds.maxLon)
+    expect(HAMBURG.reportBounds.minLat).toBeGreaterThan(FRANKFURT.reportBounds.maxLat)
   })
 
   it('refuses NaN and Infinity rather than letting them through a comparison', () => {
@@ -108,9 +128,18 @@ describe('Quellenangabe', () => {
   // Der Unterschied ist Lizenzbedingung, keine Kosmetik: Berlin gibt unter
   // DL-DE/Zero heraus, Hamburg unter DL-DE/Namensnennung. Eine Oberfläche,
   // die die Hamburger Quelle verschweigt, verletzt die Lizenz.
-  it('marks Hamburg as requiring attribution and Berlin as not', () => {
+  it('marks Hamburg and Frankfurt as requiring attribution and Berlin as not', () => {
     expect(BERLIN.attribution.attributionRequired).toBe(false)
     expect(HAMBURG.attribution.attributionRequired).toBe(true)
+    expect(FRANKFURT.attribution.attributionRequired).toBe(true)
+  })
+
+  // Woertlich der Quellenvermerk des ISO-Metadatensatzes. Bei
+  // DL-DE/Namensnennung ist er Lizenzbedingung -- eine Umformulierung erfuellt
+  // sie nicht mehr sicher, und genau deshalb steht der Wortlaut in einem Test.
+  it('keeps the Frankfurt source note verbatim', () => {
+    expect(FRANKFURT.attribution.source).toBe('Stadt Frankfurt am Main, www.frankfurt.de')
+    expect(FRANKFURT.attribution.licenceUrl).toBe('https://www.govdata.de/dl-de/by-2-0')
   })
 
   it('names a licence and a link for every city', () => {
@@ -131,14 +160,32 @@ describe('cityAt', () => {
     expect(cityAt(13.3777, 52.5163)).toBe(BERLIN)
   })
 
+  // Der Telegram-Parser und der Worker leiten die Stadt allein aus dem Punkt
+  // ab. Ohne diesen Treffer bekaeme eine Frankfurter Meldung
+  // `422 position outside` -- in der App sieht das aus, als sei das Melden
+  // kaputt, und im Log steht nichts, was nach einem Fehler aussieht.
+  it('resolves a Frankfurt position to Frankfurt', () => {
+    expect(cityAt(8.6821, 50.1109)).toBe(FRANKFURT) // Roemer
+    expect(cityAt(8.6638, 50.1188)).toBe(FRANKFURT) // Hauptwache
+  })
+
+  // Mainz und Offenbach liegen gleich nebenan und gehoeren nicht dazu. Ein
+  // Rueckfall wuerde eine Mainzer Meldung als Frankfurter Zeile speichern.
+  it('does not swallow the neighbouring cities', () => {
+    expect(cityAt(8.2473, 49.9929)).toBeUndefined() // Mainz
+    expect(cityAt(8.9167, 50.0956)).toBeUndefined() // Offenbach, Rathaus
+  })
+
   // Kein Rückfall auf Berlin: Zwischen den beiden Städten liegt keine, und
   // genau das muss die Antwort sein. Eine Meldung von hier als Berliner Zeile
   // zu speichern wäre falsch und nirgends zu sehen.
-  it('returns undefined between the two cities', () => {
+  it('returns undefined between the cities', () => {
     // Lüneburger Heide, ungefähr auf halbem Weg.
     expect(cityAt(10.4, 53.0)).toBeUndefined()
     // München — eine echte Stadt, nur keine, die wir kennen.
     expect(cityAt(11.5755, 48.1374)).toBeUndefined()
+    // Kassel, ebenfalls Hessen: Das Bundesland macht noch keine Stadt.
+    expect(cityAt(9.4797, 51.3127)).toBeUndefined()
   })
 
   it('accepts a point just inside each city and refuses one just outside', () => {
@@ -188,6 +235,7 @@ describe('cityAt', () => {
   it('honours a restricted list of cities', () => {
     expect(cityAt(9.9924, 53.5503, [BERLIN])).toBeUndefined()
     expect(cityAt(9.9924, 53.5503, [HAMBURG])).toBe(HAMBURG)
+    expect(cityAt(8.6821, 50.1109, [BERLIN, HAMBURG])).toBeUndefined()
     expect(cityAt(13.3777, 52.5163, [])).toBeUndefined()
   })
 })

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { BERLIN, CITIES, HAMBURG } from '../src/city.js'
+import { BERLIN, CITIES, FRANKFURT, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 
 /**
@@ -128,7 +128,7 @@ describe('parseTelegramUpdate', () => {
   // konfigurierte Stadt. Ein Hamburger Standort war damit „unknown", und der
   // Bot antwortete, er verstehe das nicht. Mit allen Städten ist er eine
   // Meldung — und trägt selbst, zu welcher Stadt er gehört.
-  it('reads both cities when handed all of them', () => {
+  it('reads all three cities when handed all of them', () => {
     const hamburg = update({ ...SENDER, location: { longitude: 9.99, latitude: 53.55 } })
     const berlin = update({ ...SENDER, location: { longitude: 13.4, latitude: 52.52 } })
     expect(parseTelegramUpdate(hamburg, CITIES).intent).toEqual({
@@ -143,6 +143,22 @@ describe('parseTelegramUpdate', () => {
       lat: 52.52,
       city: BERLIN,
     })
+  })
+
+  // Die dritte Stadt braucht keinen Code im Parser -- sie kommt ueber
+  // `cityAt`. Der Test steht hier trotzdem, weil "kommt automatisch mit" eine
+  // Behauptung ist, solange sie niemand nachgemessen hat.
+  it('reads a Frankfurt location as a Frankfurt report', () => {
+    const roemer = update({ ...SENDER, location: { longitude: 8.6821, latitude: 50.1109 } })
+    expect(parseTelegramUpdate(roemer, CITIES).intent).toEqual({
+      kind: 'report',
+      lon: 8.6821,
+      lat: 50.1109,
+      city: FRANKFURT,
+    })
+    // Und ohne Frankfurt in der Liste bleibt derselbe Punkt Unfug, statt der
+    // naechstbesten Stadt zugeschlagen zu werden.
+    expect(parseTelegramUpdate(roemer, [BERLIN, HAMBURG]).intent.kind).toBe('unknown')
   })
 
   it('still refuses a location in no city at all', () => {

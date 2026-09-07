@@ -1,0 +1,6449 @@
+[
+{
+"bewohnerparkzone": null,
+"strassenname": "Alte Mainzer Gasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Domstrasse 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alte Mainzer Gasse 15",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seckbaecher Gasse 14",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weissfrauenstrasse 1",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mannheimer Strasse 35",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Braubachstrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Stegstrasse 75",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Domstrasse 2",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Domplatz 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kirchplatz 8",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weckmarkt 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wildunger Strasse 1a",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Leuschner-Strasse 70",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Fahrgasse 14",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Buchgasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weissadlergasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gotenstrasse 41",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weserstrasse 54",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bleidenstrasse 11",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bleidenstrasse 6",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Toengesgasse 48",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Hasengasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ziegelgasse 2",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berliner Strasse 32",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berliner Strasse 26",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berliner Strasse 35",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gebeschusstrasse 10",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rossmarkt 23",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Radilostrasse 17-19",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Marienstrasse",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Hochstrasse 19",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Hochstrasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seilerstrasse 19",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kirchnerstrasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kurt-Schumacher-Strasse 41",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Hochstrasse 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bruesser Strasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Broennerstrasse 26",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seilerstrasse 23",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Haingrabenstrasse 65",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seilerstrasse 11",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Fahrgasse 23",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Broennerstrasse 30",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Epstein-Strasse 27",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 8-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heiligkreuzgasse 9a",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heiligkreuzgasse 22",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Am Weissen Stein 21",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berliner Strasse 27 (kurzzeitig abgebaut)",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Osthafenplatz 16",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 223",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Palmengartenstrasse 3",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Leuschner-Strasse 36-40",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": 25,
+"strassenname": "Berger Strasse 98",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 25,
+"strassenname": "Berger Strasse 62",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stiftstrasse 32",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Spohrstrasse 2",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": 4,
+"strassenname": "Gutleutstrasse 137",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Zeil 42",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Zeil 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Allerheiligenstrasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Allerheiligenstrasse 26e",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Allerheiligenstrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stoltzestrasse 22",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Allerheiligenstrasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klingerstrasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klingerstrasse 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Allerheiligenstrasse 52",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klingerstrasse 11",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klingerstrasse 26",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Neue Mainzer Strasse 82",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Epstein-Strasse 2",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Fischerfeldstrasse 10-12",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Fischerfeldstrasse 14",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Junghofstrasse 22",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Lange Strasse 29",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Toengesgasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klapperfeldstrasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berliner Strasse 44",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Am Salzhaus 1",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 5a",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 11",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 4,
+"strassenname": "Gutleutstrasse ggue 139",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Battonnstrasse 10",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bleichstrasse 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kleiner Hirschgraben 3",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alte Gasse 27",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bleichstrasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Schaefergasse 23",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Schillerstrasse 19",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Lorscher Strasse 6",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 9-14"
+},
+{
+"bewohnerparkzone": 25,
+"strassenname": "Sandweg 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 4,
+"strassenname": "Gutleutstrasse 151",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Goethestrasse 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stiftstrasse 22",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stiftstrasse 9-17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kirchnerstrasse 3",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Niddastrasse 60",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 48",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Katzenpforte 3",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Junghofstrasse 13",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mainzer Landstrasse 182",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 8,
+"strassenname": "Schaumainkai von Kirche / Dreikoenigsstrasse",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klapperfeldstrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Marbachweg 190",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-20"
+},
+{
+"bewohnerparkzone": 6,
+"strassenname": "Schaumainkai (Museumsufer) 69",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 6,
+"strassenname": "Schaumainkai (Museumsufer) 71",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 6,
+"strassenname": "Schaumainkai (Museumsufer) 87",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 24",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 6,
+"strassenname": "Schaumainkai (Museumsufer) 95",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Taunusstrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Sossenheim 53",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Skyline Plaza / Den Haager Strasse",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Skyline Plaza / Bruesselerstrasse",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Skyline Plaza / Osloerstrasse",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 29",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 48",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Taunusstrasse 12",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mainluststrasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mainluststrasse 6",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mainluststrasse 16",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mainluststrasse 15",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weserstrasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weserstrasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weserstrasse 15",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weserstrasse 35",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Muenchener Strasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Muenchener Strasse 10",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Muenchener Strasse 24",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Muenchener Strasse 34",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Muenchener Strasse 48",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Neue Mainzer Strasse 80",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 49",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Hasengasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Eschersheimer Landstrasse 25",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Baseler Strasse 46",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Moselstrasse 27",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 215",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Saalgasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Moselstrasse 50",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 73",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 62",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 63",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 37",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 36",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 42",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Liebknechtstrasse 7",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Taunusstrasse 40",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Taunusstrasse 26",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 14",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klingerstrasse 30",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bethmannstrasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Francois-Mitterand-Platz",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gutleutstrasse 42",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Grueneburgweg 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Goethestrasse 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Goethestrasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Goethestrasse 22",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Goethestrasse 19",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bockenheimer Anlage 11",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Eschersheimer Landstrasse 27",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weilburger Strasse 7",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Roedelheim 13",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Tituscorso 2b",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kurt-Schumacher-Strasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 11",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 24",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 25",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 40",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 48",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 41",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 82",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 73",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 83",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Oppenheimer Landstrasse 22",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Oppenheimer Landstrasse 10",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Oppenheimer Landstrasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Oppenheimer Landstrasse 40",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Gutzkowstrasse 50",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Gutzkowstrasse 79",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schneckenhofstrasse 6",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schneckenhofstrasse 16",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schneckenhofstrasse 13",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Hedderichstrasse 55",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Darmstaedter Landstrasse 42",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Darmstaedter Landstrasse 75-79",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 10,
+"strassenname": "Dreieichstrasse 59",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 10,
+"strassenname": "Frankensteiner Strasse 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 10,
+"strassenname": "Frankensteiner Strasse 16",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Brueckenstrasse 36",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Walter-Kolb-Strasse 9-11",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ottostrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Niddastrasse 84",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gueterplatz 4",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oeder Weg 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oeder Weg 21",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eckenheimer Landstrasse 190",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 8,
+"strassenname": "Schaumainkai (Museumsufer) 35",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Koenigsteiner Strasse 32b",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 8,
+"strassenname": "Schaumainkai (Museumsufer) 29",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Elbestrasse 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gotenstrasse 38",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rohmerstrasse 39",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Leipziger Strasse 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Leipziger Strasse 17",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": 12,
+"strassenname": "Nauheimer Strasse 1",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 12,
+"strassenname": "Schlossstrasse 73",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 29,
+"strassenname": "Berger Strasse 121",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse ggue 30",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-So 0-24"
+},
+{
+"bewohnerparkzone": 29,
+"strassenname": "Berger Strasse 147",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 29,
+"strassenname": "Berger Strasse 157",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 29,
+"strassenname": "Berger Strasse 171",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 250",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Leuschner-Strasse 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Leuschner-Strasse 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Leuschner-Strasse 27",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An der Kleinmarkthalle 7-9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Moerfelder Landstrasse 129",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Siesmayerstrasse 66",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Siesmayerstrasse 81",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 16,
+"strassenname": "Siesmayerstrasse 62",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 16,
+"strassenname": "Grueneburgweg 92",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 16,
+"strassenname": "Grueneburgweg 82",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 16,
+"strassenname": "Grueneburgweg 74",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Niddastrasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Niedenau 80",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Braubachstrasse 35",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Am Weissen Stein 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 248",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Niddastrasse 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Saalburgallee 15-19",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Darmstaedter Landstrasse 229 Suedfriedhof - Mitte",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Darmstaedter Landstrasse 229 Suedfriedhof - EInfahrt",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": 26,
+"strassenname": "Waldschmidtstrasse 73",
+"maximal_parkdauer": "5 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": 26,
+"strassenname": "Waldschmidtstrasse 79",
+"maximal_parkdauer": "5 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ankergasse 2",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Fechenheim 104",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Baumertstrasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse 50",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-So 0-24"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eckenheimer Landstrasse 269",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eckenheimer Landstrasse 196",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Reichsburgstrasse 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 9-14"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Reuterweg 18",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Diesterwegstrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 9,
+"strassenname": "Diesterwegstrasse 6",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 207",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wilhelm-Epstein-Strasse 6",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 8-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Muenchener Strasse 39",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Zum Pfarrturm 5",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Grueneburgweg 12",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ginnheimer Landstrasse 97",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Westerbachstrasse 37-43",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-17"
+},
+{
+"bewohnerparkzone": 8,
+"strassenname": "Schaumainkai 13",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Taunusstrasse 7",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Speicherstrasse 42",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 264",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 292",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 312",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Zeppelinallee 25",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Zeppelinallee 33",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kaiserstrasse 23",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schweizer Strasse 10",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Marbachweg 134",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Fahrgasse 9",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse 10",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alte Gasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Zeil 45",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Dortelweiler Strasse 104",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wasgaustrasse 10",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Praunheim 67",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Hochstrasse 29",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schaumainkai (Museumsufer) 53",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 7,
+"strassenname": "Schaumainkai (Museumsufer) 63",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Fellnerstrasse 14",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bockenheimer Anlage 1a",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heiligkreuzgasse 34",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heiligkreuzgasse 25",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Porzellanhofstrasse 14",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Porzellanhofstrasse 19",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Porzellanhofstrasse 6",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heiligkreuzgasse 31",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Klingerstrasse 25",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seilerstrasse 36",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gotenstrasse 33",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Friedensstrasse 7",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": 10,
+"strassenname": "Dreieichstrasse 57",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alte Rothofstrasse 24",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Fechenheim 90",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Fechenheim 78",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": 25,
+"strassenname": "Berger Strasse 86",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschenheimer Tor 1",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Moselstrasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Moselstrasse 13",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Adelonstrasse / Bahnhof Hoechst",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17, Sa 9-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Altenhoeferallee (Riedberg)",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Darmstaedter Landstrasse 229 Suedfriedhof - Ausfahrt",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 9-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Dortelweiler Strasse 87 (Friedhof)",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Friedberger Landstrasse Friedhof  ggue 312",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Friedberger Landstrasse 253",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kasseler Strasse 20",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ludwig-Landmann-Strasse ggue 343",
+"maximal_parkdauer": "4 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 10-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ludwig-Landmann-Strasse 343",
+"maximal_parkdauer": "4 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 10-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Mainzer Landstrasse 257 unter der Bruecke",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 7-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Niddastrasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Niddastrasse 91",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Otto-Schott-Strasse 1",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Otto-Schott-Strasse 4",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Siesmayerstrasse 71",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Taunusstrasse 2",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stuttgarter Str. 31",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stuttgarter Str. 35",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Pforzheimer Strasse 8",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Pforzheimer Strasse 18-24",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 396",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 420",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 428",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 440",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 448",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Europa-Allee 41",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Europa-Allee 46",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Europa-Allee 50",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Europa-Allee 41",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Europa-Allee 49",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Europa-Allee 33",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse 30",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-So 0-24"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse 30",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-So 0-24"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": null,
+"gebuehrenzeit": "Mo-So 0-24"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-So 0-24"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Giessener Strasse",
+"maximal_parkdauer": "3 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 0-24"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Offenbacher Landstrasse",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Maybachstrasse 14",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Maybachstrasse 20",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Maybachstrasse 24",
+"maximal_parkdauer": "2 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 8-16"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oeder Weg 52-54",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oeder Weg 59",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oeder Weg 71",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-14"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 222",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-16"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bruesseler Strasse 3",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "4 €/h",
+"gebuehrenzeit": "Mo-Sa 9-20"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eschersheimer Landstrasse 238",
+"maximal_parkdauer": "1 h",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Sa 9-16"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Glauburgstrasse 49",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Glauburgstrasse 65",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Homburger Landstrasse 118",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 8-18 Sa 8-13"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Dortelweiler Strasse ggue. 20",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Dortelweiler Strasse ggue. 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Dortelweiler Strasse 52/50",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse ggue. 81",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse 73",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse ggue. 67",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse 59",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse ggue. 59",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weidenbornstrasse ggue 51",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weidenbornstrasse 40",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Dortelweiler Strasse 72",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seckbacher Landstrasse  15-17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seckbacher Landstrasse 23",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seckbacher Landstrasse 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seckbacher Landstrasse 41",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Seckbacher Landstrasse 63",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 30",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "An den Roethen 63",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Preungesheimer Strasse 60 ggue 26d",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Preungesheimer Strasse 1",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Preungesheimer Strasse 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Preungesheimer Strasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Preungesheimer Strasse 32a",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Vereinsstrasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Vereinsstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Vereinsstrasse 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Vereinsstrasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Vereinsstrasse 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Vereinsstrasse 40",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weidenbornstrasse 45",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weidenbornstrasse 35",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Weidenbornstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse  naehe Kita 61",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse 42",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse ggue. 30",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse ggue. 18",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Comeniusstrasse ggue. 2",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wehrheimer Strasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Obernhainer Strasse 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Usinger Strasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Usinger Strasse 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Usinger Strasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 32",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 46",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 55",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Im Pruefling 60",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Throner Strasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rendeler Strasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rendeler Strasse 20",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rendeler Strasse 30",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rendeler Strasse 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rendeler Strasse 45",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Rendeler Strasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Neebstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Neebstrasse  8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Saalburgstrasse 42",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Saalburgstrasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heidestrasse 131",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heidestrasse 147",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heidestrasse 156",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gronauer Strasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gronauer Strasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gronauer Strasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gronauer Strasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Gronauer Strasse 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 247",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 263",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 277-279",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Freihofstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Freihofstrasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Grosse Spillingsgasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Grosse Spillingsgasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Turmstrasse 23",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Alt-Bornheim ggue. 11 (259b)",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse ggue 257",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse ggue 275",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Berger Strasse 224-226",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Loewengasse ggue 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Loewengasse 30",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Loewengasse ggue 27",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Loewengasse ggue 50",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Loewengasse naehe Inheidener Strasse 20",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Loewengasse 47",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Florstaedter Strasse 1",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Florstaedter Strasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Florstaedter Strasse 20a",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Florstaedter Strasse ggue 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Florstaedter Strasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Buchwaldstrasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Buchwaldstrasse ggue. naehe 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Falltorstrasse 14",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kettelerallee ggue 73",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 7-21"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kettelerallee ggue 67",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 7-21"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kettelerallee ggue 57",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 7-21"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kettelerallee ggue 45",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 7-21"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kettelerallee ggue 41",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 7-21"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Kettelerallee ggue 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Tgl. 7-21"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Inheidener Strasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Inheidener Strasse 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Inheidener Strasse naehe 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Inheidener Strasse 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Inheidener Strasse 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Inheidener Strasse 51",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ringelstrasse 50",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ringelstrasse 46",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ringelstrasse 40",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eberhardstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Eberhardstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Orthstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Andreaestrasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Andreaestrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Andreaestrasse ggue. 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Pestalozzistrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Pestalozzistrasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Pestalozzistrasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stockheimer Strasse ggue 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Stockheimer Strasse ggue 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Ettlingerstrasse ggue 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Heidelbacherstr",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Saalburgallee 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Saalburgallee 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 188",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 199",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 181",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 177",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 173",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 168",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 140",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 152",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Wittelsbacherallee 157",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Reuterweg 62",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Reuterweg 42",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Leerbachstrasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Leerbachstrasse 43",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Leerbachstrasse 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Leerbachstrasse ggue 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Leerbachstrasse ggue 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Emil-Claar-Strasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Emil-Claar-Strasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Elsheimerstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Gaertnerweg 49",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Gaertnerweg 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Gaertnerweg 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Gaertnerweg 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Gaertnerweg 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Im Trutz Frankfurt 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Im Trutz Frankfurt 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Im Trutz Frankfurt 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Im Trutz Frankfurt 46",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Im Sachsenlager 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Im Sachsenlager 18",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Fellnerstrasse  7-9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Koernerstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Auf der Koernerwiese 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Auf der Koernerwiese 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Auf der Koernerwiese 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Im Trutz Frankfurt ggue 55",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Leerbachstrasse ggue 73",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Leerbachstrasse 90",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Leerbachstrasse 104",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Gervinusstrasse Naehe 18 Spielplatz",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Boehmerstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Boehmerstrasse 38",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Eschersheimer Landstrasse 67",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Eschersheimer Landstrasse 91",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Eschersheimer Landstrasse 125",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee ggue 32",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Hansaallee ggue 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Wolfgangstrasse 81",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Wolfgangstrasse 96",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Wolfgangstrasse 106-118",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Fuerstenbergerstrasse 159",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Fuerstenbergerstrasse 166",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Fuerstenbergerstrasse ggue 168",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Vogtstrasse 82",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Bremerstrasse 2",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bremerstrasse ggue. 2",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bremerstrasse ggue. zwischen 2 und 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 17,
+"strassenname": "Bremerstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bremerstrasse ggue. 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Bremerstrasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eschersheimer Landstrasse 108",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Vogtstrasse 58",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Vogtstrasse 44",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Hammanstrasse 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 59",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse ggue 58",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Lichtensteinstrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Lichtensteinstrasse 1",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Annastrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Annastrasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Justinianstrasse 18 / Ecke Annastrasse",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Justinianstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Fuerstenbergerstrasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Fuerstenbergerstrasse 1",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Justinianstrasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Fuerstenbergerstrasse 27",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Fuerstenbergerstrasse 41",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Fuerstenbergerstrassee 139",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Fuerstenbergerstrasse 152",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eschersheimer Landstrasse 102",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eschersheimer Landstrasse 94",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eschersheimer Landstrasse 84",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse 68",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse 49",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Hammanstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Wolfsgangstrasse ggue 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Lersnerstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eschersheimer Landstrasse 76",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Hammanstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Nesenstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Lersnerstrasse 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Lersnerstrasse 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Lersnerstrasse 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Heinestrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Bornwiesenweg 79",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Baustrasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Baustrasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Bornwiesenweg 67",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Schwarzburgstrasse 61",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Soemmerringstrasse 20",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Soemmerringstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Glauburgstrasse 70",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Hansteinstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 71",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Schwarzburgstrasse 61",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Schwarzburgstrasse 88",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 83",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Glauburgstrasse ggue 93",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Glauburgstrasse 85",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 59",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 56",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Keplerstrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Keplerstrasse 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Keplerstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Keplerstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eckenheimer Landstrasse 79",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eckenheimer Landstrasse 95",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Adlerflychtstrasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Adlerflychtstrasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Stalburgstrasse 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Stalburgstrasse 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Stalburgstrasse 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Stalburgstrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eckenheimer Landstrasse 59",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eckenheimer Landstrasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Adlerflychtstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Frauensteinplatz 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Adlerflychtstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 38",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eckenheimer Landstrasse 69",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eschersheimer Landstrasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eschersheimer Landstrasse 156",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Voelckerstrasse 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Voelckerstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 55",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 50",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 47",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 38",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Neuhaussstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Neuhaussstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eschersheimer Landstrasse 152",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eschersheimer Landstrasse 140",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Melemstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Melemstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 60",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 61 ggue.64",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse / Ecke Cronstettenstrasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eysseneckstrasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 69",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 58",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Kleebergstrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Stettenstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Stettenstrasse 35",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Stettenstrasse 47",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Frauensteinplatz 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 44",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 32",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Klettenbergstrasse 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Aystettstrasse 2",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Aystettstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Klettenbergstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Klettenbergstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 54",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Frauensteinstrasse 14",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Loenstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Schlosserstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Schlosserstrasse ggue 21 (Deutsche Nationalbibliothek)",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Cronstettenstrasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 14",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Falkensteiner Strasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Humbrachstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Hynspergstrasse 12/Ecke Feyerleinstr.",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Hynspergstrasse 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Hynspergstrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Holzhausenstrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Oeder Weg 154",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Oeder Weg 151",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Eschersheimer Landstrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17 Sa 8-14"
+},
+{
+"bewohnerparkzone": 18,
+"strassenname": "Eschersheimer Landstrasse 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Eschersheimer Landstrasse 42",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 9-17"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Blumenstrasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Sternstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Sternstrasse ggue 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Sternstrasse 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Sternstrasse 35",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Unterweg naehe Eschersheimer Anlage 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Unterweg 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Schleidenstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Schleidenstrasse 27",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Jahnstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Jahnstrasse 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Jahnstrasse 45",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Jahnstrasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Klitscherstrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Mittelweg 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Mittelweg 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Mittelweg 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Mittelweg 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Leimenrode 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Bornwiesenweg 45",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Bornwiesenweg 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Finkenhofstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Fichardstrasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Fichardstrasse 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Fichardstrasse 41",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Fichardstrasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Fichardstrasse 61",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Hermannstrasse 1a",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Hermannstrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Hermannstrasse 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Hermannstrasse 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Humboldstrasse 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Humboldstrasse 18",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oberweg 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oberweg 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oberweg 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oberweg 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Glauburgstrasse naehe 39 / Ecke Weberstrasse 72",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 70",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 58",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eckenheimer Landstrasse 90",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eckenheimer Landstrasse 100",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Gluckstrasse 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Gluckstrasse 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Glauburgstrasse 23",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Lenaustrasse 63",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Lortzingstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Glauburgstrasse 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Spohrstrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Glauburgstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Friedberger Landstrasse 117",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Friedberger Landstrasse 101",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Neuhofstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Neuhofstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Neuhofstrasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Neuhofstrasse 44",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Neuhofstrasse 51",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Marschnerstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Wielandstrasse 10-12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Wielandstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Lenaustrasse 49",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Wielandstrasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Wielandstrasse 42",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Wielandstrasse 50 / Ecke Weberstrasse 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 40",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eckenheimer Landstrasse 68",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Zeisselstrasse 50",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Zeisselstrasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Lenaustrasse 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Zeisselstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Zeisselstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Friedberger Landstrasse 83",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eckenheimer Landstrasse 62",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Koselstrasse 54",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Koselstrasse 41",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Lenaustrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Koselstrasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Koselstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Friedberger Landstrasse 73",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Rappstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eiserne Hand 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Scheffelstrasse 37 / Maria-Ward-Platz",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Mercatorstrasse 35",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Mercatorstrasse 31",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Mercatorstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Scheffelstrasse 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eckenheimer Landstrasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Hebelstrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Scheffelstrasse 23",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Hebelstrasse 5",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Scheffelstrasse 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Weberstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eiserne Hand 27 / ggue. 38",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Eckenheimer Landstrasse 34",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Mercatorstrasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Friedberger Landstrasse 23",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Oeder Weg 70",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Oeder Weg 79",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Oeder Weg ggue 96",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Oeder Weg ggue 108",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Eckenheimer Landstrasse 117",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 19,
+"strassenname": "Humboldstrasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 22,
+"strassenname": "Mercatorstrasse 50",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Finkhofstrasse 19",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 20,
+"strassenname": "Finkhofstrasse 29a",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 35,
+"strassenname": "Eschersheimer Landstrasse 132",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 63 / 65",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Weberstrasse 90",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Schwarzburgstrasse 54 / 56",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Gluckstrasse 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Schwarzburgstrasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Weberstrasse 67",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Glauburgstrasse / Ecke Weberstrasse 63",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Glauburgstrasse 32 / Ecke Gluckstrasse",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Gluckstrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Lenaustrasse 91",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Schwarzburgstrasse ggue 40 / 42 - neben Feuerwehrzufahrt",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Glauburgstrasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Lortzingstrasse ggue 24/26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Spohrstrasse 37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Schwarzburgstrasse 20",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Spohrstrasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Schwarzburgstrasse 7",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Friedberger Landstrasse 128",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rohrbachstrasse 62/64",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rohrbachstrasse 54",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rothschildallee 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Friedberger Landstrasse 136",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 53",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Weberstrasse 91",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 37 / Ecke Richard-Wagner-Strasse",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 39 / neben Taxiplatz",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Haendelstrasse ggue 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Haendelstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 47",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Spohrstrasse 47",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 7/9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 23/25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 26 / Ecke Nordendplatz",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 39",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse 36",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nordendstrasse ggue 45",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Brahmstrasse 14",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Nibelungenallee 54",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Richard-Wagner-Strasse 51",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse ggue 75",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse ggue 63",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse 73",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse 61",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Spohrstrasse 61",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Spohrstrasse 56",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Kreutzerstrasse ggue 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Kreutzerstrasse 18",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse ggue 41",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse ggue 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Kleiststrasse 35/37",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse ggue 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse ggue 9",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Gleimstrasse 14",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Glauburgstrasse 6",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Glauburgstrasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Rat-Beil-Strasse 47",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Richard-Wagner-Strasse ggue 13",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Richard-Wagner-Strasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Richard-Wagner-Strasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 18",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 24",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 28",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 40",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 52",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse 66",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Seckbacher Landstrasse naehe 72 (Nussbaumstr. 1-3)",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Nussbaumstrasse naehe Karbener Strasse 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Ilbenstaedter Strasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Ilbenstaedter Strasse 21",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Ilbenstaedter Strasse ggue 35",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Nussbaumplatz naehe Ilbenstaedter Strasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Karbener Strasse 10",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Woellstaedter Strasse 4",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Woellstaedter Strasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Woellstaedter Strasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Berger Strasse 285",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Berger Strasse naehe 370",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Berger Strasse 371",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Berger Strasse ggue 434",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Berger Strasse ggue 448a (SG Bornheim)",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Kohlbrandstrasse 26",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Kohlbrandstrasse 8",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Kohlbrandstrasse ggue 29",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Am Roetheneck 3",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Am Roetheneck 16",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Am Ameisenberg naehe Eulengasse 55",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Am Ameisenberg 18",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Boenstaedter Strasse 11",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Am Stiegelschlag 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Eulengasse 15",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Eulengasse 66",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Eulengasse 71",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Eulengasse 79",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Enkheimer Strasse 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Inheidener Strasse 57",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Inheidener Strasse ggue 59",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Inheidener Strasse 60",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Inheidener Strasse 69",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Inheidener Strasse ggue 71",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Buchwaldstrasse 17",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Buchwaldstrasse 25",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Freihofstrasse 12",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 41,
+"strassenname": "Grosse Spillingsgasse 48",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Eckenheimer Landstrasse 132",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Eckenheimer Landstrasse 146",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Eckenheimer Landstrasse 156",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": 21,
+"strassenname": "Eckenheimer Landstrasse 170",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-19"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Oederweg 122-124",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": null,
+"strassenname": "Oederweg 125",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 16,
+"strassenname": "Grueneburgweg 87a",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 16,
+"strassenname": "Grueneburgweg ggue 95/ Mitscherlichplatz",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Ggue Kettenhofweg 101",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 13,
+"strassenname": "Kettenhofweg 109",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 13,
+"strassenname": "Kettenhofweg 121",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 13,
+"strassenname": "Kettenhofweg 131",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Kettenhofweg 86",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Kettenhofweg 80",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Ggue Kettenhofweg 73",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Kettenhofweg 62",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Ggue Kettenhofweg 51",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Ggue Kettenhofweg 33",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+},
+{
+"bewohnerparkzone": 15,
+"strassenname": "Ggue Kettenhofweg 22",
+"maximal_parkdauer": "-",
+"gebuehrenzone": "2 €/h",
+"gebuehrenzeit": "Mo-Fr 7-22"
+}
+]

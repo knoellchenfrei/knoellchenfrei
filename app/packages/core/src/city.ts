@@ -126,7 +126,44 @@ export const HAMBURG: City = {
   },
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG]
+/**
+ * Frankfurt am Main — die dritte Stadt.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie ist absichtlich **nicht** aus
+ * der amtlichen Ausdehnung gerechnet: Frankfurt gibt 23,4 km Ost-West und
+ * 23,3 km Nord-Süd an, das ergäbe um den Römer (8,6821 / 50,1109) herum
+ * 8,52–8,85 / 50,01–50,22. Das Stadtgebiet liegt aber nicht mittig um den
+ * Römer — es reicht im Westen bis Zeilsheim und Sindlingen, im Norden bis
+ * Nieder-Erlenbach. Der Umriss der 46 Stadtteile aus
+ * `Stadtgebietsgliederung:Stadtteile` misst 8,4714–8,8010 / 50,0149–50,2273;
+ * nach außen gerundet steht das unten. Wer stattdessen die Ausdehnung
+ * abgeschrieben hätte, hätte Höchst und Zeilsheim aus der Meldegrenze
+ * geworfen — und die App hätte dort „außerhalb" gesagt, ohne dass irgendetwas
+ * nach einem Fehler ausgesehen hätte.
+ *
+ * Der Zoom ist enger als in Berlin und Hamburg, weil die Stadt kleiner ist:
+ * 0,40° Länge gegen Hamburgs 0,65°.
+ */
+export const FRANKFURT: City = {
+  key: 'frankfurt',
+  name: 'Frankfurt am Main',
+  land: 'HE',
+  center: [8.6821, 50.1109],
+  zoom: 12,
+  reportBounds: { minLon: 8.45, minLat: 50.0, maxLon: 8.85, maxLat: 50.25 },
+  sessionBounds: { minLon: 8.2, minLat: 49.85, maxLon: 9.1, maxLat: 50.45 },
+  attribution: {
+    // Wörtlich der Quellenvermerk aus dem ISO-Metadatensatz des Dienstes.
+    // Bei DL-DE/Namensnennung ist er Lizenzbedingung, nicht Höflichkeit —
+    // wer ihn umformuliert, erfüllt sie nicht mehr sicher.
+    source: 'Stadt Frankfurt am Main, www.frankfurt.de',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
+    attributionRequired: true,
+  },
+}
+
+export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.
