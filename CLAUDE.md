@@ -508,6 +508,7 @@ wiederholt.
 | --- | --- |
 | [docs/neue-sitzung.md](docs/neue-sitzung.md) | Womit eine frische Sitzung anfängt |
 | [docs/todo.md](docs/todo.md) | Die Handover-Liste: was offen ist, und wer es tun kann |
+| [docs/ideen.md](docs/ideen.md) | Was gebaut werden könnte und noch niemand aufgeschrieben hat — nichts davon entschieden |
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Getroffene Entscheidungen mit Begründung und Quellen |
 | [docs/hosting.md](docs/hosting.md) | Cloudflare, Worker, D1, Telegram, PMTiles — mit Befehlen |
 | [docs/notfall.md](docs/notfall.md) | Was läuft, was bei Verlust weg ist, in welcher Reihenfolge es zurückkommt |
