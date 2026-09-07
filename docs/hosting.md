@@ -106,33 +106,85 @@ Für die vollständige Fassung mit Kartenkacheln.
 | **GitHub Pages** | ja | Bei privatem Repo nur mit GitHub Pro/Team — hier öffentlich, also frei |
 | **Netlify** | ja | 100 GB Traffic/Monat |
 
-### GitHub Pages — eingeschaltet am 6. September
+### GitHub Pages — am 7. September wieder abgeschaltet
 
-Bis dahin baute der Workflow sauber durch und scheiterte erst am letzten
-Schritt:
-
-> `Failed to create deployment (status: 404) … Ensure GitHub Pages has been enabled`
-
-Das war kein Fehler im Workflow, sondern ein Schalter im Repository:
+Es lief einen Tag. `.github/workflows/pages.yml` rollte den Build nach
+`https://knoellchenfrei.github.io/knoellchenfrei/` aus; der Schalter dafür war
 *Settings → Pages → Build and deployment → Source* auf **GitHub Actions**.
-Seither ist der Lauf grün. Die App liegt unter
-`https://knoellchenfrei.github.io/knoellchenfrei/`. **Ins Feld *Custom domain*
-gehört nichts:** `knoellchenfrei.de` ist für Cloudflare Pages vorgesehen, und
-ein Hostname kann nur an einer Stelle liegen. Die Begründung im Einzelnen
-steht in [todo.md](todo.md#7-auftritt--du-vorbereitet-ist-alles).
 
-Der Vollständigkeit halber, falls das Repository je wieder privat wird: Dann
-braucht Pages einen bezahlten Plan (GitHub Pro, Team oder Enterprise), und die
-Einstellungsseite zeigt das Feature schlicht nicht an. Cloudflare Pages kennt
-diese Grenze nicht.
+Abgeschaltet wurde es aus einem Grund, der nichts mit GitHub zu tun hat:
+**Dort lässt sich kein Zugangsriegel davorsetzen.** Ein öffentlich erreichbarer
+Stand ohne Impressum und Datenschutzerklärung ist genau das, was der
+Beta-Riegel verhindern soll (Audit-Punkt M-006) — und eine zweite offene Tür
+macht die erste sinnlos.
+
+Der Workflow ist gelöscht. Der **Schalter im Repository gehört noch umgelegt**:
+*Settings → Pages → Build and deployment → Source* auf **None**. Ohne das
+bleibt der zuletzt ausgerollte Stand abrufbar, auch wenn kein Workflow mehr
+läuft — eine gelöschte Automatik nimmt nichts zurück, was sie schon
+veröffentlicht hat.
+
+Der tägliche Datenabzug, der an `pages.yml` hing, ist nach `deploy.yml`
+gewandert und holt jetzt alle vier Städte statt nur Berlin (Audit-Punkt M-031).
+Dort war er ohnehin halb wirkungslos: Er frischte die Kopie auf GitHub Pages
+auf, während Cloudflare Pages weiter den eingecheckten Stand auslieferte.
+Scheitert ein Dienst, steht das jetzt in der Zusammenfassung des Laufs, statt
+unter `continue-on-error` zu verschwinden.
+
+Falls das Repository je wieder privat wird: Dann braucht Pages einen bezahlten
+Plan (GitHub Pro, Team oder Enterprise), und die Einstellungsseite zeigt das
+Feature schlicht nicht an. Cloudflare Pages kennt diese Grenze nicht.
 
 Build-Kommando: `pnpm install && pnpm --filter @knoellchenfrei/web build`,
 Ausgabeverzeichnis `app/apps/web/dist`.
 
-Der Workflow unter `.github/workflows/pages.yml` zieht die Daten vor jedem
-Deploy frisch und läuft zusätzlich täglich um 04:17 UTC. Damit ist der
-Datenstand nie älter als 24 Stunden — bei Zonendaten, die sich über Monate
-ändern, ist das reichlich.
+### Der Beta-Riegel
+
+Solange der Trägerverein nicht steht, läuft das Impressum auf eine
+Privatperson. Deshalb ist die App nicht öffentlich — und `noindex` allein ist
+dafür zu wenig: Es hält Suchmaschinen ab, keine Menschen.
+
+Der Riegel ist eine **Cloudflare-Pages-Funktion**,
+`app/apps/web/functions/_middleware.ts`. Sie läuft bei jeder Anfrage, *bevor*
+eine Datei aus `dist` ausgeliefert wird. Wer das Passwort nicht hat, bekommt
+weder das Bündel noch die Zonendaten noch das Manifest, sondern eine Seite mit
+einem Formular. Ein Login *in* der App wäre wirkungslos gewesen — die Dateien
+lägen weiter offen, und rechtlich bliebe das Angebot öffentlich.
+
+Passwort setzen oder wechseln:
+
+```bash
+cd app && pnpm install
+pnpm --filter @knoellchenfrei/api exec wrangler pages secret put BETA_PASSWORD \
+  --project-name=knoellchenfrei
+```
+
+Danach ein neuer Deploy — Pages liest Secrets beim Start der Funktion, nicht
+zur Laufzeit. Ein Passwortwechsel entwertet alle ausgegebenen Zugänge sofort:
+Die Cookies sind mit dem alten Passwort signiert und werden nicht mehr
+angenommen. Das ist zugleich der Weg, jemanden wieder auszusperren.
+
+Zwei Wege hinein, beide enden im selben Cookie:
+
+| Weg | Wofür |
+| --- | --- |
+| Formular auf der Startseite | Der Hauptweg. Einmal eingeben, 30 Tage Ruhe auf dem Gerät. |
+| `https://knoellchenfrei.de/?invite=<passwort>` | Für Telegram: ein Klick statt einer Anleitung. Die Adresse wird sofort bereinigt; im Verlauf des Browsers bleibt das Passwort trotzdem stehen. |
+
+**Fehlt das Secret, fällt der Riegel zu, nicht auf.** Eine Auslieferung ohne
+`BETA_PASSWORD` antwortet mit `503` und einer Seite, die sagt, was fehlt. Das
+ist Absicht: Andersherum öffnete ein vergessenes Secret stillschweigend die
+Beta, und niemandem fiele es auf.
+
+Was der Riegel **nicht** abdeckt, damit niemand mehr hineinliest, als dasteht:
+der API-Worker unter seiner eigenen Adresse und das Kachelarchiv unter
+`tiles.knoellchenfrei.de`. Beide tragen keine personenbezogenen Daten und haben
+eigene Grenzen (Rate-Limits, `ALLOWED_ORIGINS`), aber sie liegen nicht hinter
+dem Formular.
+
+Die Prüflogik steht in `packages/core/src/beta-gate.ts` und wird in
+`test/beta-gate.test.ts` mit Unfug beschossen — sie zerlegt einen
+`Cookie`-Header aus fremder Hand, und das gehört dorthin, wo es getestet wird.
 
 ## 3. Cloudflare Worker — Live-Daten und geteilte Meldungen
 

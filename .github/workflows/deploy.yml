@@ -9,6 +9,14 @@ name: Deploy
 on:
   push:
     branches: [main]
+  # Der tägliche Abzug der Behördendaten. Er stand bis zum 7. September in
+  # `pages.yml` und ging mit GitHub Pages ausser Betrieb — dort war er ohnehin
+  # halb wirkungslos: Er frischte nur die Kopie auf GitHub Pages auf, während
+  # Cloudflare Pages weiter den eingecheckten Stand auslieferte. Jetzt hängt er
+  # an dem Deploy, der die App wirklich ausliefert. Dass dabei auch der Worker
+  # neu ausgerollt wird, ist folgenlos: Derselbe Stand ergibt dieselbe Version.
+  schedule:
+    - cron: '17 4 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -102,6 +110,36 @@ jobs:
           echo "quelle=$quelle" >> "$GITHUB_OUTPUT"
           echo "VITE_API_BASE=$basis (aus: $quelle)"
 
+      # Frische Daten, aber der Deploy hängt nicht daran: Ein Behördendienst,
+      # der heute schweigt, darf keine Auslieferung verhindern — der
+      # eingecheckte Abzug ist gültige Daten, nur ältere. Was scheitert, steht
+      # danach in der Zusammenfassung, statt still zu altern; genau das war
+      # Audit-Punkt M-031 an der alten Fassung in `pages.yml`, wo ein
+      # `continue-on-error` den Fehlschlag verschluckte.
+      #
+      # Kein `&&` über die ganze Kette: Ein gescheiterter Abruf soll die
+      # nächste Stadt nicht mitreissen, und `if` sagt das deutlicher als eine
+      # Kette, deren Abbruchverhalten man nachschlagen muss.
+      - name: Daten auffrischen
+        if: steps.gate.outputs.ready == 'true'
+        working-directory: app
+        run: |
+          gescheitert=""
+          for stadt in berlin hamburg frankfurt muenchen; do
+            skript="build-data"
+            [ "$stadt" = "berlin" ] || skript="build-data-$stadt"
+            if CITY="$stadt" pnpm --filter @knoellchenfrei/ingest fetch-data && CITY="$stadt" pnpm --filter @knoellchenfrei/ingest "$skript"; then
+              echo "$stadt: frisch"
+            else
+              echo "$stadt: nicht aufgefrischt, der eingecheckte Abzug bleibt"
+              gescheitert="$gescheitert $stadt"
+            fi
+          done
+          if [ -n "$gescheitert" ]; then
+            echo "### Daten nicht aufgefrischt:$gescheitert" >> "$GITHUB_STEP_SUMMARY"
+            echo "Ausgeliefert wird der eingecheckte Abzug. Das ist kein Ausfall, aber es gehoert gesehen." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Web-App bauen
         if: steps.gate.outputs.ready == 'true'
         working-directory: app
@@ -119,13 +157,20 @@ jobs:
           VITE_TILES_URL: ${{ vars.VITE_TILES_URL }}
         run: pnpm --filter @knoellchenfrei/web build
 
+      # `workingDirectory` ist hier keine Kosmetik: `wrangler pages deploy`
+      # sucht das Verzeichnis `functions/` relativ zum Arbeitsverzeichnis, und
+      # darin liegt der Beta-Riegel (`_middleware.ts`). Vom Wurzelverzeichnis
+      # aus aufgerufen faende wrangler es nicht, ausrollen wuerde trotzdem
+      # klappen — und die geschlossene Beta stuende offen, ohne dass irgendwo
+      # ein roter Haken erschiene.
       - name: Web-App ausrollen
         if: steps.gate.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy app/apps/web/dist --project-name=knoellchenfrei
+          workingDirectory: app/apps/web
+          command: pages deploy dist --project-name=knoellchenfrei
 
       - name: Zusammenfassung
         run: |

@@ -414,12 +414,22 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       missbrauchen hieße, ein Symbol zu setzen, das etwas anderes behauptet.
       Eine fünfte Art wäre ein Umbau von Karte, Legende und Filtern — lohnt
       sich erst, wenn eine zweite Stadt sie auch braucht.
-- [ ] **`pages.yml` baut nur Berlin.** Die Daten von Hamburg, Frankfurt und
-      München liegen committet im Repository und werden im Deploy nicht neu gebaut. Das ist
-      heute richtig — die Daten ändern sich über Monate —, aber es heißt auch:
-      Ein Feed-Wechsel fällt erst auf, wenn jemand von Hand abruft. Ein
-      wöchentlicher Job mit `continue-on-error` je Stadt wäre der nächste
-      Schritt.
+- [x] **Der Datenabzug deckt alle vier Städte ab** — am 7. September mit dem
+      Beta-Riegel umgezogen. Er hing an `pages.yml`, holte nur Berlin und
+      frischte damit ausgerechnet die Kopie auf, die niemand benutzte: GitHub
+      Pages. Jetzt steht er in `deploy.yml`, läuft täglich um 04:17 UTC über
+      Berlin, Hamburg, Frankfurt und München, und ein Dienst, der schweigt,
+      hält den Deploy nicht auf — er steht in der Zusammenfassung des Laufs.
+      Das war Audit-Punkt M-031.
+- [ ] **Der Beta-Riegel hat keinen automatischen Test.** Die Prüflogik in
+      `core/beta-gate.ts` ist mit 26 Unit-Tests gedeckt, die *Verdrahtung*
+      nicht: dass `wrangler pages deploy` das Verzeichnis `functions/`
+      überhaupt findet, hängt am `workingDirectory` in `deploy.yml`. Steht das
+      falsch, rollt der Deploy erfolgreich aus — und die Beta steht offen, ohne
+      roten Haken. Geprüft wurde es am 7. September von Hand
+      (`wrangler pages dev` plus Abrufe gegen Bündel, Daten und Manifest) und
+      danach an der ausgelieferten Adresse. Ein Schritt in `ci.yml`, der genau
+      diese Abrufe macht, wäre die Absicherung.
 - [x] **FAQ je Stadt** — am 7. September umgestellt. Ein Eintrag trägt optional
       `cities`; ohne Angabe gilt er überall, gefiltert wird nach `CITY.key`.
       Die Berliner Zahlen (103 Zonen, 45.917 Abschnitte, Zone 29, „Advents-Sa")
@@ -532,34 +542,21 @@ in dieser Organisation weder Repositories anlegen noch Einstellungen ändern
       Sicherheitsseite hängt an diesen beiden Schaltern und lässt sich nicht
       aus dem Repository heraus setzen. Ohne sie fehlt genau der Teil, der
       dringend ist.
-- [x] **GitHub Pages ist eingeschaltet.** Nachgeprüft: `has_pages: true`, und
-      der Lauf vom 6. September, 18:24 Uhr, ist grün durchgelaufen. Damit liegt
-      die App unter `https://knoellchenfrei.github.io/knoellchenfrei/`.
-      *(Die Adresse selbst kann ich nicht abrufen — `github.io` ist vom
-      Egress-Proxy gesperrt. Der grüne Lauf ist der Beleg, nicht ein
-      Seitenaufruf.)*
+- [ ] **GitHub Pages abschalten** — *Settings → Pages → Build and deployment →
+      Source* auf **None**. Einen Tag lang lief die App zusätzlich unter
+      `https://knoellchenfrei.github.io/knoellchenfrei/`; der Workflow
+      `pages.yml` ist am 7. September gelöscht, es rollt also nichts mehr aus.
+      **Der zuletzt veröffentlichte Stand bleibt trotzdem abrufbar, bis dieser
+      Schalter umgelegt ist** — eine gelöschte Automatik nimmt nichts zurück,
+      was sie schon veröffentlicht hat.
 
-      **Ins Feld *Custom domain* gehört nichts.** Drei Gründe, jeder für sich
-      ausreichend:
+      Der Grund ist der Beta-Riegel: Vor GitHub Pages lässt sich keiner setzen
+      (kein serverseitiger Code, keine Zugangsregel), und eine zweite offene
+      Tür macht die erste sinnlos. Das war Audit-Punkt M-006.
 
-      1. Ein Hostname kann nur an einer Stelle liegen. `knoellchenfrei.de` ist
-         für **Cloudflare Pages** vorgesehen (Punkt 2 und
-         [hosting.md](hosting.md)); trägt man ihn hier ein, zeigt das DNS auf
-         GitHub, und der Umzug später kostet eine Ausfallzeit.
-      2. `base: './'` in `vite.config.ts` erzeugt **relative** Pfade. Die App
-         läuft deshalb ohne jede Anpassung unter
-         `knoellchenfrei.github.io/knoellchenfrei/` — für einen geschlossenen
-         Test ist das genug, und es kostet keine DNS-Entscheidung.
-      3. Eine eigene Domain hier bräuchte zusätzlich eine Datei `CNAME` im
-         **ausgelieferten** Verzeichnis, also `apps/web/public/CNAME`. Ohne
-         sie setzt `actions/deploy-pages` die Einstellung bei jedem Lauf
-         zurück — die Domain funktioniert dann bis zum nächsten Push.
-
-      Wenn es während der Beta trotzdem eine eigene Adresse sein soll, dann
-      **nicht die Hauptdomain**, sondern eine eigene Unterdomain, etwa
-      `beta.knoellchenfrei.de` als `CNAME` auf `knoellchenfrei.github.io`.
-      Das setzt voraus, dass die Zone schon bei Cloudflare liegt, und braucht
-      die `CNAME`-Datei aus Punkt 3. Vorher lohnt es nicht.
+      Damit ist auch alles hinfällig, was hier vorher zum Feld *Custom domain*
+      stand: `knoellchenfrei.de` gehört zu Cloudflare Pages, und dort steht der
+      Riegel.
 
 ## 8. Der Worker kennt zwei Städte — erledigt am 6. September 2026
 

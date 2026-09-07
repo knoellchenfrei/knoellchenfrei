@@ -243,11 +243,11 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 190 Unit-Tests
+pnpm test                              # 489 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 107 End-to-End-Tests
+cd apps/web && npx playwright test     # 128 End-to-End-Tests
 ```
 
 Bringt die Umgebung einen Chromium mit, den Playwright nicht selbst
@@ -274,9 +274,9 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 190, davon 25 Regressionstests für konkrete gefundene Fehler |
-| End-to-End | 107 bestanden über Desktop und Handy, gegen den Produktions-Build (ein 108. läuft nur in der Handy-Variante) |
-| Coverage | 96,1 % Zeilen, 90,3 % Zweige, 98,4 % Funktionen (`packages/core`) |
+| Unit-Tests | 489, davon 30 Regressionstests für konkrete gefundene Fehler |
+| End-to-End | 128 über Desktop und Handy, gegen den Produktions-Build; 127 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
+| Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |
 

@@ -8,6 +8,8 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
 kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
 Angeschlossen sind Berlin, Hamburg, Frankfurt am Main und München.
+Ausgeliefert wird sie hinter einem Passwort-Riegel — der Stand ist geschlossener
+Testbetrieb, siehe `apps/web/functions/_middleware.ts` und `docs/hosting.md`.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.
 Vorbild in Aufbau, Hosting und Haltung ist
 [FreiFahren](https://github.com/FreiFahren/FreiFahren).
@@ -20,7 +22,7 @@ verbindliche Liste, nicht dieser Absatz.
 
 ```bash
 pnpm -r typecheck                                   # alles, streng
-pnpm --filter @knoellchenfrei/core test                # 463 Unit-Tests
+pnpm --filter @knoellchenfrei/core test                # 489 Unit-Tests
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -39,7 +41,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=463 E2E_COUNT=128 npx tsx src/build-badges.ts
+TEST_COUNT=489 E2E_COUNT=128 npx tsx src/build-badges.ts
 scripts/build-tiles.sh                              # PMTiles-Ausschnitt Berlin
 ```
 
@@ -342,6 +344,29 @@ wiederholt.
   `noindex` und eine sperrende `robots.txt` ein. Solange das Impressum auf eine
   Privatperson läuft, entscheidet dieser Schalter, ob die Anschrift in Indizes
   und Archiven landet.
+- **`noindex` ist kein Zugangsschutz — der Riegel steht vor der Auslieferung.**
+  Suchmaschinen hält `noindex` ab, Menschen nicht; rechtlich blieb das Angebot
+  damit öffentlich, ohne Impressum und ohne Datenschutzerklärung (Audit-Punkt
+  M-006). Seit dem 7. September steht deshalb
+  `apps/web/functions/_middleware.ts` als Cloudflare-Pages-Funktion **vor**
+  `dist`: Ohne gültiges Cookie geht weder Bündel noch Zonendatei noch Manifest
+  hinaus. Ein Login *in* der React-App wäre wirkungslos gewesen — die Dateien
+  lägen weiter offen. Zwei Folgen, die man leicht übersieht: `deploy.yml`
+  braucht `workingDirectory: app/apps/web`, weil `wrangler pages deploy` das
+  Verzeichnis `functions/` relativ zum Arbeitsverzeichnis sucht (steht es
+  falsch, rollt der Deploy erfolgreich und ungeschützt aus), und GitHub Pages
+  ist abgeschaltet, weil sich dort kein Riegel davorsetzen lässt.
+- **Ein Riegel fällt zu, wenn seine Konfiguration fehlt, nicht auf.** Ohne
+  `BETA_PASSWORD` antwortet die Pages-Funktion mit `503` statt durchzulassen.
+  Die bequeme Richtung wäre genau der Fehler, den dieses Projekt dreimal
+  gemacht hat — `cache.addAll`, das Einrichtungsskript, `pnpm fetch`: etwas
+  meldet Erfolg und tut nichts. Ein vergessenes Secret öffnete sonst
+  stillschweigend die Beta. Dazu ein gefundener Fehler aus derselben Ecke:
+  `crypto.subtle.importKey` nimmt einen **Schlüssel der Länge 0** nicht an und
+  warf einen blanken `OperationError` — ausgerechnet der wahrscheinlichste
+  Betriebsfehler sah damit aus wie ein Fehler in der Kryptografie. Signieren
+  wirft jetzt mit Begründung, Prüfen sagt `false`, ohne die Kryptografie
+  überhaupt anzufassen.
 
 ## Stil
 
