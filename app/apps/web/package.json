@@ -9,6 +9,7 @@
     "build": "vite build",
     "build:artifact": "BUILD_TARGET=artifact vite build --outDir dist-artifact",
     "preview": "vite preview",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report"

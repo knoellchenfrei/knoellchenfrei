@@ -626,89 +626,54 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       dazuzugeben hiesse, den Token zu verbreitern, der bei jedem Push läuft
       — für einen Workflow, der einmal die Woche läuft.
 
-- [ ] **Der Worker hat keinen einzigen Test.** `packages/core` steht bei
-      99,9 % Zeilen, `apps/api/src/worker.ts` bei null — und dort sind am
-      7. September vier Fehler gefunden worden, die alle vier ohne Test
-      geblieben wären, hätte das Audit sie nicht aufgeschrieben (M-046). Das
-      Werkzeug dafür gibt es fertig: `@cloudflare/vitest-pool-workers` fährt
-      denselben Vitest gegen eine echte Worker-Laufzeit samt D1 und KV. Es
-      lohnt sich beim nächsten Eingriff in den Worker, nicht als Selbstzweck —
-      aber dann wirklich, denn die Ratenbremsen, die CORS-Prüfung und der
-      Telegram-Webhook sind genau die Stellen, an denen ein stiller Fehler
-      niemandem auffällt.
-- [ ] **`/visits` kann weiterhin beliebig viele Zeilen anlegen.** Die
-      Kennung ist `<tag>-<zufall>`, vom Client erfunden; wer den Zufallsteil
-      variiert, schreibt so viele Zeilen, wie er mag, und treibt die Zahl
-      „heute geöffnet" nach oben. Der teure Teil von M-015 ist erledigt — ein
-      Ping schreibt nur noch, wenn die Zeile älter als drei Minuten ist, statt
-      alle zwei Minuten —, dieser Teil nicht.
+- [x] **Der Worker hat jetzt Tests** — 15 Stück, am 7. September,
+      `apps/api/test/worker.test.ts`. Vorher: keinen einzigen, während
+      `packages/core` bei 99,9 % Zeilenabdeckung steht.
 
-      Der saubere Weg wäre, die Kennung **nicht** vom Client zu nehmen,
-      sondern aus `clientHash` und dem Tag zu bilden. Damit wäre die Zahl der
-      Zeilen durch die Zahl der Besucher begrenzt, der Zufallswert im
-      `localStorage` entfiele (das nähme auch M-020 die Grundlage, § 25
-      TDDDG), und zwei Geräte hinter demselben Anschluss zählten als einer —
-      eine ehrliche Untererfassung statt einer aufblasbaren Zahl. Das ändert
-      aber, welche Daten in `visits` stehen, und gehört deshalb erst in die
-      Datenschutzerklärung und dann in den Code, nicht umgekehrt.
+      Geprüft wird der Weg, den eine Anfrage nimmt, **bevor** sie die Datenbank
+      erreicht: `/health`, die CORS-Kopfzeilen samt Vorabruf, die Schreibsperre
+      ohne `CLIENT_SALT`, die Pflicht zu `application/json`, die Abweisung
+      fremder Herkünfte, der Telegram-Webhook ohne und mit falschem Geheimnis.
+      Vier der Audit-Befunde lagen genau auf dieser Ebene — M-014, M-016,
+      M-046, M-097.
 
-- [ ] **Der Beta-Riegel hat keinen automatischen Test.** Die Prüflogik in
-      `core/beta-gate.ts` ist mit 26 Unit-Tests gedeckt, die *Verdrahtung*
-      nicht: dass `wrangler pages deploy` das Verzeichnis `functions/`
-      überhaupt findet, hängt am `workingDirectory` in `deploy.yml`. Steht das
-      falsch, rollt der Deploy erfolgreich aus — und die Beta steht offen, ohne
-      roten Haken. Geprüft wurde es am 7. September von Hand
-      (`wrangler pages dev` plus Abrufe gegen Bündel, Daten und Manifest) und
-      danach an der ausgelieferten Adresse. Ein Schritt in `ci.yml`, der genau
-      diese Abrufe macht, wäre die Absicherung.
-- [x] **FAQ je Stadt** — am 7. September umgestellt. Ein Eintrag trägt optional
-      `cities`; ohne Angabe gilt er überall, gefiltert wird nach `CITY.key`.
-      Die Berliner Zahlen (103 Zonen, 45.917 Abschnitte, Zone 29, „Advents-Sa")
-      stehen nur noch in Berlin; allgemein blieben „unsicher", Bezahlen,
-      Sichtungsmeldung und Aktualität, jeweils ohne Berlin-Bezug. Neu je Stadt:
-      München „Warum steht kein Preis da?" und „Was heißt ‚an Schultagen'?",
-      Hamburg „Was heißt ‚Parkscheibe' statt eines Preises?", Frankfurt
-      „Warum steht die Höchstparkdauer mit einem Anteil dabei?" und die
-      Preisspanne aus zwei Automatentarifen.
+      **Was fehlt und warum es eine eigene Runde ist:** alles, was echtes SQL
+      braucht — Rate-Limits, Doppelmeldungen, die Selbstbestätigung. Dafür
+      wäre `@cloudflare/vitest-pool-workers` mit einer D1 in Miniflare nötig,
+      samt eingespielten Migrationen. Die Attrappe hier schreibt Anweisungen
+      mit, statt sie auszuführen; sie kann nicht beantworten, ob eine Abfrage
+      das Richtige zurückgibt.
 
-      Die Regel dahinter: Wo eine Zahl an der Stadt hängt, bekommt sie einen
-      Eintrag je Stadt — nicht einen gemeinsamen, der sie verschweigt. Eine
-      Antwort ohne Zahl beantwortet die Frage meistens nicht.
-- [x] **Gruppenbilder für Frankfurt und München.** `scripts/make-brand.mjs`
-      erzeugt jetzt auch `telegram-frankfurt-512.png` (`F`) und
-      `telegram-muenchen-512.png` (`M`), abgelegt unter `docs/brand/`. Die
-      Gruppen selbst legt der Betreiber an, wenn die Städte freigeschaltet
-      werden.
-- [x] **Produktname entberlinert.** Die App heißt jetzt überall
-      `knoellchenfrei`; die `h1` nennt die geladene Stadt dazu. Der interne
-      Paketname `@knoellchenfrei/*` bleibt: Ihn umzubenennen wäre Aufwand ohne
-      Wirkung nach außen.
+      Nebenbei festgehalten, was beim Schreiben auffiel: `/health` prüft die
+      Methode nicht und antwortet auf `DELETE` mit 200. Folgenlos — die
+      Schreibsperre hängt an POST —, aber jetzt steht es als Entscheidung da
+      und nicht als Versehen.
 
-## 6. Telegram — **du** (Token), dann **ich**
+- [x] **`/visits` ist gedeckelt** — am 7. September, höchstens 20.000 neue
+      Zeilen am Tag (Audit-Punkt M-016).
 
-Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
+      Die Kennung kommt vom Aufrufer, und `<heute>-<beliebig>` erfüllt das
+      Muster beliebig oft: Wer wollte, legte in einer Schleife Millionen Zeilen
+      an, trieb die Zahlen hoch und verbrannte das Schreibbudget.
+      `rejectsCrossSite` half dagegen nicht — es prüft eine Herkunft, und wer
+      keinen Browser benutzt, schickt gar keine.
 
-- [x] **Stufe 1: Bot, den man anschreibt — gebaut.** Route `/telegram` am
-      bestehenden Worker, kein zweiter Dienst. Ein gesendeter Standort wird über
-      denselben Pfad eingetragen wie eine Meldung aus der App; `/hilfe`
-      erklärt es; alles andere bekommt eine höfliche Absage. Die
-      Telegram-Nutzerkennung wird gehasht wie eine IP-Adresse und nur für die
-      Meldegrenze benutzt, die Chat-Kennung gar nicht gespeichert.
-      21 Unit-Tests auf dem Parser, weil dort fremder Text ankommt.
-- [~] **Namen belegen — vier Stück, bevor sie weg sind.** Eine Gruppe ist am
-      6. September angelegt; welche der vier Namen damit belegt sind, kann ich
-      nicht nachsehen — Telegram ist von hier aus nicht erreichbar, und ich
-      trage nur ein, was ich geprüft habe. Offen bleiben nach meinem Stand:
-      `@knoellchenfrei` (Dach), `@knoellchenfrei_B`, `@knoellchenfrei_HH`,
-      `@knoellchen_bot`. Am 6. September 2026 waren alle vier frei.
-      *(Der Bot heißt tatsächlich `@knoellchen_bot` — nachgemessen per
-      `getMe` beim Einrichten; die Doku hatte fünfmal `@knoellchenfrei_bot`
-      gesagt, ohne dass es jemand geprüft hätte.)*
-      **Nicht als leere Hülle:** Telegram behält sich ausdrücklich vor, Namen
-      ungenutzter Kanäle zurückzuholen — also anlegen, benennen, ein paar Leute
-      hineinholen und den Beitritt auf Genehmigung stellen. Das erfüllt
-      „benutzt" und bleibt hinter dem Riegel aus Punkt 1. Begründung und
-      Wortlaut in [entscheidungen.md](entscheidungen.md#telegram-und-der-name).
+      Die Grenze steht **im `INSERT` selbst**, nicht als Abfrage davor:
+      Zwischen Zählen und Schreiben läge sonst ein Fenster, in dem zwanzig
+      gleichzeitige Anfragen alle „noch Platz" lesen.
+
+      Ein Fallstrick dabei, gegen SQLite nachgemessen statt überlegt: Die erste
+      Fassung hielt mit der Grenze auch das **Auffrischen** vorhandener Zeilen
+      an — die Anzeige „gerade online" wäre an einem vollen Tag von selbst auf
+      null gelaufen, während die Leute zusahen. Das `EXISTS` davor ist der
+      Unterschied.
+
+      Was das **nicht** löst: Wer die Grenze ausschöpft, sorgt dafür, dass
+      echte Besucher an dem Tag nicht mehr gezählt werden. Bewusster Tausch —
+      eine falsche Zahl ist ärgerlich, ein volles Schreibbudget legt die
+      Meldungen mit lahm. Sichtbar wird es daran, dass die Tageszahl exakt auf
+      der Grenze steht.
+
 - [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
       im Worker hinterlegen — die Befehle stehen in
       [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet

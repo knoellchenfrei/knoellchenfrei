@@ -402,6 +402,17 @@ const ONLINE_WINDOW_MS = 5 * 60_000
  * Minuten nicht ein Schreibvorgang alle zwei Minuten wird.
  */
 const VISIT_REFRESH_MS = 3 * 60_000
+
+/**
+ * Obergrenze für **neue** Besuchszeilen an einem Tag.
+ *
+ * Grosszügig gegen den Betrieb, eng gegen den Missbrauch: Der geschlossene
+ * Test hat eine zweistellige Zahl Leser, und selbst ein erfolgreicher Start
+ * käme in Berlin nicht an 20.000 Geräte am Tag. Das freie Tagesbudget von D1
+ * liegt bei 100.000 Schreibvorgängen; die Grenze lässt also Luft für alles
+ * andere, was der Worker am Tag schreibt.
+ */
+const VISITS_PER_DAY = 20_000
 /** Visit rows are kept a day beyond the count, so a day boundary is not a cliff. */
 const VISIT_KEEP_MS = 2 * 86_400_000
 
@@ -478,12 +489,38 @@ async function recordVisit(
   // `DO UPDATE` lässt SQLite die Zeile unangetastet, solange sie frisch genug
   // ist. Die Schwelle liegt unter `ONLINE_WINDOW_MS`, damit ein Besucher nie
   // aus dem Fenster fällt, während er zusieht.
+  //
+  // Und: **höchstens `VISITS_PER_DAY` neue Zeilen am Tag.** Die Kennung kommt
+  // vom Aufrufer, und `<heute>-<beliebig>` erfüllt das Muster beliebig oft —
+  // wer will, legt in einer Schleife Millionen Zeilen an, treibt die Zahlen
+  // hoch und verbrennt das Schreibbudget. `rejectsCrossSite` hilft dagegen
+  // nicht: Es prüft eine Herkunft, und wer keinen Browser benutzt, schickt
+  // gar keine (Audit-Punkt M-016).
+  //
+  // Die Grenze steht im `INSERT` selbst und nicht als zweite Abfrage davor:
+  // Zwischen Zählen und Schreiben liegt sonst ein Fenster, in dem zwanzig
+  // gleichzeitige Anfragen alle „noch Platz" lesen. `INSERT … SELECT … WHERE`
+  // zählt und schreibt in derselben Anweisung.
+  //
+  // Was das **nicht** löst: Wer die Grenze ausschöpft, sorgt dafür, dass echte
+  // Besucher an diesem Tag nicht mehr gezählt werden. Das ist der bewusste
+  // Tausch — eine falsche Zahl ist ärgerlich, ein volles Schreibbudget legt
+  // die Meldungen mit lahm. Sichtbar wird es daran, dass die Tageszahl exakt
+  // auf der Grenze steht.
+  //
+  // Das `EXISTS` davor ist nicht schmückend, sondern der Grund, warum die
+  // Grenze niemanden hinauswirft: Ohne es hielt die Bedingung auch das
+  // **Auffrischen** vorhandener Zeilen an, sobald der Tag voll war — die
+  // Anzeige „gerade online" wäre dann von selbst auf null gelaufen, während
+  // die Leute zusahen. Gegen SQLite nachgemessen, nicht überlegt.
   await env.DB.prepare(
-    'INSERT INTO visits (id, day, seen_at) VALUES (?, ?, ?)' +
+    'INSERT INTO visits (id, day, seen_at) SELECT ?, ?, ?' +
+      ' WHERE EXISTS (SELECT 1 FROM visits WHERE id = ?)' +
+      ' OR (SELECT COUNT(*) FROM visits WHERE day = ?) < ?' +
       ' ON CONFLICT(id) DO UPDATE SET seen_at = excluded.seen_at' +
       ' WHERE excluded.seen_at - visits.seen_at > ?'
   )
-    .bind(id, today, now, VISIT_REFRESH_MS)
+    .bind(id, today, now, id, today, VISITS_PER_DAY, VISIT_REFRESH_MS)
     .run()
 
   const counts = await env.DB.prepare(
