@@ -77,8 +77,41 @@ const MAX_PASSWORD_LENGTH = 200
 /** Und für den ganzen Formularkörper. Ein Passwortformular ist winzig. */
 const MAX_BODY_BYTES = 4096
 
+/**
+ * Sicherheits-Kopfzeilen für die Antworten **dieser Funktion**.
+ *
+ * `_headers` im Ausgabeverzeichnis deckt nur die statische Auslieferung ab —
+ * was Pages aus `dist` holt. Die Anmeldeseite kommt von hier und ging damit
+ * ohne jede Kopfzeile hinaus: ausgerechnet die einzige Seite, die
+ * Unangemeldete zu sehen bekommen. Aufgefallen beim Nachmessen an der
+ * ausgelieferten Adresse, nicht beim Lesen.
+ *
+ * Die Richtlinie ist strenger als die der App, weil diese Seite weniger
+ * braucht: **kein Skript, keine Verbindung nach außen.** `default-src 'none'`
+ * verbietet damit alles, was nicht ausdrücklich dasteht — das Stylesheet steht
+ * inline in der Seite, das Symbol kommt von der eigenen Herkunft, und
+ * abgeschickt wird nur hierher.
+ */
+function sicherheitsKopfzeilen(): Record<string, string> {
+  return {
+    'Content-Security-Policy': [
+      "default-src 'none'",
+      "style-src 'unsafe-inline'",
+      "img-src 'self' data:",
+      "form-action 'self'",
+      "base-uri 'none'",
+      "frame-ancestors 'none'",
+    ].join('; '),
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'no-referrer',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Permissions-Policy': 'geolocation=(), camera=(), microphone=(), payment=()',
+  }
+}
+
 function htmlResponse(body: string, status: number, cookie?: string): Response {
   const headers = new Headers({
+    ...sicherheitsKopfzeilen(),
     'Content-Type': 'text/html; charset=utf-8',
     // Ohne `no-store` legte der Browser — oder schlimmer: der Service Worker
     // eines eingeloggten Geräts — die Anmeldeseite als App-Rumpf ab. Der
@@ -98,6 +131,7 @@ function redirect(to: string, cookie: string): Response {
     // Neuladen die Anmeldung.
     status: 303,
     headers: new Headers({
+      ...sicherheitsKopfzeilen(),
       Location: to,
       'Cache-Control': 'no-store',
       'Set-Cookie': cookie,
@@ -184,7 +218,11 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
   if (request.method === 'HEAD') {
     return new Response(null, {
       status: 401,
-      headers: new Headers({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' }),
+      headers: new Headers({
+        ...sicherheitsKopfzeilen(),
+        'Cache-Control': 'no-store',
+        'X-Robots-Tag': 'noindex, nofollow',
+      }),
     })
   }
 
