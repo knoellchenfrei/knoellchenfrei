@@ -1,10 +1,13 @@
 # Sitzungsstatistik
 
-Zwei Sitzungen, gemessen statt geschätzt: der **Umbau** vom 5./6. September und
+Drei Sitzungen, gemessen statt geschätzt: der **Umbau** vom 5./6. September,
 die **Fortsetzung** ab dem Nachmittag desselben Tages, in der das Projekt umzog,
-Hamburg dazukam — und in der Nacht darauf Frankfurt und München. Die zweite
-steht [weiter unten](#die-fortsetzung-umzug-und-zweite-stadt), dreimal
-gemessen: um 16:21, um 23:25 und um 03:50.
+Hamburg dazukam — und in der Nacht darauf Frankfurt und München —, sowie die
+**dritte** vom 7. auf den 8. September mit Audit, Nutzungsstatistik und
+Fehlerjagd. Die zweite steht
+[weiter unten](#die-fortsetzung-umzug-und-zweite-stadt), dreimal gemessen: um
+16:21, um 23:25 und um 03:50. Die dritte steht
+[ganz unten](#die-dritte-sitzung-7-auf-8-september-2026).
 
 Diese Datei ist beim Umzug aus `herbeus/parkingzone` mitgekommen; gepflegt wird
 sie hier.
@@ -426,3 +429,119 @@ Städte am Morgen vor.
 | End-to-End-Tests | 107 → **128** (108 waren es wirklich — die 107 in `CLAUDE.md` waren um eins daneben) |
 | Coverage | 96,1 % → **99,9 %** Zeilen, 90,4 % → 96,1 % Zweige, 100 % Funktionen |
 | Commits | 19, alle mit grüner CI und vollem E2E-Lauf davor |
+
+## Die dritte Sitzung: 7. auf 8. September 2026
+
+**Stand 8. September, 03:20 Uhr** — die Sitzung läuft noch, die Zahlen sind
+eine Momentaufnahme.
+
+Diesmal gibt es **nur eine** Quelle: den Sitzungsverlauf als JSONL
+(6.673 Zeilen, 28,9 MB). Die Buchhaltung (`get_session` →
+`external_metadata.usage`) ist aus dieser Sitzung heraus nicht abrufbar. Nach
+der Erfahrung der ersten Sitzung heisst das: **Die Zahlen unten überzeichnen
+das Cache-Lesen wahrscheinlich erheblich** — dort standen 777 Mio. im Verlauf
+gegen 483 Mio. in der Buchhaltung, ein Faktor von rund 1,6. Wer diese Zeile
+fortschreibt, fragt die Buchhaltung noch einmal, bevor er sie glaubt.
+
+### Modell
+
+| | |
+| --- | --- |
+| Antworten von `claude-opus-5` | 1.967 |
+| Antworten von `claude-fable-5-1` | 181 |
+| Synthetische Nachrichten | 3 |
+| Kontextfenster | 1.000.000 |
+
+Der Anteil von Fable ist kein Zufall und kein Fallback: Der Plan für die
+Nutzungsstatistik ist auf ausdrücklichen Wunsch von einem zweiten Modell
+gegengelesen worden, bevor Opus ihn umgesetzt hat. Das sind die 181 Antworten.
+
+### Tokens (aus dem Verlauf, nicht aus der Buchhaltung)
+
+| Art | Tokens |
+| --- | ---: |
+| Eingabe | 8.572 |
+| Ausgabe | 1.985.668 |
+| Cache geschrieben | 10.925.430 |
+| Cache gelesen | 1.095.485.019 |
+| **Summe** | **1.108.404.689** |
+
+Cache-Lesen macht **98,8 %** aus. Das ist die Kennzahl, die am meisten über die
+Arbeitsweise sagt: Es wird sehr viel öfter wiedergelesen als geschrieben.
+
+### Werkzeuge
+
+1.341 Aufrufe in 18 verschiedenen Werkzeugen.
+
+| Werkzeug | Aufrufe | Werkzeug | Aufrufe |
+| --- | ---: | --- | ---: |
+| Bash | 1.220 | WebSearch | 4 |
+| Read | 31 | `actions_list` | 3 |
+| Edit | 19 | TaskStop | 2 |
+| TaskOutput | 13 | `create_event` | 2 |
+| Write | 12 | `get_session` | 1 |
+| Agent | 8 | `navigate` | 1 |
+| WebFetch | 8 | `tabs_context` | 1 |
+| ToolSearch | 7 | SendMessage | 1 |
+| Artifact | 7 | PushNotification | 1 |
+
+**91 % ist Bash.** Das ist kein Stilmerkmal, sondern eine Vorgabe dieser
+Umgebung: Lesen mit `sed`, Suchen mit `grep`, Ändern mit `python3`-Heredocs
+statt mit den dafür gedachten Werkzeugen. Der Preis steht in dieser Datei
+selbst — ein zeilenbasiertes Ersetzen hat vier Abschnitte aus `docs/todo.md`
+gefressen, und das ist genau die Fehlerklasse, die ein Werkzeug mit
+Blockgrenzen nicht hat.
+
+### Agenten
+
+Acht, alle mit klar geschnittenem Schreibbereich:
+
+| Agent | Was er durfte |
+| --- | --- |
+| Frankfurt am Main anschließen | eigene Dateien, integriert |
+| München anschließen | eigene Dateien, integriert |
+| Standort-Vorschlag und FAQ je Stadt | Oberfläche |
+| Testabdeckung in `core` erhöhen | nur Tests |
+| Cloud-Sitzung lokal fortsetzen | Übergabe |
+| Fable prüft den Statistik-Plan | nur lesen |
+| Köln vorbereiten | eigene Dateien, **nicht** integriert |
+| Karlsruhe vorbereiten | eigene Dateien, **nicht** integriert |
+
+Die beiden letzten hatten eine Auflage, die es vorher nicht gab:
+`core/city.ts`, `core/index.ts` und `ingest/src/sources.ts` sind tabu. Beide
+haben sie eingehalten — nachgeprüft über `git status`, nicht geglaubt.
+
+### Übrige Kennzahlen
+
+| | |
+| --- | ---: |
+| Laufzeit | 24 h 19 min |
+| Echte Nachrichten des Nutzers | 51 |
+| Assistenten-Nachrichten | 2.151 |
+| Commits | 87 |
+| Geänderte Zeilen | +38.111 / −2.667 |
+| Unit-Tests am Ende | 620 |
+| End-to-End-Tests | 152 |
+| Coverage (`core`) | 99,9 % Zeilen |
+
+**51 Nachrichten auf 87 Commits** ist das Verhältnis, um das es in dieser
+Sitzung ging: Der Auftrag lautete, die Nacht durchzuarbeiten. Was dabei
+herauskam, steht in [nachtplan-2026-09-08.md](nachtplan-2026-09-08.md) — und
+was dabei schiefging, steht dort im selben Dokument, Abschnitt D.
+
+### Wie diese Zahlen entstanden sind
+
+```bash
+node scripts/protokoll.mjs ~/.claude/projects/<projekt>/<sitzung>.jsonl
+```
+
+Das Skript liegt seit dem 8. September im Repository, damit die Zahlen dieser
+Datei nachrechenbar sind statt behauptet. Es liest den Verlauf zeilenweise,
+summiert die `usage`-Felder der Assistenten-Nachrichten und zählt
+`tool_use`-Blöcke.
+
+Eine „echte" Nachricht des Nutzers ist eine mit reinem Text —
+Werkzeugergebnisse kommen im Verlauf ebenfalls als `type: "user"` an und wären
+sonst mitgezählt worden: **1.395 statt 51**. Wer diesen Unterschied nicht
+macht, misst nicht, wie viel Führung eine Sitzung gebraucht hat, sondern wie
+viele Werkzeuge sie benutzt hat.
