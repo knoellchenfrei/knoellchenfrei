@@ -283,7 +283,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 750 — 570 in `core`, 78 für Worker und Zählwerk, 91 für die Web-App, 11 für den Artifact-Bau; davon 58 Regressionstests für konkrete gefundene Fehler |
+| Unit-Tests | 750 — 570 in `core`, 78 für Worker und Zählwerk, 91 für die Web-App, 11 für den Artifact-Bau. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 68 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 154 über Desktop und Handy, gegen den Produktions-Build; 153 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

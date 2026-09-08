@@ -756,7 +756,11 @@ wiederholt.
   nicht zuverlässig trennen, und lieber ein Name zu viel umbenannt als ein
   Kommentar zu wenig. Der Ausweg ist ein Name ohne `ae/oe/ue` (`basis` statt
   `gueltig`), nicht eine Ausnahme im Skript.
-- **Für jeden gefundenen Fehler ein Test.** 30 der Unit-Tests sind genau das.
+- **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
+  einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
+  keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
+  darüber: **68 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
 - **`packages/core` bleibt frei von Frameworks und ohne Laufzeit-Abhängigkeiten.**
