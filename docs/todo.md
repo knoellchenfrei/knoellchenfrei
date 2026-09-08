@@ -85,28 +85,45 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
 6. **`CLOUDFLARE_R2_TOKEN`** als Repository-Secret, ein Recht: *Workers R2
    Storage: Edit*. Ohne ihn baut der Workflow *Kacheln* nichts, und die Karte
    altert still vor sich hin.
-7. **`D1:Edit` zum CI-Token hinzufügen.** Der Deploy ruft seit dem
-   7. September `wrangler d1 migrations apply` — und bekommt jedes Mal
-   `code: 7403`, weil das Token nur *Workers Scripts:Edit* und *Cloudflare
-   Pages:Edit* trägt. Wegen `continue-on-error` steht darüber eine gelbe
-   Warnung und der Lauf ist grün. Bis dahin muss **jede neue Migration von
-   Hand** eingespielt werden; das Schema stimmt heute nur, weil
-   `0002_events.sql` so eingespielt wurde. Gefunden am 8. September im Log des
-   Laufs von 02:51, nicht beim Lesen des Workflows.
-8. **Eine WAF-Regel vor das Anmeldeformular** — Cloudflare-Dashboard,
-   *Security → WAF → Rate limiting rules*: `http.request.method eq "POST" and
-   http.host eq "knoellchenfrei.de"`, etwa 10 Anfragen je Minute je IP,
-   Aktion *Block*. Im kostenlosen Tarif ist genau eine solche Regel enthalten;
-   sie ist hier gut angelegt.
+7. ~~**`D1:Edit` zum CI-Token hinzufügen.**~~ **Am 8. September erledigt und
+   nachgemessen.** Der Deploy bekam bis dahin bei jedem Lauf `code: 7403` und
+   war wegen `continue-on-error` trotzdem grün — gefunden im Log, nicht beim
+   Lesen des Workflows. Der Probelauf danach meldet
+   `✅ No migrations to apply!`; damit ist der Weg offen und das Schema keine
+   Vermutung mehr. Neue Migrationen brauchen ab jetzt keinen Handgriff.
+8. **Das Anmeldeformular ist nicht gedrosselt — Entscheidung offen.**
+   Empfohlen war eine Rate-Limiting-Regel der Cloudflare-WAF. **Sie ist im
+   kostenlosen Tarif nicht mehr enthalten** (von dir am 8. September im
+   Dashboard nachgesehen); die Empfehlung fällt damit weg.
 
-   > **Warum das nicht in die Funktion gehört.** Der Riegel ist ein geteiltes
-   > Passwort, und ein Versuch kostet den Angreifer eine einzige Anfrage —
-   > gedrosselt wird heute nichts. Eine Zählung *in* der Pages-Funktion sähe
-   > nach einer Lösung aus und wäre keine: Pages-Funktionen laufen in vielen
-   > Isolaten, jedes zählte für sich, und das Ergebnis wäre eine Sicherheit,
-   > die es nicht gibt. Die Drosselung gehört vor die Funktion. Gefunden bei
-   > der Fehlerjagd in der Nacht zum 8. September, steht auch in
-   > [SECURITY.md](../SECURITY.md#bekannte-grenzen).
+   **Mein Vorschlag: nichts kaufen und nichts einbauen, sondern das Passwort
+   lang machen.** Der Angriff ist das Raten *eines* geteilten Geheimnisses. Bei
+   24 zufälligen Zeichen ist die Drosselung gleichgültig — ohne jedes Limit
+   dauert es länger als die Beta. Bei einem merkbaren Passwort hilft auch eine
+   Regel mit zehn Versuchen je Minute nur begrenzt. Die Länge ist die
+   Verteidigung, nicht die Zählung.
+
+   ```bash
+   LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24; echo
+   cd app && pnpm --filter @knoellchenfrei/web exec wrangler \
+     pages secret put BETA_PASSWORD --project-name=knoellchenfrei
+   gh workflow run Deploy --ref main   # Pages-Secrets binden erst beim nächsten Deploy
+   ```
+
+   Zwei Alternativen, damit sie nicht heimlich verworfen sind:
+
+   - **Turnstile** ist kostenlos und täte, was die Regel sollte — kostet aber
+     die Aussage „die Anmeldeseite lädt nichts von fremden Adressen". Ihre CSP
+     steht heute auf `default-src 'none'`.
+   - **Ein Zähler in D1**, in der Pages-Funktion. Bleibt erstklassig, braucht
+     aber eine D1-Bindung am Pages-Projekt und speichert einen gehashten
+     IP-Wert — ein Pseudonym, das es heute nicht gibt.
+
+   > **Was nicht geht: eine Zählung im Speicher der Funktion.** Pages-Funktionen
+   > laufen in vielen Isolaten, jedes zählte für sich, und das Ergebnis wäre
+   > eine Sicherheit, die es nicht gibt. Deshalb entweder vor die Funktion oder
+   > in einen gemeinsamen Speicher — oder gar nicht, und dafür ein langes
+   > Passwort.
 
 **Am 6. September abends erledigt** (nachgeprüft, nicht geglaubt):
 Organisationsbild, Vorschaubild des Repositories, Beschreibung und alle zwölf

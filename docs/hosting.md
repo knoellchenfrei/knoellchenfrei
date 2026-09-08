@@ -418,8 +418,11 @@ er den Worker ausrollt — mit `continue-on-error`, damit ein Migrationsfehler
 den Rollout nicht blockiert. Vorher lief es überhaupt nicht: Der Worker war
 grün, und die Tabelle war nicht da.
 
-> **Und er läuft bis heute nicht durch.** Nachgesehen im Log des Laufs vom
-> 8. September, 02:51:
+> **Er lief bis zum 8. September nicht durch** — behoben, nachdem das Recht am
+> Token hing; der Probelauf danach meldet `✅ No migrations to apply!`. Der
+> Befund bleibt hier stehen, weil die Form wiederkommt: Ein Schritt mit
+> `continue-on-error` kann jahrelang scheitern, ohne dass ein Lauf rot wird.
+> Nachgesehen im Log des Laufs vom 8. September, 02:51:
 >
 > ```text
 > A request to the Cloudflare API (/accounts/***/d1/database/…/query) failed.
@@ -427,7 +430,7 @@ grün, und die Tabelle war nicht da.
 >   [code: 7403]
 > ```
 >
-> Dem **CI-Token fehlt `D1:Edit`** — es trägt bewusst nur *Workers
+> Dem CI-Token fehlte **`D1:Edit`** — es trug bis dahin nur *Workers
 > Scripts:Edit* und *Cloudflare Pages:Edit* (siehe
 > [notfall.md](notfall.md#zwei-zugangsdaten-und-sie-können-verschiedenes)). Der
 > Schritt wurde eingebaut, ohne das Token zu erweitern. Wegen
@@ -436,8 +439,9 @@ grün, und die Tabelle war nicht da.
 > Projekt sonst Prüfungen baut. Dass das Schema trotzdem stimmt, liegt daran,
 > dass `0002_events.sql` von Hand eingespielt wurde.
 >
-> **Bis das Recht ergänzt ist, gehört jede neue Migration von Hand
-> eingespielt:**
+> **Solange das Recht fehlt, gehört jede neue Migration von Hand eingespielt** —
+> heute nicht mehr nötig, aber der Befehl bleibt für den Fall, dass ein Token
+> einmal enger geschnitten wird:
 >
 > ```bash
 > cd app && pnpm install

@@ -156,13 +156,21 @@ personenbezogenen Daten über ihre Nutzer, außer dem, was sie selbst melden.
   Unabhängig davon: prüfen, ob das Passwort anderswo wiederverwendet wurde.
 - **Das Formular des Beta-Riegels ist nicht gedrosselt.** Ein Versuch kostet
   eine Anfrage, und Cloudflare Pages bringt von sich aus keine Zählung mit.
-  Das Passwort ist geteilt und wird von Hand gesetzt — seine Länge ist damit
-  die einzige Schranke. Der richtige Ort für die Abhilfe ist eine
-  Rate-Limiting-Regel der Cloudflare-WAF auf `POST /` (eine Regel ist im
-  kostenlosen Tarif enthalten), nicht eine Zählung in der Funktion selbst:
-  Pages-Funktionen laufen in vielen Isolaten, ein Zähler im Speicher zählt
-  jedes für sich und gäbe eine Sicherheit vor, die es nicht gibt. Steht in
-  `docs/todo.md`.
+  Das Passwort ist geteilt und wird von Hand gesetzt — **seine Länge ist die
+  Schranke**, und sie ist es bewusst.
+
+  Empfohlen war hier eine Rate-Limiting-Regel der Cloudflare-WAF auf `POST /`.
+  Die ist im kostenlosen Tarif **nicht mehr enthalten** (am 8. September im
+  Dashboard nachgesehen), und damit fällt die Empfehlung weg. Was bleibt, ist
+  die Rechnung: Der Angriff ist das Raten *eines* geteilten Geheimnisses; bei
+  24 zufälligen Zeichen ist die Drosselung gleichgültig, bei einem merkbaren
+  Passwort hilft auch eine Regel nur begrenzt.
+
+  Was **nicht** geht, und zwar unabhängig vom Tarif: eine Zählung im Speicher
+  der Pages-Funktion. Die läuft in vielen Isolaten, jedes zählte für sich, und
+  das Ergebnis wäre eine Sicherheit, die es nicht gibt. Eine echte Drosselung
+  müsste vor die Funktion (Turnstile) oder in einen gemeinsamen Speicher (D1) —
+  beides mit einem Preis, der in `docs/todo.md` steht.
 - Kartenkacheln kommen aus dem **eigenen** R2-Eimer, seit dem 7. September
   auch die Schriftschnitte. Die Vektorkarte macht damit keinen einzigen
   fremden Abruf mehr. Nur der Rückfall auf OpenStreetMap-Rasterkacheln — er
