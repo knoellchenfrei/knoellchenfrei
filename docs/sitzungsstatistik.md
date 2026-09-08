@@ -534,7 +534,7 @@ und die Regel dagegen stand zu diesem Zeitpunkt seit zwei Stunden in
 | Assistenten-Nachrichten | 2.550 |
 | Commits | 106 |
 | Geänderte Zeilen | +41.925 / −3.546 |
-| Unit-Tests am Ende | 649 |
+| Unit-Tests am Ende | 653 |
 | End-to-End-Tests | 154 |
 | Coverage (`core`) | 99,9 % Zeilen |
 
