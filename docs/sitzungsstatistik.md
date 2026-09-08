@@ -432,8 +432,15 @@ Städte am Morgen vor.
 
 ## Die dritte Sitzung: 7. auf 8. September 2026
 
-**Stand 8. September, 03:20 Uhr** — die Sitzung läuft noch, die Zahlen sind
+**Stand 8. September, 02:40 Uhr** — die Sitzung läuft noch, die Zahlen sind
 eine Momentaufnahme.
+
+> Die Uhrzeit stand hier zuerst falsch (03:20). Ursache: Ich hatte GitHubs
+> Zeitstempel gelesen, die in **UTC** stehen, und sie für Ortszeit gehalten —
+> zwei Stunden Unterschied. Dieselbe Verwechslung steckt in der Falle, gegen
+> die dieses Projekt `berlinWallClock` hat. Aufgeschrieben, weil eine
+> Statistikdatei mit einer falschen Uhrzeit die schlechteste Sorte Fehler ist:
+> Sie sieht aus wie eine Messung.
 
 Diesmal gibt es **nur eine** Quelle: den Sitzungsverlauf als JSONL
 (6.673 Zeilen, 28,9 MB). Die Buchhaltung (`get_session` →
