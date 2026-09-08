@@ -432,7 +432,7 @@ Städte am Morgen vor.
 
 ## Die dritte Sitzung: 7. auf 8. September 2026
 
-**Stand 8. September, 04:20 Uhr** — die Sitzung läuft noch, die Zahlen sind
+**Stand 8. September, 04:30 Uhr** — die Sitzung läuft noch, die Zahlen sind
 eine Momentaufnahme.
 
 > Die Uhrzeit stand hier zuerst falsch (03:20). Ursache: Ich hatte GitHubs
@@ -454,7 +454,7 @@ fortschreibt, fragt die Buchhaltung noch einmal, bevor er sie glaubt.
 
 | | |
 | --- | --- |
-| Antworten von `claude-opus-5` | 2.554 |
+| Antworten von `claude-opus-5` | 2.633 |
 | Antworten von `claude-fable-5-1` | 181 |
 | Synthetische Nachrichten | 3 |
 | Kontextfenster | 1.000.000 |
@@ -467,22 +467,22 @@ gegengelesen worden, bevor Opus ihn umgesetzt hat. Das sind die 181 Antworten.
 
 | Art | Tokens |
 | --- | ---: |
-| Eingabe | 9.746 |
-| Ausgabe | 2.400.987 |
-| Cache geschrieben | 11.593.836 |
-| Cache gelesen | 1.392.191.097 |
-| **Summe** | **1.406.195.666** |
+| Eingabe | 9.904 |
+| Ausgabe | 2.456.779 |
+| Cache geschrieben | 11.659.154 |
+| Cache gelesen | 1.448.953.035 |
+| **Summe** | **1.463.078.872** |
 
 Cache-Lesen macht **99,0 %** aus. Das ist die Kennzahl, die am meisten über die
 Arbeitsweise sagt: Es wird sehr viel öfter wiedergelesen als geschrieben.
 
 ### Werkzeuge
 
-1.746 Aufrufe in 19 verschiedenen Werkzeugen.
+1.801 Aufrufe in 19 verschiedenen Werkzeugen.
 
 | Werkzeug | Aufrufe | Werkzeug | Aufrufe |
 | --- | ---: | --- | ---: |
-| Bash | 1.610 | WebSearch | 4 |
+| Bash | 1.663 | WebSearch | 4 |
 | Read | 31 | `actions_list` | 3 |
 | Edit | 19 | TaskStop | 2 |
 | TaskOutput | 13 | `create_event` | 2 |
@@ -529,16 +529,16 @@ und die Regel dagegen stand zu diesem Zeitpunkt seit zwei Stunden in
 
 | | |
 | --- | ---: |
-| Laufzeit | 25 h 53 min |
+| Laufzeit | 26 h 8 min |
 | Echte Nachrichten des Nutzers | 52 |
-| Assistenten-Nachrichten | 2.738 |
-| Commits | 111 |
-| Geänderte Zeilen | +42.264 / −3.618 |
+| Assistenten-Nachrichten | 2.817 |
+| Commits | 119 |
+| Geänderte Zeilen | +42.736 / −3.741 |
 | Unit-Tests am Ende | 668 |
 | End-to-End-Tests | 154 |
 | Coverage (`core`) | 99,9 % Zeilen |
 
-**52 Nachrichten auf 111 Commits** ist das Verhältnis, um das es in dieser
+**52 Nachrichten auf 119 Commits** ist das Verhältnis, um das es in dieser
 Sitzung ging: Der Auftrag lautete, die Nacht durchzuarbeiten. Was dabei
 herauskam, steht in [nachtplan-2026-09-08.md](nachtplan-2026-09-08.md) — und
 was dabei schiefging, steht dort im selben Dokument, Abschnitt D.
