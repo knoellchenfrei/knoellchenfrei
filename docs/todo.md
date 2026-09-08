@@ -856,8 +856,11 @@ Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
       hineinholen und den Beitritt auf Genehmigung stellen. Das erfüllt
       „benutzt" und bleibt hinter dem Riegel aus Punkt 1. Begründung und
       Wortlaut in [entscheidungen.md](entscheidungen.md#telegram-und-der-name).
-- [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
-      im Worker hinterlegen — die Befehle stehen in
+- [ ] **Token des bestehenden Bots holen und Webhook anmelden.**
+      **Nicht `/newbot`** — `@knoellchen_bot` gibt es seit dem 6. September.
+      @BotFather → `/mybots` → `@knoellchen_bot` → *API Token*; ist er
+      verloren, stellt *Revoke* einen neuen aus. Dann zwei Geheimnisse im
+      Worker hinterlegen — die Befehle stehen in
       [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet
       `/telegram` mit 404.
 - [ ] **Stufe 2: öffentliche Gruppen mitlesen.** Deutlich mehr Meldungen, aber

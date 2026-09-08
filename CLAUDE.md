@@ -617,6 +617,17 @@ wiederholt.
   Nacht die Zahl von kurz vor Mitternacht auf dem Schirm — eine tote Zahl, die
   aussieht wie eine lebende, und das Gerät fehlte im Tageszähler, obwohl es
   offen war. `visitRowId(at)` bildet sie jetzt bei jedem Ping neu.
+- **Eine Anleitung altert mit dem, was sie einrichtet.** In `hosting.md` stand
+  bis zum 8. September „@BotFather anschreiben, `/newbot`, Namen vergeben" —
+  geschrieben am 6. September, **bevor** der Bot existierte. Anderthalb Seiten
+  weiter, in `entscheidungen.md`, `notfall.md` und `marke.md`, steht seit
+  demselben Tag `@knoellchen_bot` als Tatsache, mit `getMe` belegt. Wer der
+  Anleitung gefolgt wäre, hätte einen zweiten Bot angelegt und den Namen im
+  Schema verbrannt; ein umbenannter Telegram-Link ist ein toter Link in jedem
+  Beitrag, der ihn je geteilt hat. Aufgefallen ist es an der Rückfrage des
+  Betreibers („wieso einen neuen Bot?"), nicht beim Lesen — und `doku-pruefen.mjs`
+  kann so etwas nicht finden: Der Verweis war intakt, nur der Inhalt überholt.
+  **Eine Einrichtungsanweisung wird nach dem Einrichten noch einmal gelesen.**
 - **Ein Katalogeintrag ohne Aufrufstelle ist eine leere Spalte.** Drei der
   zwölf Ereignisse (`layer.on`, `city.suggest`, `tow.open`) standen in
   `core/events.ts` und in keiner Zeile der App — auf der Statistikseite hätten

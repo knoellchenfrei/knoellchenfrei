@@ -508,8 +508,23 @@ Worker und schreibt über denselben Pfad in dieselben Tabellen wie die Web-App.
 Ein eigener Worker wäre eine zweite Betriebsumgebung für eine Funktion, die
 sich mit der ersten alles teilt.
 
-1. In Telegram **@BotFather** anschreiben, `/newbot`, Namen vergeben. Am Ende
-   steht ein Token.
+1. **Den Token des bestehenden Bots holen** — nicht `/newbot`.
+   `@knoellchen_bot` gibt es seit dem 6. September; `getMe` hat ihn damals
+   beim Einrichten zurückgegeben, und so steht er in
+   [entscheidungen.md](entscheidungen.md#telegram-und-der-name),
+   [notfall.md](notfall.md) und [marke.md](marke.md). Ein zweiter Bot daneben
+   verbrennt den Namen im Schema, und ein umbenannter Telegram-Link ist ein
+   toter Link in jedem Beitrag, der ihn je geteilt hat.
+
+   In Telegram: **@BotFather → `/mybots` → `@knoellchen_bot` → API Token.**
+   Ist der alte Token verloren, stellt *Revoke* einen neuen aus und macht den
+   alten ungültig — folgenlos, solange nirgends einer gesetzt ist. Genau so
+   steht es auch in `notfall.md`: „Token **nein** — neu ausstellen."
+
+   *(Hier stand bis zum 8. September „`/newbot`, Namen vergeben". Das war am
+   6. September richtig, bevor der Bot existierte, und ist danach nie
+   nachgezogen worden — aufgefallen durch die Rückfrage des Betreibers,
+   nicht beim Lesen.)*
 2. Ein zweites Geheimnis frei erfinden — es weist Telegram gegenüber dem Worker
    aus. Die Webhook-Adresse ist sonst nur durch Unkenntnis geschützt, und
    „niemand kennt sie" ist keine Zugangskontrolle.
