@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 
 import type { LoadedZone } from '../zones.js'
+import { zoneKurz } from '../zone-label.js'
 
 interface Props {
   zones: readonly LoadedZone[]
@@ -60,7 +61,7 @@ export function SearchBox({ zones, onPick }: Props) {
                   setQuery('')
                 }}
               >
-                <strong>Zone {zone.properties.zone}</strong>
+                <strong>{zoneKurz(zone.properties)}</strong>
                 <span>{zone.properties.district}</span>
               </button>
             </li>

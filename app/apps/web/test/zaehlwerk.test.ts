@@ -285,3 +285,52 @@ describe('die Kennung einer Kartenfläche', () => {
     expect(sammlung.features[0]?.id).toBe(0)
   })
 })
+
+/**
+ * Wie eine Fläche heißt, der die Quelle keinen Namen gegeben hat.
+ *
+ * Hamburg liefert für 44 seiner 145 Flächen den Schlüssel `-`. An neun Stellen
+ * der Oberfläche stand daraufhin wörtlich „Zone -" — im Panel, in der Ansage
+ * für Screenreader, in der Suche, im Meldedialog und im Satz „Parkplatz
+ * gemerkt in Zone -". Das liest sich wie ein Anzeigefehler und ist eine
+ * Tatsache der Quelle; man muss sie nur aussprechen statt durchreichen.
+ */
+describe('der Name einer Fläche', () => {
+  it('nennt eine Zone mit Nummer beim Namen', async () => {
+    const { zoneImDativ, zoneTitel, hatNummer } = await import('../src/zone-label.js')
+    expect(hatNummer({ zone: '12' })).toBe(true)
+    expect(zoneImDativ({ zone: '12' })).toBe('Zone 12')
+    expect(zoneTitel({ zone: 'A103' })).toBe('Parkzone A103')
+  })
+
+  it('sagt bei „-" etwas, das ein Mensch lesen kann', async () => {
+    const { zoneImDativ, zoneTitel, hatNummer } = await import('../src/zone-label.js')
+    expect(hatNummer({ zone: '-' })).toBe(false)
+    expect(zoneTitel({ zone: '-' })).toBe('Bewirtschaftete Fläche')
+    // Und der Satz, in dem es am meisten auffiel — im Dativ, denn der erste
+    // Anlauf schrieb „gemerkt in eine Fläche ohne Nummer".
+    expect(`Parkplatz gemerkt in ${zoneImDativ({ zone: '-' })}.`).toBe(
+      'Parkplatz gemerkt in einer Fläche ohne Nummer.'
+    )
+  })
+
+  /**
+   * Die Kurzform gibt es, weil die erste Fassung überall `zoneTitel` einsetzte
+   * und damit an vier Stellen aus „Zone 12" ein „Parkzone 12" machte — eine
+   * Wortänderung, um die niemand gebeten hatte. Vier E2E-Tests haben es
+   * gemeldet („Received string: 'Parkzone 3'"); der Fehler, um den es ging,
+   * war ausschliesslich der Platzhalter.
+   */
+  it('lässt die gewohnte Kurzform stehen, wo vorher „Zone 12" stand', async () => {
+    const { zoneKurz } = await import('../src/zone-label.js')
+    expect(zoneKurz({ zone: '12' })).toBe('Zone 12')
+    expect(zoneKurz({ zone: '3' })).toMatch(/^Zone /)
+    expect(zoneKurz({ zone: '-' })).toBe('Fläche ohne Nummer')
+  })
+
+  it('behandelt einen leeren Schlüssel wie einen fehlenden', async () => {
+    const { hatNummer } = await import('../src/zone-label.js')
+    expect(hatNummer({ zone: '' })).toBe(false)
+    expect(hatNummer({ zone: '  ' })).toBe(false)
+  })
+})

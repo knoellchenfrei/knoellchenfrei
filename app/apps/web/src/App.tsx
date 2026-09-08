@@ -48,6 +48,7 @@ import { TowInfo } from './components/TowInfo.js'
 import { ZonePanel } from './components/ZonePanel.js'
 import { seedMarks, seedSightings } from './seed.js'
 import { track, trackNow } from './track.js'
+import { zoneImDativ, zoneKurz, zoneTitel } from './zone-label.js'
 import {
   countVisit,
   hideInstall,
@@ -92,7 +93,7 @@ function prefersReducedMotion(): boolean {
 /** One sentence for the live region when a zone becomes the selection. */
 function describeZone(properties: ZoneProperties, now: number): string {
   const paid = isChargeable(toParkingZone(properties), now)
-  return `Zone ${properties.zone}, ${properties.district}: ${
+  return `${zoneKurz(properties)}, ${properties.district}: ${
     paid ? 'gebührenpflichtig' : 'gerade keine Gebühr'
   }. Details im Seitenbereich.`
 }
@@ -784,7 +785,7 @@ export function App() {
     for (const cell of heat.cells) {
       const zone = zoneAt(zones, cell.centre)
       const key = zone?.properties.zone ?? '—'
-      const label = zone === null ? 'Außerhalb der Zonen' : `Zone ${zone.properties.zone}`
+      const label = zone === null ? 'Außerhalb der Zonen' : zoneKurz(zone.properties)
       const entry = perZone.get(key) ?? { label, marks: 0, days: 0, weight: 0 }
       entry.marks += cell.marks
       entry.days = Math.max(entry.days, cell.days)
@@ -1008,7 +1009,7 @@ export function App() {
     setAnnouncement(
       hit === null
         ? 'Parkplatz gemerkt, außerhalb der Parkzonen.'
-        : `Parkplatz gemerkt in Zone ${hit.properties.zone}.`
+        : `Parkplatz gemerkt in ${zoneImDativ(hit.properties)}.`
     )
   }, [position, anchor, zones])
 

@@ -102,6 +102,16 @@ Ping absichtlich still bleibt, sieht man davon nichts ausser einer Zahl, die
 sich nicht mehr ändert. Gefunden wurde er, indem der Client gegen die
 Serverregel gehalten wurde, die er bedienen soll.
 
+Aus demselben Befund fiel eine zweite Sache heraus, die niemandem aufgefallen
+war, weil sie nur in Hamburg auftritt: An **neun Stellen in fünf Dateien**
+stand wörtlich „Zone -" — im Panel, in der Ansage für Screenreader, in der
+Suche, im Meldedialog und im Satz „Parkplatz gemerkt in Zone -". Das liest sich
+wie ein Anzeigefehler und ist eine Tatsache der Quelle; sie gehört
+ausgesprochen, nicht durchgereicht. Alle neun gehen jetzt über
+`src/zone-label.ts`. Der erste Anlauf schrieb dabei „gemerkt in **eine** Fläche
+ohne Nummer" — aufgefallen im eigenen Test, in dem der falsche Satz als
+Erwartung stand.
+
 Der zehnte ist der teuerste und zeigt eine dritte Sorte Blindheit: **Ich habe
 zuerst das Falsche gemessen.** Auf die Beobachtung „Hamburg hat 145 Flächen für
 63 Zonen" habe ich vier Beispiele angesehen, in allen vieren unterschied sich
@@ -130,6 +140,7 @@ die Fehler sind der Punkt, sondern die Prüfung, die sie künftig laut macht.
 | **D1-Migrationen liefen nie — und laufen immer noch nicht** | Der Deploy rief `migrations apply` gar nicht. Seit dem 7. September ruft er es, und bekommt jedes Mal `code: 7403`: Dem CI-Token fehlt `D1:Edit`, es trägt bewusst nur *Workers Scripts:Edit* und *Cloudflare Pages:Edit*. Wegen `continue-on-error` steht darüber eine gelbe Warnung, und der Lauf ist grün | Nichts — das Recht muss ans Token, und das ist im Dashboard. Steht als Punkt 7 in `todo.md`. Gefunden im Log des Laufs vom 8. September, 02:51, **nachdem** ich in `hosting.md` geschrieben hatte, der Schritt tue es |
 | **220 KB fremde Rohdaten in einem Commit über Testabdeckung** (`bdf27a2`) | `git add -A`, während zwei Hintergrundagenten in denselben Baum schrieben | Herausgenommen in `a0eb8a8`. Die Regel dahinter: Solange Agenten im selben Baum arbeiten, wird **benannt** hinzugefügt, nie pauschal |
 | **Dieselbe Sache noch einmal, zwei Stunden später** (`01df659`) | Wieder `git add -A`, wieder Fixtures eines laufenden Agenten — diesmal Düsseldorfs, eine Minute nachdem er sie geschrieben hatte. Die Regel stand zu diesem Zeitpunkt seit zwei Stunden in `CLAUDE.md`, von mir geschrieben, und **gemerkt hat es der Agent, nicht ich** | Herausgenommen. Und die Lehre ist nicht „besser aufpassen": Eine Regel, die nur im Kopf gilt, ist keine. Solange Agenten laufen, gehört `git add` mit Pfaden geschrieben — was pauschal geht, geht irgendwann pauschal daneben |
+| **Dreimal derselbe Pipe-Fehler in einer Nacht** | `pruefung \| tail` — eine Pipeline hat den Status ihres letzten Glieds. Beim dritten Mal traf es die E2E-Suite: `tail -5` schnitt die Zeile „4 failed" ab und zeigte „149 passed", der Exit-Code gehörte `tail`. **Vier rote Tests sahen aus wie ein grüner Lauf** | Aufgefallen nur daran, dass 149 + 1 nicht 154 ergibt. Die Suite schreibt jetzt in eine Datei, und die Testzahl wird nachgerechnet: Eine Suite, die weniger Tests meldet, hat keine verloren, sondern welche verschwiegen |
 | **Ein roter Typecheck als Dauerzustand** | Die vorbereiteten Städte importieren Namen, die `core` ohne die drei Einträge nicht ausführt | Der Code liegt auf `staedte/koeln-karlsruhe-vorbereitet`, nicht auf dem Arbeitszweig. Ein dauerhaft roter Typecheck macht das nächste echte Problem unsichtbar |
 
 Der gemeinsame Nenner aller fünf ist derselbe, den CLAUDE.md schon dreimal

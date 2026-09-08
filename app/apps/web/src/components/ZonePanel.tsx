@@ -1,6 +1,7 @@
 import { duration, euro, feeLabel, maxStayLabel, until } from '../format.js'
 import type { ZoneStatus } from '../useZoneStatus.js'
 import type { ZoneProperties } from '../types.js'
+import { zoneTitel } from '../zone-label.js'
 
 /**
  * The defect codes come from the core parser and are English by design (they
@@ -23,13 +24,13 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
   const { chargeable, changesAt, hourly, uncertain } = status
 
   return (
-    <section className="panel" aria-label={`Parkzone ${properties.zone}`}>
+    <section className="panel" aria-label={zoneTitel(properties)}>
       <header className="panel__head">
         <div>
           <p className="panel__eyebrow">{properties.district}</p>
           {/* Focus target after a search pick; tabIndex -1 keeps it out of the Tab order. */}
           <h2 className="panel__title" id="zone-panel-title" tabIndex={-1}>
-            Parkzone {properties.zone}
+            {zoneTitel(properties)}
           </h2>
         </div>
         <span

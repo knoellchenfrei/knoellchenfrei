@@ -526,10 +526,12 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       Kartenfärbung ist deshalb seit dem 8. September nicht mehr daran
       gebunden (siehe `LoadedZone.id`). An drei Stellen wirkt er trotzdem noch:
 
-      1. **Die Oberfläche schreibt „Zone -"** — im Panel, in der Ansage für
-         Screenreader und im Satz „Parkplatz gemerkt in Zone -". Richtig wäre
-         „Bewirtschaftete Fläche ohne Nummer" oder der Stadtteil. Das ist die
-         billigste Hälfte und braucht nur einen Blick auf `describeZone`.
+      1. ~~**Die Oberfläche schreibt „Zone -"**~~ **Erledigt am 8. September.**
+         Es waren neun Stellen in fünf Dateien; sie gehen jetzt alle über
+         `src/zone-label.ts`. Eine Fläche ohne Nummer heisst „Bewirtschaftete
+         Fläche", und der eine Satz, der sie mit „in" nennt, bekommt die
+         Dativform — der erste Anlauf schrieb „gemerkt in eine Fläche ohne
+         Nummer" und ist im eigenen Test aufgefallen.
       2. **Die Nutzungsstatistik zählt sie als *eine* Zone.** `zone.open` mit
          der Ausprägung `-` steht für 44 verschiedene Flächen quer durch die
          Stadt; die Zeile ist damit die häufigste und sagt am wenigsten.

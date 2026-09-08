@@ -432,7 +432,7 @@ Städte am Morgen vor.
 
 ## Die dritte Sitzung: 7. auf 8. September 2026
 
-**Stand 8. September, 02:40 Uhr** — die Sitzung läuft noch, die Zahlen sind
+**Stand 8. September, 03:50 Uhr** — die Sitzung läuft noch, die Zahlen sind
 eine Momentaufnahme.
 
 > Die Uhrzeit stand hier zuerst falsch (03:20). Ursache: Ich hatte GitHubs
@@ -454,7 +454,7 @@ fortschreibt, fragt die Buchhaltung noch einmal, bevor er sie glaubt.
 
 | | |
 | --- | --- |
-| Antworten von `claude-opus-5` | 1.967 |
+| Antworten von `claude-opus-5` | 2.366 |
 | Antworten von `claude-fable-5-1` | 181 |
 | Synthetische Nachrichten | 3 |
 | Kontextfenster | 1.000.000 |
@@ -467,32 +467,32 @@ gegengelesen worden, bevor Opus ihn umgesetzt hat. Das sind die 181 Antworten.
 
 | Art | Tokens |
 | --- | ---: |
-| Eingabe | 8.572 |
-| Ausgabe | 1.985.668 |
-| Cache geschrieben | 10.925.430 |
-| Cache gelesen | 1.095.485.019 |
-| **Summe** | **1.108.404.689** |
+| Eingabe | 9.370 |
+| Ausgabe | 2.309.065 |
+| Cache geschrieben | 11.461.964 |
+| Cache gelesen | 1.271.092.903 |
+| **Summe** | **1.284.873.302** |
 
-Cache-Lesen macht **98,8 %** aus. Das ist die Kennzahl, die am meisten über die
+Cache-Lesen macht **98,9 %** aus. Das ist die Kennzahl, die am meisten über die
 Arbeitsweise sagt: Es wird sehr viel öfter wiedergelesen als geschrieben.
 
 ### Werkzeuge
 
-1.341 Aufrufe in 18 verschiedenen Werkzeugen.
+1.608 Aufrufe in 19 verschiedenen Werkzeugen.
 
 | Werkzeug | Aufrufe | Werkzeug | Aufrufe |
 | --- | ---: | --- | ---: |
-| Bash | 1.220 | WebSearch | 4 |
+| Bash | 1.479 | WebSearch | 4 |
 | Read | 31 | `actions_list` | 3 |
 | Edit | 19 | TaskStop | 2 |
 | TaskOutput | 13 | `create_event` | 2 |
 | Write | 12 | `get_session` | 1 |
-| Agent | 8 | `navigate` | 1 |
+| Agent | 9 | `navigate` | 1 |
 | WebFetch | 8 | `tabs_context` | 1 |
 | ToolSearch | 7 | SendMessage | 1 |
 | Artifact | 7 | PushNotification | 1 |
 
-**91 % ist Bash.** Das ist kein Stilmerkmal, sondern eine Vorgabe dieser
+**92 % ist Bash.** Das ist kein Stilmerkmal, sondern eine Vorgabe dieser
 Umgebung: Lesen mit `sed`, Suchen mit `grep`, Ändern mit `python3`-Heredocs
 statt mit den dafür gedachten Werkzeugen. Der Preis steht in dieser Datei
 selbst — ein zeilenbasiertes Ersetzen hat vier Abschnitte aus `docs/todo.md`
@@ -501,7 +501,7 @@ Blockgrenzen nicht hat.
 
 ### Agenten
 
-Acht, alle mit klar geschnittenem Schreibbereich:
+Neun, alle mit klar geschnittenem Schreibbereich:
 
 | Agent | Was er durfte |
 | --- | --- |
@@ -513,25 +513,32 @@ Acht, alle mit klar geschnittenem Schreibbereich:
 | Fable prüft den Statistik-Plan | nur lesen |
 | Köln vorbereiten | eigene Dateien, **nicht** integriert |
 | Karlsruhe vorbereiten | eigene Dateien, **nicht** integriert |
+| Düsseldorf vorbereiten | eigene Dateien, **nicht** integriert |
 
-Die beiden letzten hatten eine Auflage, die es vorher nicht gab:
-`core/city.ts`, `core/index.ts` und `ingest/src/sources.ts` sind tabu. Beide
-haben sie eingehalten — nachgeprüft über `git status`, nicht geglaubt.
+Die drei letzten hatten eine Auflage, die es vorher nicht gab: `core/city.ts`,
+`core/index.ts` und `ingest/src/sources.ts` sind tabu. Alle drei haben sie
+eingehalten — nachgeprüft über `git status`, nicht geglaubt.
+
+Und einer von ihnen hat in seinem Bericht einen Fehler von **mir** gemeldet:
+Ein `git add -A` hatte seine Fixtures mitcommittet, eine Minute nachdem er sie
+geschrieben hatte. Das ist der zweite Vorfall derselben Art in dieser Nacht,
+und die Regel dagegen stand zu diesem Zeitpunkt seit zwei Stunden in
+`CLAUDE.md` — von mir geschrieben.
 
 ### Übrige Kennzahlen
 
 | | |
 | --- | ---: |
-| Laufzeit | 24 h 19 min |
-| Echte Nachrichten des Nutzers | 51 |
-| Assistenten-Nachrichten | 2.151 |
-| Commits | 87 |
-| Geänderte Zeilen | +38.111 / −2.667 |
-| Unit-Tests am Ende | 620 |
-| End-to-End-Tests | 152 |
+| Laufzeit | 25 h 27 min |
+| Echte Nachrichten des Nutzers | 52 |
+| Assistenten-Nachrichten | 2.550 |
+| Commits | 106 |
+| Geänderte Zeilen | +41.925 / −3.546 |
+| Unit-Tests am Ende | 649 |
+| End-to-End-Tests | 154 |
 | Coverage (`core`) | 99,9 % Zeilen |
 
-**51 Nachrichten auf 87 Commits** ist das Verhältnis, um das es in dieser
+**52 Nachrichten auf 106 Commits** ist das Verhältnis, um das es in dieser
 Sitzung ging: Der Auftrag lautete, die Nacht durchzuarbeiten. Was dabei
 herauskam, steht in [nachtplan-2026-09-08.md](nachtplan-2026-09-08.md) — und
 was dabei schiefging, steht dort im selben Dokument, Abschnitt D.

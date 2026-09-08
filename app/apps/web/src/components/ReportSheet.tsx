@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react'
 import { distanceMetres, type Position } from '@knoellchenfrei/core'
 
 import { representativePoint, zoneAt, type LoadedZone } from '../zones.js'
+import { zoneKurz } from '../zone-label.js'
 
 interface Props {
   zones: readonly LoadedZone[]
@@ -66,7 +67,7 @@ export function ReportSheet({
 
   const zoneChoice = (zone: LoadedZone, detail: string): Choice => ({
     key: `zone-${zone.properties.zone}`,
-    label: `Zone ${zone.properties.zone}`,
+    label: zoneKurz(zone.properties),
     detail,
     point: representativePoint(zone),
   })
@@ -77,7 +78,7 @@ export function ReportSheet({
     const zone = zoneAt(zones, anchor)
     return {
       key: 'map',
-      label: zone === null ? 'Angetippte Stelle' : `Zone ${zone.properties.zone}`,
+      label: zone === null ? 'Angetippte Stelle' : zoneKurz(zone.properties),
       detail: zone === null ? 'außerhalb der Parkzonen' : `${zone.properties.district} · angetippt`,
       // The tapped point itself, not the zone's centre: it is more precise, and
       // the report is coarsened to ~10 m anyway.
@@ -91,7 +92,7 @@ export function ReportSheet({
     return {
       key: 'gps',
       label: 'Mein Standort',
-      detail: zone === null ? 'außerhalb der Parkzonen' : `Zone ${zone.properties.zone}`,
+      detail: zone === null ? 'außerhalb der Parkzonen' : zoneKurz(zone.properties),
       point: position,
     }
   }, [position, zones])

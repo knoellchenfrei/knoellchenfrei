@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 649 Unit-Tests (core, api, web)
+pnpm test                                           # 653 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -62,7 +62,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
 davon Tests: `core` (548), `apps/api` (64, Worker und Zählwerk) und `apps/web`
-(37, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung). Die beiden letzten haben eine
+(41, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen). Die beiden letzten haben eine
 eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -76,7 +76,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=649 E2E_COUNT=154 npx tsx src/build-badges.ts
+TEST_COUNT=653 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -136,6 +136,18 @@ wiederholt.
   Prüfung ging als grün durch, der Commit lag draussen, bevor die Meldung
   gelesen war. Ein Prüfskript wird nie in eine Pipe gehängt; wer die Ausgabe
   kürzen will, nimmt `set -o pipefail` oder ruft es getrennt auf.
+
+  **Dritter Vorfall, eine Stunde später, und diesmal die volle Wirkung:**
+  `npx playwright test 2>&1 | tail -5`. Die Zusammenfassung von Playwright
+  nennt die Fehlschläge in der **ersten** Zeile ihres Blocks — `tail -5`
+  schneidet genau die ab und zeigt „1 skipped / 149 passed". Dazu ein
+  `exited with code 0`, das `tail` gehörte. **Vier rote Tests sahen aus wie ein
+  grüner Lauf.** Aufgefallen ist es nur daran, dass 149 + 1 nicht 154 ergibt.
+  Die Suite wird deshalb in eine Datei geschrieben und die Zusammenfassung
+  daraus gelesen: `npx playwright test --reporter=list > lauf.txt 2>&1`,
+  danach `grep -E '[0-9]+ (passed|failed)' lauf.txt`. **Und die Testzahl wird
+  nachgerechnet** — eine Suite, die plötzlich weniger Tests meldet, hat keine
+  verloren, sondern welche verschwiegen.
 - **Nach einem Eingriff in die Oberfläche die volle E2E-Suite laufen lassen,
   bevor committet wird.** Ein zweiter `.callout` in den Einstellungen hat einen
   bestehenden Strict-Mode-Test gebrochen; der Commit war da schon draußen.
