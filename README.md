@@ -243,11 +243,11 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 640 Unit-Tests
+pnpm test                              # 645 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 152 End-to-End-Tests
+cd apps/web && npx playwright test     # 154 End-to-End-Tests
 ```
 
 **Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
@@ -282,8 +282,8 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 640 — 547 in `core`, 64 für Worker und Zählwerk, 29 für Beta-Riegel und Zählwerk der App; davon 43 Regressionstests für konkrete gefundene Fehler |
-| End-to-End | 152 über Desktop und Handy, gegen den Produktions-Build; 151 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
+| Unit-Tests | 645 — 547 in `core`, 64 für Worker und Zählwerk, 34 für Beta-Riegel, Zählwerk und Besuchszähler; davon 44 Regressionstests für konkrete gefundene Fehler |
+| End-to-End | 154 über Desktop und Handy, gegen den Produktions-Build; 153 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |

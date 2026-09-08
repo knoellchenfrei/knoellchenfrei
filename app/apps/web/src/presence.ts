@@ -93,6 +93,28 @@ function visitIdForToday(day: string): string {
   }
 }
 
+/**
+ * Die Zeilenkennung dieses Geräts für den Tag, an dem gerade gepingt wird.
+ *
+ * **Sie wird bei jedem Ping neu gebildet, nicht einmal beim Start** — und das
+ * ist die Behebung eines Fehlers, den man nur um Mitternacht sieht. Der Worker
+ * weist eine Kennung ab, deren Tag nicht der heutige ist (`422 stale day`);
+ * das muss er, sonst liesse sich ein vergangener Tag aufblähen. Die App bildete
+ * die Kennung aber **einmal** beim Aufsetzen und behielt sie. Ein Tab, der um
+ * 23:55 offen war, schickte ab 00:00 stundenlang die Kennung von gestern:
+ * jeder Ping ein 422, und weil ein fehlgeschlagener Ping absichtlich still
+ * bleibt („dann gelten die vorigen Zahlen"), stand auf dem Schirm die ganze
+ * Nacht die Zahl von kurz vor Mitternacht. Eine tote Zahl, die aussieht wie
+ * eine lebende.
+ *
+ * `visitIdForToday` legt beim Tageswechsel von selbst eine neue Kennung an —
+ * es fehlte nur der zweite Aufruf.
+ */
+export function visitRowId(at: number): string {
+  const tag = berlinDay(at)
+  return `${tag}-${visitIdForToday(tag)}`
+}
+
 /** Row ids are `<day>-<id>`; the day has to survive a malformed body. */
 function dayOf(docId: string): string | null {
   const match = /^(\d{4}-\d{2}-\d{2})-[\w-]{1,32}$/.exec(docId)
@@ -112,14 +134,15 @@ function daysBetween(a: string, b: string): number {
 const PING_MS = 2 * 60_000
 
 function workerStats(base: string, onChange: (patch: Partial<LiveStats>) => void): () => void {
-  const today = berlinDay(Date.now())
-  const id = `${today}-${visitIdForToday(today)}`
   let stopped = false
 
   const ping = (): void => {
     // A hidden tab is not a viewer. Without this a phone left on the homescreen
     // would count as present for as long as the browser keeps the page alive.
     if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
+    // Bei jedem Ping neu — siehe `visitRowId`. Ein Tab, der über Mitternacht
+    // offen bleibt, zählte sonst ab 00:00 gar nicht mehr, und zwar still.
+    const id = visitRowId(Date.now())
     void fetch(`${base}/visits`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -190,7 +213,7 @@ export function openLiveStats(onChange: (patch: Partial<LiveStats>) => void): ()
       const db = value as Db | null
       if (db === null || stopped) return
       const today = berlinDay(Date.now())
-      const id = `${today}-${visitIdForToday(today)}`
+      const id = visitRowId(Date.now())
       // Written before the first snapshot so this device is in its own count.
       void db.doc(`visits/${id}`).set({ day: today }).catch(() => undefined)
 

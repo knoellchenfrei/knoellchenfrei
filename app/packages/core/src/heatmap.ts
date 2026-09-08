@@ -95,6 +95,30 @@ export interface HeatmapOptions {
  * The grid is deliberately metric and fixed rather than a lat/lon degree grid:
  * a 0.001° cell is 111 m tall and 68 m wide here, so a degree grid would draw
  * lopsided rectangles and make "250 m" mean two different things per axis.
+ *
+ * **Und die 52,52° stehen fest, obwohl vier Städte laufen — nachgemessen,
+ * nicht geschätzt.** Die Zelle ist in Nord-Süd-Richtung überall 250 m hoch; in
+ * Ost-West-Richtung wird sie nach Süden hin breiter, weil ein Längengrad dort
+ * mehr Meter trägt:
+ *
+ * | Stadt | Zellbreite | Abweichung |
+ * | --- | ---: | ---: |
+ * | Berlin | 250,0 m | 0,0 % |
+ * | Hamburg | 244,1 m | −2,4 % |
+ * | Frankfurt am Main | 263,5 m | +5,4 % |
+ * | München | 274,2 m | +9,7 % |
+ *
+ * Warum das bleibt: Die Heatmap beantwortet „wo wird **innerhalb dieser Stadt**
+ * häufiger kontrolliert". Dafür muss das Raster in sich gleichmässig sein, und
+ * das ist es — nur eben mit einer Zelle, die in München 274 statt 250 m breit
+ * ist. Die Breite je Stadt zu rechnen wäre richtiger und ändert **jeden
+ * gespeicherten Zellschlüssel**: Die Tabelle `marks` hält 28 Tage, und ein
+ * Wechsel ohne Migration würde die vorhandene Karte still zerreissen. Das ist
+ * ein eigener Schritt mit Migrationsplan, kein Nebenbei — er steht in
+ * `docs/todo.md`.
+ *
+ * Was hier **nicht** passieren darf: die Zahl 250 in der Oberfläche als
+ * exakten Meterwert auszugeben. Sie ist ein Rastermass, keine Messung.
  */
 const LAT_DEG_PER_M = 1 / 111_320
 const LON_DEG_PER_M = 1 / (111_320 * Math.cos((52.52 * Math.PI) / 180))

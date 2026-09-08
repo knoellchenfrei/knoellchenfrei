@@ -55,6 +55,35 @@ function stampServiceWorker(singleBundle: boolean): Plugin {
       // vorgehalten. Die App sah dabei völlig gesund aus und war nur nicht
       // mehr offlinefähig. Deshalb wird die Liste jetzt aus dem Verzeichnis
       // gelesen statt aufgeschrieben.
+      /**
+       * Die Worker-Datei von MapLibre — sie steht in **keinem** `src=` der
+       * index.html und wäre sonst nicht im Vorrat.
+       *
+       * Genau diese Unsichtbarkeit hat schon einmal zwei Tage gekostet:
+       * MapLibre 6 baut die Adresse zur Laufzeit zusammen
+       * (`new URL('./maplibre-gl-worker.mjs', import.meta.url)`), kein Bündler
+       * erkennt sie statisch, und die Liste oben liest die index.html. Ohne
+       * diesen Zusatz holt eine frisch abgelegte App die Datei erst beim
+       * ersten Kartenaufbau nach — wer vorher offline geht, bekommt eine App
+       * ohne Karte **und ohne Parkzonen**, weil MapLibre ohne seinen Worker
+       * gar nichts parst. Und ausgerechnet offline ist der Fall, für den diese
+       * App den Vorrat hat.
+       *
+       * Fehlt sie im Bundle, bricht der Build ab, statt eine Fassung
+       * auszuliefern, die still nicht offlinefähig ist — dieselbe Regel wie in
+       * `build-artifact.ts`.
+       */
+      const workerDatei = Object.keys(bundle).find((name) =>
+        /^assets\/maplibre-gl-worker-.*\.js$/.test(name),
+      )
+      if (workerDatei === undefined) {
+        throw new Error(
+          'maplibre-gl-worker-*.js fehlt im Bundle — ohne sie zeichnet die Karte nichts, ' +
+            'und der Vorrat des Service Workers wäre unvollständig',
+        )
+      }
+      const zusatz = [`./${workerDatei}`]
+
       const cityKey = process.env.VITE_CITY ?? 'berlin'
       const cityDir = join(process.cwd(), 'public/data', cityKey)
       const data = readdirSync(cityDir)
@@ -66,7 +95,7 @@ function stampServiceWorker(singleBundle: boolean): Plugin {
       }
       const stamped = source
         .replaceAll('__BUILD_ID__', id)
-        .replaceAll('__SHELL_ASSETS__', JSON.stringify([...assets, ...data]))
+        .replaceAll('__SHELL_ASSETS__', JSON.stringify([...assets, ...zusatz, ...data]))
 
       // Fail the build rather than ship a worker that still contains a
       // placeholder: it would look fine and silently never update.

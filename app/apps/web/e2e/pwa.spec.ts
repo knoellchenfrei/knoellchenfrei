@@ -77,6 +77,32 @@ test.describe('der Service Worker', () => {
     expect(code).not.toMatch(/['"]\.\/index\.html['"]/)
   })
 
+  /**
+   * Die Worker-Datei von MapLibre gehört in den Vorrat — und sie kommt dort
+   * nicht von selbst hinein.
+   *
+   * Die Liste entsteht aus den `src=`/`href=` der index.html. MapLibre 6 baut
+   * die Adresse seines Workers aber zur Laufzeit zusammen, also steht sie in
+   * keinem Attribut; genau diese Unsichtbarkeit hat schon einmal dazu geführt,
+   * dass der Bündler die Datei gar nicht erst abgelegt hat und die Karte nie
+   * etwas zeichnete. Ohne sie im Vorrat holt eine frisch abgelegte App sie
+   * erst beim ersten Kartenaufbau nach — wer vorher offline geht, bekommt eine
+   * App ohne Karte **und ohne Parkzonen**, weil MapLibre ohne seinen Worker
+   * gar nichts parst.
+   */
+  test('hält die MapLibre-Worker-Datei vor, obwohl sie in keinem src steht', async ({ page }) => {
+    const source = await (await page.request.get('/sw.js')).text()
+    const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+    const treffer = /["'](\.\/assets\/maplibre-gl-worker-[^"']+\.js)["']/.exec(code)
+    expect(treffer, 'maplibre-gl-worker-*.js fehlt im Vorrat des Service Workers').not.toBeNull()
+    // Und der Pfad muss auch etwas liefern — ein Eintrag im Vorrat, den es
+    // nicht gibt, kostet bei `cache.add` genau diesen einen Eintrag und steht
+    // sonst nur in der Konsole des Workers.
+    const antwort = await page.request.get((treffer as RegExpExecArray)[1]!.replace(/^\./, ''))
+    expect(antwort.status()).toBe(200)
+    expect(antwort.headers()['content-type']).toContain('javascript')
+  })
+
   test('trägt eine ersetzte Build-Kennung, keinen Platzhalter', async ({ page }) => {
     const source = await (await page.request.get('/sw.js')).text()
     expect(source).not.toContain('__BUILD_ID__')

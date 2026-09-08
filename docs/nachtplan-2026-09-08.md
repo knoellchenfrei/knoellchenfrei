@@ -67,7 +67,7 @@ Systematisch statt zufällig: Grenzfälle im Worker, in der App, in den Daten.
 Was gefunden wird, bekommt einen Test **und** einen Eintrag, wo die Ursache
 steht.
 
-**Gemessen, sechs Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
+**Gemessen, neun Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
 dreien ist die Gegenprobe gefahren — der Test wurde gegen die *alte* Fassung
 gehalten und musste dort fallen. Ein Test, von dem niemand weiß, ob er den
 Fehler gefunden hätte, ist eine Behauptung.
@@ -81,14 +81,25 @@ Fehler gefunden hätte, ist eine Behauptung.
 | C5 | **Offene Weiterleitung** im Beta-Riegel | `new URL('https://knoellchenfrei.de//evil.com/').pathname` ist `//evil.com/` — als `Location` eine protokollrelative Adresse. Ein Tester könnte einen Einladungslink bauen, der von der echten Domain kommt und auf seiner Seite endet | Durchgehen beider Anmeldewege |
 | C6 | `docs/todo.md` fehlte Abschnitt **6** | Verloren am 7. September in einem Commit über Worker-Tests. Der vierte Abschnitt, den dasselbe Ersetzungsmuster gefressen hat — die ersten drei waren aufgefallen, dieser nicht | Nachzählen der Überschriften |
 | C7 | **Drei der zwölf Katalogereignisse wurden nie ausgelöst** | `layer.on`, `city.suggest` und `tow.open` standen in `core/events.ts` und in keiner Zeile der App. Auf der Statistikseite hätten sie als Dauer-Null gestanden — und `layer.on` ist ausgerechnet die Antwort auf „welche Ebenen werden benutzt", eine der Fragen, für die das Zählwerk gebaut wurde | Katalogeinträge gegen die Aufrufstellen gezählt |
+| C8 | **Ein Tab über Mitternacht zählte nicht mehr mit** | Der Worker weist eine Besuchskennung ab, deren Tag nicht der heutige ist (`422 stale day`). Die App bildete sie **einmal** beim Aufsetzen — ab 00:00 also stundenlang die von gestern. Sichtbar war nichts: Ein fehlgeschlagener Ping bleibt absichtlich still, also stand die ganze Nacht die Zahl von kurz vor Mitternacht auf dem Schirm | Den Client gegen die Serverregel gehalten, die er bedienen soll |
+| C9 | **Die MapLibre-Worker-Datei stand nicht im Vorrat des Service Workers** | Dieselbe Wurzel wie der grosse Fund der Nacht: Die Vorratsliste entsteht aus den `src=` der index.html, und die Adresse des Workers wird zur Laufzeit gebaut. Wer die App ablegt und offline geht, bevor die Karte einmal geladen hat, bekommt sie ohne Karte **und ohne Parkzonen** — und offline ist der Fall, für den der Vorrat da ist | Die gebaute `sw.js` gegen `dist/assets` gehalten |
 
-Der siebte ist der lehrreichste, weil er zeigt, wie eine Lücke aussieht, die
-niemandem auffällt: **Nichts war kaputt.** Die Zählung lief, die Seite
+Die letzten beiden sind die lehrreichsten, weil sie zeigen, wie eine Lücke
+aussieht, die niemandem auffällt: **Nichts war kaputt.** Die Zählung lief, die Seite
 zeichnete, die Tests waren grün — es fehlte nur die Hälfte der Antwort, und
 eine Dimension ohne Werte ist von einer kaputten nicht zu unterscheiden. Der
 Test dagegen prüft die **Quelle**: Für jeden Katalognamen muss es eine Stelle
 geben, die ihn auslöst. Ein Ereignis an einer Schaltfläche ist im Unit-Test
 nicht erreichbar, und zwölf Klickstrecken in E2E wären der falsche Preis.
+
+Beim achten dasselbe eine Ebene tiefer: Der Fehler entsteht **zwischen** zwei
+Stellen, die für sich richtig sind. Der Worker weist eine veraltete Kennung
+zurück, und das muss er. Die App bildet die Kennung beim Aufsetzen, und das
+wäre in Ordnung, wenn sie nicht stundenlang liefe. Erst zusammen ergeben sie
+einen Tab, der ab Mitternacht nicht mehr zählt — und weil ein fehlgeschlagener
+Ping absichtlich still bleibt, sieht man davon nichts ausser einer Zahl, die
+sich nicht mehr ändert. Gefunden wurde er, indem der Client gegen die
+Serverregel gehalten wurde, die er bedienen soll.
 
 Was **nicht** gefunden wurde, obwohl gesucht: `Vary: Origin` steht bereits an
 jeder CORS-Antwort, `hour >= 0` hält die Ortsereignisse aus dem Tagesgang

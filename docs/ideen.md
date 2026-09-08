@@ -1,7 +1,10 @@
 # Ideen: was wir noch bauen sollten
 
 Entstanden am 7. September 2026 auf die Frage des Betreibers, was bisher
-niemand aufgeschrieben hat. **Nichts davon ist entschieden** — das steht in
+niemand aufgeschrieben hat; **11 bis 13 kamen in der Nacht zum 8. September
+dazu** und stammen nicht aus einem Brainstorming, sondern aus Fehlern — jede
+davon ist die Verallgemeinerung eines Befunds, siehe
+[nachtplan-2026-09-08.md](nachtplan-2026-09-08.md). **Nichts davon ist entschieden** — das steht in
 [entscheidungen.md](entscheidungen.md) —, und nichts davon ist geplant; die
 verbindliche Liste ist [todo.md](todo.md).
 
@@ -102,6 +105,48 @@ Gegenwert für die Behördendaten, die es benutzt.
 Fällt jemandem auf, dass eine Zone falsch liegt oder ein Preis nicht stimmt,
 gibt es keinen Weg. Ein Knopf „stimmt hier etwas nicht?" mit Zone und Feld im
 Freitext — der Weg ins Feedback steht schon.
+
+## 11. Ein Alarm, wenn die Gegenprobe kippt
+
+*Aus der Nacht zum 8. September.*
+
+Auf der Statistikseite steht die einzige Zahl, die etwas über die Statistik
+selbst sagt: Sie vergleicht die Öffnungen mit der Gerätezahl aus einem ganz
+anderen Schreibweg, und wenn die Öffnungen darunter liegen, kommen Zählungen
+nicht an. Nur sieht diese Zahl niemand — die Seite liegt hinter dem Riegel, und
+wer die App benutzt, hat keinen Grund, sie aufzurufen.
+
+Die kleine Fassung: Der stündliche Cron rechnet die Gegenprobe ohnehin. Kippt
+sie, geht eine Nachricht an den Telegram-Admin-Kanal. Das ist ein `fetch` im
+Aufräumlauf und braucht nichts, was es nicht schon gibt — ausser dem Bot-Token.
+
+Dasselbe gilt für zwei weitere Zahlen, die still schieflaufen können: das
+Tagesbudget der Ereignisse (steht es exakt auf 5.000, hat jemand es gefüllt)
+und der Deckel der Besuche.
+
+## 12. Die Statistikseite zeigt, was sie **nicht** weiss
+
+*Aus der Nacht zum 8. September, und der Anlass war ein Fehler.*
+
+Drei der zwölf Katalogereignisse wurden nie ausgelöst. Auf der Seite standen
+sie als Dauer-Null — nicht zu unterscheiden von „macht niemand". Ein Test
+verhindert das jetzt für die Quelle, aber die Anzeige könnte es selbst sagen:
+Ereignisse, für die es im gewählten Zeitraum **keine einzige** Zeile gibt,
+gehören in einen eigenen kleinen Block „bisher nie gezählt". Dann ist eine
+Lücke sichtbar, statt als Null durchzugehen.
+
+Kostet fast nichts: Der Katalog liegt in `core`, die Seite kennt ihn schon für
+die Anzeigenamen.
+
+## 13. Ein Datum an den Daten, sichtbar in der App
+
+Die App sagt „Daten: <Quelle> · <n> Zonen", aber nicht, **wann** sie gezogen
+wurden. `meta.json` trägt das Datum; im Betrieb ist es die interessantere
+Angabe von beiden, weil ein Abzug von vor drei Wochen für die Frage „kostet das
+gerade etwas" eine andere Verlässlichkeit hat als einer von gestern. Und es
+macht einen stehengebliebenen Datenbau sichtbar — der Deploy zieht frische
+Daten, aber ein Behördendienst, der schweigt, lässt den alten Abzug stehen, und
+genau das soll er ja auch.
 
 ## Was ich nicht bauen würde
 

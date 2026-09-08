@@ -496,12 +496,23 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       Abstand zu `CITY.center`.
 - [ ] **Das Heatmap-Raster ist noch Berlin.** `core/heatmap.ts` rechnet das
       250-m-Raster mit `ORIGIN` 13,0/52,3 und `cos 52,52°` — beides fest
-      verdrahtet. In München sind die Zellen dadurch rund 9 % breiter als
-      250 m; funktional fällt das nicht auf, weil der Ursprung nur als
-      Bezugspunkt dient und die Zellen innerhalb einer Stadt gleich groß
-      bleiben. Ein Wechsel des Rasters ändert aber die Zell-Schlüssel und
-      damit jede im Worker und in D1 gespeicherte Markierung — deshalb erst
-      mit Migrationsplan, nicht nebenbei.
+      verdrahtet. **Am 8. September nachgemessen statt geschätzt:** Die Zelle
+      ist überall 250 m hoch und in Ost-West-Richtung Berlin 250,0 m,
+      Hamburg 244,1 m (−2,4 %), Frankfurt 263,5 m (+5,4 %), München 274,2 m
+      (+9,7 %). Für Köln wären es 258,9 m, für Karlsruhe 269,5 m.
+
+      Funktional fällt das nicht auf: Die Heatmap beantwortet „wo wird
+      *innerhalb dieser Stadt* häufiger kontrolliert", und dafür muss das
+      Raster nur in sich gleichmäßig sein. Was nicht passieren darf, ist die
+      250 als exakten Meterwert in der Oberfläche auszugeben — sie ist ein
+      Rastermaß, keine Messung.
+
+      Ein Wechsel des Rasters ändert die Zell-Schlüssel und damit **jede** in
+      D1 gespeicherte Markierung. `marks` hält 28 Tage; ohne Migration
+      zerreißt der Wechsel die vorhandene Karte still. Deshalb erst mit
+      Migrationsplan, nicht nebenbei — die Zahlen oben stehen jetzt auch im
+      Quelltext von `heatmap.ts`, damit die Entscheidung nicht noch einmal
+      geschätzt wird.
 
 - [ ] **Drei Rückfragen an München**, `gb1-23.mor@muenchen.de` (MOR-GB1).
       Keine davon ist aus dem Feed zu beantworten:

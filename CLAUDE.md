@@ -29,11 +29,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 640 Unit-Tests (core, api, web)
+pnpm test                                           # 645 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 152 End-to-End-Tests
+cd apps/web && npx playwright test                  # 154 End-to-End-Tests
 ```
 
 Und vier Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -62,7 +62,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
 davon Tests: `core` (547), `apps/api` (64, Worker und Zählwerk) und `apps/web`
-(29, Beta-Riegel und der Zähler in der App). Die beiden letzten haben eine
+(34, Beta-Riegel, Zähler und Besuchszähler). Die beiden letzten haben eine
 eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -76,7 +76,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=640 E2E_COUNT=152 npx tsx src/build-badges.ts
+TEST_COUNT=645 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -331,6 +331,17 @@ wiederholt.
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
   `lint-workflows.yml` prüft nur, ob die Datei *parst*, nicht ob das Schema
   stimmt; es hätte das nicht gefunden.
+- **Die MapLibre-Worker-Datei gehört von Hand in den Vorrat — sie kommt dort
+  nicht von selbst hinein.** Die Liste entsteht aus den `src=`/`href=` der
+  index.html, und MapLibre 6 baut die Adresse seines Workers zur Laufzeit
+  zusammen; sie steht in keinem Attribut. Dieselbe Unsichtbarkeit, die dazu
+  geführt hat, dass der Bündler die Datei gar nicht erst abgelegt hat, liess
+  sie danach auch aus dem Vorrat fallen. Ohne sie holt eine frisch abgelegte
+  App sie erst beim ersten Kartenaufbau nach — wer vorher offline geht, bekommt
+  eine App ohne Karte **und ohne Parkzonen**, weil MapLibre ohne seinen Worker
+  gar nichts parst. Und offline ist der Fall, für den diese App den Vorrat hat.
+  `vite.config.ts` bricht seitdem ab, wenn die Datei im Bundle fehlt, und ein
+  E2E-Test hält fest, dass sie im Vorrat steht und dort etwas liefert.
 - **Was der Service Worker vorab holt, wird gelesen, nicht aufgeschrieben.**
   Die Liste stand als fünf Dateinamen in `vite.config.ts`. Mit der zweiten
   Stadt wanderten die Daten nach `data/<stadt>/`, und die Liste zeigte auf
@@ -544,6 +555,16 @@ wiederholt.
   es ab. Die Zusicherung steht als Eigenschaft im Test: Was die Funktion
   zurückgibt, muss sich gegen **jede** Basis zu genau dieser Basis auflösen —
   „fängt mit einem Schrägstrich an" wäre nur die halbe Miete.
+- **Was der Server je Tag prüft, muss der Client je Ping bilden.** Der
+  Besuchszähler weist eine Kennung ab, deren Tag nicht der heutige ist
+  (`422 stale day`) — sonst liesse sich ein vergangener Tag aufblähen. Die App
+  bildete die Kennung aber **einmal** beim Aufsetzen. Ein Tab, der um 23:55
+  offen war, schickte ab 00:00 stundenlang die Kennung von gestern, jeder Ping
+  ein 422. Sichtbar war davon nichts: Ein fehlgeschlagener Ping bleibt
+  absichtlich still („dann gelten die vorigen Zahlen"), also stand die ganze
+  Nacht die Zahl von kurz vor Mitternacht auf dem Schirm — eine tote Zahl, die
+  aussieht wie eine lebende, und das Gerät fehlte im Tageszähler, obwohl es
+  offen war. `visitRowId(at)` bildet sie jetzt bei jedem Ping neu.
 - **Ein Katalogeintrag ohne Aufrufstelle ist eine leere Spalte.** Drei der
   zwölf Ereignisse (`layer.on`, `city.suggest`, `tow.open`) standen in
   `core/events.ts` und in keiner Zeile der App — auf der Statistikseite hätten
