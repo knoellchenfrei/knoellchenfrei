@@ -71,7 +71,16 @@ den es ihn gibt. Beide jetzt geprüft, dazu vierzehn Sorten Unfug hinter dem
 Bot-Geheimnis: Telegram wiederholt jede Zustellung ohne 2xx unbegrenzt, ein
 geworfener Fehler wäre also keine Panne, sondern eine Schleife.
 
-Danach **85,4 %** Zeilen und 96,4 % Funktionen. Von 602 auf 663 Tests.
+Dazu der Vorspann vor dem Behördendienst (`/wfs/<ebene>`) — die einzige Stelle,
+an der der Worker selbst nach draussen ruft. Drei Dinge darin sieht man nicht,
+wenn man nur die glückliche Antwort betrachtet: dass ein Treffer im
+Zwischenspeicher gar nicht erst hinausruft, dass eine 200 mit etwas anderem als
+einer FeatureCollection **nicht** abgelegt wird — sonst vergiftete sie den
+Speicher für einen ganzen Tag —, und dass die Fehlermeldung der Gegenstelle ins
+Log geht und nicht in die Antwort.
+
+Danach **91,3 %** Zeilen und **100 %** Funktionen: Jede Funktion des Workers
+wird jetzt von mindestens einem Test angefasst. Von 602 auf 668 Tests.
 
 ## C — Fehlerjagd
 

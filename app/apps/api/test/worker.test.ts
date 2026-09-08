@@ -887,3 +887,91 @@ describe('eine Meldung über Telegram', () => {
     expect(anweisungen.some((sql) => /INSERT INTO sightings/.test(sql))).toBe(false)
   })
 })
+
+/**
+ * `/wfs/<ebene>` — der Vorspann vor dem Behördendienst, ebenfalls ungetestet.
+ *
+ * Er ist die einzige Stelle, an der der Worker **selbst** nach draussen ruft.
+ * Drei Dinge stehen darin, die man nicht sieht, wenn man nur die glückliche
+ * Antwort betrachtet: dass ein Treffer im Zwischenspeicher gar nicht erst
+ * hinausruft, dass eine 200 mit etwas anderem als einer FeatureCollection
+ * **nicht** abgelegt wird — sonst vergiftete sie den Speicher für einen ganzen
+ * Tag —, und dass die Fehlermeldung der Gegenstelle ins Log geht und nicht in
+ * die Antwort (Audit-Punkt M-092).
+ */
+describe('/wfs/<ebene>', () => {
+  const speicher = (wert: string | null) => {
+    const abgelegt: string[] = []
+    const kv = {
+      get: async () => wert,
+      put: async (_k: string, v: string) => {
+        abgelegt.push(v)
+      },
+    } as unknown as KVNamespace
+    return { kv, abgelegt }
+  }
+
+  const hole = async (pfad: string, kv: KVNamespace): Promise<Response> =>
+    worker.fetch(new Request(`https://api.example${pfad}`), umgebung({ CACHE: kv }))
+
+  it('kennt eine erfundene Ebene nicht', async () => {
+    const { kv } = speicher(null)
+    const response = await hole('/wfs/gibtsnicht', kv)
+    expect(response.status).toBe(404)
+  })
+
+  it('antwortet aus dem Zwischenspeicher, ohne hinauszurufen', async () => {
+    let gerufen = 0
+    vi.stubGlobal('fetch', () => {
+      gerufen += 1
+      return Promise.resolve(new Response('{}'))
+    })
+    const { kv } = speicher('{"type":"FeatureCollection","features":[]}')
+    const response = await hole('/wfs/zones', kv)
+    vi.unstubAllGlobals()
+    expect(response.status).toBe(200)
+    expect(response.headers.get('X-Cache')).toBe('HIT')
+    expect(gerufen).toBe(0)
+  })
+
+  it('legt keine Antwort ab, die keine FeatureCollection ist', async () => {
+    // Eine 200 mit etwas anderem darin vergiftete den Speicher für einen
+    // ganzen Tag — deshalb wird vor dem Ablegen geprüft, nicht danach.
+    vi.stubGlobal('fetch', () => Promise.resolve(new Response('{"type":"Etwas"}')))
+    const { kv, abgelegt } = speicher(null)
+    const response = await hole('/wfs/zones', kv)
+    vi.unstubAllGlobals()
+    expect(abgelegt).toHaveLength(0)
+    expect(response.status).toBeGreaterThanOrEqual(400)
+  })
+
+  it('nennt die fremde Fehlermeldung nicht in der Antwort', async () => {
+    // Sie kommt aus fremder Hand und kann interne Adressen oder Pfade
+    // enthalten; ein Aufrufer kann sie erzwingen (Audit-Punkt M-092).
+    vi.stubGlobal('fetch', () =>
+      Promise.resolve(new Response('geheimer/interner/pfad', { status: 500 }))
+    )
+    const { kv } = speicher(null)
+    const response = await hole('/wfs/zones', kv)
+    vi.unstubAllGlobals()
+    expect(await response.text()).not.toContain('geheimer/interner/pfad')
+  })
+})
+
+describe('eine Telegram-Zustellung mit kaputtem Körper', () => {
+  it('wird mit 2xx quittiert — ungültiges JSON wird beim zweiten Mal auch nicht gültig', async () => {
+    vi.stubGlobal('fetch', () => Promise.resolve(new Response('{"ok":true}')))
+    const response = await worker.fetch(
+      post('/telegram', {
+        body: '{das ist kein JSON',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Telegram-Bot-Api-Secret-Token': 'geheim',
+        },
+      }),
+      umgebung({ TELEGRAM_TOKEN: 'tok', TELEGRAM_SECRET: 'geheim' })
+    )
+    vi.unstubAllGlobals()
+    expect(response.status).toBe(200)
+  })
+})
