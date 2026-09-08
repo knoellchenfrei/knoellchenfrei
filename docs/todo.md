@@ -5,7 +5,7 @@ Entscheidungen mit Begründung stehen in [entscheidungen.md](entscheidungen.md),
 Ideen ohne Beschluss in [ideen.md](ideen.md);
 Eigenheiten der Arbeitsumgebung in [../CLAUDE.md](../CLAUDE.md). Was hier steht, ist
 entschieden; was noch zur Debatte steht, steht in
-[öffentlich-machen.md](öffentlich-machen.md).
+[oeffentlich-machen.md](oeffentlich-machen.md).
 
 Zeichen: **du** = geht nur mit deinem Konto, deiner Unterschrift oder deinem
 Geld. **ich** = kann ich übernehmen, sobald der Vorlauf steht.

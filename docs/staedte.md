@@ -808,7 +808,7 @@ nicht die Form `MM-TT` hat, wirft, statt stillschweigend nichts zu bewirken.
 
 ## Was am Code dafür zu tun ist
 
-Der Stand heute, aus [öffentlich-machen.md](öffentlich-machen.md):
+Der Stand heute, aus [oeffentlich-machen.md](oeffentlich-machen.md):
 
 | Baustein | Berlin-spezifisch? |
 | --- | --- |

@@ -67,12 +67,45 @@ Systematisch statt zufällig: Grenzfälle im Worker, in der App, in den Daten.
 Was gefunden wird, bekommt einen Test **und** einen Eintrag, wo die Ursache
 steht.
 
+**Gemessen, sechs Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
+dreien ist die Gegenprobe gefahren — der Test wurde gegen die *alte* Fassung
+gehalten und musste dort fallen. Ein Test, von dem niemand weiß, ob er den
+Fehler gefunden hätte, ist eine Behauptung.
+
+| # | Befund | Was er im Betrieb angerichtet hätte | Gefunden durch |
+| --- | --- | --- | --- |
+| C1 | Das Bündel, das über das Tagesbudget läuft, wurde **ganz** verworfen — und die Antwort meldete trotzdem `written: n` | Zahlen, die nicht ankommen, während die API Erfolg meldet. Deckel 20, Stand 18, Bündel mit 5 → geschrieben 0, gemeldet 2 | Probe gegen SQLite |
+| C2 | Die Zonenkennung wurde gegen **alle 275** Kennungen geprüft statt gegen die der Stadt | Berlin und Frankfurt teilen sich 20 Kennungen; in München wären 193 der 275 angenommenen Werte solche, die es dort nicht gibt | Auszählen der erzeugten Liste |
+| C3 | Eine gescheiterte Auswertung hielt **Löschungen** an | Der Aufräumlauf war eine Kette aus zehn `await`; hinter `rollupStats` standen die Fristen für `events`, `event_budget` und `feedback`. Eine Statistik, die nicht rechnen kann, verhinderte damit die Einhaltung einer Zusage aus der Datenschutzerklärung | Lesen — der Aufräumlauf hatte **keinen einzigen** Test |
+| C4 | `build-badges.ts` ersetzte ein gutes Abzeichen durch „unknown", wenn keine Messung vorlag | Genau eingetreten: ein Lauf, bei dem es nur um die Testzahl ging, überschrieb die eine Zahl, die niemand nachrechnet | Der eigene Diff |
+| C5 | **Offene Weiterleitung** im Beta-Riegel | `new URL('https://knoellchenfrei.de//evil.com/').pathname` ist `//evil.com/` — als `Location` eine protokollrelative Adresse. Ein Tester könnte einen Einladungslink bauen, der von der echten Domain kommt und auf seiner Seite endet | Durchgehen beider Anmeldewege |
+| C6 | `docs/todo.md` fehlte Abschnitt **6** | Verloren am 7. September in einem Commit über Worker-Tests. Der vierte Abschnitt, den dasselbe Ersetzungsmuster gefressen hat — die ersten drei waren aufgefallen, dieser nicht | Nachzählen der Überschriften |
+
+Was **nicht** gefunden wurde, obwohl gesucht: `Vary: Origin` steht bereits an
+jeder CORS-Antwort, `hour >= 0` hält die Ortsereignisse aus dem Tagesgang
+heraus, `visits.day` und `events.day` rechnen beide in Berliner Zeit, und die
+Statistikseite schreibt ausschließlich über `textContent`. Vier Verdachte, vier
+Fehlanzeigen — das gehört mit aufgeschrieben, sonst sucht sie beim nächsten Mal
+jemand noch einmal.
+
 ## D — Prozess
 
-Was in dieser Sitzung schiefging, und was es das nächste Mal verhindert. Drei
-Fälle liegen schon vor: die nie angewendeten D1-Migrationen, meine
-zeilenbasierte Ersetzung, die drei Abschnitte verschluckt hat, und das doppelte
-`robots`-Meta.
+Was in dieser Sitzung schiefging, und was es das nächste Mal verhindert. Nicht
+die Fehler sind der Punkt, sondern die Prüfung, die sie künftig laut macht.
+
+| Vorfall | Ursache | Was es jetzt verhindert |
+| --- | --- | --- |
+| **Vier verlorene Abschnitte in `docs/todo.md`** (`## 3.`, `## 5.`, `## 6.`, `## 8.`) | Zeilenbasiertes Ersetzen, dessen Block nicht an der nächsten Überschrift endete. Gefunden wurden sie durch Nachzählen, Stunden später — und einer erst am 8. September | `scripts/doku-pruefen.mjs`: Nummerierte Abschnitte müssen lückenlos aufsteigen. Läuft in der CI, prüft sich vorher selbst |
+| **Zwei Verweise auf `öffentlich-machen.md`** — die Datei heißt `oeffentlich-machen.md` | Ausgerechnet der Commit, der die Sprachregel eingeführt hat (`ca60146`), hat einen **Dateinamen** wie Prosa behandelt. `sprache-pruefen.sh` prüft die Gegenrichtung und konnte es nicht sehen | Dasselbe Skript: relative Verweise müssen auf eine existierende Datei zeigen, und ein Anker auf eine Überschrift, die es gibt |
+| **D1-Migrationen liefen nie** | Der Deploy rollte den Worker aus, ohne `migrations apply` zu rufen. Der Worker war grün und die Tabelle nicht da | Steht seit dem 7. September im Deploy-Workflow, mit `continue-on-error`, damit ein Migrationsfehler den Rollout nicht blockiert |
+| **220 KB fremde Rohdaten in einem Commit über Testabdeckung** (`bdf27a2`) | `git add -A`, während zwei Hintergrundagenten in denselben Baum schrieben | Herausgenommen in `a0eb8a8`. Die Regel dahinter: Solange Agenten im selben Baum arbeiten, wird **benannt** hinzugefügt, nie pauschal |
+| **Ein roter Typecheck als Dauerzustand** | Die vorbereiteten Städte importieren Namen, die `core` ohne die drei Einträge nicht ausführt | Der Code liegt auf `staedte/koeln-karlsruhe-vorbereitet`, nicht auf dem Arbeitszweig. Ein dauerhaft roter Typecheck macht das nächste echte Problem unsichtbar |
+
+Der gemeinsame Nenner aller fünf ist derselbe, den CLAUDE.md schon dreimal
+festhält: **etwas meldet Erfolg und tut nichts.** Der Commit war grün, der
+Deploy war grün, das Abzeichen war grün. Die Abhilfe ist nie „besser
+aufpassen", sondern jedes Mal eine Prüfung, die anschlägt — und eine, die sich
+vorher selbst prüft, damit sie nicht still kaputtgeht.
 
 ## E — Doku
 
