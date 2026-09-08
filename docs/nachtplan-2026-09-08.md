@@ -270,9 +270,32 @@ nicht mir gehören.
 | **Köln, Karlsruhe und Düsseldorf eintragen** | Drei bis vier Dateien, die architektonisch sind. Je ein offener Punkt: Kölns Gebühr (Datei sagt 4,00 €, Stadt sagt 5,00 €), Karlsruhes 4,8 m breite „Zonen", die keine Ortung trifft, und Düsseldorfs Automatenebene ohne Lizenzfeld — eine E-Mail an `opendata@duesseldorf.de` |
 | ~~**`NW` im Feiertagskalender**~~ | **Erledigt.** Der Wortlaut von § 2 FeiertagsG NW liegt vor, gefunden über `robots.txt` → Sitemap-Index → statisches HTML. Damit ist auch Kölns Feiertagsfrage beantwortet |
 | **`@types/geojson` als direkte Abhängigkeit** | Drei Felder in `loadData` bleiben sonst ungetypt. Eine Abhängigkeitsänderung, also abzusprechen |
-| **Der Ersatzschlüssel für Hamburgs 44 namenlose Flächen** | Er ändert die erzeugte Zonenliste und bereits gezählte Ausprägungen. Die Oberfläche sagt inzwischen „Bewirtschaftete Fläche" statt „Zone -"; die Statistik zählt sie weiter als eine |
+| **Der Ersatzschlüssel für Hamburgs 44 Flächen ohne Nummer** | Am 9. September entscheidungsreif gemessen (in `todo.md`): Die Quelle vergibt selbst eine stabile Kennung, und in der Produktion stehen **null** gezählte `-`-Ausprägungen — heute kostet der Wechsel keine Migration. Ursprünglich hier notiert als: Er ändert die erzeugte Zonenliste und bereits gezählte Ausprägungen. Die Oberfläche sagt inzwischen „Bewirtschaftete Fläche" statt „Zone -"; die Statistik zählt sie weiter als eine |
 | **Drosselung des Anmeldeformulars — oder bewusst keine** | Die WAF-Regel ist im kostenlosen Tarif **nicht mehr** enthalten. Vorschlag: 24 zufällige Zeichen als Passwort statt einer Zählung; die Alternativen (Turnstile, Zähler in D1) stehen mit ihrem Preis in `todo.md` |
-| **`CLOUDFLARE_R2_TOKEN`** | Ohne ihn baut der Kachel-Workflow nichts, und die Karte altert still |
+| ~~**`CLOUDFLARE_R2_TOKEN`**~~ | **Erledigt** — gesetzt, und der Kachel-Workflow ist gelaufen |
 | ~~**`D1:Edit` ans CI-Token**~~ | **Erledigt und nachgemessen** — der Deploy erreicht D1 jetzt |
-| **`vitest-pool-workers`** | Verlangt Vitest 4, wir sind auf 3.2. Ein Hauptversionssprung des Testläufers über alle Pakete — abzusprechen |
+| **`vitest-pool-workers`** | Die Voraussetzung ist **da**: Vitest 4 liegt seit dem 9. September, nicht als Komfort, sondern als Sicherheitsupdate. Der Pool selbst bleibt eine Entscheidung |
 | **Der Bericht als Artifact** | Die veröffentlichte Fassung ist alt (sie lädt noch Schriften von Google, was seit Audit-Punkt M-018 nicht mehr stimmt). Das Aktualisieren wurde in dieser Sitzung abgelehnt; die gepflegte Fassung liegt im Repository |
+
+## Fortsetzung am 9. September
+
+Kein zweiter Nachtplan, sondern die Kette, die aus dem Abschnitt „offen" folgte.
+Der Anlass war ein roter Haken: Der Sicherheits-Job der CI scheiterte an zwei
+Meldungen, `sharp` und `vitest`.
+
+| | Was daraus wurde | Nachgemessen |
+| --- | --- | --- |
+| **`sharp` und Vitest 4** | Beide Meldungen zu. `sharp` kommt transitiv über `miniflare`; ein `overrides`-Eintrag erzwingt `>=0.35.4`. Vitest 4 brach danach den Typcheck mit **29 Fehlern** in `packages/core` | `pnpm audit` ohne Befund, alle vier Dependabot-Meldungen auf `fixed`, CI grün |
+| **Der geliehene Typ** | Ursache der 29 Fehler: `packages/core` hatte nie ein eigenes `@types/node`. Vitest 3 führte es als Peer, `autoInstallPeers` legte es nach `app/node_modules/@types/`, `tsc` las es von dort mit. Jetzt deklariert; die dadurch verlorene Compiler-Sperre gegen Node-Importe ist als Test wieder da | Gegenprobe: ein eingeschmuggeltes `node:fs` in `src/geo.ts` lässt den Test fallen |
+| **Die Abdeckungsbasis** | Vitest 4 rechnet AST-genau statt zeilenweise. `core` fiel von 1828 auf 812 Zeilen — und stieg von 117 auf **164 Funktionen**. Die genauere Rechnung sieht mehr, nicht weniger | Beide Werkzeuge nacheinander auf demselben Stand gerechnet |
+| **Hamburgs Strich** | An sechs Stellen stand von mir, die Quelle vergebe keinen Namen. Falsch: `bwp_name` ist bei keiner der 146 Flächen leer, der Strich steht in `bwp_code`. Es sind Flächen ohne Bewohnerparkrecht | Zwei Momentaufnahmen im Abstand von zwei Tagen: identische Quell-IDs, keine geänderte Geometrie |
+| **Die Nachmessung galt der falschen Adresse** | `ausgeliefert-pruefen.sh` prüfte ohne Argument nur `pages.dev` — nicht die Adresse, die jemand eintippt. Jetzt beide | Beide grün; Gegenprobe: eine unpassende Adresse gibt den Fehler durch |
+| **Eine fehlende Datendatei kam als `200 text/html`** | `loadData` prüfte `response.ok` und danach nichts. Fehlt eine der fünf Dateien, antwortet die SPA-Rückfalladresse — der Abbruch kam erst aus `response.json()`, ohne den Namen der Datei | Gegen die Vorschau gemessen: `/data/berlin/fehlt.json` → `200 text/html`. Sieben Tests, Gegenprobe gemacht |
+| **Der Flächenpunkt** | `representativePoint` hatte keinen Test. Im Quelltext stand „wrong for three zones" — es sind **41 von 357**: Berlin 3, **Hamburg 38 von 145** | Eigenschaftstest über alle vier Städte; mit der alten Rechteckmitte fallen zwei davon |
+| **180 ungeprüfte Tests** | `tsc` sah nur `packages/core/test`. Drei Pakete hatten `test` nicht im `include` — und die Umstellung fand prompt eine Zusicherung auf einem Feld, das der Typ gar nicht hat | Gegenprobe je Paket: ein absichtlicher Typfehler in `test/` lässt den Lauf fallen |
+
+**Die Lehre der Nacht galt wieder**, diesmal ohne dass eine Zahl aufgehen
+musste: Sechs der acht Punkte sind Fälle, in denen etwas Erfolg meldet und
+nichts tut — der geliehene Typ, die Adresse, die niemand aufruft, die
+`200 text/html`, der ungeprüfte Test, der Punkt in der Nachbarzone, und eine
+Abdeckungszahl, die zwei verschiedene Dinge zählte.
