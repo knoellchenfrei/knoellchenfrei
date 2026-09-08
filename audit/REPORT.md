@@ -1,5 +1,14 @@
 # Audit-Report — knoellchenfrei @ `fceadca`
 
+
+> **Die sechs Einzelberichte** liegen daneben und sind die Quelle dieser
+> Zusammenfassung — jeder Befund steht dort mit Beleg:
+> [A1 Dokumentation](A1-dokumentation.md) ·
+> [A2 Konsistenz](A2-konsistenz.md) ·
+> [A3 Ausfall und Wiederherstellung](A3-blackout.md) ·
+> [A4 Sicherheit](A4-security.md) ·
+> [A5 Rechtliches](A5-rechtlich.md) ·
+> [A6 Open Source](A6-opensource.md)
 Zusammenführung der sechs Agent-Reports A1–A6 (Phase 2). Read-only; einzige
 Schreibung ist diese Datei. Grundgesamtheit `audit/inventory.json`, 176 Dateien.
 Stand 7. September 2026. Die Reports sind redigiert; Kennungen und Geheimnisse

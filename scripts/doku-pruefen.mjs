@@ -165,10 +165,50 @@ for (const datei of dateien) {
   }
 }
 
+// --- 3. Verwaiste Dateien ---------------------------------------------------
+/**
+ * Eine Datei, auf die nichts zeigt, wird nicht gelesen.
+ *
+ * Am 8. September lagen zwei davon herum: `THIRD-PARTY-NOTICES.md` — eine
+ * Lizenzliste, die ihren Zweck nur erfüllt, wenn man sie findet — und die
+ * sechs Einzelberichte des Audits, die nur ihre eigene Zusammenfassung kannte,
+ * ohne dass sie umgekehrt auf sie zeigte.
+ *
+ * Die Ausnahmen sind Dateien, die GitHub **über ihren Ort** benutzt, nicht
+ * über einen Verweis. Sie stehen namentlich da und nicht als Muster: Eine
+ * Ausnahmeliste, die man mit einem Stern erweitern kann, hört auf, eine zu
+ * sein.
+ */
+const OHNE_VERWEIS = new Set([
+  'README.md',
+  'CLAUDE.md',
+  '.github/pull_request_template.md',
+  '.github/ISSUE_TEMPLATE/config.md',
+])
+
+const verlinkt = new Set()
+for (const datei of dateien) {
+  for (const treffer of ohneCode(readFileSync(datei, 'utf8')).matchAll(/\[[^\]]*\]\(([^)\s#]+)/g)) {
+    const ziel = treffer[1]
+    if (/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(ziel)) continue
+    verlinkt.add(resolve(dirname(datei), ziel))
+  }
+}
+for (const datei of dateien) {
+  const relativ = relative(WURZEL, datei)
+  if (OHNE_VERWEIS.has(relativ)) continue
+  if (!verlinkt.has(resolve(datei))) {
+    fehler.push(`${relativ}: Es zeigt kein Verweis hierher — eine Datei, die niemand findet.`)
+  }
+}
+
 if (fehler.length > 0) {
   console.error('Doku-Prüfung fehlgeschlagen:\n')
   for (const zeile of fehler) console.error(`  ${zeile}`)
   console.error(`\n  ${fehler.length} Befund(e).`)
   process.exit(1)
 }
-console.log(`  ✓ Doku geprüft: ${dateien.length} Dateien, Nummerierung lückenlos, Verweise tragen`)
+console.log(
+  `  ✓ Doku geprüft: ${dateien.length} Dateien, Nummerierung lückenlos, ` +
+    'Verweise tragen, nichts liegt unverlinkt herum'
+)

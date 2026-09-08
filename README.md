@@ -362,6 +362,16 @@ dort ist die Quellenangabe Bedingung, nicht Höflichkeit. Kartenkacheln:
 © OpenStreetMap-Mitwirkende, ODbL — auch deren Namensnennung in der App ist
 Lizenzbedingung.
 
+Die Lizenztexte aller Abhängigkeiten stehen in
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md), erzeugt von
+`packages/ingest/src/build-notices.ts`. Die Datei lag bis zum 8. September da,
+ohne dass irgendetwas auf sie zeigte — eine Lizenzliste, die niemand findet,
+erfüllt ihren Zweck nicht.
+
+Das Audit vom 7. September (102 Befunde aus sechs Blickwinkeln, mit
+Widersprüchen statt Mehrheitsentscheid) liegt in
+[audit/REPORT.md](audit/REPORT.md); die sechs Einzelberichte daneben.
+
 Mitmachen: [CONTRIBUTING.md](CONTRIBUTING.md) ·
 [Verhaltensregeln](CODE_OF_CONDUCT.md).
 

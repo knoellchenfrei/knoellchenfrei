@@ -41,7 +41,7 @@ aus `app/`. Alle vier laufen in der CI, und jede hat einen Vorfall hinter sich:
 
 ```bash
 ./scripts/sprache-pruefen.sh    # Prosa mit Umlauten, Bezeichner ohne
-node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen
+node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen, nichts verwaist
 ./scripts/namen-pruefen.sh      # Ressourcennamen stimmen überein
 ./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
 ```
@@ -585,9 +585,12 @@ wiederholt.
 - **Zeilenbasiertes Ersetzen in Markdown frisst Abschnitte.** Vier sind so aus
   `docs/todo.md` verschwunden (`## 3.`, `## 5.`, `## 6.`, `## 8.`), jedes Mal
   leise, gefunden erst durch Nachzählen. `scripts/doku-pruefen.mjs` prüft
-  seitdem, dass nummerierte Abschnitte lückenlos aufsteigen und relative
-  Verweise auf existierende Dateien und Überschriften zeigen — und prüft sich
-  vorher selbst. Der erste Lauf fand zwei Verweise auf `öffentlich-machen.md`;
+  seitdem, dass nummerierte Abschnitte lückenlos aufsteigen, dass relative
+  Verweise auf existierende Dateien und Überschriften zeigen, und dass **auf
+  jede Datei etwas zeigt** — und prüft sich vorher selbst. Die dritte Regel
+  fand sofort zwei Fälle: `THIRD-PARTY-NOTICES.md`, eine Lizenzliste, die ihren
+  Zweck nur erfüllt, wenn man sie findet, und die sechs Einzelberichte des
+  Audits, auf die nur ihre eigene Zusammenfassung nicht zeigte. Der erste Lauf fand zwei Verweise auf `öffentlich-machen.md`;
   die Datei heißt `oeffentlich-machen.md`, und kaputtgegangen war der Link
   ausgerechnet in dem Commit, der die Sprachregel eingeführt hat. **Ein
   Dateiname ist ein Bezeichner, keine Prosa.**
