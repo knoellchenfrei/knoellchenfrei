@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { ZONE_KEYS } from '@knoellchenfrei/core'
+
 import worker, { type Env } from '../src/worker.js'
 
 /**
@@ -437,5 +439,193 @@ describe('unbekannte Wege', () => {
       umgebung()
     )
     expect(response.status).toBe(200)
+  })
+})
+
+/**
+ * Der Aufräumlauf — der Teil des Workers, der bisher **keinen einzigen** Test
+ * hatte.
+ *
+ * Er ist nicht Beiwerk: In `docs/datenschutz.md` stehen Aufbewahrungsfristen,
+ * und dieser Cron ist die einzige Stelle, die sie einhält. Läuft er halb, ist
+ * das Versprechen halb — und von aussen sieht nichts danach aus.
+ */
+function aufraeumAttrappe(patch: { batchWirft?: boolean; runWirftBei?: RegExp } = {}): {
+  db: D1Database
+  gesehen: string[]
+} {
+  const gesehen: string[] = []
+  const statement = (sql: string) => {
+    gesehen.push(sql)
+    const self = {
+      bind: () => self,
+      run: async () => {
+        if (patch.runWirftBei?.test(sql) === true) throw new Error(`D1 kaputt: ${sql}`)
+        return { success: true }
+      },
+      first: async () => null,
+      all: async () => ({ results: [] }),
+    }
+    return self
+  }
+  const db = {
+    prepare: statement,
+    batch: async () => {
+      if (patch.batchWirft === true) throw new Error('D1 batch kaputt')
+      return [{ results: [] }]
+    },
+  }
+  return { db: db as unknown as D1Database, gesehen }
+}
+
+/** Was jeder Lauf angefasst haben muss, egal was sonst schiefgeht. */
+const PFLICHT = [
+  /UPDATE sightings SET client_hash = NULL/,
+  /DELETE FROM sightings/,
+  /DELETE FROM votes/,
+  /DELETE FROM marks/,
+  /DELETE FROM visits/,
+  /UPDATE feedback SET client_hash = NULL/,
+  /DELETE FROM events/,
+  /DELETE FROM event_budget/,
+  /DELETE FROM feedback/,
+]
+
+const cron = {} as ScheduledController
+
+describe('der Aufräumlauf', () => {
+  it('löscht jede Tabelle mit Frist und rechnet danach die Auswertung', async () => {
+    const { db, gesehen } = aufraeumAttrappe()
+    const kv: string[] = []
+    await worker.scheduled(
+      cron,
+      umgebung({
+        DB: db,
+        CACHE: {
+          get: async () => null,
+          put: async (_k: string, v: string) => {
+            kv.push(v)
+          },
+        } as unknown as KVNamespace,
+      })
+    )
+    for (const muster of PFLICHT) {
+      expect(gesehen.some((sql) => muster.test(sql)), String(muster)).toBe(true)
+    }
+    expect(kv).toHaveLength(1)
+  })
+
+  /**
+   * Der Befund, der diese Tests ausgelöst hat.
+   *
+   * Vorher stand `await rollupStats(env)` mitten in einer Kette aus zehn
+   * `await`, und **nach** ihm kamen die Löschungen für `events`,
+   * `event_budget` und `feedback`. Eine Auswertung, die nicht gerechnet werden
+   * konnte — ein D1-Fehler, ein volles KV, ein Tippfehler im SQL —, hielt
+   * damit die Löschung von Daten an. Die Statistik ist Beiwerk, die Löschung
+   * ist ein Versprechen; die Reihenfolge hatte es umgedreht.
+   */
+  it('löscht auch dann, wenn die Auswertung scheitert', async () => {
+    const { db, gesehen } = aufraeumAttrappe({ batchWirft: true })
+    await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
+      /Aufraeumlauf unvollstaendig/
+    )
+    for (const muster of PFLICHT) {
+      expect(gesehen.some((sql) => muster.test(sql)), String(muster)).toBe(true)
+    }
+  })
+
+  it('hält nach einem gescheiterten Schritt nicht an, sondern macht die übrigen', async () => {
+    const { db, gesehen } = aufraeumAttrappe({ runWirftBei: /DELETE FROM sightings/ })
+    await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
+      /sichtungen: abgelaufene loeschen/
+    )
+    // Der Schritt danach ist der wichtigste Beleg: Er stand in der alten
+    // Fassung hinter dem gescheiterten und lief deshalb nie.
+    expect(gesehen.some((sql) => /DELETE FROM votes/.test(sql))).toBe(true)
+    expect(gesehen.some((sql) => /DELETE FROM feedback/.test(sql))).toBe(true)
+  })
+
+  /**
+   * Ein stiller `catch` wäre die schlechtere Hälfte der Korrektur gewesen: Der
+   * Lauf bliebe grün, und niemand erführe, dass eine Frist nicht eingehalten
+   * wurde. Genau diese Sorte Fehler — etwas meldet Erfolg und tut nichts —
+   * steht in CLAUDE.md dreimal.
+   */
+  it('bleibt rot, wenn etwas gescheitert ist', async () => {
+    const { db } = aufraeumAttrappe({ runWirftBei: /DELETE FROM (events|feedback)/ })
+    await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
+      /ereignisse: nach 90 tagen loeschen.*rueckmeldungen: nach 90 tagen loeschen/
+    )
+  })
+})
+
+/**
+ * Die Zonenkennung wird gegen die Liste **dieser** Stadt geprüft, nicht gegen
+ * alle.
+ *
+ * Vorher stand im Worker `ALL_ZONE_KEYS` — die vier Listen flachgeklopft, 275
+ * Kennungen. Das ist keine Kleinigkeit: Berlin und Frankfurt nummerieren beide
+ * schlicht durch und teilen sich dadurch 20 Kennungen (`10`, `12`, `13`, …).
+ * Eine Frankfurter Zahl landete als Berliner Zone in der Auswertung, und in
+ * München wären 193 der 275 angenommenen Kennungen solche gewesen, die es dort
+ * gar nicht gibt. Auf der Statistikseite hätte das ausgesehen wie eine Zone,
+ * die jemand angesehen hat — sie existiert nur nicht.
+ */
+describe('die Zonenkennung in /events', () => {
+  function zaehlAttrappe(): { db: D1Database; geschrieben: number } {
+    const zustand = { geschrieben: 0 }
+    const db = {
+      prepare: (sql: string) => {
+        const self = {
+          bind: () => self,
+          run: async () => ({ success: true }),
+          first: async () => (sql.includes('event_budget') ? { n: 0 } : null),
+          all: async () => ({ results: [] }),
+        }
+        return self
+      },
+      batch: async (anweisungen: unknown[]) => {
+        zustand.geschrieben += anweisungen.length
+        return anweisungen.map(() => ({ results: [] }))
+      },
+    }
+    return { db: db as unknown as D1Database, get geschrieben() { return zustand.geschrieben } }
+  }
+
+  const sende = async (city: string, value: string): Promise<number> => {
+    const { db } = zaehlAttrappe()
+    const response = await worker.fetch(
+      post('/events', { body: JSON.stringify({ city, events: [{ name: 'zone.open', value, n: 1 }] }) }),
+      umgebung({ DB: db })
+    )
+    return ((await response.json()) as { written: number }).written
+  }
+
+  // Nicht abgeschrieben, sondern aus der erzeugten Liste geholt: Ändern sich
+  // die Daten, ändert sich der Test mit — und wenn die Überschneidung
+  // verschwindet, sagt die Zusicherung das laut, statt still zu bestehen.
+  const nurBerlin = ZONE_KEYS.berlin?.find((k) => ZONE_KEYS.frankfurt?.includes(k) !== true)
+  const gemeinsam = ZONE_KEYS.berlin?.find((k) => ZONE_KEYS.frankfurt?.includes(k) === true)
+
+  it('nimmt eine Zone, die es in der gemeldeten Stadt gibt', async () => {
+    expect(nurBerlin).toBeDefined()
+    expect(await sende('berlin', nurBerlin as string)).toBe(1)
+  })
+
+  it('verwirft eine Berliner Zone, die als Frankfurter gemeldet wird', async () => {
+    expect(await sende('frankfurt', nurBerlin as string)).toBe(0)
+  })
+
+  it('lässt eine Kennung durch, die es in beiden Städten wirklich gibt', async () => {
+    expect(gemeinsam).toBeDefined()
+    expect(await sende('frankfurt', gemeinsam as string)).toBe(1)
+    expect(await sende('berlin', gemeinsam as string)).toBe(1)
+  })
+
+  it('verwirft in München jede Kennung, die dort nicht in der Liste steht', async () => {
+    const fremd = ZONE_KEYS.hamburg?.find((k) => ZONE_KEYS.muenchen?.includes(k) !== true)
+    expect(fremd).toBeDefined()
+    expect(await sende('muenchen', fremd as string)).toBe(0)
   })
 })

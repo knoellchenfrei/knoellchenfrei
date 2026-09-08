@@ -18,7 +18,6 @@
  */
 
 import {
-  ALL_ZONE_KEYS,
   BERLIN,
   berlinWallClock,
   CITIES,
@@ -36,6 +35,7 @@ import {
   parseTelegramUpdate,
   tidyFeedback,
   windowStart,
+  ZONE_KEYS,
   type City,
 } from '@knoellchenfrei/core'
 
@@ -611,7 +611,14 @@ async function recordEvents(
   const now = Date.now()
   const day = berlinDay(now)
   const hour = Math.floor(berlinWallClock(now).minuteOfDay / 60)
-  const listen = { zones: ALL_ZONE_KEYS, cities: CITIES.map((eine) => eine.key) }
+  // Die Zonen **dieser** Stadt, nicht alle 275. Vorher stand hier
+  // `ALL_ZONE_KEYS`, und das ist keine Kleinigkeit: Berlin und Frankfurt
+  // teilen sich 20 Kennungen (`10`, `12`, `13`, …), weil beide schlicht
+  // durchnummerieren. Eine Frankfurter Zahl landete damit als Berliner Zone
+  // in der Auswertung, und in Muenchen waeren 193 der 275 angenommenen
+  // Kennungen solche, die es dort gar nicht gibt. Die Liste ist ohnehin je
+  // Stadt erzeugt — sie wurde nur flachgeklopft, bevor sie geprueft hat.
+  const listen = { zones: ZONE_KEYS[city.key] ?? [], cities: CITIES.map((eine) => eine.key) }
 
   const angenommen: { name: string; hour: number; value: string; n: number }[] = []
   for (const eintrag of roh) {
@@ -637,19 +644,39 @@ async function recordEvents(
 
   const gesamt = angenommen.reduce((summe, e) => summe + e.n, 0)
   await env.DB.batch([
-    // Reserviert das **Angenommene**, nicht das Geschriebene. Die Abweichung
-    // geht damit in die vorsichtige Richtung.
+    ...angenommen.map((e) =>
+      env.DB.prepare(
+        'INSERT INTO events (day, hour, city, name, value, n) SELECT ?, ?, ?, ?, ?, ?' +
+          ' WHERE COALESCE((SELECT n FROM event_budget WHERE day = ?), 0) < ?' +
+          ' ON CONFLICT (day, hour, city, name, value) DO UPDATE SET n = events.n + excluded.n'
+      ).bind(day, e.hour, city.key, e.name, e.value, e.n, day, EVENTS_PER_DAY)
+    ),
+    // Reserviert wird **zuletzt**, und das ist die Korrektur eines Fehlers.
+    //
+    // Vorher stand diese Anweisung an erster Stelle. Ein `batch` laeuft der
+    // Reihe nach in einer Transaktion — die Zaehlanweisungen lasen also
+    // bereits den *erhoehten* Stand. Ein Buendel, das den Deckel ueberschritt,
+    // schrieb damit **gar nichts**, auch nicht den Teil, der noch gepasst
+    // haette, und die Antwort meldete trotzdem `written: n`. Gemessen gegen
+    // SQLite: Deckel 20, Stand 18, Buendel mit 5 → Budget 23, geschrieben 0,
+    // gemeldet 2.
+    //
+    // Jetzt lesen die Zaehlanweisungen den Stand *vor* diesem Buendel — den,
+    // den die Vorpruefung oben schon als „passt" befunden hat. Der Deckel
+    // greift ab dem naechsten Aufruf. Der Ueberschuss ist damit hoechstens ein
+    // Buendel (25 × 50 = 1.250 auf 5.000), und er ist derselbe wie vorher; nur
+    // liegt er jetzt in der Tabelle statt in der Luft.
+    //
+    // `COALESCE(…, 0)` ist Pflicht und kein Schmuck: Am ersten Buendel eines
+    // Tages gibt es die Budgetzeile noch nicht, `NULL < 5000` ist NULL, und
+    // ohne den Ersatzwert wuerde an jedem Tag das erste Buendel verworfen —
+    // taeglich, still, und ausgerechnet die Zeile fuer Mitternacht.
+    //
+    // Reserviert wird weiterhin das **Angenommene**, nicht das Geschriebene.
     env.DB.prepare(
       'INSERT INTO event_budget (day, n) VALUES (?, ?)' +
         ' ON CONFLICT (day) DO UPDATE SET n = event_budget.n + excluded.n'
     ).bind(day, gesamt),
-    ...angenommen.map((e) =>
-      env.DB.prepare(
-        'INSERT INTO events (day, hour, city, name, value, n) SELECT ?, ?, ?, ?, ?, ?' +
-          ' WHERE (SELECT n FROM event_budget WHERE day = ?) <= ?' +
-          ' ON CONFLICT (day, hour, city, name, value) DO UPDATE SET n = events.n + excluded.n'
-      ).bind(day, e.hour, city.key, e.name, e.value, e.n, day, EVENTS_PER_DAY)
-    ),
   ])
 
   return json({ written: angenommen.length }, { status: 200 }, cors)
@@ -1200,52 +1227,120 @@ export default {
   },
 
   /**
-   * Deletes expired sightings. Wired to a cron trigger so the table cannot grow
-   * into a movement history even if the read path stops filtering.
+   * Der Aufräumlauf: löscht, was abgelaufen ist, und rechnet danach die
+   * Statistik. Stündlich am Cron, damit keine Tabelle zu einem Bewegungsprofil
+   * wächst — auch dann nicht, wenn der Lesepfad einmal aufhört zu filtern.
+   *
+   * ## Warum jeder Schritt für sich läuft
+   *
+   * Vorher war das eine Kette aus zehn `await`. Eine geworfene Ausnahme in der
+   * Mitte hielt alles danach an — und „danach" standen ausgerechnet die drei
+   * Löschungen, die die Aufbewahrungsfrist der Nutzungsstatistik und der
+   * Rückmeldungen einhalten. Der Reihe nach hiess: Eine Statistik, die nicht
+   * gerechnet werden konnte, verhinderte, dass Daten gelöscht wurden. Das ist
+   * die falsche Richtung: Die Löschung ist ein Versprechen aus
+   * `docs/datenschutz.md`, die Statistik ist Beiwerk.
+   *
+   * Jetzt läuft jeder Schritt einzeln und meldet, wenn er scheitert. Was
+   * gescheitert ist, wird am Ende **geworfen** — sonst wäre ein stiller
+   * `catch` genau der Fehler, den dieses Projekt dreimal gemacht hat: etwas
+   * meldet Erfolg und tut nichts. So bleibt der Cron-Lauf rot und steht in der
+   * Observability, während die übrigen neun Schritte trotzdem gelaufen sind.
    */
   async scheduled(_event: ScheduledController, env: Env): Promise<void> {
-    const cutoff = Date.now() - SIGHTING_MAX_AGE_MS
-    // Drop the client hash as soon as the rate-limit window has passed, so a
-    // still-live sighting stops carrying a pseudonym for its reporter.
-    await env.DB.prepare(
-      'UPDATE sightings SET client_hash = NULL WHERE client_hash IS NOT NULL AND reported_at <= ?'
-    )
-      .bind(Date.now() - 3_600_000)
-      .run()
-    await env.DB.prepare('DELETE FROM sightings WHERE reported_at <= ?').bind(cutoff).run()
-    await env.DB.prepare(
-      'DELETE FROM votes WHERE sighting_id NOT IN (SELECT id FROM sightings)'
-    ).run()
-    // Same promise for the long-lived table: deleted, not merely filtered out.
-    await env.DB.prepare('DELETE FROM marks WHERE day < ?')
-      .bind(windowStart({ now: Date.now() }))
-      .run()
-    await env.DB.prepare('DELETE FROM visits WHERE seen_at < ?')
-      .bind(Date.now() - VISIT_KEEP_MS)
-      .run()
-    // Der Hash fällt, sobald das Rate-Limit-Fenster durch ist; der Text bleibt
-    // 90 Tage und ist dann ohne jeden Bezug zu seinem Absender.
-    await env.DB.prepare(
-      'UPDATE feedback SET client_hash = NULL WHERE client_hash IS NOT NULL AND created_at <= ?'
-    )
-      .bind(Date.now() - 3_600_000)
-      .run()
-    // Nach dem Löschen, nicht davor: Der Stand soll die Zahlen zeigen, die
-    // danach noch da sind.
-    await rollupStats(env)
+    const now = Date.now()
+    // Das Fenster, nach dem ein Pseudonym nichts mehr nützt: das Rate-Limit
+    // ist eine Stunde lang, danach ist der Hash nur noch ein Bezug.
+    const pseudonymFrist = now - 3_600_000
 
-    // Die Nutzungsstatistik: 90 Tage. Eine Zahl, die älter ist als ein
-    // Quartal, beantwortet keine Frage, die dieses Projekt hat. Das Tagesbudget
-    // hält nur zwei Tage — es ist ein Zähler, kein Bestand.
-    await env.DB.prepare('DELETE FROM events WHERE day < ?')
-      .bind(berlinDay(Date.now() - 90 * 86_400_000))
-      .run()
-    await env.DB.prepare('DELETE FROM event_budget WHERE day < ?')
-      .bind(berlinDay(Date.now() - 2 * 86_400_000))
-      .run()
+    const schritte: [string, () => Promise<unknown>][] = [
+      // Der Hash fällt, sobald das Rate-Limit-Fenster durch ist, damit eine
+      // noch sichtbare Meldung kein Pseudonym ihres Melders mehr trägt.
+      [
+        'sichtungen: hash loeschen',
+        () =>
+          env.DB.prepare(
+            'UPDATE sightings SET client_hash = NULL WHERE client_hash IS NOT NULL AND reported_at <= ?'
+          )
+            .bind(pseudonymFrist)
+            .run(),
+      ],
+      [
+        'sichtungen: abgelaufene loeschen',
+        () =>
+          env.DB.prepare('DELETE FROM sightings WHERE reported_at <= ?')
+            .bind(now - SIGHTING_MAX_AGE_MS)
+            .run(),
+      ],
+      [
+        'stimmen: verwaiste loeschen',
+        () =>
+          env.DB.prepare(
+            'DELETE FROM votes WHERE sighting_id NOT IN (SELECT id FROM sightings)'
+          ).run(),
+      ],
+      // Dasselbe Versprechen für die langlebige Tabelle: gelöscht, nicht bloss
+      // aus der Anzeige gefiltert.
+      [
+        'kontrolldichte: altes fenster loeschen',
+        () => env.DB.prepare('DELETE FROM marks WHERE day < ?').bind(windowStart({ now })).run(),
+      ],
+      [
+        'besuche: loeschen',
+        () =>
+          env.DB.prepare('DELETE FROM visits WHERE seen_at < ?')
+            .bind(now - VISIT_KEEP_MS)
+            .run(),
+      ],
+      [
+        'rueckmeldungen: hash loeschen',
+        () =>
+          env.DB.prepare(
+            'UPDATE feedback SET client_hash = NULL WHERE client_hash IS NOT NULL AND created_at <= ?'
+          )
+            .bind(pseudonymFrist)
+            .run(),
+      ],
+      // Die Nutzungsstatistik: 90 Tage. Eine Zahl, die älter ist als ein
+      // Quartal, beantwortet keine Frage, die dieses Projekt hat. Das
+      // Tagesbudget hält nur zwei Tage — es ist ein Zähler, kein Bestand.
+      [
+        'ereignisse: nach 90 tagen loeschen',
+        () =>
+          env.DB.prepare('DELETE FROM events WHERE day < ?')
+            .bind(berlinDay(now - 90 * 86_400_000))
+            .run(),
+      ],
+      [
+        'tagesbudget: loeschen',
+        () =>
+          env.DB.prepare('DELETE FROM event_budget WHERE day < ?')
+            .bind(berlinDay(now - 2 * 86_400_000))
+            .run(),
+      ],
+      [
+        'rueckmeldungen: nach 90 tagen loeschen',
+        () =>
+          env.DB.prepare('DELETE FROM feedback WHERE created_at < ?')
+            .bind(now - FEEDBACK_MAX_AGE_MS)
+            .run(),
+      ],
+      // Zuletzt, und mit Absicht nach allen Löschungen: Der Stand soll die
+      // Zahlen zeigen, die danach noch da sind.
+      ['auswertung rechnen', () => rollupStats(env)],
+    ]
 
-    await env.DB.prepare('DELETE FROM feedback WHERE created_at < ?')
-      .bind(Date.now() - FEEDBACK_MAX_AGE_MS)
-      .run()
+    const gescheitert: string[] = []
+    for (const [name, tun] of schritte) {
+      try {
+        await tun()
+      } catch (fehler) {
+        gescheitert.push(name)
+        console.error(`Aufraeumlauf: "${name}" gescheitert:`, fehler)
+      }
+    }
+    if (gescheitert.length > 0) {
+      throw new Error(`Aufraeumlauf unvollstaendig: ${gescheitert.join(', ')}`)
+    }
   },
 }

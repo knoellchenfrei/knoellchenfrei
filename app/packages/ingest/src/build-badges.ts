@@ -96,12 +96,19 @@ const e2eCount = process.env.E2E_COUNT ?? ''
 
 const badges: [string, string][] = [
   ['build', badge('build', 'passing', '#3fb950')],
-  [
-    'coverage',
-    coveragePct === null
-      ? badge('coverage', 'unknown', '#8b949e')
-      : badge('coverage', `${coveragePct}%`, coverageColour(coveragePct)),
-  ],
+  // Ohne gelaufene Messung wird das Abzeichen **nicht angefasst**, statt auf
+  // „unknown" gesetzt zu werden. Vorher stand hier ein grauer Ersatzwert, und
+  // der hat am 8. September genau das getan, wovor CLAUDE.md dreimal warnt:
+  // Ein Lauf, bei dem es nur um die Testzahl ging, meldete Erfolg und
+  // ueberschrieb dabei stillschweigend die einzige Zahl, die jemand nicht
+  // nachrechnen kann. Ein Abzeichen, das man aus Versehen verschlechtern kann,
+  // ist schlechter als eins, das stehen bleibt.
+  ...(coveragePct === null
+    ? []
+    : ([['coverage', badge('coverage', `${coveragePct}%`, coverageColour(coveragePct))]] as [
+        string,
+        string,
+      ][])),
   ['tests', badge('tests', testCount === '' ? 'passing' : `${testCount} passing`, '#3fb950')],
   ['e2e', badge('e2e', e2eCount === '' ? 'passing' : `${e2eCount} passing`, '#3fb950')],
   ['security', badge('security', 'audited', '#3fb950')],
@@ -117,4 +124,5 @@ for (const [name, svg] of badges) {
 }
 
 console.log(`Wrote ${badges.length} badges to ${OUT}`)
-if (coveragePct !== null) console.log(`  coverage: ${coveragePct}%`)
+if (coveragePct === null) console.log('  coverage: unveraendert gelassen (keine Messung)')
+else console.log(`  coverage: ${coveragePct}%`)

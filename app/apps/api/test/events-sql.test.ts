@@ -28,17 +28,30 @@ const RESERVIEREN =
   ' ON CONFLICT (day) DO UPDATE SET n = event_budget.n + excluded.n'
 const ZAEHLEN =
   'INSERT INTO events (day, hour, city, name, value, n) SELECT ?, ?, ?, ?, ?, ?' +
-  ' WHERE (SELECT n FROM event_budget WHERE day = ?) <= ?' +
+  ' WHERE COALESCE((SELECT n FROM event_budget WHERE day = ?), 0) < ?' +
   ' ON CONFLICT (day, hour, city, name, value) DO UPDATE SET n = events.n + excluded.n'
 
 let db: DatabaseSync
 
-function bündel(tag: string, ereignisse: [string, number, string, string, number][]): void {
-  const gesamt = ereignisse.reduce((summe, e) => summe + e[4], 0)
-  db.prepare(RESERVIEREN).run(tag, gesamt)
+const budget = (tag: string): number =>
+  (db.prepare('SELECT n FROM event_budget WHERE day = ?').get(tag) as { n: number } | undefined)
+    ?.n ?? 0
+
+/**
+ * Ein Bündel, genau wie der Worker es fährt: erst die Vorprüfung, dann die
+ * Zählanweisungen, **zuletzt** die Reservierung.
+ *
+ * Gibt zurück, was die Antwort behaupten würde — damit ein Test die Behauptung
+ * gegen die Tabelle halten kann. Genau dort lag der Fehler.
+ */
+function bündel(tag: string, ereignisse: [string, number, string, string, number][]): number {
+  if (budget(tag) >= EVENTS_PER_DAY) return 0
   for (const [name, hour, city, value, n] of ereignisse) {
     db.prepare(ZAEHLEN).run(tag, hour, city, name, value, n, tag, EVENTS_PER_DAY)
   }
+  const gesamt = ereignisse.reduce((summe, e) => summe + e[4], 0)
+  db.prepare(RESERVIEREN).run(tag, gesamt)
+  return ereignisse.length
 }
 
 const zahl = (tag: string, name: string, value = ''): number =>
@@ -110,11 +123,53 @@ describe('das Tagesbudget', () => {
     expect(zahl('2026-09-08', 'app.open')).toBe(3)
   })
 
-  it('zählt das Angenommene, auch wenn nichts geschrieben wurde', () => {
+  it('reserviert nichts mehr, sobald die Vorprüfung ablehnt', () => {
     bündel('2026-09-07', [['app.open', 9, 'berlin', '', EVENTS_PER_DAY]])
-    bündel('2026-09-07', [['app.open', 9, 'berlin', '', 7]])
-    const budget = db.prepare('SELECT n FROM event_budget WHERE day = ?').get('2026-09-07') as { n: number }
-    expect(budget.n).toBe(EVENTS_PER_DAY + 7)
+    expect(budget('2026-09-07')).toBe(EVENTS_PER_DAY)
+    // Vorher wurde auch das Abgelehnte noch aufaddiert; das Budget wuchs dann
+    // den ganzen Tag weiter, ohne dass es etwas bedeutet hätte.
+    expect(bündel('2026-09-07', [['app.open', 9, 'berlin', '', 7]])).toBe(0)
+    expect(budget('2026-09-07')).toBe(EVENTS_PER_DAY)
+  })
+
+  /**
+   * Der Fehler, den die Reihenfolge im `batch` machte — gemessen, nicht
+   * gelesen.
+   *
+   * Zuerst stand die Reservierung an erster Stelle. Ein `batch` läuft der
+   * Reihe nach in einer Transaktion, also lasen die Zählanweisungen bereits
+   * den erhöhten Stand: Deckel 20, Stand 18, ein Bündel mit 5 → Budget 23,
+   * `23 <= 20` falsch, **null** Zeilen geschrieben. Die Antwort meldete
+   * trotzdem `written: 2`. Nicht die Menge war das Problem, sondern dass die
+   * Antwort etwas anderes sagte als die Tabelle.
+   */
+  it('schreibt das Bündel, das über den Deckel läuft — statt es still zu verwerfen', () => {
+    bündel('2026-09-07', [['app.open', 9, 'berlin', '', 18]])
+    const gemeldet = bündel('2026-09-07', [
+      ['app.open', 10, 'berlin', '', 3],
+      ['app.open', 11, 'berlin', '', 2],
+    ])
+    expect(gemeldet).toBe(2)
+    expect(zahl('2026-09-07', 'app.open')).toBe(23)
+    // Und der Deckel greift ab dem nächsten Aufruf, nicht mitten im Bündel.
+    expect(bündel('2026-09-07', [['app.open', 12, 'berlin', '', 9]])).toBe(0)
+    expect(zahl('2026-09-07', 'app.open')).toBe(23)
+  })
+
+  /**
+   * Die Falle, die die Umstellung aufgemacht hätte.
+   *
+   * Steht die Reservierung zuletzt, gibt es beim **ersten** Bündel eines Tages
+   * noch keine Budgetzeile. `(SELECT n FROM event_budget WHERE day = ?)` ist
+   * dann NULL, und `NULL < 5000` ist NULL — also falsch. Ohne `COALESCE(…, 0)`
+   * würde an jedem Tag das erste Bündel verworfen: täglich, still, und
+   * ausgerechnet die Zeilen der ersten Stunde.
+   */
+  it('schreibt das erste Bündel eines Tages, obwohl es noch keine Budgetzeile gibt', () => {
+    expect(budget('2026-09-09')).toBe(0)
+    expect(bündel('2026-09-09', [['app.open', 0, 'berlin', '', 2]])).toBe(1)
+    expect(zahl('2026-09-09', 'app.open')).toBe(2)
+    expect(budget('2026-09-09')).toBe(2)
   })
 
   /**
