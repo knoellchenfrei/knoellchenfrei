@@ -318,3 +318,51 @@ describe('die Zusicherungen im Schema', () => {
     expect(() => bündel('2026-09-07', [['app.open', 9, 'berlin', '', 0]])).toThrow()
   })
 })
+
+describe('die Aufschlüsselung nach Ausprägung', () => {
+  /** Wörtlich wie im Worker — inklusive der Positivliste. */
+  const werte = (seit: string) =>
+    db
+      .prepare(
+        'SELECT name, value, SUM(n) AS n FROM events' +
+          " WHERE day >= ? AND name IN ('layer.on', 'zone.answer', 'zone.source', 'app.open', 'city.suggest')" +
+          ' GROUP BY name, value ORDER BY name, n DESC'
+      )
+      .all(seit) as { name: string; value: string; n: number }[]
+
+  it('trennt die Ebenen, statt sie zu einer Zahl zu summieren', () => {
+    bündel('2026-09-07', [
+      ['layer.on', 9, 'berlin', 'heat', 5],
+      ['layer.on', 9, 'berlin', 'charging', 2],
+      ['layer.on', 10, 'berlin', 'heat', 3],
+    ])
+    const ergebnis = werte('2026-09-01').filter((z) => z.name === 'layer.on')
+    // Über die Stunden zusammengezählt, nach Ebene getrennt: genau das, was
+    // „welche Ebenen werden benutzt" beantwortet.
+    expect(ergebnis).toEqual([
+      { name: 'layer.on', value: 'heat', n: 8 },
+      { name: 'layer.on', value: 'charging', n: 2 },
+    ])
+  })
+
+  /**
+   * Die Zusicherung, auf die es ankommt: Die Liste ist eine **Positivliste**.
+   *
+   * `zone.open` und `city.switch` tragen Ortsangaben als Wert. Stünden sie
+   * hier mit drin, ginge die Zone ohne k-Schwelle hinaus — und die Schwelle
+   * ist der einzige Grund, warum eine einmal angesehene Zone niemanden
+   * beschreibt. Eine Positivliste kann nicht dadurch undicht werden, dass
+   * jemand dem Katalog ein Ereignis hinzufügt.
+   */
+  it('lässt jedes Ereignis draussen, dessen Wert ein Ort ist', () => {
+    bündel('2026-09-07', [
+      ['zone.open', -1, 'berlin', '34', 9],
+      ['city.switch', -1, 'berlin', 'hamburg', 4],
+      ['zone.answer', 9, 'berlin', 'pflichtig', 1],
+    ])
+    const namen = werte('2026-09-01').map((z) => z.name)
+    expect(namen).not.toContain('zone.open')
+    expect(namen).not.toContain('city.switch')
+    expect(namen).toContain('zone.answer')
+  })
+})

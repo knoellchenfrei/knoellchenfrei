@@ -239,7 +239,7 @@ flowchart LR
     E --> W["Worker<br/>stempelt Tag + Stunde"]
     W --> K["Katalog core/events.ts<br/>+ zone-keys.generated.ts"]
     K --> D[("D1 · events<br/>day·hour·city·name·value → n")]
-    D -->|"stündlich, im Cron"| R["rollupStats<br/>5 GROUP BY + Gegenprobe"]
+    D -->|"stündlich, im Cron"| R["rollupStats<br/>6 GROUP BY + Gegenprobe"]
     R --> KV[("KV · stats:v1")]
     KV --> S["GET /stats"] --> P["/statistik<br/>zweiter Vite-Eintrag"]
 ```
@@ -265,6 +265,15 @@ Lesen des Codes sonst raten müsste:
    kann auch niemand auslesen — und `GET /stats` liegt bewusst *nicht* hinter
    dem Beta-Riegel, weil der vor der Auslieferung der Seite steht und nicht vor
    dem Worker.
+
+Ausgewertet wird zweimal: **wie oft** (je Tag, Stunde, Stadt, Ereignisname) und
+**was** — die Ausprägungen der Ereignisse, deren Werte aufgezählt sind. Ohne die
+zweite Hälfte steht unter „Was benutzt wird" je Ereignis genau eine Zahl, und
+`layer.on: 214` beantwortet die Frage „welche Ebenen werden benutzt" gerade
+nicht. Welche Ereignisse dorthin dürfen, entscheidet eine **Positivliste** im
+SQL, nicht eine Ausnahmeregel: `zone.open` und `city.switch` tragen Orte als
+Wert und gehen durch die k-Schwelle, nicht hier. Eine Positivliste kann nicht
+dadurch undicht werden, dass jemand dem Katalog ein Ereignis hinzufügt.
 
 Was **nicht** gespeichert wird: keine Kennung, keine Sitzung, keine Reihenfolge,
 keine IP — auch nicht gehasht. Der Puffer im Browser liegt im Arbeitsspeicher

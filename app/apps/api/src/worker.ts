@@ -701,7 +701,7 @@ const STATS_KEY = 'stats:v1'
  * Rechnet die Statistik **einmal je Stunde** aus und legt sie ins KV.
  *
  * Warum nicht bei jeder Anfrage: D1 rechnet **gelesene** Zeilen gegen ein
- * eigenes Tagesbudget ab. Fünf `GROUP BY`-Abfragen über 28 Tage lesen je
+ * eigenes Tagesbudget ab. Sechs `GROUP BY`-Abfragen über 28 Tage lesen je
  * Aufruf fünfstellig viele Zeilen; bei einem öffentlichen Endpunkt mit
  * Neuladen wäre das Budget vor dem Mittag weg. So kostet die Auswertung
  * **24 Läufe am Tag**, unabhängig davon, wie oft jemand hinsieht.
@@ -743,6 +743,26 @@ async function rollupStats(env: Env): Promise<void> {
         " WHERE day >= ? AND hour = -1 AND name = 'zone.open' GROUP BY city, value" +
         ') GROUP BY city, zone ORDER BY city, n DESC'
     ).bind(STATS_MIN_ZONE, seit),
+    /**
+     * Die Ausprägungen der Ereignisse, deren Werte **keine Orte** sind.
+     *
+     * Eine Frage, fünf Antworten: welche Ebenen eingeschaltet werden, was die
+     * App geantwortet hat, wie jemand zu einer Zone kam, worüber die App
+     * geöffnet wurde, ob ein Stadtvorschlag angenommen wird. Ohne das steht
+     * unter „Was benutzt wird" je Ereignis genau eine Zahl — `layer.on: 214`
+     * beantwortet die Frage „welche Ebenen" gerade nicht.
+     *
+     * Die Liste ist **fest und aufzählend**, nicht „alles ausser den Orten":
+     * `zone.open` und `city.switch` tragen Ortsangaben als Wert und gehören
+     * durch die k-Schwelle darunter, nicht hierher. Eine Positivliste kann
+     * nicht dadurch undicht werden, dass jemand dem Katalog ein Ereignis
+     * hinzufügt.
+     */
+    env.DB.prepare(
+      'SELECT name, value, SUM(n) AS n FROM events' +
+        " WHERE day >= ? AND name IN ('layer.on', 'zone.answer', 'zone.source', 'app.open', 'city.suggest')" +
+        ' GROUP BY name, value ORDER BY name, n DESC'
+    ).bind(seit),
     // Die Gegenprobe. Siehe unten, warum sie nur zwei Tage weit reicht.
     env.DB.prepare('SELECT day, COUNT(*) AS n FROM visits GROUP BY day ORDER BY day').bind(),
   ])
@@ -772,7 +792,7 @@ async function rollupStats(env: Env): Promise<void> {
    * über 28 Tage verglich eine volle Zahl mit einer leeren und meldete jedes
    * Mal Alarm.
    */
-  const besuche = zeilen<{ day: string; n: number }>(5)
+  const besuche = zeilen<{ day: string; n: number }>(6)
   const gestern = berlinDay(now - 86_400_000)
   const probe = besuche
     .filter((zeile) => zeile.day >= gestern)
@@ -792,6 +812,7 @@ async function rollupStats(env: Env): Promise<void> {
     proStadt: zeilen(2),
     proName: zeilen(3),
     proZone: zeilen(4),
+    proWert: zeilen(5),
     probe,
   }
   await env.CACHE.put(STATS_KEY, JSON.stringify(stand))

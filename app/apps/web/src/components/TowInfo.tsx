@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { CITY } from '../city.js'
+import { track } from '../track.js'
 
 /**
  * Aus der Ideenliste von 2012 übernommen: Wenn das Auto weg ist, ist die
@@ -34,7 +35,14 @@ export function TowInfo() {
         <button
           type="button"
           className="disclosure"
-          onClick={() => setOpen((value) => !value)}
+          onClick={() => {
+            // Nur das Aufklappen zählt. Wer auf- und wieder zuklappt, hat
+            // einmal nachgesehen, nicht zweimal — und der Zähler steht vor
+            // dem `setState`, weil dessen Aktualisierungsfunktion unter
+            // StrictMode zweimal läuft.
+            if (!open) track('tow.open')
+            setOpen((value) => !value)
+          }}
           aria-expanded={open}
           aria-controls="tow-info-body"
         >

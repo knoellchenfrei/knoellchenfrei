@@ -80,6 +80,15 @@ Fehler gefunden hätte, ist eine Behauptung.
 | C4 | `build-badges.ts` ersetzte ein gutes Abzeichen durch „unknown", wenn keine Messung vorlag | Genau eingetreten: ein Lauf, bei dem es nur um die Testzahl ging, überschrieb die eine Zahl, die niemand nachrechnet | Der eigene Diff |
 | C5 | **Offene Weiterleitung** im Beta-Riegel | `new URL('https://knoellchenfrei.de//evil.com/').pathname` ist `//evil.com/` — als `Location` eine protokollrelative Adresse. Ein Tester könnte einen Einladungslink bauen, der von der echten Domain kommt und auf seiner Seite endet | Durchgehen beider Anmeldewege |
 | C6 | `docs/todo.md` fehlte Abschnitt **6** | Verloren am 7. September in einem Commit über Worker-Tests. Der vierte Abschnitt, den dasselbe Ersetzungsmuster gefressen hat — die ersten drei waren aufgefallen, dieser nicht | Nachzählen der Überschriften |
+| C7 | **Drei der zwölf Katalogereignisse wurden nie ausgelöst** | `layer.on`, `city.suggest` und `tow.open` standen in `core/events.ts` und in keiner Zeile der App. Auf der Statistikseite hätten sie als Dauer-Null gestanden — und `layer.on` ist ausgerechnet die Antwort auf „welche Ebenen werden benutzt", eine der Fragen, für die das Zählwerk gebaut wurde | Katalogeinträge gegen die Aufrufstellen gezählt |
+
+Der siebte ist der lehrreichste, weil er zeigt, wie eine Lücke aussieht, die
+niemandem auffällt: **Nichts war kaputt.** Die Zählung lief, die Seite
+zeichnete, die Tests waren grün — es fehlte nur die Hälfte der Antwort, und
+eine Dimension ohne Werte ist von einer kaputten nicht zu unterscheiden. Der
+Test dagegen prüft die **Quelle**: Für jeden Katalognamen muss es eine Stelle
+geben, die ihn auslöst. Ein Ereignis an einer Schaltfläche ist im Unit-Test
+nicht erreichbar, und zwölf Klickstrecken in E2E wären der falsche Preis.
 
 Was **nicht** gefunden wurde, obwohl gesucht: `Vary: Origin` steht bereits an
 jeder CORS-Antwort, `hour >= 0` hält die Ortsereignisse aus dem Tagesgang

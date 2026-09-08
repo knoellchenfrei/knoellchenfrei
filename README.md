@@ -243,7 +243,7 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 629 Unit-Tests
+pnpm test                              # 632 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -282,7 +282,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 629 — 541 in `core`, 60 für Worker und Zählwerk, 28 für Beta-Riegel und Zählwerk der App; davon 41 Regressionstests für konkrete gefundene Fehler |
+| Unit-Tests | 632 — 541 in `core`, 62 für Worker und Zählwerk, 29 für Beta-Riegel und Zählwerk der App; davon 42 Regressionstests für konkrete gefundene Fehler |
 | End-to-End | 152 über Desktop und Handy, gegen den Produktions-Build; 151 bestehen, einer überspringt sich selbst, wenn der Tag nichts zu erklären hat |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

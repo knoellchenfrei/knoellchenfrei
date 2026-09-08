@@ -16,6 +16,7 @@ import {
   withinCitySession,
   MIN_MARKS_FOR_PATTERN,
   type City,
+  type EventLayerValue,
   type HeatMark,
   type Position,
   type Sighting,
@@ -46,7 +47,7 @@ import { SightingPanel } from './components/SightingPanel.js'
 import { TowInfo } from './components/TowInfo.js'
 import { ZonePanel } from './components/ZonePanel.js'
 import { seedMarks, seedSightings } from './seed.js'
-import { track } from './track.js'
+import { track, trackNow } from './track.js'
 import {
   countVisit,
   hideInstall,
@@ -1190,14 +1191,32 @@ export function App() {
     )
   }, [])
 
-  const togglePoi = useCallback((kind: PoiKind) => {
-    setVisiblePoi((current) => {
-      const next = new Set(current)
-      if (next.has(kind)) next.delete(kind)
-      else next.add(kind)
-      return next
-    })
+  /**
+   * Gezählt wird nur das **Einschalten**, nicht jedes Umlegen.
+   *
+   * Die Frage, die der Katalog beantworten soll, lautet „welche Ebenen
+   * benutzt jemand" — und wer eine Ebene an- und wieder ausschaltet, hat sie
+   * einmal benutzt, nicht zweimal. Ausserdem: Der Zähler steht **vor** dem
+   * `setState` und nicht in dessen Aktualisierungsfunktion. Unter StrictMode
+   * läuft die zweimal, und jede Zählung wäre doppelt — derselbe Grund, aus
+   * dem der Persist-Effekt hier schon einmal falsch lag.
+   */
+  const schalteEbene = useCallback((wert: EventLayerValue, war: boolean) => {
+    if (!war) track('layer.on', wert)
   }, [])
+
+  const togglePoi = useCallback(
+    (kind: PoiKind) => {
+      schalteEbene(kind, visiblePoi.has(kind))
+      setVisiblePoi((current) => {
+        const next = new Set(current)
+        if (next.has(kind)) next.delete(kind)
+        else next.add(kind)
+        return next
+      })
+    },
+    [schalteEbene, visiblePoi]
+  )
 
   const activeLayerCount = visiblePoi.size + (showLowEmission ? 1 : 0) + (showHeat ? 1 : 0)
   // Selecting another zone, or starting a session, replaces what the panel is
@@ -1329,7 +1348,10 @@ export function App() {
         <button
           type="button"
           className={`chip${showHeat ? ' chip--on' : ''}`}
-          onClick={() => setShowHeat((value) => !value)}
+          onClick={() => {
+            schalteEbene('heat', showHeat)
+            setShowHeat((value) => !value)
+          }}
           aria-pressed={showHeat}
           title={
             heat.hasPattern
@@ -1344,7 +1366,10 @@ export function App() {
         <button
           type="button"
           className={`chip${showLowEmission ? ' chip--on' : ''}`}
-          onClick={() => setShowLowEmission((value) => !value)}
+          onClick={() => {
+            schalteEbene('umweltzone', showLowEmission)
+            setShowLowEmission((value) => !value)
+          }}
           aria-pressed={showLowEmission}
         >
           <span className="chip__dot" style={{ background: '#a3e635' }} aria-hidden="true" />
@@ -1424,8 +1449,14 @@ export function App() {
         <CitySuggestion
           city={citySuggestion}
           current={CITY}
-          onSwitch={() => switchCity(citySuggestion)}
+          onSwitch={() => {
+            // `trackNow` und nicht `track`: `switchCity` lädt gleich neu, ein
+            // gepuffertes Ereignis wäre damit weg.
+            trackNow('city.suggest', 'accept')
+            switchCity(citySuggestion)
+          }}
           onStay={() => {
+            track('city.suggest', 'decline')
             // Je Stadt gemerkt, nicht als „nie wieder": Wer in München bleibt,
             // soll in Hamburg trotzdem gefragt werden.
             rememberSuggestionDismissed(citySuggestion.key)
@@ -1605,7 +1636,10 @@ export function App() {
           weekday={berlinNow.weekday}
           hour={Math.floor(berlinNow.minuteOfDay / 60)}
           visible={showHeat}
-          onToggle={() => setShowHeat((value) => !value)}
+          onToggle={() => {
+            schalteEbene('heat', showHeat)
+            setShowHeat((value) => !value)
+          }}
           shared={shared}
         />
 

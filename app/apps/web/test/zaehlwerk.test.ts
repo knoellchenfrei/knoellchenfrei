@@ -186,3 +186,43 @@ describe('was der Katalog nicht kennt', () => {
     expect((gesendet[0] as Bündel).events[0]?.name).toBe('app.open')
   })
 })
+
+/**
+ * Der Katalog verspricht zwölf Messungen — die Prüfung, ob es sie gibt.
+ *
+ * Am 8. September waren **drei** davon tot: `layer.on`, `city.suggest` und
+ * `tow.open` standen in `core/events.ts`, wurden aber nirgends ausgelöst. Auf
+ * der Statistikseite hätten sie als Dauer-Null gestanden — und ausgerechnet
+ * `layer.on` ist die Antwort auf „welche Ebenen werden benutzt", also eine der
+ * Fragen, für die das Zählwerk gebaut wurde. Eine Dimension, die nie einen
+ * Wert bekommt, ist von einer kaputten nicht zu unterscheiden.
+ *
+ * Geprüft wird die Quelle, nicht die Laufzeit: Ein Ereignis, das an einer
+ * Schaltfläche hängt, ist im Unit-Test nicht erreichbar, und ein E2E-Test
+ * dafür wäre zwölf Klickstrecken lang. Der Name im Aufruf ist eine
+ * Zeichenkette; dass sie dort steht, ist die Zusicherung, um die es geht.
+ */
+describe('der Katalog', () => {
+  it('hat für jedes Ereignis eine Stelle, die es auslöst', async () => {
+    const { readFileSync, readdirSync } = await import('node:fs')
+    const { join } = await import('node:path')
+    const { EVENTS } = await import('@knoellchenfrei/core')
+
+    const wurzel = join(import.meta.dirname, '../src')
+    const dateien: string[] = []
+    const sammeln = (verzeichnis: string): void => {
+      for (const eintrag of readdirSync(verzeichnis, { withFileTypes: true })) {
+        const pfad = join(verzeichnis, eintrag.name)
+        if (eintrag.isDirectory()) sammeln(pfad)
+        else if (/\.tsx?$/.test(eintrag.name) && eintrag.name !== 'track.ts') dateien.push(pfad)
+      }
+    }
+    sammeln(wurzel)
+    const quelle = dateien.map((pfad) => readFileSync(pfad, 'utf8')).join('\n')
+
+    const tot = Object.keys(EVENTS).filter(
+      (name) => !quelle.includes(`track('${name}'`) && !quelle.includes(`trackNow('${name}'`)
+    )
+    expect(tot, `nie ausgelöst: ${tot.join(', ')}`).toEqual([])
+  })
+})

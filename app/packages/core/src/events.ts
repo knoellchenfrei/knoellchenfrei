@@ -102,6 +102,15 @@ export const EVENT_MAX_COUNT = 50
 /** Obergrenze für die Zahl der Ereignisse in einer Anfrage. */
 export const EVENTS_PER_REQUEST = 25
 
+/**
+ * Die Ausprägungen von `layer.on` als Typ.
+ *
+ * Damit ist die Liste in der Oberfläche nicht abgeschrieben, sondern
+ * abgeleitet: Wer hier eine Ebene ergänzt, bekommt an der Schaltfläche einen
+ * Typfehler, statt eine Zählung zu erzeugen, die der Worker still verwirft.
+ */
+export type EventLayerValue = (typeof EVENTS)['layer.on']['values'][number]
+
 export function isEventName(value: unknown): value is EventName {
   return typeof value === 'string' && Object.prototype.hasOwnProperty.call(EVENTS, value)
 }

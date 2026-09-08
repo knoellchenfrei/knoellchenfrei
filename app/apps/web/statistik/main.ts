@@ -26,6 +26,7 @@ interface Stand {
   proStadt: (Zeile & { city: string })[]
   proName: (Zeile & { name: string })[]
   proZone: (Zeile & { city: string; zone: string })[]
+  proWert?: (Zeile & { name: string; value: string })[]
   probe?: { day: string; geraete: number; oeffnungen: number }[]
 }
 
@@ -61,6 +62,38 @@ const NAMEN: Record<string, string> = {
   locate: 'Standort freigegeben',
   feedback: 'Rückmeldung geschickt',
   'tow.open': '„Auto weg?" geöffnet',
+}
+
+/**
+ * Anzeigenamen der Ausprägungen — und derselbe Grundsatz wie oben: Was hier
+ * fehlt, erscheint technisch, statt zu verschwinden.
+ *
+ * Ohne diese Aufschlüsselung stand unter „Was benutzt wird" je Ereignis genau
+ * eine Zahl. `layer.on: 214` beantwortet die Frage „welche Ebenen werden
+ * benutzt" gerade nicht — und sie ist eine der Fragen, für die das Zählwerk
+ * gebaut wurde.
+ */
+const WERTE: Record<string, string> = {
+  heat: 'Kontrolldichte',
+  umweltzone: 'Umweltzone',
+  charging: 'Ladepunkte',
+  carsharing: 'Carsharing',
+  park_and_ride: 'Park and Ride',
+  accessible: 'Behindertenparkplätze',
+  frei: 'gebührenfrei',
+  pflichtig: 'gebührenpflichtig',
+  unsicher: 'unsicher',
+  quelldefekt: 'Quelle unbrauchbar',
+  karte: 'auf die Karte getippt',
+  standort: 'über den Standort',
+  suche: 'über die Suche',
+  melden: 'über „Melden“',
+  kontrollen: 'über „Kontrollen“',
+  accept: 'angenommen',
+  decline: 'abgelehnt',
+  use: 'freigegeben',
+  send: 'abgeschickt',
+  '': 'direkt',
 }
 
 const el = (tag: string, klasse?: string, text?: string): HTMLElement => {
@@ -178,6 +211,30 @@ function zeichnen(stand: Stand): HTMLElement {
       )
     )
   )
+
+  /**
+   * Die Aufschlüsselung: nicht wie oft, sondern **was**.
+   *
+   * Nur Ereignisse, deren Ausprägungen aufgezählt sind — kein Ort. Welche das
+   * sind, entscheidet der Server in `rollupStats` über eine Positivliste; hier
+   * wird nur gezeichnet, was ankommt. Bleibt das Feld leer (ein Stand aus der
+   * Zeit vor dieser Auswertung), fällt der Abschnitt weg, statt leer
+   * dazustehen.
+   */
+  const wertNamen = [...new Set((stand.proWert ?? []).map((z) => z.name))]
+  for (const name of wertNamen) {
+    const werte = (stand.proWert ?? []).filter((z) => z.name === name)
+    if (werte.length === 0) continue
+    wurzel.append(
+      abschnitt(
+        NAMEN[name] ?? name,
+        balken(
+          werte.map((z) => ({ label: WERTE[z.value] ?? z.value, n: z.n })),
+          'Noch nichts gezählt.'
+        )
+      )
+    )
+  }
 
   /**
    * Die Gegenprobe — die einzige Zahl auf dieser Seite, die etwas über die

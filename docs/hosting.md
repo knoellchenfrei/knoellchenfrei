@@ -594,7 +594,7 @@ was davon in der Datenschutzerklärung steht, in
 `GET /stats` liefert **keine** Abfrage, sondern einen fertigen Stand aus dem
 KV (`stats:v1`). Gerechnet wird er einmal je Stunde im selben Cron, der
 aufräumt. Der Grund ist eine Abrechnungseigenheit von D1: Es zählt **gelesene**
-Zeilen gegen ein eigenes Tagesbudget, und fünf `GROUP BY` über 28 Tage lesen je
+Zeilen gegen ein eigenes Tagesbudget, und sechs `GROUP BY` über 28 Tage lesen je
 Aufruf fünfstellig viele. Bei einem öffentlichen Endpunkt mit Neuladen wäre das
 Budget vor dem Mittag weg; so kostet die Auswertung 24 Läufe am Tag, egal wie
 oft jemand hinsieht.
