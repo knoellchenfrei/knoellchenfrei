@@ -1471,17 +1471,151 @@ Mo-Sa 9-22 UhrMo-Sa 9-22 Uhr        Mo-Fr 9-17 Uhr, Sa 9 -14 Uhr/ Advents-Sa 9 -
   </div>
 </section>
 
+<section>
+  <h2>Siebter Nachtrag</h2>
+  <div class="col">
+    <h3>Die dritte Nacht: die Karte hat nie gezeichnet</h3>
+    <p>Der ganze sechste Nachtrag beschreibt vier Städte, deren Zonen niemand
+    gesehen hat. Der Hintergrund fehlte, das war bekannt und galt als
+    Kachelproblem — die Zonen selbst hätten aber zeichnen müssen, und sie taten
+    es nicht. Die Suche ging über den Kartenstil, über PMTiles, über
+    Range-Requests. Gefunden wurde es erst, als der Stil von FreiFahren geladen
+    wurde: <em>der</em> zeichnete auch nichts. Damit war klar, dass der Fehler
+    nicht in unseren Daten liegt.</p>
+    <p><strong>MapLibre 6 startet einen Worker aus einer eigenen Datei</strong>
+    — <code>maplibre-gl-worker.mjs</code>, deren Adresse zur Laufzeit gebaut
+    wird. Kein Bündler erkennt sie statisch, also emittiert keiner sie, und die
+    Anfrage lief in die SPA-Rückfalladresse: <code>index.html</code> mit
+    <code>200 OK</code> und <code>text/html</code>. Kein Fehler im Protokoll,
+    kein roter Eintrag, nur ein Status, der Erfolg meldet. Ohne diesen Worker
+    parst MapLibre <em>gar nichts</em> — weder Vektorkacheln noch das GeoJSON
+    der Parkzonen.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Ein 200 ist kein Beweis</span>
+    <p>Die Lehre steht in einer Zeile: Beim Suchen nach einer fehlenden Datei
+    zählt der <code>content-type</code>, nicht der Status. Eine SPA-Rückfallregel
+    macht aus jeder 404 eine 200 mit HTML darin — und das sieht in jeder
+    Übersicht des Netzwerkprotokolls aus wie eine geglückte Anfrage. Der Bau
+    des Einzeldatei-Artifacts bricht seitdem ab, wenn die Worker-Datei im
+    <code>dist</code> fehlt, statt eine Fassung auszuliefern, die still nichts
+    zeichnet.</p>
+  </div>
+
+  <div class="col">
+    <h3>„Da sind Löcher am Zoologischen Garten. Das glaube ich nicht."</h3>
+    <p>Und er hatte recht, dass es merkwürdig aussieht — nur nicht damit, dass
+    es unser Fehler ist. Der Verdacht war naheliegend: 103 Zonen, gestern seien
+    es mehr gewesen. Also frische Daten gezogen und die beiden Abzüge
+    byteweise verglichen: <strong>identisch</strong>. Danach Berlins eigenen
+    Kartendienst befragt — er zeigt dieselben Löcher, an denselben Stellen. Was
+    aussieht wie ein Datenverlust, ist der Zuschnitt der Quelle: Die
+    Parkraumbewirtschaftung endet dort tatsächlich, auch mitten in Straßen, die
+    jeder für bewirtschaftet hielte.</p>
+    <p>Geblieben ist daraus ein echter Befund: <strong>421 gebührenpflichtige
+    Segmente liegen außerhalb jedes Zonenpolygons</strong>. Der Satz „Außerhalb
+    der Parkraumbewirtschaftung — hier ist Parken gebührenfrei" hätte über
+    jedem von ihnen gestanden und wäre falsch gewesen. Er ist weg. Eine Aussage
+    über den Ort, die in Wahrheit eine über die geladenen Daten war — dieselbe
+    Fehlerklasse wie bei den Demodaten, die in München 500 km neben der Karte
+    lagen.</p>
+
+    <h3>Ein Zählwerk, das nichts über einzelne Leute weiß</h3>
+    <p>Die Anforderung kam kurz: „Ich will wissen, wo die App benutzt wird, in
+    welcher Stadt, in welcher Zone, wie oft, welche Features." Der Plan dafür
+    ist von einem zweiten Modell gegengelesen worden (Fable 5.1, 181 der 2.157
+    Antworten dieser Sitzung), zweimal überarbeitet und dann umgesetzt. Die
+    Regel, die alles trägt, ist eine Zeile: <strong>Ort oder Zeit, nie
+    beides.</strong></p>
+    <p>Ein Ereignis, dessen Ausprägung ein Ort ist, bekommt
+    <code>hour = -1</code> statt der Stunde. Das sieht im SQL wie ein Fehlwert
+    aus und ist Teil des Schlüssels. Der Grund: Eine Zeile mit Zone
+    <em>und</em> Uhrzeit wäre bei kleinen Zahlen ein Einzelereignis mit Ort und
+    Zeit — und sie stünde in derselben Datenbank wie die Meldungen. Dazu: Der
+    Server stempelt Tag und Stunde, nicht der Client; Name und Ausprägung
+    werden gegen einen Katalog geprüft; eine Zone unter fünf Aufrufen geht in
+    eine Sammelzeile, und diese Schwelle steht im SQL, nicht in der Anzeige —
+    was die Antwort nicht enthält, kann niemand auslesen. Gespeichert wird
+    keine Kennung, keine Sitzung, keine Reihenfolge, keine IP, auch nicht
+    gehasht.</p>
+    <p>Die aufschlussreichste Zahl der Statistikseite ist die, die etwas über
+    die Seite selbst sagt: Die Besuchszählung läuft über einen völlig anderen
+    Schreibweg, und jedes Gerät mit einer Besuchszeile hat die App geöffnet.
+    Ist <code>app.open</code> kleiner als die Gerätezahl, kommen Bündel nicht
+    an — und das sähe sonst aus wie weniger Nutzung.</p>
+
+    <h3>Die Fehlerjagd: sechs Befunde, drei mit Gegenprobe</h3>
+    <p>Nicht gelesen, sondern gemessen. Und bei dreien wurde der neue Test
+    gegen die <em>alte</em> Fassung gehalten: Er musste dort fallen. Ein Test,
+    von dem niemand weiß, ob er den Fehler gefunden hätte, ist eine
+    Behauptung.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Befund</th><th>Was er angerichtet hätte</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Das Bündel über dem Tagesdeckel wurde ganz verworfen</td><td>Ein <code>batch</code> läuft der Reihe nach in einer Transaktion; die Reservierung stand zuerst, also lasen die Zählanweisungen den bereits erhöhten Stand. Gemessen gegen SQLite: Deckel 20, Stand 18, Bündel mit 5 → geschrieben <strong>0</strong>, gemeldet <strong>2</strong>. Nicht die verlorene Zählung ist der Fehler, sondern dass die Antwort etwas anderes sagte als die Tabelle.</td></tr>
+        <tr><td class="k">Zonenkennung gegen alle 275 statt gegen die der Stadt</td><td>Berlin und Frankfurt nummerieren beide durch und teilen sich <strong>20</strong> Kennungen; in München wären <strong>193 der 275</strong> angenommenen Werte solche, die es dort nicht gibt. Die Liste ist je Stadt erzeugt — sie wurde nur flachgeklopft, bevor sie geprüft hat.</td></tr>
+        <tr><td class="k">Eine gescheiterte Auswertung hielt Löschungen an</td><td>Der Aufräumlauf war eine Kette aus zehn <code>await</code>; hinter der Statistik standen die Aufbewahrungsfristen. Eine Statistik, die nicht rechnen kann, verhinderte damit die Einhaltung einer Zusage aus der Datenschutzerklärung. Er hatte <strong>keinen einzigen Test</strong>.</td></tr>
+        <tr><td class="k">Offene Weiterleitung im Beta-Riegel</td><td><code>new URL('https://…//evil.com/').pathname</code> ist <code>//evil.com/</code> — als <code>Location</code> eine protokollrelative Adresse. Beide Anmeldewege hatten das. Ein Tester könnte einen Einladungslink bauen, der von der echten Domain kommt und woanders endet; genau solche Links werden herumgereicht.</td></tr>
+        <tr><td class="k">Ein gutes Abzeichen durch „unknown" ersetzt</td><td>Eingetreten, nicht ausgedacht: ein Lauf, bei dem es nur um die Testzahl ging, meldete Erfolg und überschrieb dabei die eine Zahl, die niemand nachrechnet.</td></tr>
+        <tr><td class="k">Vier verlorene Abschnitte in der Todo-Liste</td><td>Zeilenbasiertes Ersetzen ohne Blockgrenze, viermal, jedes Mal leise. Drei fielen beim Nachzählen auf, der vierte erst Tage später.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Der gemeinsame Nenner</span>
+    <p>Fünf der sechs sind dieselbe Fehlerklasse, die in <code>CLAUDE.md</code>
+    schon dreimal steht: <strong>etwas meldet Erfolg und tut nichts.</strong>
+    Der Commit war grün, der Deploy war grün, das Abzeichen war grün. Die
+    Abhilfe ist nie „besser aufpassen", sondern jedes Mal eine Prüfung, die
+    anschlägt — und eine, die sich vorher selbst prüft, damit sie nicht still
+    kaputtgeht. Seit dieser Nacht laufen vier davon in der CI; die jüngste
+    prüft die Doku und fand beim ersten Lauf zwei Verweise auf eine Datei, die
+    es nicht gibt. Kaputtgegangen waren sie ausgerechnet in dem Commit, der die
+    Sprachregel eingeführt hatte: Ein Dateiname ist ein Bezeichner, keine
+    Prosa.</p>
+  </div>
+
+  <div class="col">
+    <h3>Zwei Städte, vorbereitet und nicht eingeschaltet</h3>
+    <p>Köln und Karlsruhe sind von zwei Agenten gegen die echten Dienste
+    vermessen worden, mit Parsern, Tests und laufendem Datenbau — und sie sind
+    <strong>nicht</strong> angeschlossen. Die Auflage lautete: drei Dateien
+    sind tabu, weil sie das Anschalten <em>sind</em>, und architektonische
+    Änderungen werden abgesprochen. Beide haben sie eingehalten; nachgeprüft
+    über <code>git status</code>, nicht geglaubt. Der Code liegt auf einem
+    eigenen Zweig, damit der Arbeitszweig nicht dauerhaft rot typprüft — ein
+    dauerhaft roter Typecheck macht das nächste echte Problem unsichtbar.</p>
+    <p>Beide bringen eine Entscheidung mit, die niemand nebenbei trifft.
+    <strong>Kölns</strong> WFS dreht die Achsen nach dem angefragten System und
+    beschriftet die Geometrie damit — rechnet aber nie um: als Grad etikettierte
+    UTM-Meter. Die eigene Umprojektion ist gegen eine <em>andere</em> Behörde
+    belegt, 4.508 Punktpaare, größte Abweichung 0,7 Mikrometer. Die Gebühr wird
+    bewusst nicht gelesen: Die Datei nennt 4,00 € Tagesticket, die Stadt am
+    selben Tag 5,00 € — ein Widerspruch zwischen zwei Aussagen derselben
+    Behörde. <strong>Karlsruhes</strong> „Zonen" sind keine Gebiete, sondern die
+    Stellplatzreihen selbst: Median 128 m², 4,8 m breit. Eine Ortung ist auf
+    10–20 m genau und trifft so etwas nie. Das ist blockierend und steht als
+    solches da.</p>
+  </div>
+</section>
+
 <footer>
-  <p>Stand 7. September 2026, kurz vor vier. Der Hauptteil beschreibt die Nacht
+  <p>Stand 8. September 2026, halb vier. Der Hauptteil beschreibt die Nacht
   und den Tag bis 12:11 Uhr auf <span class="mono">herbeus/parkingzone</span>;
-  die sechs Nachträge alles danach — Umzug, zweite Stadt, Abhängigkeiten, den
+  die sieben Nachträge alles danach — Umzug, zweite Stadt, Abhängigkeiten, den
   Abend, an dem das Ganze zum ersten Mal wirklich lief, die Nacht, in der die
-  Domains ankamen und die Karte uns gehörte, und die zweite Nacht mit dem
-  Audit, Frankfurt und München. Alles liegt in
+  Domains ankamen und die Karte uns gehörte, die zweite Nacht mit dem Audit,
+  Frankfurt und München, und die dritte, in der sich herausstellte, dass die
+  Karte bis dahin nie etwas gezeichnet hatte. Alles liegt in
   <span class="mono">knoellchenfrei/knoellchenfrei</span> — die neue Historie
   beginnt mit einem einzigen Commit, und das Projekt von 2012 ist im alten
   Repository geblieben. Die Prüfläufe stammen aus dem Abschlusslauf gegen den
-  Endstand: 463 Unit-Tests, 128 End-to-End, 99,9 % Coverage.</p>
+  Endstand: <strong>620 Unit-Tests, 152 End-to-End, 99,9 % Coverage</strong>.</p>
   <p>Verbindlich bleibt das Repository: <code>docs/todo.md</code> für das Offene,
   <code>docs/entscheidungen.md</code> für die Begründungen, <code>CLAUDE.md</code> für
   die Eigenheiten der Werkstatt. Und verbindlich fürs Parken bleibt ohnehin die
