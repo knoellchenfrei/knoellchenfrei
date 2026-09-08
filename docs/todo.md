@@ -799,40 +799,22 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       Meldungen mit lahm. Sichtbar wird es daran, dass die Tageszahl exakt auf
       der Grenze steht.
 
-- [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
-      im Worker hinterlegen — die Befehle stehen in
-      [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet
-      `/telegram` mit 404.
-- [ ] **Stufe 2: öffentliche Gruppen mitlesen.** Deutlich mehr Meldungen, aber
-      ungeprüfter Fremdtext. FreiFahren hängt dafür einen eigenen Dienst
-      (`report-gate`) vor jeden Schreibpfad; das brauchen wir dann auch, samt
-      einem Satz in der Datenschutzerklärung.
-**AtAdminBot ist angesehen — und hilft beim Melden nicht.** Nachgesehen am
-6. September 2026 unter
-`git.abfelbaum.dev/abfelbaum/bots/telegram/atadminbot`: Das ist ein
-**Moderationsbot**, kein Meldebot. Schreibt jemand `@admin` in eine Gruppe,
-benachrichtigt er die Administratoren; `/solve` schließt den Fall. Schlagworte
-des Projekts: `bot`, `group-administration`, `telegram`. Geschrieben in C#/.NET,
-AGPLv3, letzte Änderung Juni 2024, keine Sterne, keine Forks.
-
-Für die Community-Gruppe kann er später nützlich sein — für die Meldungen
-nicht, und in unseren Stack (TypeScript, Cloudflare Worker) passt ein
-eigenständiger .NET-Dienst nicht ohne zweite Betriebsumgebung. Unser Meldeweg
-bleibt Stufe 1 oben.
-
-Die Community ist davon unabhängig: Eine Telegram-Gruppe ist die Community, der
-Bot ist nur eine Datenleitung. Die Gruppe kann sofort aufmachen, der Bot muss
-warten, bis der Worker steht.
-
 ## 6. Telegram — **du** (Token), dann **ich**
 
-> **Dieser Abschnitt war zwischenzeitlich weg.** Er ist am 7. September in
-> Commit `2212bfc` verschwunden — einem Commit über Worker-Tests, der mit
-> Telegram nichts zu tun hatte. Ursache war dieselbe wie bei den drei anderen
-> Abschnitten, die schon einmal zurückgeholt werden mussten: ein
-> zeilenbasiertes Ersetzen ohne Blockgrenze. Wiederhergestellt am 8. September
-> aus `362e8c8`, inhaltlich unverändert. Was daraus als Regel folgt, steht in
-> `docs/nachtplan-2026-09-08.md`.
+> **Dieser Abschnitt war zwischenzeitlich zerrissen.** Am 7. September haben
+> Commit `2212bfc` — einer über Worker-Tests, der mit Telegram nichts zu tun
+> hatte — die Überschrift und die ersten beiden Punkte entfernt; der Rest blieb
+> kopflos am Ende von Abschnitt 5 hängen. Ursache war dieselbe wie bei den drei
+> anderen Abschnitten, die schon einmal zurückgeholt werden mussten: ein
+> zeilenbasiertes Ersetzen ohne Blockgrenze.
+>
+> **Und die Reparatur war beim ersten Anlauf zu grob.** Am 8. September habe
+> ich aus der fehlenden Überschrift auf einen fehlenden Abschnitt geschlossen
+> und den ganzen aus `362e8c8` wieder eingesetzt — damit stand die Hälfte
+> zweimal da, bis es beim Auflisten der offenen Punkte auffiel. Der kopflose
+> Rest ist jetzt entfernt. Die Lehre steht in
+> `docs/nachtplan-2026-09-08.md`: Ein fehlender Anker heisst nicht, dass alles
+> dahinter fehlt — nachzählen, was wirklich weg ist.
 
 Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
 
