@@ -362,6 +362,22 @@ wiederholt.
   nicht mehr am Compiler scheitern. Diese Sperre war ein Zufall und ist jetzt
   ein Test — `packages/core/test/kein-node-in-core.test.ts`, mit Gegenprobe
   nachgemessen.
+- **Ein Test, den kein Compiler ansieht, behauptet mehr, als er prüft.**
+  `tsc` sah bis zum 9. September nur `packages/core/test/`. In `apps/web`,
+  `apps/api` und `packages/ingest` stand `test` nicht im `include` — **180 der
+  750 Tests** waren damit nie typgeprüft. Gefunden hat es die Umstellung
+  prompt: In `zaehlwerk.test.ts` las eine Zusicherung `feature.id` auf einem
+  Objektliteral, das gar kein `id` hat. Der Test lief grün, weil Vitest die
+  Typen nicht braucht.
+
+  Der Worker geht dabei einen eigenen Weg, und der Grund ist gemessen: Sein
+  `src` steht auf `@cloudflare/workers-types` **allein**, denn damit ist
+  `import … from 'node:fs'` ein Typfehler — mit `@types/node` daneben ist es
+  keiner mehr. Seine Tests brauchen aber `node:sqlite`, um den Worker gegen
+  echtes SQLite zu rechnen. Deshalb zwei Läufe: `tsc --noEmit` für `src`,
+  `tsc -p tsconfig.test.json` für `test`. Was dabei **nicht** hilft: `Buffer`
+  und `process` kennt `workers-types` selbst, die bleiben so oder so erlaubt.
+
 - **Eine Abdeckungszahl gehört zu dem Werkzeug, das sie gemessen hat.** Mit
   Vitest 4 fielen `core`s Zeilen von 1828 auf 812 und die Statements von 1828
   auf 953 — dieselbe Testmenge, dasselbe `src/`. Kein Verlust: Vitest 3 rechnete

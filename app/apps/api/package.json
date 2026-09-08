@@ -8,10 +8,11 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260831.1",
+    "@types/node": "^26.2.0",
     "wrangler": "^4.129.0"
   },
   "dependencies": {

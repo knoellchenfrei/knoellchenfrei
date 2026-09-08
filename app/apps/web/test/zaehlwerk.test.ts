@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { ZoneFeature } from '../src/zones.js'
+
 /**
  * Der Zähler in der App — die Hälfte, die vorher keinen Test hatte.
  *
@@ -242,7 +244,11 @@ describe('der Katalog', () => {
  * Sichtbar war es nur als Farbe; das Panel las immer die richtige Fläche.
  */
 describe('die Kennung einer Kartenfläche', () => {
-  const fläche = (zone: string, lon: number) => ({
+  // Der Rückgabetyp steht ausdrücklich da: Ohne ihn ist es ein Objektliteral
+  // ohne `id`, und `f.id` unten wäre ein Typfehler — genau der, den `tsc` bis
+  // zum 9. September gar nicht zu sehen bekam, weil `test/` nicht im
+  // `include` der `tsconfig.json` stand.
+  const fläche = (zone: string, lon: number): ZoneFeature => ({
     properties: { zone } as never,
     geometry: {
       type: 'Polygon' as const,
