@@ -643,6 +643,24 @@ async function recordEvents(
   if ((stand?.n ?? 0) >= EVENTS_PER_DAY) return json({ written: 0 }, { status: 200 }, cors)
 
   const gesamt = angenommen.reduce((summe, e) => summe + e.n, 0)
+  /**
+   * Was ein einzelnes Bündel höchstens vom Tagesdeckel beanspruchen darf.
+   *
+   * Ohne diese Grenze kann eine Anfrage 25 × 50 = 1.250 Zählungen behaupten,
+   * also **ein Viertel des Tages** — vier Aufrufe genügten, um die Statistik
+   * für 24 Stunden abzuschalten. Ein echtes Bündel liegt weit darunter: Es
+   * sammelt fünf Minuten lang, was ein Mensch in der App tut.
+   *
+   * Das ist kein vollständiger Schutz, und der wäre auch nicht zu haben —
+   * dazu bräuchte es eine Kennung je Aufrufer, und genau die soll diese
+   * Tabelle nicht kennen. Siehe `SECURITY.md`, „Bekannte Grenzen". Es
+   * verschiebt nur das Verhältnis: aus vier Aufrufen werden fünfundzwanzig,
+   * und ein legitimer Aufrufer merkt nichts davon.
+   */
+  const EVENT_BUNDLE_MAX = 200
+  if (gesamt > EVENT_BUNDLE_MAX) {
+    return json({ error: 'bundle too large' }, { status: 413 }, cors)
+  }
   await env.DB.batch([
     ...angenommen.map((e) =>
       env.DB.prepare(

@@ -168,6 +168,18 @@ personenbezogenen Daten über ihre Nutzer, außer dem, was sie selbst melden.
   fremden Abruf mehr. Nur der Rückfall auf OpenStreetMap-Rasterkacheln — er
   greift, wenn `VITE_TILES_URL` nicht gesetzt ist — lädt von einem Dritten,
   und dessen Betreiber sieht dann die IP-Adressen der Nutzer.
+- **Wer die Nutzungsstatistik stören will, kann das — und das ist eine
+  Entscheidung, keine Nachlässigkeit.** `POST /events` hat keinen Deckel je
+  Aufrufer, sondern nur einen für den Tag: 5.000 Zählungen, danach antwortet
+  der Worker mit `200` und `written: 0`. Ein Bündel darf höchstens 200 davon
+  beanspruchen, also braucht es 25 Aufrufe, um den Tag zu füllen. Ein Deckel
+  **je Aufrufer** ginge nur mit einer Kennung, und genau die soll diese Tabelle
+  nicht kennen — sie ist der einzige Datensatz des Projekts ohne jedes
+  Pseudonym. Zwei Dinge machen den Handel vertretbar: Es geht um einen Zähler,
+  nicht um eine Auskunft, und die **Gegenprobe** auf der Statistikseite zeigt
+  es an — sie vergleicht `app.open` mit der Zahl der Geräte aus einem ganz
+  anderen Schreibweg. Wer den Tag füllt, drückt die eine Zahl unter die andere,
+  und dort steht dann „da kommen Zählungen nicht an".
 - Die Zonenkennung, die Stunde und die Stadt der Nutzungsstatistik sind
   aggregiert und k-anonymisiert, aber `GET /stats` liegt **nicht** hinter dem
   Beta-Riegel: Der Riegel steht vor der Auslieferung der Seite, nicht vor dem

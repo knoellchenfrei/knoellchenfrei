@@ -629,3 +629,57 @@ describe('die Zonenkennung in /events', () => {
     expect(await sende('muenchen', fremd as string)).toBe(0)
   })
 })
+
+/**
+ * Der Deckel je Bündel — die Grenze, die verhindert, dass vier Aufrufe die
+ * Statistik für einen ganzen Tag abschalten.
+ *
+ * Ohne sie darf eine Anfrage 25 Einträge à 50 behaupten: 1.250 von 5.000, also
+ * ein Viertel des Tages. Vollständig lösen lässt sich das nicht — dazu bräuchte
+ * es eine Kennung je Aufrufer, und genau die soll diese Tabelle nicht kennen.
+ * Es verschiebt das Verhältnis, mehr nicht, und das steht so in `SECURITY.md`.
+ */
+describe('der Deckel je Bündel', () => {
+  const sende = async (events: unknown[]): Promise<Response> =>
+    worker.fetch(
+      post('/events', { body: JSON.stringify({ city: 'berlin', events }) }),
+      umgebung({
+        DB: {
+          prepare: (sql: string) => {
+            const self = {
+              bind: () => self,
+              run: async () => ({ success: true }),
+              first: async () => (sql.includes('event_budget') ? { n: 0 } : null),
+              all: async () => ({ results: [] }),
+            }
+            return self
+          },
+          batch: async (a: unknown[]) => a.map(() => ({ results: [] })),
+        } as unknown as D1Database,
+      })
+    )
+
+  it('weist ein Bündel ab, das mehr als 200 Zählungen behauptet', async () => {
+    // 5 × 50 = 250, mit fünf verschiedenen Ausprägungen, damit nichts
+    // zusammenfällt.
+    const events = ['karte', 'standort', 'suche'].map((value) => ({
+      name: 'zone.source',
+      value,
+      n: 50,
+    }))
+    events.push({ name: 'zone.answer', value: 'frei', n: 50 })
+    events.push({ name: 'zone.answer', value: 'pflichtig', n: 50 })
+    const response = await sende(events)
+    expect(response.status).toBe(413)
+  })
+
+  it('lässt ein Bündel durch, wie es im Betrieb entsteht', async () => {
+    const response = await sende([
+      { name: 'app.open', value: '', n: 2 },
+      { name: 'zone.source', value: 'karte', n: 4 },
+      { name: 'layer.on', value: 'heat', n: 1 },
+    ])
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ written: 3 })
+  })
+})
