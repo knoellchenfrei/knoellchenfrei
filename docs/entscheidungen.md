@@ -534,3 +534,86 @@ macht.
 Nutzen ein anderer — nicht Fehler finden, sondern Streit über Stil vermeiden,
 bevor er entsteht.
 
+
+## Die Nutzungsstatistik reserviert ihr Budget zuletzt
+
+*8. September 2026.*
+
+Ein D1-`batch` läuft der Reihe nach in einer Transaktion. Stand die
+Reservierung des Tagesbudgets an erster Stelle, lasen die Zählanweisungen
+dahinter bereits den erhöhten Stand — ein Bündel, das den Deckel überschritt,
+schrieb **gar nichts**, auch nicht den Teil, der noch gepasst hätte, und die
+Antwort meldete trotzdem `written: n`. Gemessen gegen SQLite: Deckel 20,
+Stand 18, Bündel mit 5 → Budget 23, geschrieben 0, gemeldet 2.
+
+Die Alternative wäre gewesen, das Budget je Anweisung fortzuschreiben. Das
+kostet einen Lesevorgang je Ereignis — und D1 rechnet **gelesene** Zeilen gegen
+ein eigenes Tagesbudget ab, was die teure Hälfte ist. Die Reservierung zuletzt
+kostet nichts und macht die Antwort wahr.
+
+Der Preis ist ein Überschuss von höchstens einem Bündel. Der war vorher
+genauso gross — er lag nur in der Luft statt in der Tabelle.
+
+**`COALESCE(…, 0)` ist dabei Pflicht und kein Schmuck.** Am ersten Bündel eines
+Tages gibt es die Budgetzeile noch nicht, `NULL < 5000` ist NULL, und ohne den
+Ersatzwert würde an jedem Tag das erste Bündel verworfen: täglich, still, und
+ausgerechnet die Zeilen der ersten Stunde.
+
+## Die Aufschlüsselung nach Ausprägung ist eine Positivliste
+
+*8. September 2026.*
+
+`rollupStats` schlüsselt fünf Ereignisse nach ihren Ausprägungen auf —
+`layer.on`, `zone.answer`, `zone.source`, `app.open`, `city.suggest`. Ohne das
+stünde unter „Was benutzt wird" je Ereignis genau eine Zahl, und
+`layer.on: 214` beantwortet die Frage „welche Ebenen werden benutzt" gerade
+nicht.
+
+Die naheliegende Formulierung wäre gewesen: *alles ausser den Ortsereignissen*.
+Sie steht bewusst nicht da. `zone.open` und `city.switch` tragen Orte als Wert
+und gehören durch die k-Schwelle; eine Ausschlussregel wäre in dem Moment
+undicht, in dem jemand dem Katalog ein weiteres Ortsereignis hinzufügt — und
+zwar ohne dass irgendetwas rot würde. Eine Positivliste kann das nicht. Ein
+Test in `apps/api/test/events-sql.test.ts` hält beides fest.
+
+## Kein Deckel je Aufrufer für `/events`
+
+*8. September 2026.*
+
+`POST /events` hat einen Tagesdeckel (5.000 Zählungen) und seit dem
+8. September einen je Bündel (200), aber **keinen je Aufrufer**. Damit kann,
+wer will, die Statistik eines Tages mit 25 Anfragen füllen; der `Origin`-Kopf
+hält das nicht auf, den setzt ein Aufrufer ohne Browser einfach selbst.
+
+Ein Deckel je Aufrufer braucht eine Kennung, und die ist genau das, was diese
+Tabelle nicht kennen soll: `events` ist der einzige Datensatz des Projekts ohne
+jedes Pseudonym — keine Kennung, keine Sitzung, keine Reihenfolge, keine IP,
+auch nicht gehasht. Einen Hash nur für das Rate-Limit einzuführen hiesse, ein
+Pseudonym zu schaffen, das es sonst nicht gäbe, und zwar für einen Zähler.
+
+Zwei Dinge machen den Handel vertretbar: Es geht um eine Statistik, nicht um
+eine Auskunft. Und es ist **sichtbar** — die Gegenprobe auf der Statistikseite
+vergleicht `app.open` mit der Gerätezahl aus einem ganz anderen Schreibweg. Wer
+den Tag füllt, drückt die eine Zahl unter die andere, und dort steht dann „da
+kommen Zählungen nicht an".
+
+Wiedervorlage, sobald die App öffentlich ist: Dann ist eine WAF-Regel vor
+`/events` der richtige Ort, nicht der Worker.
+
+## Vorbereitete Städte liegen auf einem eigenen Zweig
+
+*8. September 2026.*
+
+Köln und Karlsruhe sind vermessen, geparst und getestet — und nicht
+eingetragen. Die drei Dateien, die sie anschalten würden (`core/city.ts`,
+`core/index.ts`, `ingest/src/sources.ts`), sind absprachepflichtig.
+
+Sie deshalb einfach unversioniert liegen zu lassen war keine Option: Der Code
+importiert Namen, die `core` ohne die Einträge nicht exportiert, und
+`pnpm -r typecheck` wäre auf dem Arbeitszweig **dauerhaft rot**. Ein dauerhaft
+roter Typecheck ist schlimmer als keine Vorarbeit — er macht das nächste echte
+Problem unsichtbar.
+
+Also ein eigener Zweig, `staedte/koeln-karlsruhe-vorbereitet`. Die Berichte
+liegen auf beiden Zweigen, der Code nur auf jenem; wer die Städte anschalten
+will, findet in Abschnitt „Was einzutragen bleibt" fertige Schnipsel.
