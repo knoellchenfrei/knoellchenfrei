@@ -37,7 +37,7 @@ fi
 
 # Die Ersatzschreibungen, an denen es hängt. Ein Wort gehört nur hierher, wenn
 # es in diesem Projekt niemals ein Bezeichner ist.
-WOERTER='fuer|Fuer|dafuer|ueber|Ueber|ueberall|ueberhaupt|uebrig|koennen|koennte|muessen|duerfen|wuerde|zurueck|Rueckfall|Rueckmeldung|Rueckmeldungen|naechste|naechsten|spaeter|waere|waeren|haette|haetten|haelt|laeuft|laesst|laedt|faellt|faengt|gehoert|gehoeren|loeschen|Loesung|Schluessel|Groesse|moeglich|noetig|oeffentlich|Oberflaeche|gefaehrlich|haeufig|naemlich|zunaechst|zusaetzlich|vollstaendig|grundsaetzlich|ungueltig|gueltig|verfuegbar|erwaehnt|aehnlich|Aenderung|aendern|geaendert|Behoerde|Behoerden|Erklaerung|erklaert|zaehlt|zaehlen|traegt|haengt|prueft|geprueft|Pruefung|Eintraege|Saetze|Staedte|Haelfte|juengste|staerker|Begruendung|Buendel|Privatsphaere|Empfaenger|waehrend|waehlt|gewaehlt|bestaetigt|ausgefuehrt|Ausfuehrung|erfuellt|woertlich|hoechstens|Menue|Maerz'
+WOERTER='fuer|Fuer|dafuer|ueber|Ueber|ueberall|ueberhaupt|uebrig|koennen|koennte|muessen|duerfen|wuerde|zurueck|Rueckfall|Rueckmeldung|Rueckmeldungen|naechste|naechsten|spaeter|waere|waeren|haette|haetten|haelt|laeuft|laesst|laedt|faellt|faengt|gehoert|gehoeren|loeschen|Loesung|Schluessel|Groesse|moeglich|noetig|oeffentlich|Oberflaeche|gefaehrlich|haeufig|naemlich|zunaechst|zusaetzlich|vollstaendig|grundsaetzlich|ungueltig|gueltig|verfuegbar|erwaehnt|aehnlich|Aenderung|aendern|geaendert|Behoerde|Behoerden|Erklaerung|erklaert|zaehlt|zaehlen|traegt|haengt|prueft|geprueft|Pruefung|Eintraege|Saetze|Staedte|Haelfte|juengste|staerker|Begruendung|Buendel|Privatsphaere|Empfaenger|waehrend|waehlt|gewaehlt|bestaetigt|ausgefuehrt|Ausfuehrung|erfuellt|woertlich|hoechstens|Menue|Maerz|unabhaengig|abhaengig|Abhaengigkeit|Abhaengigkeiten|Zaehlanweisung|Zaehlanweisungen|Gebuehrenerhoehung|Anfuehrungszeichen|Aenderungen|erhoeht|verkuerzt|Erklaerungen|zusaetzliche|nachtraeglich'
 
 # Wo nicht gesucht wird, und warum:
 #   audit/    empfangener Bericht — wird nicht redigiert, auch nicht orthografisch
@@ -61,6 +61,17 @@ DATEIEN="$(find . $AUS \( -name '*.ts' -o -name '*.tsx' -o -name '*.mjs' \
 # oder — in CONTRIBUTING.md — die falsche Schreibweise als Beispiel. Genau
 # daran hat sich diese Prüfung beim ersten Lauf gestoßen: Sie fand die Regel,
 # die sie durchsetzt. Deshalb fällt jede Code-Spanne vor dem Suchen weg;
+# **Und was diese Löschung mit verdeckt: einen Umlaut IN den Akzenten.** Ein
+# `geprueftAm`, das jemand beim Ersetzen von `ae` nach `ä` mitgenommen hat,
+# wird hier nicht gesehen — obwohl ein Bezeichner mit Umlaut genau das ist, was
+# die Regel verbietet. Am 9. September geprüft, ob sich das schliessen lässt:
+# **134 Stellen** im Bestand haben einen Umlaut in Grave-Akzenten, und fast
+# alle sind richtig — `täglich 9-2 Uhr`, `Höchstparkdauer`, `Gebührenzeit` sind
+# Feed-Werte, die ihn wirklich tragen, und `ä ö ü ß` steht in CONTRIBUTING.md
+# als die Regel selbst. Eine Prüfung darauf wäre 134-mal falsch. Sie gibt es
+# deshalb bewusst nicht; wer `ae` nach `ä` ersetzt, sieht die Akzente von Hand
+# durch.
+#
 # `sed` löscht sie, ohne Zeilen zu entfernen, die Zeilennummern stimmen also
 # weiter.
 treffer=''

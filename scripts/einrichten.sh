@@ -1208,7 +1208,7 @@ print(sum(1 for r in (d.get('result') or []) if r.get('phase') == 'http_request_
     if [ "$NUR_PRUEFEN" = ja ]; then offen_merken; continue; fi
 
     # JSON von einem JSON-Schreiber bauen lassen. Der erste Entwurf setzte es
-    # aus Shell-Anfuehrungszeichen zusammen, mit vier Ebenen Maskierung um das
+    # aus Shell-Anführungszeichen zusammen, mit vier Ebenen Maskierung um das
     # `concat("https://…", …)` herum — unlesbar und beim ersten Umbau kaputt.
     local daten
     daten="$(python3 -c "

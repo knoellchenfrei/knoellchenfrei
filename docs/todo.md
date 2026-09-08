@@ -1040,6 +1040,39 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
+- [ ] **Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
+      aktuell ist.** Der Deploy holt die Daten je Stadt neu und fällt bei einem
+      Fehlschlag auf den eingecheckten Abzug zurück — richtig so, ein
+      Dienstausfall darf keinen Deploy blockieren. Gemeldet wird das in
+      `$GITHUB_STEP_SUMMARY`, also nur für den, der den Lauf öffnet; der Job
+      bleibt grün.
+
+      **Der Rückfall ist nicht theoretisch.** Am 9. September um 01:30 war
+      Frankfurts WFS vollständig unten: `503` auf `GetFeature` **und** auf
+      `GetCapabilities`, dreimal nacheinander, mit HTML-Körper. Berlin,
+      Hamburg und München antworteten im selben Lauf und lieferten Daten, die
+      Zeichen für Zeichen dem Bestand entsprechen — 103, 146 und 82 Flächen,
+      gleiche Geometrien, gleiche Merkmale.
+
+      Und genau daran hängt der Punkt: **Der Git-Zeitstempel misst „zuletzt
+      geändert", nicht „zuletzt geprüft".** Weil eine unveränderte Quelle
+      keinen Diff erzeugt, steht in der Historie für alle vier Städte der
+      6./7. September — unabhängig davon, ob seitdem täglich erfolgreich
+      abgerufen wurde oder seit Wochen gar nicht. Ein Abzug, den seit drei
+      Monaten niemand aufgefrischt hat, ist von einer Quelle, die sich drei
+      Monate nicht geändert hat, nicht zu unterscheiden. Auch `meta.json`
+      hilft nicht: Es trägt Zonen-, Bezirks- und Automatenzahlen, aber **kein
+      Datum**.
+
+      Vorschlag, nicht eingebaut, weil er das erzeugte Datenformat ändert:
+      ein Feld `geprueftAm` in `meta.json` — der Zeitpunkt des letzten
+      **erfolgreichen Abrufs**, nicht der des Baus. Es wandert dann mit dem
+      Deploy nach draußen: Nach einem gelungenen Abruf ist es frisch, nach
+      einem Rückfall bleibt das alte Datum stehen und fällt auf. Dazu eine
+      Warnung im Deploy, sobald es älter ist als eine Woche. Ändert vier
+      Datenbauten und eine Datei, die die App liest — deshalb erst nach
+      Absprache.
+
 - [x] **Bilder neu aufgenommen** — am 7. September, mit Hintergrundkarte
       (Audit-Punkt M-076). Vorher zeigten `public/screenshots/` und
       `docs/images/` eine Karte ohne alles: erst, weil der Egress-Proxy

@@ -183,7 +183,7 @@ export function parseFrankfurtSchedule(raw: string): ChargeWindow[] {
  *
  * Der Nachkommateil ist optional zugelassen, obwohl der Feed heute nur ganze
  * Euro schreibt. Das ist keine geratene Schreibweise, sondern dieselbe
- * Schreibweise mit derselben Einheit — eine Gebuehrenerhoehung auf `2,50 €/h`
+ * Schreibweise mit derselben Einheit — eine Gebührenerhöhung auf `2,50 €/h`
  * soll den Datenbau nicht abbrechen lassen.
  */
 const FRANKFURT_AMOUNT = /^(\d{1,3})(?:,(\d{2}))?\s*€\s*\/\s*h$/i
