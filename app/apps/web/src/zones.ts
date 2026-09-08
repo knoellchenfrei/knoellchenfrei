@@ -117,6 +117,14 @@ export function zoneAt(zones: readonly LoadedZone[], point: Position): LoadedZon
  * wraps around 133, whose territory the centre falls in. Parking from the panel
  * of zone 132 then recorded the car in zone 133. Candidates are tried from the
  * centre outwards on a grid; the first inside point nearest the centre wins.
+ *
+ * Nachtrag vom 9. September, gemessen statt geschätzt: Es sind nicht drei
+ * Flächen, sondern **41 von 357**. Berlin 3, **Hamburg 38 von 145**, Frankfurt
+ * und München keine. Die Korrektur war für Berlin geschrieben und trägt in
+ * Hamburg mehr als zehnmal so weit — die schmalen Streifen ohne
+ * Bewohnerparkrecht liegen dort oft L-förmig um einen Block. Geprüft wird das
+ * jetzt als Eigenschaft über alle vier Städte in
+ * `test/flaechenpunkt.test.ts`.
  */
 export function representativePoint(zone: LoadedZone): Position {
   const { minLon, minLat, maxLon, maxLat } = zone.bounds
