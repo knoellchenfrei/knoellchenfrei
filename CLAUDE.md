@@ -671,6 +671,14 @@ wiederholt.
   — als Umlaut geschrieben brechen zwei Parser lautlos. Und was in
   Grave-Akzenten steht, ist ein Zitat, kein Befund; sonst schlägt die Prüfung
   auf der Regel an, die sie durchsetzt.
+
+  **Und sie unterscheidet Bezeichner nicht von Prosa.** Ein `const gueltig =`
+  wird angestrichen, obwohl ein Bezeichner nach der Regel ASCII bleiben *soll*.
+  Das ist kein Fehler der Prüfung, sondern die sichere Richtung: Sie kann
+  „Ersatzschreibung in einem Kommentar" von „Ersatzschreibung in einem Namen"
+  nicht zuverlässig trennen, und lieber ein Name zu viel umbenannt als ein
+  Kommentar zu wenig. Der Ausweg ist ein Name ohne `ae/oe/ue` (`basis` statt
+  `gueltig`), nicht eine Ausnahme im Skript.
 - **Für jeden gefundenen Fehler ein Test.** 30 der Unit-Tests sind genau das.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
