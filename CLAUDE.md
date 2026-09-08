@@ -123,6 +123,13 @@ wiederholt.
   Ausdruck. **In dieser Datei darf die Zeichenfolge gar nicht vorkommen**, auch
   nicht maskiert, auch nicht in einer Fehlermeldung. Wer über sie schreiben
   will, umschreibt sie.
+- **Commit-Nachrichten gehen über ein Heredoc mit gequotetem Begrenzer, nicht
+  über `-m "…"`.** In einem doppelt gequoteten Argument führt die Shell alles
+  aus, was zwischen Backticks steht — und Backticks sind in diesem Projekt die
+  übliche Auszeichnung für Code. Am 8. September verschwand so ein
+  `` `const gueltig =` `` aus einer Commit-Nachricht und hinterliess ein Loch
+  mitten im Satz; gemerkt hat es nur, wer die Nachricht danach noch einmal
+  gelesen hat. `git commit -F -` mit `<<'MSG'` schützt jedes Zeichen.
 - **Keine mehrzeiligen Commit-Nachrichten in einem `run: |`-Block einer
   Workflow-Datei.** Das bricht zweimal aus dem YAML-Blockskalar aus und hat
   zweimal kaputte Workflows gepusht. Zwei `-m`-Flags benutzen.
