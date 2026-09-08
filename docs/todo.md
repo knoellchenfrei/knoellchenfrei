@@ -80,7 +80,7 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    Rückversicherung. Es war der einzige Punkt auf dieser Liste, an dem ein
    Versäumnis nicht reparierbar gewesen wäre.
 5. **Telegram-Token** beim BotFather holen (Punkt 6) und die restlichen Namen
-   sichern, solange sie frei sind. — Offen, zusammen mit den beiden Punkten
+   sichern, solange sie frei sind. — Offen, zusammen mit den drei Punkten
    darunter.
 6. **`CLOUDFLARE_R2_TOKEN`** als Repository-Secret, ein Recht: *Workers R2
    Storage: Edit*. Ohne ihn baut der Workflow *Kacheln* nichts, und die Karte
