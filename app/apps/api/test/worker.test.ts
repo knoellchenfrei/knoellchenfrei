@@ -528,7 +528,7 @@ describe('der Aufräumlauf', () => {
   it('löscht auch dann, wenn die Auswertung scheitert', async () => {
     const { db, gesehen } = aufraeumAttrappe({ batchWirft: true })
     await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
-      /Aufraeumlauf unvollstaendig/
+      /Aufräumlauf unvollständig/
     )
     for (const muster of PFLICHT) {
       expect(gesehen.some((sql) => muster.test(sql)), String(muster)).toBe(true)
@@ -538,7 +538,7 @@ describe('der Aufräumlauf', () => {
   it('hält nach einem gescheiterten Schritt nicht an, sondern macht die übrigen', async () => {
     const { db, gesehen } = aufraeumAttrappe({ runWirftBei: /DELETE FROM sightings/ })
     await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
-      /sichtungen: abgelaufene loeschen/
+      /sichtungen: abgelaufene löschen/
     )
     // Der Schritt danach ist der wichtigste Beleg: Er stand in der alten
     // Fassung hinter dem gescheiterten und lief deshalb nie.
@@ -555,7 +555,7 @@ describe('der Aufräumlauf', () => {
   it('bleibt rot, wenn etwas gescheitert ist', async () => {
     const { db } = aufraeumAttrappe({ runWirftBei: /DELETE FROM (events|feedback)/ })
     await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
-      /ereignisse: nach 90 tagen loeschen.*rueckmeldungen: nach 90 tagen loeschen/
+      /ereignisse: nach 90 tagen löschen.*rückmeldungen: nach 90 tagen löschen/
     )
   })
 })

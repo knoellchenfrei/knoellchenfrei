@@ -615,9 +615,9 @@ async function recordEvents(
   // `ALL_ZONE_KEYS`, und das ist keine Kleinigkeit: Berlin und Frankfurt
   // teilen sich 20 Kennungen (`10`, `12`, `13`, …), weil beide schlicht
   // durchnummerieren. Eine Frankfurter Zahl landete damit als Berliner Zone
-  // in der Auswertung, und in Muenchen waeren 193 der 275 angenommenen
+  // in der Auswertung, und in München wären 193 der 275 angenommenen
   // Kennungen solche, die es dort gar nicht gibt. Die Liste ist ohnehin je
-  // Stadt erzeugt — sie wurde nur flachgeklopft, bevor sie geprueft hat.
+  // Stadt erzeugt — sie wurde nur flachgeklopft, bevor sie geprüft hat.
   const listen = { zones: ZONE_KEYS[city.key] ?? [], cities: CITIES.map((eine) => eine.key) }
 
   const angenommen: { name: string; hour: number; value: string; n: number }[] = []
@@ -653,24 +653,24 @@ async function recordEvents(
     ),
     // Reserviert wird **zuletzt**, und das ist die Korrektur eines Fehlers.
     //
-    // Vorher stand diese Anweisung an erster Stelle. Ein `batch` laeuft der
+    // Vorher stand diese Anweisung an erster Stelle. Ein `batch` läuft der
     // Reihe nach in einer Transaktion — die Zaehlanweisungen lasen also
-    // bereits den *erhoehten* Stand. Ein Buendel, das den Deckel ueberschritt,
+    // bereits den *erhöhten* Stand. Ein Bündel, das den Deckel überschritt,
     // schrieb damit **gar nichts**, auch nicht den Teil, der noch gepasst
-    // haette, und die Antwort meldete trotzdem `written: n`. Gemessen gegen
-    // SQLite: Deckel 20, Stand 18, Buendel mit 5 → Budget 23, geschrieben 0,
+    // hätte, und die Antwort meldete trotzdem `written: n`. Gemessen gegen
+    // SQLite: Deckel 20, Stand 18, Bündel mit 5 → Budget 23, geschrieben 0,
     // gemeldet 2.
     //
-    // Jetzt lesen die Zaehlanweisungen den Stand *vor* diesem Buendel — den,
+    // Jetzt lesen die Zählanweisungen den Stand *vor* diesem Bündel — den,
     // den die Vorpruefung oben schon als „passt" befunden hat. Der Deckel
-    // greift ab dem naechsten Aufruf. Der Ueberschuss ist damit hoechstens ein
-    // Buendel (25 × 50 = 1.250 auf 5.000), und er ist derselbe wie vorher; nur
+    // greift ab dem nächsten Aufruf. Der Überschuss ist damit höchstens ein
+    // Bündel (25 × 50 = 1.250 auf 5.000), und er ist derselbe wie vorher; nur
     // liegt er jetzt in der Tabelle statt in der Luft.
     //
-    // `COALESCE(…, 0)` ist Pflicht und kein Schmuck: Am ersten Buendel eines
+    // `COALESCE(…, 0)` ist Pflicht und kein Schmuck: Am ersten Bündel eines
     // Tages gibt es die Budgetzeile noch nicht, `NULL < 5000` ist NULL, und
-    // ohne den Ersatzwert wuerde an jedem Tag das erste Buendel verworfen —
-    // taeglich, still, und ausgerechnet die Zeile fuer Mitternacht.
+    // ohne den Ersatzwert würde an jedem Tag das erste Bündel verworfen —
+    // täglich, still, und ausgerechnet die Zeile für Mitternacht.
     //
     // Reserviert wird weiterhin das **Angenommene**, nicht das Geschriebene.
     env.DB.prepare(
@@ -1257,7 +1257,7 @@ export default {
       // Der Hash fällt, sobald das Rate-Limit-Fenster durch ist, damit eine
       // noch sichtbare Meldung kein Pseudonym ihres Melders mehr trägt.
       [
-        'sichtungen: hash loeschen',
+        'sichtungen: hash löschen',
         () =>
           env.DB.prepare(
             'UPDATE sightings SET client_hash = NULL WHERE client_hash IS NOT NULL AND reported_at <= ?'
@@ -1266,14 +1266,14 @@ export default {
             .run(),
       ],
       [
-        'sichtungen: abgelaufene loeschen',
+        'sichtungen: abgelaufene löschen',
         () =>
           env.DB.prepare('DELETE FROM sightings WHERE reported_at <= ?')
             .bind(now - SIGHTING_MAX_AGE_MS)
             .run(),
       ],
       [
-        'stimmen: verwaiste loeschen',
+        'stimmen: verwaiste löschen',
         () =>
           env.DB.prepare(
             'DELETE FROM votes WHERE sighting_id NOT IN (SELECT id FROM sightings)'
@@ -1282,18 +1282,18 @@ export default {
       // Dasselbe Versprechen für die langlebige Tabelle: gelöscht, nicht bloss
       // aus der Anzeige gefiltert.
       [
-        'kontrolldichte: altes fenster loeschen',
+        'kontrolldichte: altes fenster löschen',
         () => env.DB.prepare('DELETE FROM marks WHERE day < ?').bind(windowStart({ now })).run(),
       ],
       [
-        'besuche: loeschen',
+        'besuche: löschen',
         () =>
           env.DB.prepare('DELETE FROM visits WHERE seen_at < ?')
             .bind(now - VISIT_KEEP_MS)
             .run(),
       ],
       [
-        'rueckmeldungen: hash loeschen',
+        'rückmeldungen: hash löschen',
         () =>
           env.DB.prepare(
             'UPDATE feedback SET client_hash = NULL WHERE client_hash IS NOT NULL AND created_at <= ?'
@@ -1305,21 +1305,21 @@ export default {
       // Quartal, beantwortet keine Frage, die dieses Projekt hat. Das
       // Tagesbudget hält nur zwei Tage — es ist ein Zähler, kein Bestand.
       [
-        'ereignisse: nach 90 tagen loeschen',
+        'ereignisse: nach 90 tagen löschen',
         () =>
           env.DB.prepare('DELETE FROM events WHERE day < ?')
             .bind(berlinDay(now - 90 * 86_400_000))
             .run(),
       ],
       [
-        'tagesbudget: loeschen',
+        'tagesbudget: löschen',
         () =>
           env.DB.prepare('DELETE FROM event_budget WHERE day < ?')
             .bind(berlinDay(now - 2 * 86_400_000))
             .run(),
       ],
       [
-        'rueckmeldungen: nach 90 tagen loeschen',
+        'rückmeldungen: nach 90 tagen löschen',
         () =>
           env.DB.prepare('DELETE FROM feedback WHERE created_at < ?')
             .bind(now - FEEDBACK_MAX_AGE_MS)
@@ -1336,11 +1336,11 @@ export default {
         await tun()
       } catch (fehler) {
         gescheitert.push(name)
-        console.error(`Aufraeumlauf: "${name}" gescheitert:`, fehler)
+        console.error(`Aufräumlauf: "${name}" gescheitert:`, fehler)
       }
     }
     if (gescheitert.length > 0) {
-      throw new Error(`Aufraeumlauf unvollstaendig: ${gescheitert.join(', ')}`)
+      throw new Error(`Aufräumlauf unvollständig: ${gescheitert.join(', ')}`)
     }
   },
 }

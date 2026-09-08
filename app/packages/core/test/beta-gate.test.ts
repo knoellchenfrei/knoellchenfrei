@@ -11,6 +11,7 @@ import {
   BETA_TOKEN_TTL_MS,
   constantTimeEqual,
   readCookie,
+  sameOriginPath,
   signBetaToken,
   verifyBetaToken,
 } from '../src/beta-gate.js'
@@ -243,5 +244,65 @@ describe('das Zusammenspiel', () => {
     expect(await verifyBetaToken(SECRET, gelesen, NOW)).toBe(true)
     // …und einen Tag nach Ablauf nicht mehr.
     expect(await verifyBetaToken(SECRET, gelesen, NOW + BETA_TOKEN_TTL_MS + 1)).toBe(false)
+  })
+})
+
+describe('sameOriginPath', () => {
+  /**
+   * Der Befund, der diese Funktion ausgelöst hat — gemessen, nicht vermutet.
+   *
+   * Der Riegel leitete nach erfolgreicher Anmeldung auf `url.pathname` um und
+   * hielt das für sicher, weil nichts aus der Anfrage übernommen wurde ausser
+   * dem Pfad. `new URL('https://k.de//evil.com/').pathname` ist aber
+   * `//evil.com/`, und als `Location` ist das keine Pfadangabe, sondern eine
+   * protokollrelative Adresse: Der Browser geht nach `https://evil.com/`.
+   */
+  it('macht aus einer protokollrelativen Adresse wieder einen Pfad', () => {
+    expect(sameOriginPath(new URL('https://k.de//evil.com/').pathname)).toBe('/evil.com/')
+  })
+
+  it('lässt sich auch mit Rückwärtsschrägstrichen nicht hinausführen', () => {
+    // Browser behandeln `\` bei der Adressauflösung wie `/`; `new URL` macht
+    // aus `/\/evil.com` schon `///evil.com`.
+    expect(sameOriginPath(new URL('https://k.de/\\/evil.com').pathname)).toBe('/evil.com')
+    expect(sameOriginPath('\\\\evil.com')).toBe('/evil.com')
+  })
+
+  it('lässt den gewöhnlichen Fall unverändert', () => {
+    expect(sameOriginPath('/')).toBe('/')
+    expect(sameOriginPath('/statistik/')).toBe('/statistik/')
+    expect(sameOriginPath('/', '?start=melden')).toBe('/?start=melden')
+    expect(sameOriginPath('/', '?start=melden', '#karte')).toBe('/?start=melden#karte')
+  })
+
+  /**
+   * Die Zusicherung als Eigenschaft, nicht als Beispielliste: Was diese
+   * Funktion zurückgibt, muss sich gegen **jede** Basis zu genau dieser Basis
+   * auflösen. Das ist die Aussage, um die es geht — „fängt mit einem
+   * Schrägstrich an" wäre nur ihre halbe Miete.
+   */
+  it('bleibt bei beliebigem Unfug auf der eigenen Herkunft', () => {
+    const unfug = [
+      '//evil.com',
+      '///evil.com',
+      '\\/evil.com',
+      '//user:pass@evil.com/x',
+      '/\\\\/evil.com',
+      '//evil.com:8080/pfad',
+      '',
+      '/',
+      '//',
+      '/normal/pfad',
+      '//evil.com/../..',
+      '/%2F%2Fevil.com',
+      '//evil.com\\@k.de',
+    ]
+    for (const roh of unfug) {
+      const ziel = sameOriginPath(roh)
+      expect(ziel.startsWith('/'), roh).toBe(true)
+      expect(new URL(ziel, 'https://knoellchenfrei.de').origin, roh).toBe(
+        'https://knoellchenfrei.de'
+      )
+    }
   })
 })

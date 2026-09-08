@@ -154,5 +154,23 @@ personenbezogenen Daten über ihre Nutzer, außer dem, was sie selbst melden.
   Repository ist es nicht mehr enthalten** — dessen Historie beginnt mit einem
   einzigen Commit, und das Altprojekt zieht nicht mit um (`scripts/umzug.sh`).
   Unabhängig davon: prüfen, ob das Passwort anderswo wiederverwendet wurde.
-- Kartenkacheln kommen von einem Dritten. Deren Betreiber sieht die IP-Adressen
-  der Nutzer.
+- **Das Formular des Beta-Riegels ist nicht gedrosselt.** Ein Versuch kostet
+  eine Anfrage, und Cloudflare Pages bringt von sich aus keine Zählung mit.
+  Das Passwort ist geteilt und wird von Hand gesetzt — seine Länge ist damit
+  die einzige Schranke. Der richtige Ort für die Abhilfe ist eine
+  Rate-Limiting-Regel der Cloudflare-WAF auf `POST /` (eine Regel ist im
+  kostenlosen Tarif enthalten), nicht eine Zählung in der Funktion selbst:
+  Pages-Funktionen laufen in vielen Isolaten, ein Zähler im Speicher zählt
+  jedes für sich und gäbe eine Sicherheit vor, die es nicht gibt. Steht in
+  `docs/todo.md`.
+- Kartenkacheln kommen aus dem **eigenen** R2-Eimer, seit dem 7. September
+  auch die Schriftschnitte. Die Vektorkarte macht damit keinen einzigen
+  fremden Abruf mehr. Nur der Rückfall auf OpenStreetMap-Rasterkacheln — er
+  greift, wenn `VITE_TILES_URL` nicht gesetzt ist — lädt von einem Dritten,
+  und dessen Betreiber sieht dann die IP-Adressen der Nutzer.
+- Die Zonenkennung, die Stunde und die Stadt der Nutzungsstatistik sind
+  aggregiert und k-anonymisiert, aber `GET /stats` liegt **nicht** hinter dem
+  Beta-Riegel: Der Riegel steht vor der Auslieferung der Seite, nicht vor dem
+  Worker. Das ist eine Entscheidung, keine Lücke — sie steht so im Code
+  kommentiert, damit niemand die Schwelle in die Anzeige verlegt statt ins
+  SQL.

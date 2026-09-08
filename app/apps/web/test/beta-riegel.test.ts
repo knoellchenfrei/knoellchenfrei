@@ -170,3 +170,71 @@ describe('der Einladungslink', () => {
     expect(response.headers.get('Location')).toBe('/melden')
   })
 })
+
+/**
+ * Die offene Weiterleitung — gefunden bei der Fehlerjagd in der Nacht zum
+ * 8. September, gemessen statt gelesen.
+ *
+ * Beide Anmeldewege leiteten auf den angefragten Pfad um. Das galt als sicher,
+ * weil ausser dem Pfad nichts aus der Anfrage übernommen wurde — nur ist
+ * `new URL('https://knoellchenfrei.de//evil.com/').pathname` eben
+ * `//evil.com/`, und als `Location` ist das eine protokollrelative Adresse.
+ *
+ * Der Angreifer braucht dafür das Beta-Passwort, ist also ein Tester. Der
+ * Gewinn wäre ein Link, der von der echten Domain kommt und auf einer fremden
+ * Seite endet — und genau solche Links werden in Telegram herumgereicht.
+ */
+describe('das Umleitungsziel nach der Anmeldung', () => {
+  const zielVon = (response: Response): string => response.headers.get('Location') ?? ''
+  const bleibtHier = (ziel: string): boolean =>
+    new URL(ziel, 'https://knoellchenfrei.de').origin === 'https://knoellchenfrei.de'
+
+  it('führt über das Formular nicht auf eine fremde Herkunft', async () => {
+    const response = await onRequest(
+      kontext(
+        new Request('https://knoellchenfrei.de//evil.com/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ password: 'offen-sesam' }).toString(),
+        }),
+        'offen-sesam'
+      )
+    )
+    expect(response.status).toBe(303)
+    expect(zielVon(response)).toBe('/evil.com/')
+    expect(bleibtHier(zielVon(response))).toBe(true)
+  })
+
+  it('führt über den Einladungslink nicht auf eine fremde Herkunft', async () => {
+    const response = await onRequest(
+      kontext(GET('https://knoellchenfrei.de//evil.com/?invite=offen-sesam'), 'offen-sesam')
+    )
+    expect(response.status).toBe(303)
+    expect(bleibtHier(zielVon(response))).toBe(true)
+    expect(zielVon(response).startsWith('//')).toBe(false)
+  })
+
+  it('behält dabei, was am Einladungslink hing — ohne das Passwort', async () => {
+    const response = await onRequest(
+      kontext(
+        GET('https://knoellchenfrei.de/?invite=offen-sesam&start=melden#karte'),
+        'offen-sesam'
+      )
+    )
+    expect(zielVon(response)).toBe('/?start=melden#karte')
+  })
+
+  it('lässt den gewöhnlichen Weg unverändert', async () => {
+    const response = await onRequest(
+      kontext(
+        new Request('https://knoellchenfrei.de/statistik/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ password: 'offen-sesam' }).toString(),
+        }),
+        'offen-sesam'
+      )
+    )
+    expect(zielVon(response)).toBe('/statistik/')
+  })
+})

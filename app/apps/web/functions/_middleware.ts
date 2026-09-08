@@ -37,6 +37,7 @@ import {
   BETA_TOKEN_TTL_MS,
   constantTimeEqual,
   readCookie,
+  sameOriginPath,
   signBetaToken,
   verifyBetaToken,
 } from '@knoellchenfrei/core'
@@ -197,8 +198,11 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
   if (request.method === 'POST') {
     if (accepts(secret, await passwordFromForm(request))) {
       // Nur der Pfad, nie etwas aus der Anfrage: Eine Umleitung, die ein Ziel
-      // aus fremder Eingabe übernimmt, ist eine offene Weiterleitung.
-      return redirect(url.pathname, await issueCookie(secret, now))
+      // aus fremder Eingabe übernimmt, ist eine offene Weiterleitung. Und
+      // „nur der Pfad" reichte nicht — `//evil.com/` ist ein gültiger Pfad und
+      // als `Location` eine protokollrelative Adresse. `sameOriginPath` in
+      // core schneidet das ab und wird dort beschossen.
+      return redirect(sameOriginPath(url.pathname), await issueCookie(secret, now))
     }
     return htmlResponse(loginPage('wrong-password'), 401)
   }
@@ -210,7 +214,10 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
       // Das Passwort raus aus der Adresse, der Rest bleibt: `?start=melden`
       // soll einen Einladungslink überleben.
       clean.searchParams.delete(INVITE_PARAM)
-      return redirect(`${clean.pathname}${clean.search}${clean.hash}`, await issueCookie(secret, now))
+      return redirect(
+        sameOriginPath(clean.pathname, clean.search, clean.hash),
+        await issueCookie(secret, now)
+      )
     }
     return htmlResponse(loginPage('wrong-password'), 401)
   }

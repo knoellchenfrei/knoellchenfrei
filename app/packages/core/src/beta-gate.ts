@@ -178,6 +178,36 @@ export async function verifyBetaToken(
  * `null` heißt „nicht da", nicht „leer": Ein Cookie mit leerem Wert ist ein
  * gelöschtes Cookie, und das ist dasselbe wie keins.
  */
+/**
+ * Macht aus Pfad, Abfrage und Fragment ein Umleitungsziel, das die eigene
+ * Herkunft nicht verlassen kann.
+ *
+ * Der Riegel leitet nach erfolgreicher Anmeldung auf den angefragten Pfad um
+ * und nimmt dafür bewusst **nichts** aus der Anfrage ausser diesem Pfad — eine
+ * Umleitung mit fremdem Ziel wäre eine offene Weiterleitung. Genau das war es
+ * trotzdem, und zwar über eine Lücke, die man beim Lesen nicht sieht:
+ *
+ * `new URL('https://knoellchenfrei.de//evil.com/?invite=…').pathname` ist
+ * `//evil.com/`. Als `Location` ist das kein Pfad, sondern eine
+ * **protokollrelative Adresse** — der Browser geht nach `https://evil.com/`.
+ * Dasselbe über `\` : `/\/evil.com` wird zu `///evil.com`.
+ *
+ * Der Angreifer braucht dafür das Beta-Passwort, ist also ein Tester. Der
+ * Gewinn wäre ein Link, der von der echten Domain kommt und auf einer fremden
+ * Seite endet — und Einladungslinks werden in Telegram herumgereicht. Deshalb
+ * gemessen, gemeldet und geschlossen, statt als „unwahrscheinlich" liegen zu
+ * lassen.
+ *
+ * Die Regel ist die einfachste, die trägt: genau ein führender Schrägstrich,
+ * und was danach kommt, kann keine Autorität mehr einleiten.
+ */
+export function sameOriginPath(pathname: string, search = '', hash = ''): string {
+  // Rückwärtsschrägstriche zählen für Browser bei der Adressauflösung wie
+  // Schrägstriche — sie gehören mit weggeschnitten, nicht nur die geraden.
+  const pfad = `/${pathname.replace(/^[/\\]+/, '')}`
+  return `${pfad}${search}${hash}`
+}
+
 export function readCookie(header: string | null | undefined, name: string): string | null {
   if (header === null || header === undefined) return null
   if (header.length > MAX_COOKIE_HEADER) return null

@@ -80,11 +80,25 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
    Rückversicherung. Es war der einzige Punkt auf dieser Liste, an dem ein
    Versäumnis nicht reparierbar gewesen wäre.
 5. **Telegram-Token** beim BotFather holen (Punkt 6) und die restlichen Namen
-   sichern, solange sie frei sind. — **Der einzige Punkt dieser Liste, der noch
-   offen ist**, zusammen mit dem R2-Token darunter.
+   sichern, solange sie frei sind. — Offen, zusammen mit den beiden Punkten
+   darunter.
 6. **`CLOUDFLARE_R2_TOKEN`** als Repository-Secret, ein Recht: *Workers R2
    Storage: Edit*. Ohne ihn baut der Workflow *Kacheln* nichts, und die Karte
    altert still vor sich hin.
+7. **Eine WAF-Regel vor das Anmeldeformular** — Cloudflare-Dashboard,
+   *Security → WAF → Rate limiting rules*: `http.request.method eq "POST" and
+   http.host eq "knoellchenfrei.de"`, etwa 10 Anfragen je Minute je IP,
+   Aktion *Block*. Im kostenlosen Tarif ist genau eine solche Regel enthalten;
+   sie ist hier gut angelegt.
+
+   > **Warum das nicht in die Funktion gehört.** Der Riegel ist ein geteiltes
+   > Passwort, und ein Versuch kostet den Angreifer eine einzige Anfrage —
+   > gedrosselt wird heute nichts. Eine Zählung *in* der Pages-Funktion sähe
+   > nach einer Lösung aus und wäre keine: Pages-Funktionen laufen in vielen
+   > Isolaten, jedes zählte für sich, und das Ergebnis wäre eine Sicherheit,
+   > die es nicht gibt. Die Drosselung gehört vor die Funktion. Gefunden bei
+   > der Fehlerjagd in der Nacht zum 8. September, steht auch in
+   > [SECURITY.md](../SECURITY.md#bekannte-grenzen).
 
 **Am 6. September abends erledigt** (nachgeprüft, nicht geglaubt):
 Organisationsbild, Vorschaubild des Repositories, Beschreibung und alle zwölf
@@ -368,8 +382,35 @@ weiteren Städten in
 [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md). Hamburg ist seit
 dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
 **vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
-angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat;
-Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016).
+angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
+
+> **Köln und Karlsruhe sind seit dem 8. September vorbereitet, aber nicht
+> eingetragen** — Zweig `staedte/koeln-karlsruhe-vorbereitet`. Zwei Agenten
+> haben je eine Stadt gegen die echten Dienste vermessen, Parser samt Tests
+> geschrieben (82 bzw. 69) und die Datenbauten laufen lassen. Keiner hat
+> `core/city.ts`, `core/index.ts` oder `ingest/src/sources.ts` angefasst; genau
+> diese drei Dateien wären das Anschalten, und sie sind abzusprechen. Die
+> fertigen Schnipsel stehen in [staedte-koeln.md](staedte-koeln.md) und
+> [staedte-karlsruhe.md](staedte-karlsruhe.md), beide **auf jenem Zweig**.
+>
+> Warum ein eigener Zweig und nicht der Arbeitszweig: Ohne die drei Einträge
+> ist der Baum nicht neutral, sondern rot — `pnpm -r typecheck` meldet 22
+> `has no exported member`, weil die Datenbauten Namen importieren, die `core`
+> noch nicht ausführt. Ein dauerhaft roter Typecheck macht das nächste echte
+> Problem unsichtbar.
+>
+> Je eine Entscheidung steht aus:
+>
+> - **Köln** — die Gebühr wird bewusst *nicht* gelesen. Die Datei nennt
+>   4,00 € Tagesticket, die Stadt am selben Tag 5,00 €; ein Widerspruch
+>   zwischen zwei Aussagen derselben Behörde. `Fee.unknown` plus Quellhinweis
+>   statt einer Zahl, die falsch ist. Dazu `NW` im Feiertagskalender, dessen
+>   Beleg noch fehlt (`recht.nrw.de` hat seine Adressen umgebaut).
+> - **Karlsruhe** — blockierend: Die „Zonen" sind keine Gebiete, sondern die
+>   Stellplatzreihen selbst, Median 128 m², 4,8 m breit. `zoneAt` fragt strikt
+>   Punkt-in-Polygon; eine Ortung ist auf 10–20 m genau und trifft das nie.
+>   Entweder ein gemessener Nächste-Zone-Rückfall in `zones.ts` — das ändert
+>   `core` — oder eine Gebietsebene von der Stadt.
 
 - [x] **Stadt als Konfiguration statt als Konstante.** `core/city.ts` trägt
       Mittelpunkt, Zoom, Meldegrenze, Sitzungsgrenze, Bundesland und
@@ -656,6 +697,64 @@ Köln wäre die nächste und braucht vorher eine Rückfrage (Preisfeld von 2016)
       Meldungen mit lahm. Sichtbar wird es daran, dass die Tageszahl exakt auf
       der Grenze steht.
 
+- [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
+      im Worker hinterlegen — die Befehle stehen in
+      [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet
+      `/telegram` mit 404.
+- [ ] **Stufe 2: öffentliche Gruppen mitlesen.** Deutlich mehr Meldungen, aber
+      ungeprüfter Fremdtext. FreiFahren hängt dafür einen eigenen Dienst
+      (`report-gate`) vor jeden Schreibpfad; das brauchen wir dann auch, samt
+      einem Satz in der Datenschutzerklärung.
+**AtAdminBot ist angesehen — und hilft beim Melden nicht.** Nachgesehen am
+6. September 2026 unter
+`git.abfelbaum.dev/abfelbaum/bots/telegram/atadminbot`: Das ist ein
+**Moderationsbot**, kein Meldebot. Schreibt jemand `@admin` in eine Gruppe,
+benachrichtigt er die Administratoren; `/solve` schließt den Fall. Schlagworte
+des Projekts: `bot`, `group-administration`, `telegram`. Geschrieben in C#/.NET,
+AGPLv3, letzte Änderung Juni 2024, keine Sterne, keine Forks.
+
+Für die Community-Gruppe kann er später nützlich sein — für die Meldungen
+nicht, und in unseren Stack (TypeScript, Cloudflare Worker) passt ein
+eigenständiger .NET-Dienst nicht ohne zweite Betriebsumgebung. Unser Meldeweg
+bleibt Stufe 1 oben.
+
+Die Community ist davon unabhängig: Eine Telegram-Gruppe ist die Community, der
+Bot ist nur eine Datenleitung. Die Gruppe kann sofort aufmachen, der Bot muss
+warten, bis der Worker steht.
+
+## 6. Telegram — **du** (Token), dann **ich**
+
+> **Dieser Abschnitt war zwischenzeitlich weg.** Er ist am 7. September in
+> Commit `2212bfc` verschwunden — einem Commit über Worker-Tests, der mit
+> Telegram nichts zu tun hatte. Ursache war dieselbe wie bei den drei anderen
+> Abschnitten, die schon einmal zurückgeholt werden mussten: ein
+> zeilenbasiertes Ersetzen ohne Blockgrenze. Wiederhergestellt am 8. September
+> aus `362e8c8`, inhaltlich unverändert. Was daraus als Regel folgt, steht in
+> `docs/nachtplan-2026-09-08.md`.
+
+Zweistufig, weil Stufe 2 ohne Stufe 1 nichts hat, wohin sie schreiben könnte:
+
+- [x] **Stufe 1: Bot, den man anschreibt — gebaut.** Route `/telegram` am
+      bestehenden Worker, kein zweiter Dienst. Ein gesendeter Standort wird über
+      denselben Pfad eingetragen wie eine Meldung aus der App; `/hilfe`
+      erklärt es; alles andere bekommt eine höfliche Absage. Die
+      Telegram-Nutzerkennung wird gehasht wie eine IP-Adresse und nur für die
+      Meldegrenze benutzt, die Chat-Kennung gar nicht gespeichert.
+      21 Unit-Tests auf dem Parser, weil dort fremder Text ankommt.
+- [~] **Namen belegen — vier Stück, bevor sie weg sind.** Eine Gruppe ist am
+      6. September angelegt; welche der vier Namen damit belegt sind, kann ich
+      nicht nachsehen — Telegram ist von hier aus nicht erreichbar, und ich
+      trage nur ein, was ich geprüft habe. Offen bleiben nach meinem Stand:
+      `@knoellchenfrei` (Dach), `@knoellchenfrei_B`, `@knoellchenfrei_HH`,
+      `@knoellchen_bot`. Am 6. September 2026 waren alle vier frei.
+      *(Der Bot heißt tatsächlich `@knoellchen_bot` — nachgemessen per
+      `getMe` beim Einrichten; die Doku hatte fünfmal `@knoellchenfrei_bot`
+      gesagt, ohne dass es jemand geprüft hätte.)*
+      **Nicht als leere Hülle:** Telegram behält sich ausdrücklich vor, Namen
+      ungenutzter Kanäle zurückzuholen — also anlegen, benennen, ein paar Leute
+      hineinholen und den Beitritt auf Genehmigung stellen. Das erfüllt
+      „benutzt" und bleibt hinter dem Riegel aus Punkt 1. Begründung und
+      Wortlaut in [entscheidungen.md](entscheidungen.md#telegram-und-der-name).
 - [ ] **Token besorgen und Webhook anmelden.** @BotFather, dann zwei Geheimnisse
       im Worker hinterlegen — die Befehle stehen in
       [hosting.md](hosting.md#telegram-anschließen). Ohne beide antwortet
