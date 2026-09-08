@@ -484,6 +484,15 @@ Kommentar an jener Stelle sagte das seit dem 7. September und **niemand hat es
 geprüft**. Dasselbe gälte für ein fehlendes `BETA_PASSWORD` (dann antwortet
 die Funktion mit `503`). Jetzt wird der Lauf rot.
 
+> **Der erste Lauf war rot — und der Fehler lag im Prüfschritt.** Eine
+> Vorschauadresse von Cloudflare Pages antwortet in der ersten Minute mit
+> `404`. Das Warten prüfte nur, ob **irgendein** Status kommt, und `404` ist
+> einer: elf Fehlschläge, die eine Minute später alle grün waren. Gewartet wird
+> jetzt, solange `000` oder `404` kommt, höchstens 90 Sekunden. Ein `200`
+> bricht sofort ab, statt ausgesessen zu werden — das ist der schlimmste Fall
+> (die Seite liefert aus, ohne dass der Riegel davorsteht) und gehört beim
+> Namen gemeldet, nicht als „antwortet nicht".
+
 ### Telegram anschließen
 
 Der Bot ist kein zweiter Dienst: Er hängt als Route `/telegram` an demselben

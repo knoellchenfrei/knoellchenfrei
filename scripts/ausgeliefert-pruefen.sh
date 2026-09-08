@@ -38,20 +38,32 @@ abruf() { # pfad -> "status content-type"
 
 # Eine frische Auslieferung braucht ein paar Sekunden, bis ihre Adresse
 # antwortet. Ohne dieses Warten misst der Lauf direkt nach einem Deploy gegen
-# eine Adresse, die es noch nicht gibt — und meldet einen Fehler, der keiner
-# ist. Höchstens eine Minute; danach ist es kein Anlaufen mehr, sondern ein
-# Befund.
-kopf "Warten, bis die Adresse antwortet"
+# eine Adresse, die es noch nicht gibt.
+#
+# **Und „antwortet" heisst nicht „ist da".** Die erste Fassung wartete nur
+# darauf, dass überhaupt ein Status kommt — eine Vorschauadresse von
+# Cloudflare Pages liefert in der ersten Minute aber **404**, und das ist ein
+# Status. Der Lauf vom 8. September ist genau daran gescheitert und hat elf
+# Fehlschläge gemeldet, die eine Minute später alle grün waren. Gewartet wird
+# deshalb, solange `000` oder `404` kommt.
+#
+# Ein `200` bricht die Schleife sofort ab, statt sie auszusitzen: Das ist der
+# schlimmste Fall — die Seite liefert aus, ohne dass der Riegel davorsteht —
+# und er gehört sofort und beim Namen gemeldet, nicht nach 90 Sekunden als
+# „antwortet nicht".
+kopf "Warten, bis die Auslieferung wirklich steht"
 versuch=0
-until [ "$(abruf / | cut -d' ' -f1)" != "000" ]; do
+status="$(abruf / | cut -d' ' -f1)"
+while [ "$status" = "000" ] || [ "$status" = "404" ]; do
   versuch=$((versuch + 1))
-  if [ "$versuch" -ge 12 ]; then
-    weh "${BASIS} antwortet nach 60 s nicht"
+  if [ "$versuch" -ge 18 ]; then
+    weh "${BASIS} liefert nach 90 s noch ${status} — die Auslieferung steht nicht"
     exit 1
   fi
   sleep 5
+  status="$(abruf / | cut -d' ' -f1)"
 done
-ok "${BASIS} antwortet"
+ok "${BASIS} liefert aus (${status})"
 
 kopf "Der Riegel steht vor allem — nicht nur vor der Startseite"
 # Jeder dieser Pfade wäre ohne Riegel offen: das Bündel, die Zonendaten, das
