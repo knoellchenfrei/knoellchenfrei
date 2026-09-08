@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 712 Unit-Tests (core, api, web)
+pnpm test                                           # 734 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -61,7 +61,7 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (548), `apps/api` (78, Worker und Zählwerk),
+**alle vier** Tests: `core` (570), `apps/api` (78, Worker und Zählwerk),
 `apps/web` (75, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -77,7 +77,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=712 E2E_COUNT=154 npx tsx src/build-badges.ts
+TEST_COUNT=734 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -346,6 +346,30 @@ wiederholt.
   Abbruch nur auf eine transitive Abhängigkeit. Offene Konflikte:
   `dependabot-core#13165`, `pnpm#11203`. Wiedervorlage bei pnpm 11, das
   `minimumReleaseAgeStrict: false` kennt.
+- **Was `tsc` an Typen findet, gehört deklariert — sonst hängt es an einem
+  fremden Peer.** `packages/core` hatte nie ein eigenes `@types/node`. Sichtbar
+  waren die Node-Typen trotzdem: Vitest 3 führte `@types/node` als Peer,
+  `autoInstallPeers: true` legte es nach `app/node_modules/@types/`, und von
+  dort las `tsc` es beim Hochlaufen mit. Vitest 4 hat den Peer nicht mehr — und
+  auf einmal standen **29 Typfehler** in einem Paket, an dem niemand etwas
+  geändert hatte: `crypto`, `TextEncoder`, `URL`, `performance`, `node:fs`,
+  alles „Cannot find name". Das sieht nach einem kaputten Testwerkzeug aus und
+  ist ein fehlender Eintrag in der eigenen `package.json`; im CI-Log des
+  Dependabot-Laufs stand exakt dieselbe Liste. Seitdem steht `@types/node` dort
+  als devDependency und `"types": ["node"]` in der `tsconfig.json` — so, wie
+  `packages/ingest` und `apps/api` es längst halten. Die Nebenwirkung gehört
+  dazu: Mit Node-Typen im Paket würde ein `import 'node:fs'` in `core/src`
+  nicht mehr am Compiler scheitern. Diese Sperre war ein Zufall und ist jetzt
+  ein Test — `packages/core/test/kein-node-in-core.test.ts`, mit Gegenprobe
+  nachgemessen.
+- **Eine Abdeckungszahl gehört zu dem Werkzeug, das sie gemessen hat.** Mit
+  Vitest 4 fielen `core`s Zeilen von 1828 auf 812 und die Statements von 1828
+  auf 953 — dieselbe Testmenge, dasselbe `src/`. Kein Verlust: Vitest 3 rechnete
+  die V8-Rohdaten zeilenweise um, deshalb waren Statements und Zeilen dort auf
+  die Einheit gleich; Vitest 4 rechnet AST-genau. Die Gegenprobe steht in den
+  **Funktionen**: 117 vorher, **164** nachher — die genauere Rechnung sieht mehr,
+  nicht weniger. Der Prozentwert blieb bei 99,9 %. Wer zwei Abdeckungszahlen
+  vergleicht, vergleicht also erst die Werkzeuge.
 - **In einem `on: push` nie `branches` und `branches-ignore` zusammen.**
   GitHub Actions lehnt das ab, und der Workflow läuft dann gar nicht — ohne
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
@@ -721,6 +745,9 @@ wiederholt.
 - **`packages/core` bleibt frei von Frameworks und ohne Laufzeit-Abhängigkeiten.**
   Alles, was fremde Eingaben zerlegt, gehört dorthin — dort lässt es sich mit
   Unfug beschießen. Der Telegram-Parser ist das jüngste Beispiel.
+  Dass dort nichts aus Node importiert wird, prüft
+  `test/kein-node-in-core.test.ts` — vorher hing es daran, dass der
+  Compiler die Node-Typen gar nicht kannte.
 - **Berlin darf nicht fest verdrahtet werden.** Eine weitere Stadt ist stehende
   Anforderung. Was heute noch Berlin-spezifisch ist, steht in
   [docs/oeffentlich-machen.md](docs/oeffentlich-machen.md).

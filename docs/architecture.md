@@ -83,7 +83,7 @@ flowchart LR
 
 `core` kennt weder React noch Node noch MapLibre. Das ist keine Ästhetik: Die
 Tarifberechnung ist der Teil, bei dem ein Fehler den Nutzer Geld kostet, und sie
-soll ohne Browser prüfbar sein — 541 Unit-Tests laufen in rund zwei Sekunden.
+soll ohne Browser prüfbar sein — 570 Unit-Tests laufen in rund einer Sekunde.
 
 Ein späterer nativer Client wäre ein zusätzliches Frontend gegen dasselbe `core`,
 kein Rewrite.

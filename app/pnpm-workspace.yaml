@@ -58,3 +58,23 @@ minimumReleaseAgeExclude:
 ignoredBuiltDependencies:
   - esbuild
   - workerd
+
+# Erzwingt eine Fassung von `sharp`, die nicht verwundbar ist.
+#
+# `sharp` steht in keiner unserer package.json — es kommt transitiv ueber
+# `miniflare` und damit ueber `wrangler`, also ueber ein reines Werkzeug, das
+# nie ausgeliefert wird. Trotzdem meldet GitHub dafuer eine **hohe**
+# Schwachstelle (GHSA-g89c-p67h-r497 und GHSA-2jg2-4, Luecken in libheif), und
+# `pnpm audit --audit-level moderate` bricht in der CI ab -- zu Recht: Ein
+# Werkzeug laeuft auf dem Rechner des Betreibers und in der CI, und beide
+# haben Zugriff auf mehr als die App.
+#
+# Warten, bis wrangler nachzieht, hiesse: die Pruefung so lange rot lassen oder
+# stummschalten. Beides ist schlechter als eine Zeile, die die reparierte
+# Fassung erzwingt. Sie ist rein additiv -- 0.35.4 ist ein Patch auf 0.35.2.
+#
+# Wiedervorlage: Sobald miniflare selbst >= 0.35.4 verlangt, gehoert diese
+# Zeile geprueft und entfernt. Ein Override, den niemand mehr braucht, verdeckt
+# beim naechsten Mal ein echtes Problem.
+overrides:
+  sharp: '>=0.35.4'

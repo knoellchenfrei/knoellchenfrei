@@ -1242,3 +1242,21 @@ Was noch offen ist:
       `@cloudflare/workers-types` 5 waren grün und sind zusammengeführt.
       Alle elf PRs sind zu; Begründungen in
       [entscheidungen.md](entscheidungen.md#abhängigkeiten-aktuell-halten).
+
+- [x] **Zwei Sicherheitsmeldungen geschlossen — `sharp` und `vitest`** am
+      9. September. Beide kamen als Dependabot-PR (#16 für `vitest`), beide
+      brauchten mehr als einen Versionssprung:
+      - **`sharp`** steht in keiner unserer `package.json`; es kommt transitiv
+        über `miniflare` und damit über `wrangler`. Ein `overrides`-Eintrag in
+        `app/pnpm-workspace.yaml` erzwingt `>=0.35.4` — mit Wiedervorlage im
+        Kommentar, denn ein Override, den niemand mehr braucht, verdeckt beim
+        nächsten Mal ein echtes Problem.
+      - **Vitest 4** brach den Typcheck mit **29 Fehlern** in `packages/core`,
+        an dem niemand etwas geändert hatte. Ursache: Die Node-Typen kamen
+        bisher über einen Peer von Vitest 3 in `app/node_modules/@types/`.
+        `packages/core` deklariert sie jetzt selbst; die Compiler-Sperre gegen
+        Node-Importe in `core/src`, die dabei verloren ging, ist als Test
+        wieder da. Ausführlich in [CLAUDE.md](../CLAUDE.md).
+      Gemessen danach: `pnpm audit --audit-level moderate` ohne Befund,
+      734 Unit-Tests, 153 von 154 E2E (einer überspringt sich selbst),
+      Abdeckung 99,9 % Zeilen.
