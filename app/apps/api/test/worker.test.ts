@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { ZONE_KEYS } from '@knoellchenfrei/core'
 
@@ -191,6 +191,60 @@ describe('der Telegram-Webhook', () => {
       umgebung({ TELEGRAM_TOKEN: 'tok', TELEGRAM_SECRET: 'geheim' })
     )
     expect(response.status).toBe(403)
+  })
+
+  /**
+   * Hinter dem Geheimnis muss **jede** Zustellung mit 2xx enden.
+   *
+   * Telegram wiederholt eine Zustellung, die nicht 2xx beantwortet wird — und
+   * zwar mit wachsendem Abstand, aber unbegrenzt. Ein einziger Update, der
+   * hier eine Ausnahme wirft, ergibt damit keinen einmaligen Fehler, sondern
+   * eine Schleife: dieselbe kaputte Nachricht, immer wieder, gegen dasselbe
+   * Tagesbudget. Der Endpunkt hat drei Tests, alle auf dem Riegel; was
+   * **hinter** ihm passiert, war ungeprüft.
+   *
+   * `fetch` wird gestellt: `telegramSend` würde sonst wirklich
+   * `api.telegram.org` anrufen.
+   */
+  it('beantwortet auch Unfug hinter dem Geheimnis mit 2xx — sonst wiederholt Telegram ewig', async () => {
+    const gesendet: string[] = []
+    vi.stubGlobal('fetch', (url: string) => {
+      gesendet.push(String(url))
+      return Promise.resolve(new Response('{"ok":true}'))
+    })
+    const unfug = [
+      'null',
+      '[]',
+      '"text"',
+      '0',
+      '{}',
+      '{"message":null}',
+      '{"message":{}}',
+      '{"message":{"from":null,"chat":null}}',
+      '{"message":{"from":{"id":"nicht-numerisch"},"chat":{"id":1},"text":"/hilfe"}}',
+      '{"message":{"from":{"id":1},"chat":{"id":1},"location":{"latitude":"x","longitude":null}}}',
+      '{"message":{"from":{"id":1},"chat":{"id":1},"location":{"latitude":1e308,"longitude":-1e308}}}',
+      `{"message":{"from":{"id":1},"chat":{"id":1},"text":"${'A'.repeat(5000)}"}}`,
+      '{"message":{"from":{"id":1},"chat":{"id":1},"text":"/hilfe"},"edited_message":{}}',
+      '{"__proto__":{"polluted":true},"message":{"from":{"id":1},"chat":{"id":1}}}',
+    ]
+    for (const body of unfug) {
+      const response = await worker.fetch(
+        post('/telegram', {
+          body,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Telegram-Bot-Api-Secret-Token': 'geheim',
+          },
+        }),
+        umgebung({ TELEGRAM_TOKEN: 'tok', TELEGRAM_SECRET: 'geheim', CLIENT_SALT: 'salz' })
+      )
+      expect(response.status, body.slice(0, 60)).toBeGreaterThanOrEqual(200)
+      expect(response.status, body.slice(0, 60)).toBeLessThan(300)
+    }
+    // Und nichts davon darf den Prototyp verbogen haben.
+    expect(({} as { polluted?: boolean }).polluted).toBeUndefined()
+    vi.unstubAllGlobals()
   })
 })
 
