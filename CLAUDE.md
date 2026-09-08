@@ -36,8 +36,18 @@ pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 152 End-to-End-Tests
 ```
 
+Und vier Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
+aus `app/`. Alle vier laufen in der CI, und jede hat einen Vorfall hinter sich:
+
+```bash
+./scripts/sprache-pruefen.sh    # Prosa mit Umlauten, Bezeichner ohne
+node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen
+./scripts/namen-pruefen.sh      # Ressourcennamen stimmen überein
+./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
+```
+
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
-davon Tests: `core` (537), `apps/api` (50, Worker und Zählwerk) und `apps/web` (15, der
+davon Tests: `core` (541), `apps/api` (60, Worker und Zählwerk) und `apps/web` (19, der
 Beta-Riegel). Die beiden letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -471,6 +481,57 @@ wiederholt.
   7. September ist genau daran gescheitert. Der Ausweg ist wranglers eigenes
   `--cwd`: Die Action installiert weiter im Wurzelverzeichnis, wrangler
   arbeitet trotzdem im Paket.
+- **In einem `batch` liest jede Anweisung, was die vorherige geschrieben hat.**
+  Das Zählwerk reservierte sein Tagesbudget in der **ersten** Anweisung; die
+  Zählanweisungen dahinter prüften daraufhin gegen den bereits erhöhten Stand.
+  Ein Bündel, das den Deckel überschritt, schrieb damit **gar nichts** — auch
+  nicht den Teil, der noch gepasst hätte — und die Antwort meldete trotzdem
+  `written: n`. Gemessen gegen SQLite: Deckel 20, Stand 18, Bündel mit 5 →
+  Budget 23, geschrieben 0, gemeldet 2. Die Reservierung steht jetzt zuletzt.
+  Die Umstellung macht eine zweite Falle auf, und die ist teurer: Am **ersten**
+  Bündel eines Tages gibt es die Budgetzeile noch nicht, `NULL < 5000` ist
+  NULL, und ohne `COALESCE(…, 0)` würde täglich das erste Bündel verworfen.
+- **Eine Liste, die je Stadt erzeugt wird, wird auch je Stadt geprüft.** Der
+  Worker prüfte die Zonenkennung gegen `ALL_ZONE_KEYS` — die vier Listen
+  flachgeklopft. Berlin und Frankfurt nummerieren beide durch und teilen sich
+  dadurch 20 Kennungen; in München wären 193 der 275 angenommenen Werte
+  solche, die es dort nicht gibt. Auf der Statistikseite sähe das aus wie eine
+  Zone, die jemand angesehen hat — sie existiert nur nicht.
+- **Was eine Frist einhält, darf nicht hinter etwas stehen, das scheitern
+  darf.** Der Aufräumlauf war eine Kette aus zehn `await` mit `rollupStats`
+  mittendrin; dahinter standen die Löschungen für `events`, `event_budget` und
+  `feedback`. Eine Statistik, die nicht gerechnet werden konnte, verhinderte
+  damit, dass Daten gelöscht werden — die Frist ist ein Versprechen aus
+  `docs/datenschutz.md`, die Statistik ist Beiwerk. Jeder Schritt läuft jetzt
+  für sich, und was scheitert, wird **am Ende geworfen**: Ein stiller `catch`
+  wäre die schlechtere Hälfte der Korrektur, der Lauf bliebe grün, und niemand
+  erführe, dass eine Frist gerissen ist.
+- **„Nur der Pfad" ist kein Schutz vor einer offenen Weiterleitung.**
+  `new URL('https://knoellchenfrei.de//evil.com/').pathname` ist `//evil.com/`,
+  und als `Location` ist das keine Pfadangabe, sondern eine protokollrelative
+  Adresse — der Browser geht nach `https://evil.com/`. Über `\` dasselbe. Beide
+  Anmeldewege des Beta-Riegels hatten das; `sameOriginPath` in `core` schneidet
+  es ab. Die Zusicherung steht als Eigenschaft im Test: Was die Funktion
+  zurückgibt, muss sich gegen **jede** Basis zu genau dieser Basis auflösen —
+  „fängt mit einem Schrägstrich an" wäre nur die halbe Miete.
+- **Ein Werkzeug, das ohne Messung läuft, überschreibt nichts.**
+  `build-badges.ts` ersetzte das Coverage-Abzeichen durch „unknown", wenn keine
+  Messung vorlag. Genau das ist passiert: ein Lauf, bei dem es nur um die
+  Testzahl ging, meldete Erfolg und überschrieb dabei die eine Zahl, die
+  niemand nachrechnet. Ohne Messung bleibt das Abzeichen jetzt stehen.
+- **Zeilenbasiertes Ersetzen in Markdown frisst Abschnitte.** Vier sind so aus
+  `docs/todo.md` verschwunden (`## 3.`, `## 5.`, `## 6.`, `## 8.`), jedes Mal
+  leise, gefunden erst durch Nachzählen. `scripts/doku-pruefen.mjs` prüft
+  seitdem, dass nummerierte Abschnitte lückenlos aufsteigen und relative
+  Verweise auf existierende Dateien und Überschriften zeigen — und prüft sich
+  vorher selbst. Der erste Lauf fand zwei Verweise auf `öffentlich-machen.md`;
+  die Datei heißt `oeffentlich-machen.md`, und kaputtgegangen war der Link
+  ausgerechnet in dem Commit, der die Sprachregel eingeführt hat. **Ein
+  Dateiname ist ein Bezeichner, keine Prosa.**
+- **Solange Hintergrundagenten in denselben Baum schreiben, wird benannt
+  hinzugefügt.** Ein `git add -A` hat 220 KB fremder Rohdaten in einen Commit
+  über Testabdeckung genommen. Kein Schaden, aber der Commit behauptete etwas
+  anderes, als er tat.
 - **Ein Riegel fällt zu, wenn seine Konfiguration fehlt, nicht auf.** Ohne
   `BETA_PASSWORD` antwortet die Pages-Funktion mit `503` statt durchzulassen.
   Die bequeme Richtung wäre genau der Fehler, den dieses Projekt dreimal
@@ -525,4 +586,6 @@ wiederholt.
 | [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
 | [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |
+| [docs/nachtplan-2026-09-08.md](docs/nachtplan-2026-09-08.md) | Der Plan der Nacht zum 8. September und was jeder Abschnitt ergeben hat |
+| [docs/staedte-koeln.md](docs/staedte-koeln.md), [docs/staedte-karlsruhe.md](docs/staedte-karlsruhe.md) | Zwei vorbereitete Städte — Messung, Entscheidungen, was einzutragen bleibt |
 | [SECURITY.md](SECURITY.md) | Bedrohungsmodell und Maßnahmen |

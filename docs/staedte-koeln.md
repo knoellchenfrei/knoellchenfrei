@@ -381,6 +381,31 @@ beim hessischen Innenministerium geschehen ist. Endpunkte zu raten hat hier
 sechsmal 404 ergeben; der Weg ist derselbe wie bei Frankfurts Stadtteilen: über
 den Katalog, nicht über die Adresszeile.
 
+> **Zweiter Anlauf am 8. September, weitergekommen und trotzdem nicht am
+> Ziel.** Die richtige Adresse ist gefunden — die Norm heißt *Gesetz über die
+> Sonn- und Feiertage*, SGV. NRW. **113**, und liegt unter
+> `recht.nrw.de/lmi/owa/br_bes_text?anw_nr=2&gld_nr=1&ugl_nr=113&bes_id=3367`.
+> Ein Suchindex gibt § 2 auch inhaltlich wieder: Neujahr, Karfreitag,
+> Ostermontag, 1. Mai, Christi Himmelfahrt, Pfingstmontag, **Fronleichnam**
+> (Donnerstag nach Trinitatis), 3. Oktober, **Allerheiligen** (1. November),
+> Weihnachten — **kein** Reformationstag, **kein** Buß- und Bettag, und keine
+> gemeindeweise Regelung wie in Bayern. Das entspricht genau dem
+> vorgeschlagenen Eintrag `NW: { fixed: ['11-01'], fromEaster: [60] }`.
+>
+> **Es bleibt trotzdem draußen.** Die Seite selbst liefert an einen Abruf von
+> hier nur Navigation und Fußzeile — der Gesetzestext wird per JavaScript
+> nachgeladen. Das Gesetz- und Verordnungsblatt von 1989
+> (`GV_Archiv/4122-xmmgvb8919.pdf`) ist ein Scan mit JBIG2-Kompression und
+> lässt sich nicht auslesen. Was hier also vorliegt, ist die Wiedergabe eines
+> Suchindexes, nicht der Wortlaut aus der Quelle. Bei BayFTG stand am Ende die
+> Gemeindeabfrage des Landesamts für Statistik, bei Hessen das Innenministerium
+> — das ist der Maßstab, und eine Suchergebnisseite erreicht ihn nicht.
+>
+> **Für den nächsten Anlauf** ist damit alles beisammen außer dem letzten
+> Schritt: Die Fundstelle steht oben, ein Browser mit JavaScript zeigt den
+> Text, und die Prüfung ist eine Minute Arbeit. Die zehn Minuten Suche muss
+> niemand wiederholen.
+
 Bis dahin ist der Zustand **laut**: Eine Zone mit `land: 'NW'` bricht heute mit
 `Kein Feiertagskalender für "NW" hinterlegt` ab, statt an Fronleichnam still
 zum Zahlen aufzufordern. Ein Test in `koeln.test.ts` hält genau das fest und

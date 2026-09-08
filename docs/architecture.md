@@ -37,6 +37,14 @@ Die dicke Trennlinie liegt zwischen Build- und Laufzeit. Alles, was aus einer
 fremden Quelle kommt, wird beim Bauen geprüft und eingefroren — nicht im Browser
 des Nutzers.
 
+**Das Bild zeigt Berlin als Beispiel, nicht als Sonderfall.** Hamburg,
+Frankfurt am Main und München laufen durch dieselbe Form; nur die Kästen links
+heißen anders, und jede Stadt hat ihren eigenen Parser, weil die vier Dienste
+sich außer der Domäne nichts teilen — andere Felder, andere Schreibweisen,
+andere Achsenreihenfolge. Welche Ebenen eine Stadt hat, steht in
+`ingest/src/sources.ts`; was daraus wird, in
+[data-sources.md](data-sources.md) und [staedte.md](staedte.md).
+
 ## Warum die Daten eingefroren werden
 
 Der naheliegende Einwand: Warum nicht live abfragen? Vier Gründe, in dieser
@@ -219,6 +227,66 @@ statt geteilten Zustand vorzutäuschen, den es nicht gibt.
 Eine frühere Fassung presste die REST-Variante in die Form des Dokumentspeichers
 und verlor dabei die Richtung einer Stimme: Jedes „weg" wurde als „gesehen"
 gesendet.
+
+## Nutzungsstatistik: ein Zählwerk, kein Protokoll
+
+Seit dem 8. September zählt die App mit, **was** benutzt wird — und zwar so
+gebaut, dass daraus kein Verlauf werden kann.
+
+```mermaid
+flowchart LR
+    A["apps/web<br/>track.ts"] -->|"alle 5 min<br/>+ pagehide"| E["POST /events<br/>Name · Ausprägung · Stadt"]
+    E --> W["Worker<br/>stempelt Tag + Stunde"]
+    W --> K["Katalog core/events.ts<br/>+ zone-keys.generated.ts"]
+    K --> D[("D1 · events<br/>day·hour·city·name·value → n")]
+    D -->|"stündlich, im Cron"| R["rollupStats<br/>5 GROUP BY + Gegenprobe"]
+    R --> KV[("KV · stats:v1")]
+    KV --> S["GET /stats"] --> P["/statistik<br/>zweiter Vite-Eintrag"]
+```
+
+Vier Entscheidungen tragen das Ganze, und jede hat einen Grund, den man beim
+Lesen des Codes sonst raten müsste:
+
+1. **Ort oder Zeit, nie beides.** Ereignisse, deren Ausprägung ein Ort ist
+   (`zone.open`, `city.switch`), bekommen `hour = -1`; alle anderen bekommen
+   die Stunde. Eine Zeile mit Ort *und* Uhrzeit wäre bei kleinen Zahlen ein
+   Einzelereignis — und sie stünde neben `sightings` und `marks` in derselben
+   Datenbank. `hourFor` in `core/events.ts` entscheidet das, nicht der Aufrufer.
+2. **Der Server stempelt.** Tag und Stunde kommen aus `Date.now()` im Worker.
+   Ein Stempel vom Client wäre rückdatierbar — dieselbe Falle, gegen die
+   `/visits` seine „stale day"-Regel hat.
+3. **Der Katalog ist die Grenze.** Name und Ausprägung werden gegen
+   `core/events.ts` geprüft, die Zonenkennung gegen `ZONE_KEYS[stadt]`. Die
+   Prüfung im Client ist eine Bequemlichkeit; was zählt, ist die im Worker.
+   Ohne den Katalog wäre `value` eine Freitextspalte mit 90 Tagen
+   Aufbewahrung.
+4. **Die k-Schwelle steht im SQL, nicht in der Anzeige.** Eine Zone unter fünf
+   Aufrufen geht in eine Sammelzeile „andere". Was die Antwort nicht enthält,
+   kann auch niemand auslesen — und `GET /stats` liegt bewusst *nicht* hinter
+   dem Beta-Riegel, weil der vor der Auslieferung der Seite steht und nicht vor
+   dem Worker.
+
+Was **nicht** gespeichert wird: keine Kennung, keine Sitzung, keine Reihenfolge,
+keine IP — auch nicht gehasht. Der Puffer im Browser liegt im Arbeitsspeicher
+und nicht in `localStorage`, weil er dort ein Sitzungsverlauf auf fremdem Gerät
+wäre. Der Preis sind ein paar verlorene Zählungen; der Gegenwert ist, dass die
+Nicht-Liste stimmt. Ausschalten geht in den Einstellungen, und ein Gerät mit
+`navigator.globalPrivacyControl` wird von vornherein nicht gezählt.
+
+**Die Gegenprobe** ist die einzige Zahl auf der Statistikseite, die etwas über
+die Seite selbst sagt: `visits` zählt Geräte je Tag über einen ganz anderen
+Schreibweg, und jedes Gerät mit einer Besuchszeile hat die App geöffnet — also
+muss `app.open` mindestens so groß sein. Ist es das nicht, kommen Bündel nicht
+an, und das sähe sonst aus wie weniger Nutzung. Sie reicht nur zwei Tage weit,
+weil `visits` nach zwei Tagen gelöscht wird und `events` nach 90.
+
+**Der Aufräumlauf** (`scheduled`, stündlich zur Minute 7) hält alle Fristen
+ein. Seit dem 8. September läuft jeder seiner elf Schritte für sich: Vorher war
+es eine Kette aus `await`, und eine gescheiterte Auswertung hielt die
+Löschungen dahinter an — eine Statistik, die nicht rechnen kann, verhinderte
+damit die Einhaltung einer Zusage aus [datenschutz.md](datenschutz.md). Was
+scheitert, wird am Ende geworfen; ein stiller `catch` wäre die schlechtere
+Hälfte der Korrektur.
 
 ## Drei Fehler, die nur im echten Build auftreten
 

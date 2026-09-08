@@ -69,6 +69,8 @@ bei jedem Push läuft und absichtlich nur Pages und Worker kann.
 | `marks` | Kontrolldichte, 28 Tage | **Weg und nicht ersetzbar** — niemand kann vergangene Kontrollen nachtragen. Die Heatmap fängt bei null an. |
 | `sightings` | Meldungen, 90 Minuten | Egal. Nach anderthalb Stunden ist der Bestand ohnehin ersetzt. |
 | `visits` | Tageszähler | Egal. Eine Zahl, die morgen neu entsteht. |
+| `events` | Nutzungsstatistik, 90 Tage | **Weg und nicht ersetzbar** — dieselbe Lage wie bei `marks`. Niemand kann nachtragen, was letzten Monat benutzt wurde. Kein Personenbezug, also kein Schaden für Nutzer; verloren ist nur die Antwort auf „wird das eigentlich benutzt". |
+| `event_budget` | Tagesdeckel der Statistik, 2 Tage | Egal. Ein Zähler, kein Bestand. Fehlt er, fängt der Deckel des laufenden Tages bei null an. |
 
 Deshalb sichert `scripts/sichern.sh` die ganze Datenbank, nicht eine Auswahl:
 Der Abzug ist klein, und eine gepflegte Tabellenliste ist eine Stelle mehr, an
@@ -88,7 +90,10 @@ Dasselbe gilt für die Sicherungsdateien: Ein zweiter Ort ist der Sinn der
 Sache.
 
 Verschlüsselt wird, weil der Abzug gesalzene Client-Hashes und
-Freitext-Rückmeldungen enthält. Das gehört nicht unverschlüsselt in einen
+Freitext-Rückmeldungen enthält. Die Nutzungsstatistik ist davon **nicht** der
+Grund: In `events` steht keine Kennung, keine Sitzung und keine Reihenfolge,
+und ein Ortsereignis trägt keine Uhrzeit. Sie wird mitgesichert, weil der Abzug
+die ganze Datenbank nimmt, nicht weil sie schützenswert wäre. Das gehört nicht unverschlüsselt in einen
 Ordner, den irgendwann ein Synchronisationsdienst mitnimmt.
 
 **Was hier bewusst fehlt: ein Zeitplan.** Ein Workflow, der nächtlich sichert,

@@ -26,6 +26,12 @@ das Projekt erklären, sondern nur sagen, wo es steht und was ansteht.
 
 ## Zum Kopieren
 
+> **Der Block unten ist der Wortlaut vom 6. September, nicht der Stand von
+> heute.** Er steht hier als Protokoll; die Zahlen darin (541 Unit-Tests,
+> 140 E2E) waren damals richtig und sind es heute nicht mehr — die aktuellen
+> stehen in [README.md](../README.md) und in den Abzeichen. Wer ihn kopiert,
+> kopiert Geschichte.
+
 ```text
 Wir ziehen dieses Projekt aus herbeus/parkingzone hierher um.
 
@@ -58,7 +64,7 @@ sonst geht es im Text unter. Aktuelle Fakten bitte nachschlagen statt raten.
 
 ## Was die neue Sitzung nicht wissen kann
 
-Drei Dinge stehen zwar in den Dokumenten, gehen aber erfahrungsgemäß unter:
+Diese Punkte stehen zwar in den Dokumenten, gehen aber erfahrungsgemäß unter:
 
 - **Der Beta-Riegel ist die Voreinstellung.** Ohne `PUBLIC_LAUNCH=1` baut Vite
   `noindex` und eine sperrende `robots.txt` ein. Das ist Absicht.
@@ -80,3 +86,24 @@ Drei Dinge stehen zwar in den Dokumenten, gehen aber erfahrungsgemäß unter:
   eine Variable noch einen Deploy.
 - **Playwright braucht `PLAYWRIGHT_CHROMIUM`.** Sonst sucht es eine
   Build-Nummer, die es nicht gibt.
+- **Die App zählt seit dem 8. September mit, und die Regel dahinter ist
+  ungewöhnlich: Ort oder Zeit, nie beides.** Ein Ereignis, dessen Ausprägung
+  ein Ort ist, bekommt `hour = -1` statt der Stunde. Das sieht im SQL wie ein
+  Fehlwert aus und ist Teil des Schlüssels. Wer die Stunde „repariert", macht
+  aus einem Zählwerk ein Bewegungsprofil. Aufbau in
+  [architecture.md](architecture.md#nutzungsstatistik-ein-zählwerk-kein-protokoll).
+- **Zwei Städte liegen fertig vorbereitet auf einem eigenen Zweig**
+  (`staedte/koeln-karlsruhe-vorbereitet`) und sind mit Absicht **nicht**
+  eingetragen — `core/city.ts`, `core/index.ts` und `ingest/src/sources.ts`
+  anzufassen ist eine architektonische Änderung und abzusprechen. Auf dem
+  Arbeitszweig fehlen die Dateien deshalb; das ist kein Verlust, sondern der
+  Grund, warum `pnpm -r typecheck` dort grün ist. Details in
+  [todo.md](todo.md) Abschnitt 5.
+- **Vor dem Committen laufen drei Prüfungen, die kein Compiler ist:**
+  `./scripts/sprache-pruefen.sh` (Prosa mit Umlauten, Bezeichner ohne),
+  `node scripts/doku-pruefen.mjs` (lückenlose Abschnitte, tragende Verweise)
+  und `./scripts/namen-pruefen.sh`. Alle drei laufen in der CI und haben je
+  einen Vorfall hinter sich.
+- **Solange Hintergrundagenten in denselben Baum schreiben, wird benannt
+  hinzugefügt, nie `git add -A`.** Ein Commit über Testabdeckung hat auf diesem
+  Weg schon einmal 220 KB fremder Rohdaten mitgenommen.

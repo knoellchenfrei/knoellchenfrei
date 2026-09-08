@@ -410,7 +410,13 @@ das `duplicate column name` und `no such table` hinnahm, um zweimal laufen zu
 können. Ein Nachbau dessen, was D1 mitbringt — und ein schlechterer: Er kannte
 den Zustand nicht, er erriet ihn aus Fehlermeldungen, und einmal lag er daneben
 (`no such column: city`, weil die Reihenfolge vertauscht war). Neue Migrationen
-kommen als `migrations/NNNN_name.sql` dazu, aufsteigend nummeriert.
+kommen als `migrations/NNNN_name.sql` dazu, aufsteigend nummeriert. Stand
+8. September: `0001_init.sql` und `0002_events.sql`.
+
+Seit dem 7. September ruft der Deploy-Workflow `migrations apply` selbst, bevor
+er den Worker ausrollt — mit `continue-on-error`, damit ein Migrationsfehler
+den Rollout nicht blockiert. Vorher lief es überhaupt nicht: Der Worker war
+grün, und die Tabelle war nicht da.
 
 Danach `ALLOWED_ORIGINS` in `wrangler.toml` auf die Domain der Web-App setzen.
 Ohne diesen Wert antwortet der Worker ohne CORS-Header — er scheitert
@@ -539,12 +545,44 @@ läse Berliner Meldungen — auf der Karte unsichtbar, in den Zählern falsch.
 | `votes` | eine Stimme je Client und Meldung | solange die Meldung lebt |
 | `marks` | `{Tag, Stunde, Stadt, 250-m-Feld}` für Heatmap und Report | 28 Tage |
 | `visits` | eine Zeile je Gerät und Tag, Zeitstempel wird überschrieben | 2 Tage |
+| `feedback` | Freitext, gehashter Client für die Stundengrenze | 90 Tage |
+| `events` | `{Tag, Stunde, Stadt, Name, Ausprägung} → Anzahl` | 90 Tage |
+| `event_budget` | eine Zeile je Tag: wie viel schon gezählt wurde | 2 Tage |
 
 `visits` beantwortet beide Live-Zahlen ohne Anwesenheitskanal: „gerade offen"
 sind Zeilen, die in den letzten fünf Minuten aktualisiert wurden, „heute" sind
 Zeilen mit dem heutigen Datum. Weil jeder Ping dieselbe Zeile überschreibt,
 entsteht **kein** Verlauf — die Zeile hält den letzten Ping, nie eine Folge.
 Der stündliche Cron-Job löscht, was aus dem Fenster fällt.
+
+`events` ist ein Zählwerk, kein Protokoll: Der Primärschlüssel ist die ganze
+Zeile bis auf die Anzahl, und dieselbe Kombination wird hochgezählt statt neu
+angelegt. Ereignisse mit Ortsbezug liegen auf `hour = -1` — Ort **oder** Zeit,
+nie beides. Wie das zusammenhängt, steht in
+[architecture.md](architecture.md#nutzungsstatistik-ein-zählwerk-kein-protokoll);
+was davon in der Datenschutzerklärung steht, in
+[datenschutz.md](datenschutz.md).
+
+### Die Statistikseite
+
+`GET /stats` liefert **keine** Abfrage, sondern einen fertigen Stand aus dem
+KV (`stats:v1`). Gerechnet wird er einmal je Stunde im selben Cron, der
+aufräumt. Der Grund ist eine Abrechnungseigenheit von D1: Es zählt **gelesene**
+Zeilen gegen ein eigenes Tagesbudget, und fünf `GROUP BY` über 28 Tage lesen je
+Aufruf fünfstellig viele. Bei einem öffentlichen Endpunkt mit Neuladen wäre das
+Budget vor dem Mittag weg; so kostet die Auswertung 24 Läufe am Tag, egal wie
+oft jemand hinsieht.
+
+Ausgeliefert wird sie unter `/statistik` als **zweiter Vite-Eintrag** — kein
+React, keine Karte, kein Router. Das App-Bündel wächst dadurch um null Byte.
+Der Service Worker hält die Seite bewusst nicht vor (`isCacheable` gibt für
+`/statistik` `false` zurück): Eine Statistik aus dem Vorrat wäre eine falsche
+Zahl, die aussieht wie eine richtige.
+
+Ein Deckel schützt beide Seiten: 5.000 gezählte Ereignisse je Tag, 25 je
+Anfrage, 50 je Ereignis. Ist der Tag voll, antwortet der Worker mit `200` und
+`written: 0` statt mit `429` — der Aufrufer soll seinen Puffer verwerfen und
+nicht wiederholen, denn ein Fehler wäre nicht seiner.
 
 ## 4. Eigene Kartenkacheln
 
