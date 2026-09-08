@@ -67,7 +67,7 @@ Systematisch statt zufällig: Grenzfälle im Worker, in der App, in den Daten.
 Was gefunden wird, bekommt einen Test **und** einen Eintrag, wo die Ursache
 steht.
 
-**Gemessen, zehn Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
+**Gemessen, elf Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
 dreien ist die Gegenprobe gefahren — der Test wurde gegen die *alte* Fassung
 gehalten und musste dort fallen. Ein Test, von dem niemand weiß, ob er den
 Fehler gefunden hätte, ist eine Behauptung.
@@ -84,6 +84,7 @@ Fehler gefunden hätte, ist eine Behauptung.
 | C8 | **Ein Tab über Mitternacht zählte nicht mehr mit** | Der Worker weist eine Besuchskennung ab, deren Tag nicht der heutige ist (`422 stale day`). Die App bildete sie **einmal** beim Aufsetzen — ab 00:00 also stundenlang die von gestern. Sichtbar war nichts: Ein fehlgeschlagener Ping bleibt absichtlich still, also stand die ganze Nacht die Zahl von kurz vor Mitternacht auf dem Schirm | Den Client gegen die Serverregel gehalten, die er bedienen soll |
 | C9 | **Die MapLibre-Worker-Datei stand nicht im Vorrat des Service Workers** | Dieselbe Wurzel wie der grosse Fund der Nacht: Die Vorratsliste entsteht aus den `src=` der index.html, und die Adresse des Workers wird zur Laufzeit gebaut. Wer die App ablegt und offline geht, bevor die Karte einmal geladen hat, bekommt sie ohne Karte **und ohne Parkzonen** — und offline ist der Fall, für den der Vorrat da ist | Die gebaute `sw.js` gegen `dist/assets` gehalten |
 | C10 | **Ein Drittel der Hamburger Flächen konnte die falsche Farbe zeigen** | Die Karte färbt über `setFeatureState({ id })`, und `id` kam aus `promoteId: 'zone'`. In Hamburg tragen **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen Namen —, dazu vier Zonen in Stücken mit verschiedenen Zeiten (A103: 9–20 und 9–23 Uhr) und eine mit verschiedenen Beträgen. Alle teilten sich einen Zustandsplatz, der letzte Schreibvorgang gewann. Um 21 Uhr stand „frei" über Flächen, die bis 22 Uhr kassieren | Die Zonenschlüssel je Stadt gezählt: 145 Flächen, 63 Schlüssel |
+| C11 | **…und beim Klick auch die falschen Zeiten** | Nachtrag zu C10, gefunden beim Nachlesen der eigenen Behauptung: Der Klick-Handler schlug über `properties.zone` nach und nahm die **erste** Fläche mit diesem Schlüssel. Ein Klick auf irgendeine der 44 zeigte die Zeiten der ersten — bei A103 9–20 statt 9–23 Uhr, bei E315 3,50 statt 3,00 €. Ich hatte eine Stunde vorher geschrieben, das Panel sei nicht betroffen | Den eigenen Satz gegen den Code gehalten, statt ihn stehen zu lassen. Der Rückfall auf den Schlüssel bleibt für den Fall, dass MapLibre keine `id` mitliefert: Ein Klick, der gar nichts tut, wäre schlechter als einer, der in Hamburg gelegentlich die Nachbarfläche trifft |
 
 Die letzten beiden sind die lehrreichsten, weil sie zeigen, wie eine Lücke
 aussieht, die niemandem auffällt: **Nichts war kaputt.** Die Zählung lief, die Seite

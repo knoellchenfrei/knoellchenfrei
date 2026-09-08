@@ -28,9 +28,11 @@ export interface LoadedZone {
    * bis 22 Uhr kassieren, standen auf „frei", oder umgekehrt. Rund ein Drittel
    * der Hamburger Flächen konnte die falsche Farbe zeigen.
    *
-   * Das Panel war nie betroffen — `zoneAt` sucht geometrisch und liest die
-   * Merkmale der getroffenen Fläche. Falsch war nur die Karte, und die ist das
-   * Erste, was jemand ansieht.
+   * Für Standort und Tipp ins Leere stimmte das Panel: `zoneAt` sucht
+   * geometrisch und liest die Merkmale der getroffenen Fläche. **Für den Klick
+   * auf eine Zonenfläche nicht** — der Handler schlug über `properties.zone`
+   * nach und nahm die erste Fläche mit diesem Schlüssel. Auch er nimmt jetzt
+   * diese Kennung.
    *
    * Deshalb eine laufende Nummer je Fläche statt des Zonenschlüssels. Sie ist
    * ein Zeiger auf die Kartenfläche und darf **nirgends** als fachliche

@@ -334,3 +334,47 @@ describe('der Name einer Fläche', () => {
     expect(hatNummer({ zone: '  ' })).toBe(false)
   })
 })
+
+/**
+ * Der Klick auf eine Kartenfläche muss **diese** Fläche treffen.
+ *
+ * Der Handler schlug bis zum 8. September über `properties.zone` nach:
+ * `loaded.find(z => z.properties.zone === id)` nimmt die **erste** Fläche mit
+ * diesem Schlüssel. In Hamburg tragen 44 von 145 Flächen den Schlüssel `-` —
+ * ein Klick auf irgendeine von ihnen zeigte die Zeiten der ersten. Bei A103
+ * wären das 9–20 statt 9–23 Uhr gewesen, bei E315 3,50 statt 3,00 €.
+ *
+ * Ich hatte beim Kartenfehler eine Stunde vorher geschrieben, das Panel sei
+ * nicht betroffen, weil `zoneAt` geometrisch sucht. Das gilt für Standort und
+ * Tipp ins Leere — nicht für den Klick auf eine Zonenfläche.
+ */
+describe('das Nachschlagen einer angeklickten Fläche', () => {
+  it('unterscheidet zwei Flächen mit demselben Zonenschlüssel', async () => {
+    const { loadZones } = await import('../src/zones.js')
+    const ring = (lon: number) => [
+      [
+        [lon, 53],
+        [lon + 0.01, 53],
+        [lon + 0.01, 53.01],
+        [lon, 53.01],
+        [lon, 53],
+      ],
+    ]
+    const geladen = loadZones({
+      features: [
+        { properties: { zone: '-', rawHours: 'täglich 9-20 Uhr' } as never, geometry: { type: 'Polygon', coordinates: ring(9.9) } },
+        { properties: { zone: '-', rawHours: 'täglich 9-22 Uhr' } as never, geometry: { type: 'Polygon', coordinates: ring(10.0) } },
+      ],
+    })
+
+    // So schlägt der Handler seit dem 8. September nach: über die Kennung der
+    // angeklickten Fläche, die MapLibre am Feature mitliefert.
+    const zweite = geladen.find((zone) => zone.id === 1)
+    expect((zweite?.properties as { rawHours?: string }).rawHours).toBe('täglich 9-22 Uhr')
+
+    // Und so vorher — die erste Fläche gewann, egal welche angeklickt wurde.
+    const alt = geladen.find((zone) => zone.properties.zone === '-')
+    expect((alt?.properties as { rawHours?: string }).rawHours).toBe('täglich 9-20 Uhr')
+    expect(alt).not.toBe(zweite)
+  })
+})

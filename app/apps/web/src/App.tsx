@@ -672,11 +672,36 @@ export function App() {
             if (Date.now() - suppressZoneClick.current < 400) return
             // MapLibre flattens nested GeoJSON properties to JSON strings, so
             // feature.properties.windows arrives as text and any array method on
-            // it throws. The parsed zone is already in memory — look it up by id
+            // it throws. The parsed zone is already in memory — look it up
             // instead of trusting what the map hands back.
-            const id = event.features?.[0]?.properties?.['zone']
-            if (typeof id !== 'string') return
-            const hit = loaded.find((zone) => zone.properties.zone === id)
+            //
+            // **Nachgeschlagen wird über die Flächenkennung, nicht über
+            // `properties.zone`.** Bis zum 8. September stand hier
+            // `loaded.find(z => z.properties.zone === id)`, und das nimmt die
+            // **erste** Fläche mit diesem Schlüssel. In Hamburg tragen 44 von
+            // 145 Flächen den Schlüssel `-`: Ein Klick auf irgendeine von
+            // ihnen zeigte die Zeiten der ersten. Bei A103 waren das 9–20 statt
+            // 9–23 Uhr, bei E315 3,50 statt 3,00 €.
+            //
+            // Ich hatte beim Kartenfehler eine Stunde vorher geschrieben, das
+            // Panel sei nicht betroffen, weil `zoneAt` geometrisch sucht. Das
+            // gilt für Standort und Tipp ins Leere — **nicht** für den Klick
+            // auf eine Zonenfläche, der genau hier landet.
+            //
+            // Der Rückfall auf den Schlüssel bleibt, falls MapLibre einmal
+            // keine `id` mitliefert: Er ist überall dort richtig, wo die
+            // Schlüssel eindeutig sind — also in Berlin, Frankfurt und München
+            // immer. Ein Klick, der gar nichts tut, wäre die schlechtere
+            // Antwort als einer, der in Hamburg gelegentlich die
+            // Nachbarfläche trifft.
+            const feature = event.features?.[0]
+            const schluessel = feature?.properties?.['zone']
+            const hit =
+              typeof feature?.id === 'number'
+                ? loaded.find((zone) => zone.id === feature.id)
+                : typeof schluessel === 'string'
+                  ? loaded.find((zone) => zone.properties.zone === schluessel)
+                  : undefined
             if (hit !== undefined) {
               setSelected(hit.properties)
               track('zone.open', hit.properties.zone)

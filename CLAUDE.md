@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 653 Unit-Tests (core, api, web)
+pnpm test                                           # 654 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -62,7 +62,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
 davon Tests: `core` (548), `apps/api` (64, Worker und Zählwerk) und `apps/web`
-(41, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen). Die beiden letzten haben eine
+(42, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen). Die beiden letzten haben eine
 eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -76,7 +76,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=653 E2E_COUNT=154 npx tsx src/build-badges.ts
+TEST_COUNT=654 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -351,7 +351,15 @@ wiederholt.
   und 3,00 €). Alle Flächen mit gleichem Schlüssel teilten sich **einen**
   Zustandsplatz: Die Schleife schrieb 44-mal hinein, der letzte gewann, und
   alle 44 bekamen dessen Farbe. Um 21 Uhr stand „frei" über Flächen, die bis
-  22 Uhr kassieren. Das Panel war nie betroffen — `zoneAt` sucht geometrisch.
+  22 Uhr kassieren.
+
+  **Korrektur eine Stunde später, und sie gehört hierher:** Ich hatte
+  geschrieben, das Panel sei nicht betroffen, weil `zoneAt` geometrisch sucht.
+  Das gilt für Standort und Tipp ins Leere — **nicht** für den Klick auf eine
+  Zonenfläche. Der Handler schlug über `loaded.find(z => z.properties.zone ===
+  id)` nach und nahm damit die **erste** Fläche mit diesem Schlüssel: Ein Klick
+  auf irgendeine der 44 zeigte die Zeiten der ersten, bei A103 9–20 statt 9–23
+  Uhr. Auch er nimmt jetzt die Flächenkennung.
   `loadZones` stempelt seitdem jeder Fläche eine laufende Nummer auf, auch in
   das Objekt, das an `addSource` geht; `promoteId` ist weg.
 
