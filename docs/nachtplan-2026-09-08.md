@@ -211,6 +211,21 @@ Das **Protokoll** steht in
 gemessen mit `scripts/protokoll.mjs` — das jetzt im Repository liegt, weil
 Zahlen in einer Statistikdatei nachrechenbar sein müssen.
 
+## Abschluss: die Befehle in der Doku wurden ausgeführt
+
+Nicht gelesen — ausgeführt, um 04:24. Alle zehn, die `CLAUDE.md` nennt, laufen
+so, wie sie dort stehen: `pnpm -r typecheck`, `pnpm test`, `test:coverage`,
+`pnpm --filter … build`, `pnpm artifact` aus `app/`, und die fünf Prüfungen
+`sprache-pruefen.sh`, `doku-pruefen.mjs`, `namen-pruefen.sh`,
+`geheimnisse-pruefen.sh`, `ausgeliefert-pruefen.sh` aus dem Wurzelverzeichnis.
+Danach ist der Arbeitsbaum unverändert.
+
+**Und die Messung war beim ersten Anlauf falsch**, was hierher gehört, weil es
+die Lehre der Nacht ist: Die Schleife meldete alle vier Befehle als
+fehlgeschlagen. Ursache war nicht der Code, sondern zsh — es trennt eine
+unquotierte Variable nicht in Wörter und suchte einen Befehl namens
+`pnpm -r typecheck`. Ein Messgerät, das lügt, sieht genauso aus wie ein Befund.
+
 ## Was am Morgen offen ist
 
 Nichts davon ist angefangen und liegengeblieben; es sind Entscheidungen, die
