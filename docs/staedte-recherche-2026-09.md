@@ -329,6 +329,12 @@ PSA-Nr;Aufstellort;PLZ;Bezirk/Gebiet;…;Gebührenzeit;Gebühr je 20 Minuten;Hö
 
 ### Düsseldorf — geprüft, geeignet mit Einschränkung
 
+> **Überholt, Stand 8. September 2026.** Dieser Abschnitt beschreibt einen
+> älteren und kleineren Datenbestand als den, der wirklich da ist: Düsseldorf
+> hat einen WFS mit 20 Ebenen, darunter 732 Parkscheinautomaten mit Tarif. Was
+> davon hier falsch steht, ist einzeln aufgezählt in
+> [staedte-duesseldorf.md](staedte-duesseldorf.md), Abschnitt 2.
+
 | Kriterium | Befund |
 | --- | --- |
 | **Datensatz** | „Bewohnerparkgebiete in Düsseldorf", <https://opendata.duesseldorf.de/dataset/bewohnerparkgebiete-d%C3%BCsseldorf> |

@@ -13,6 +13,9 @@
  * one thing a static host cannot offer without a server.
  */
 
+import type { Meta } from './types.js'
+import type { ZoneFeature } from './zones.js'
+
 interface CityData {
   zones: unknown
   poi: unknown
@@ -37,6 +40,43 @@ declare global {
 export const isEmbedded = (): boolean =>
   typeof window !== 'undefined' && window.__PARKINGZONE_DATA__ !== undefined
 
+/**
+ * Was ein Datenverzeichnis einer Stadt enthält.
+ *
+ * Bis zum 8. September stand hier fünfmal `any` — gegen die eigene Regel
+ * („kein `any`, keine nicht begründeten Casts") und ohne Begründung. Die
+ * Werte kommen zwar aus dem eigenen Datenbau und nicht von fremd, aber `any`
+ * schaltet die Prüfung auch für die **Verwendung** ab: `meta.zonen` statt
+ * `meta.zones` wäre durchgegangen und hätte in der Fusszeile `undefined`
+ * gezeigt.
+ *
+ * Zwei der fünf sind jetzt echt getypt, drei noch nicht — warum, steht unten
+ * an ihnen. `meta` ist der wichtigste von beiden: Aus ihm liest die Fusszeile
+ * Felder beim Namen, und mit `any` wäre `meta.zonen` statt `meta.zones` durch
+ * die Prüfung gegangen und hätte im Betrieb `undefined` angezeigt.
+ */
+export interface ZonenSammlung {
+  type: 'FeatureCollection'
+  features: ZoneFeature[]
+}
+
+export interface StadtDaten {
+  zones: ZonenSammlung
+  // Diese drei bleiben ungetypt, und das ist eine offene Rechnung, keine
+  // Bequemlichkeit: Der richtige Typ ist `GeoJSON.FeatureCollection` aus
+  // `@types/geojson` — genau der, den `map.addSource({ data })` erwartet. Das
+  // Paket liegt im Baum, aber nur **transitiv** über maplibre-gl, und pnpm
+  // löst es von hier aus nicht auf (`TS2307: Cannot find module 'geojson'`).
+  // Es als direkte Abhängigkeit einzutragen ist eine Änderung an den
+  // Abhängigkeiten und deshalb abzusprechen; ein selbstgebauter
+  // Struktur-Typ wäre kein Gewinn, weil `addSource` ihn nicht annimmt.
+  // Steht als Punkt in `docs/todo.md`.
+  poi: unknown
+  districts: unknown
+  umweltzone: unknown
+  meta: Meta
+}
+
 /** Welche Städte diese Auslieferung überhaupt zeigen kann. */
 export function availableCities(): string[] | null {
   const inlined = window.__PARKINGZONE_DATA__
@@ -54,13 +94,7 @@ export function availableCities(): string[] | null {
  * sie sich gegenseitig überschrieben, ohne dass irgendetwas fehlgeschlagen
  * wäre.
  */
-export async function loadData(cityKey: string): Promise<{
-  zones: any
-  poi: any
-  districts: any
-  umweltzone: any
-  meta: any
-}> {
+export async function loadData(cityKey: string): Promise<StadtDaten> {
   const inlined = window.__PARKINGZONE_DATA__
   if (inlined !== undefined) {
     const city = inlined[cityKey]

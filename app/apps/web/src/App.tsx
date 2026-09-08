@@ -455,11 +455,11 @@ export function App() {
           // Gezählte, denn genau die gepflegte Liste läuft irgendwann weg.
           setEbenenMitDaten({
             poi: new Set(
-              (poiData.features as { properties?: { kind?: PoiKind } }[])
+              (poiData as { features: { properties?: { kind?: PoiKind } }[] }).features
                 .map((feature) => feature.properties?.kind)
                 .filter((kind): kind is PoiKind => kind !== undefined)
             ),
-            umweltzone: umweltzone.features.length > 0,
+            umweltzone: (umweltzone as { features: unknown[] }).features.length > 0,
           })
 
           const loaded = loadZones(zoneData)
@@ -486,7 +486,14 @@ export function App() {
             paint: { 'line-color': '#2b3440', 'line-width': 1 },
           })
 
-          map.addSource('zones', { type: 'geojson', data: zoneData, promoteId: 'zone' })
+          // **Kein `promoteId: 'zone'` mehr.** `loadZones` hat jeder Fläche
+          // oben eine laufende `id` aufgestempelt, und MapLibre nimmt die am
+          // Feature vorrangig. Der Zonenschlüssel taugt nicht als Kennung: In
+          // Hamburg tragen 44 von 145 Flächen den Schlüssel `-`, und vier
+          // Zonen kommen in mehreren Stücken mit verschiedenen Zeiten. Alle
+          // teilten sich damit einen Zustandsplatz — die Begründung steht bei
+          // `LoadedZone.id`.
+          map.addSource('zones', { type: 'geojson', data: zoneData })
           map.addLayer({
             id: 'zones-fill',
             type: 'fill',
@@ -738,7 +745,7 @@ export function App() {
     // phone, that is the whole interaction budget.
     for (const zone of zones) {
       const chargeable = isChargeable(toParkingZone(zone.properties), now)
-      map.setFeatureState({ source: 'zones', id: zone.properties.zone }, { chargeable })
+      map.setFeatureState({ source: 'zones', id: zone.id }, { chargeable })
     }
   }, [ready, zones, now])
 
@@ -747,7 +754,7 @@ export function App() {
     if (map === null || !ready) return
     for (const zone of zones) {
       map.setFeatureState(
-        { source: 'zones', id: zone.properties.zone },
+        { source: 'zones', id: zone.id },
         { selected: zone.properties.zone === selected?.zone }
       )
     }

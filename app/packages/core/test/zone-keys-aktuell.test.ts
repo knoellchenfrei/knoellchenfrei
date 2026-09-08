@@ -24,6 +24,16 @@ import { ALL_ZONE_KEYS, ZONE_KEYS } from '../src/zone-keys.generated.js'
 
 const DATEN = join(import.meta.dirname, '../../../apps/web/public/data')
 
+function merkmale(stadt: string): Record<string, unknown>[] {
+  const roh = JSON.parse(readFileSync(join(DATEN, stadt, 'zones.geojson'), 'utf8')) as {
+    features?: { properties?: Record<string, unknown> }[]
+  }
+  return (roh.features ?? []).map((f) => f.properties ?? {})
+}
+
+const eindeutig = (wert: unknown, index: number, alle: unknown[]): boolean =>
+  alle.indexOf(wert) === index
+
 function schlüsselAusDaten(stadt: string): string[] {
   const roh = JSON.parse(
     readFileSync(join(DATEN, stadt, 'zones.geojson'), 'utf8')
@@ -55,6 +65,46 @@ describe('die erzeugte Zonenliste', () => {
       ).toEqual([])
     })
   }
+
+  /**
+   * Ein Zonenschlüssel ist **keine** Kennung einer Fläche — festgehalten,
+   * weil die naheliegende Annahme falsch ist und teuer war.
+   *
+   * Beim Schreiben dieses Tests hatte ich zuerst behauptet, mehrfach
+   * vorkommende Zonen unterschieden sich nur im Stadtteil. Vier Beispiele
+   * angesehen, verallgemeinert, danebengelegen: Hamburg liefert 145 Flächen
+   * für 63 Schlüssel, **44 davon tragen `-`** — die Quelle vergibt dort keinen
+   * Namen —, und vier Zonen kommen in Stücken mit *verschiedenen* Zeiten
+   * (A103: 9–20 und 9–23 Uhr) oder sogar verschiedenen Beträgen (E315: 3,50 €
+   * und 3,00 €).
+   *
+   * Das ist kein Datenfehler: Jede Fläche hat ihre eigene Geometrie, und
+   * `zoneAt` liest die Merkmale genau der getroffenen. Der Fehler entsteht
+   * erst, wenn jemand den Schlüssel als Kennung **einer Fläche** benutzt — die
+   * Karte tat das über `promoteId: 'zone'`, und 44 Hamburger Flächen teilten
+   * sich dadurch einen Zustandsplatz. Dieser Test hält die Voraussetzung fest,
+   * damit die Annahme nicht ein zweites Mal gemacht wird.
+   */
+  it('vergibt Zonenschlüssel mehrfach — sie taugen nicht als Flächenkennung', () => {
+    const hamburg = merkmale('hamburg')
+    expect(hamburg.length).toBeGreaterThan(hamburg.map((p) => p['zone']).filter(eindeutig).length)
+
+    const ohneNamen = hamburg.filter((p) => p['zone'] === '-')
+    expect(ohneNamen.length, 'Flächen ohne Zonennamen').toBeGreaterThan(20)
+
+    // Und mindestens eine Gruppe widerspricht sich in den Zeiten. Fiele das
+    // eines Tages weg, wäre die Karte trotzdem richtig — der Test sagt dann
+    // nur, dass die Quelle sich geändert hat.
+    const nachSchlüssel = new Map<string, Record<string, unknown>[]>()
+    for (const p of hamburg) {
+      const k = String(p['zone'])
+      nachSchlüssel.set(k, [...(nachSchlüssel.get(k) ?? []), p])
+    }
+    const uneinig = [...nachSchlüssel.values()].filter(
+      (stücke) => new Set(stücke.map((p) => JSON.stringify(p['windows']))).size > 1
+    )
+    expect(uneinig.length, 'Gruppen mit verschiedenen Zeiten unter einem Schlüssel').toBeGreaterThan(0)
+  })
 
   it('kennt jede angeschlossene Stadt', () => {
     expect(Object.keys(ZONE_KEYS).sort()).toEqual(CITIES.map((stadt) => stadt.key).sort())

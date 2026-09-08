@@ -67,7 +67,7 @@ Systematisch statt zufällig: Grenzfälle im Worker, in der App, in den Daten.
 Was gefunden wird, bekommt einen Test **und** einen Eintrag, wo die Ursache
 steht.
 
-**Gemessen, neun Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
+**Gemessen, zehn Befunde.** Jeder hat eine Zahl, jeder einen Test, und bei
 dreien ist die Gegenprobe gefahren — der Test wurde gegen die *alte* Fassung
 gehalten und musste dort fallen. Ein Test, von dem niemand weiß, ob er den
 Fehler gefunden hätte, ist eine Behauptung.
@@ -83,6 +83,7 @@ Fehler gefunden hätte, ist eine Behauptung.
 | C7 | **Drei der zwölf Katalogereignisse wurden nie ausgelöst** | `layer.on`, `city.suggest` und `tow.open` standen in `core/events.ts` und in keiner Zeile der App. Auf der Statistikseite hätten sie als Dauer-Null gestanden — und `layer.on` ist ausgerechnet die Antwort auf „welche Ebenen werden benutzt", eine der Fragen, für die das Zählwerk gebaut wurde | Katalogeinträge gegen die Aufrufstellen gezählt |
 | C8 | **Ein Tab über Mitternacht zählte nicht mehr mit** | Der Worker weist eine Besuchskennung ab, deren Tag nicht der heutige ist (`422 stale day`). Die App bildete sie **einmal** beim Aufsetzen — ab 00:00 also stundenlang die von gestern. Sichtbar war nichts: Ein fehlgeschlagener Ping bleibt absichtlich still, also stand die ganze Nacht die Zahl von kurz vor Mitternacht auf dem Schirm | Den Client gegen die Serverregel gehalten, die er bedienen soll |
 | C9 | **Die MapLibre-Worker-Datei stand nicht im Vorrat des Service Workers** | Dieselbe Wurzel wie der grosse Fund der Nacht: Die Vorratsliste entsteht aus den `src=` der index.html, und die Adresse des Workers wird zur Laufzeit gebaut. Wer die App ablegt und offline geht, bevor die Karte einmal geladen hat, bekommt sie ohne Karte **und ohne Parkzonen** — und offline ist der Fall, für den der Vorrat da ist | Die gebaute `sw.js` gegen `dist/assets` gehalten |
+| C10 | **Ein Drittel der Hamburger Flächen konnte die falsche Farbe zeigen** | Die Karte färbt über `setFeatureState({ id })`, und `id` kam aus `promoteId: 'zone'`. In Hamburg tragen **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen Namen —, dazu vier Zonen in Stücken mit verschiedenen Zeiten (A103: 9–20 und 9–23 Uhr) und eine mit verschiedenen Beträgen. Alle teilten sich einen Zustandsplatz, der letzte Schreibvorgang gewann. Um 21 Uhr stand „frei" über Flächen, die bis 22 Uhr kassieren | Die Zonenschlüssel je Stadt gezählt: 145 Flächen, 63 Schlüssel |
 
 Die letzten beiden sind die lehrreichsten, weil sie zeigen, wie eine Lücke
 aussieht, die niemandem auffällt: **Nichts war kaputt.** Die Zählung lief, die Seite
@@ -100,6 +101,15 @@ einen Tab, der ab Mitternacht nicht mehr zählt — und weil ein fehlgeschlagene
 Ping absichtlich still bleibt, sieht man davon nichts ausser einer Zahl, die
 sich nicht mehr ändert. Gefunden wurde er, indem der Client gegen die
 Serverregel gehalten wurde, die er bedienen soll.
+
+Der zehnte ist der teuerste und zeigt eine dritte Sorte Blindheit: **Ich habe
+zuerst das Falsche gemessen.** Auf die Beobachtung „Hamburg hat 145 Flächen für
+63 Zonen" habe ich vier Beispiele angesehen, in allen vieren unterschied sich
+nur der Stadtteil, und daraus wurde „unterscheidet sich nur im Stadtteil". Der
+Test, den ich auf diese Behauptung schrieb, fiel sofort — und nannte A103 mit
+zwei verschiedenen Zeiten. Vier Beispiele sind keine Messung, sie sind vier
+Beispiele. Die Zusicherung heisst jetzt, was wahr ist: Ein Zonenschlüssel ist
+keine Kennung einer Fläche.
 
 Was **nicht** gefunden wurde, obwohl gesucht: `Vary: Origin` steht bereits an
 jeder CORS-Antwort, `hour >= 0` hält die Ortsereignisse aus dem Tagesgang
@@ -119,6 +129,7 @@ die Fehler sind der Punkt, sondern die Prüfung, die sie künftig laut macht.
 | **Zwei Verweise auf `öffentlich-machen.md`** — die Datei heißt `oeffentlich-machen.md` | Ausgerechnet der Commit, der die Sprachregel eingeführt hat (`ca60146`), hat einen **Dateinamen** wie Prosa behandelt. `sprache-pruefen.sh` prüft die Gegenrichtung und konnte es nicht sehen | Dasselbe Skript: relative Verweise müssen auf eine existierende Datei zeigen, und ein Anker auf eine Überschrift, die es gibt |
 | **D1-Migrationen liefen nie — und laufen immer noch nicht** | Der Deploy rief `migrations apply` gar nicht. Seit dem 7. September ruft er es, und bekommt jedes Mal `code: 7403`: Dem CI-Token fehlt `D1:Edit`, es trägt bewusst nur *Workers Scripts:Edit* und *Cloudflare Pages:Edit*. Wegen `continue-on-error` steht darüber eine gelbe Warnung, und der Lauf ist grün | Nichts — das Recht muss ans Token, und das ist im Dashboard. Steht als Punkt 7 in `todo.md`. Gefunden im Log des Laufs vom 8. September, 02:51, **nachdem** ich in `hosting.md` geschrieben hatte, der Schritt tue es |
 | **220 KB fremde Rohdaten in einem Commit über Testabdeckung** (`bdf27a2`) | `git add -A`, während zwei Hintergrundagenten in denselben Baum schrieben | Herausgenommen in `a0eb8a8`. Die Regel dahinter: Solange Agenten im selben Baum arbeiten, wird **benannt** hinzugefügt, nie pauschal |
+| **Dieselbe Sache noch einmal, zwei Stunden später** (`01df659`) | Wieder `git add -A`, wieder Fixtures eines laufenden Agenten — diesmal Düsseldorfs, eine Minute nachdem er sie geschrieben hatte. Die Regel stand zu diesem Zeitpunkt seit zwei Stunden in `CLAUDE.md`, von mir geschrieben, und **gemerkt hat es der Agent, nicht ich** | Herausgenommen. Und die Lehre ist nicht „besser aufpassen": Eine Regel, die nur im Kopf gilt, ist keine. Solange Agenten laufen, gehört `git add` mit Pfaden geschrieben — was pauschal geht, geht irgendwann pauschal daneben |
 | **Ein roter Typecheck als Dauerzustand** | Die vorbereiteten Städte importieren Namen, die `core` ohne die drei Einträge nicht ausführt | Der Code liegt auf `staedte/koeln-karlsruhe-vorbereitet`, nicht auf dem Arbeitszweig. Ein dauerhaft roter Typecheck macht das nächste echte Problem unsichtbar |
 
 Der gemeinsame Nenner aller fünf ist derselbe, den CLAUDE.md schon dreimal

@@ -226,3 +226,62 @@ describe('der Katalog', () => {
     expect(tot, `nie ausgelöst: ${tot.join(', ')}`).toEqual([])
   })
 })
+
+/**
+ * Jede Kartenfläche bekommt ihre eigene Kennung — der teuerste Fund der Nacht.
+ *
+ * Die Karte färbt über `setFeatureState({ source, id })`, und `id` kam aus
+ * `promoteId: 'zone'`, also aus dem Zonenschlüssel. In Hamburg tragen **44 von
+ * 145 Flächen** den Schlüssel `-`, weil die Quelle dort keinen Namen vergibt;
+ * dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten.
+ *
+ * Alle Flächen mit demselben Schlüssel teilten sich damit **einen**
+ * Zustandsplatz: Die Schleife schrieb 44-mal hinein, der letzte gewann, und
+ * alle 44 bekamen dessen Farbe — unabhängig von ihren eigenen Zeiten. Rund ein
+ * Drittel der Hamburger Flächen konnte „kassiert gerade" falsch anzeigen.
+ * Sichtbar war es nur als Farbe; das Panel las immer die richtige Fläche.
+ */
+describe('die Kennung einer Kartenfläche', () => {
+  const fläche = (zone: string, lon: number) => ({
+    properties: { zone } as never,
+    geometry: {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [lon, 53],
+          [lon + 0.01, 53],
+          [lon + 0.01, 53.01],
+          [lon, 53.01],
+          [lon, 53],
+        ],
+      ],
+    },
+  })
+
+  it('ist je Fläche verschieden, auch wenn der Zonenschlüssel derselbe ist', async () => {
+    const { loadZones } = await import('../src/zones.js')
+    const sammlung = { features: [fläche('-', 9.9), fläche('-', 10.0), fläche('A103', 10.1)] }
+    const geladen = loadZones(sammlung)
+    expect(new Set(geladen.map((z) => z.id)).size).toBe(3)
+  })
+
+  it('steht auch am übergebenen Feature — genau das Objekt geht an MapLibre', async () => {
+    const { loadZones } = await import('../src/zones.js')
+    const sammlung = { features: [fläche('-', 9.9), fläche('-', 10.0)] }
+    const geladen = loadZones(sammlung)
+    // `addSource({ data: sammlung })` bekommt dieses Objekt; ohne den Stempel
+    // fiele MapLibre auf `promoteId` oder gar keine Kennung zurück.
+    expect(sammlung.features.map((f) => f.id)).toEqual(geladen.map((z) => z.id))
+    expect(new Set(sammlung.features.map((f) => f.id)).size).toBe(2)
+  })
+
+  it('überschreibt eine mitgelieferte Kennung — Berlin brachte als einzige eine', async () => {
+    const { loadZones } = await import('../src/zones.js')
+    const mitId = { ...fläche('7', 13.4), id: '7' }
+    const sammlung = { features: [mitId] }
+    loadZones(sammlung)
+    // Eine Kennung, die in einer Stadt der Zonenschlüssel ist und in der
+    // nächsten fehlt, ist keine.
+    expect(sammlung.features[0]?.id).toBe(0)
+  })
+})

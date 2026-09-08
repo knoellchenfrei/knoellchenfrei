@@ -398,8 +398,34 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > geschrieben (82 bzw. 69) und die Datenbauten laufen lassen. Keiner hat
 > `core/city.ts`, `core/index.ts` oder `ingest/src/sources.ts` angefasst; genau
 > diese drei Dateien wären das Anschalten, und sie sind abzusprechen. Die
-> fertigen Schnipsel stehen in [staedte-koeln.md](staedte-koeln.md) und
-> [staedte-karlsruhe.md](staedte-karlsruhe.md), beide **auf jenem Zweig**.
+> fertigen Schnipsel stehen in [staedte-koeln.md](staedte-koeln.md),
+> [staedte-karlsruhe.md](staedte-karlsruhe.md) und
+> [staedte-duesseldorf.md](staedte-duesseldorf.md) — die Berichte liegen hier,
+> der Code auf jenem Zweig.
+>
+> **Düsseldorf kam am 8. September dazu**, auf denselben Zweig und nach
+> derselben Regel. Zwei Dinge daraus sind auch ohne Düsseldorf wertvoll:
+>
+> - **§ 2 Feiertagsgesetz NW ist im Wortlaut belegt.** Nicht über die
+>   JavaScript-Seite, sondern über `recht.nrw.de/robots.txt` → Sitemap-Index →
+>   statisches HTML unter `/lrgv/gesetz/…`. Elf Feiertage, Fronleichnam und
+>   Allerheiligen landesweit, **keine** gemeindeweise Regelung wie in Bayern.
+>   `NW: { fixed: ['11-01'], fromEaster: [60] }` ist damit belegt — und Kölns
+>   offener Punkt erledigt. Der Weg über die Sitemap ist der, den Frankfurts
+>   Stadtteile schon einmal gezeigt haben: über den Katalog, nicht über die
+>   Adresszeile.
+> - **Die Recherche vom 7. September beschreibt für Düsseldorf einen anderen
+>   Bestand als den, der da ist** — neun Punkte einzeln aufgezählt. Es gibt
+>   zwei WFS mit zusammen 20 Ebenen und 732 Parkscheinautomaten *mit Tarif*;
+>   die statische Datei aus dem Portal ist materiell überholt, 18 von 44
+>   Gebieten haben inzwischen andere Zeiten. Wer aus ihr baut, sagt in fünf
+>   Innenstadtgebieten „ab 20 Uhr frei", wo bis 22 Uhr kassiert wird. Der
+>   Abschnitt in [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md)
+>   trägt jetzt eine Warnung.
+>
+>   Der Tarif wird trotzdem **nicht ausgeliefert**: Die Automatenebene steht in
+>   keinem Katalog und hat kein Lizenzfeld. Eine E-Mail an
+>   `opendata@duesseldorf.de`, und es ist eine Zeile.
 >
 > Warum ein eigener Zweig und nicht der Arbeitszweig: Ohne die drei Einträge
 > ist der Baum nicht neutral, sondern rot — `pnpm -r typecheck` meldet 22
@@ -412,8 +438,9 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > - **Köln** — die Gebühr wird bewusst *nicht* gelesen. Die Datei nennt
 >   4,00 € Tagesticket, die Stadt am selben Tag 5,00 €; ein Widerspruch
 >   zwischen zwei Aussagen derselben Behörde. `Fee.unknown` plus Quellhinweis
->   statt einer Zahl, die falsch ist. Dazu `NW` im Feiertagskalender, dessen
->   Beleg noch fehlt (`recht.nrw.de` hat seine Adressen umgebaut).
+>   statt einer Zahl, die falsch ist. ~~Dazu `NW` im Feiertagskalender, dessen
+>   Beleg noch fehlt.~~ **Der Beleg ist da** — siehe Düsseldorf unten; damit
+>   bleibt für Köln nur noch die Gebührenfrage.
 > - **Karlsruhe** — blockierend: Die „Zonen" sind keine Gebiete, sondern die
 >   Stellplatzreihen selbst, Median 128 m², 4,8 m breit. `zoneAt` fragt strikt
 >   Punkt-in-Polygon; eine Ortung ist auf 10–20 m genau und trifft das nie.
@@ -494,6 +521,45 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       neben der Karte, unsichtbar, während die Liste „am häufigsten
       kontrolliert" dreimal „Außerhalb der Zonen" nannte. Sie stehen jetzt als
       Abstand zu `CITY.center`.
+- [ ] **44 Hamburger Flächen heißen `-`.** Die Quelle vergibt für sie keinen
+      Zonennamen; von 145 Flächen tragen 44 diesen Schlüssel, und die
+      Kartenfärbung ist deshalb seit dem 8. September nicht mehr daran
+      gebunden (siehe `LoadedZone.id`). An drei Stellen wirkt er trotzdem noch:
+
+      1. **Die Oberfläche schreibt „Zone -"** — im Panel, in der Ansage für
+         Screenreader und im Satz „Parkplatz gemerkt in Zone -". Richtig wäre
+         „Bewirtschaftete Fläche ohne Nummer" oder der Stadtteil. Das ist die
+         billigste Hälfte und braucht nur einen Blick auf `describeZone`.
+      2. **Die Nutzungsstatistik zählt sie als *eine* Zone.** `zone.open` mit
+         der Ausprägung `-` steht für 44 verschiedene Flächen quer durch die
+         Stadt; die Zeile ist damit die häufigste und sagt am wenigsten.
+      3. **Die Zonensuche** findet unter `-` genau die erste.
+
+      Der saubere Weg ist ein stabiler Ersatzschlüssel im Datenbau — etwa aus
+      Stadtteil und laufender Nummer. Er ändert die erzeugte Zonenliste und
+      die bereits gezählten Ausprägungen, also nicht nebenbei.
+
+- [ ] **Drei Datenfelder sind noch ungetypt — und dafür braucht es deine
+      Zustimmung.** `loadData` in `apps/web/src/data-source.ts` gab bis zum
+      8. September fünfmal `any` zurück, gegen die eigene Regel und ohne
+      Begründung. Zwei davon sind repariert (`meta` und `zones`, beides
+      hauseigene Typen); `meta` war der wichtigere Fall, denn aus ihm liest die
+      Fußzeile Felder beim Namen — `meta.zonen` statt `meta.zones` wäre durch
+      die Prüfung gegangen und hätte `undefined` angezeigt.
+
+      Für `poi`, `districts` und `umweltzone` ist der richtige Typ
+      `GeoJSON.FeatureCollection` aus `@types/geojson` — genau der, den
+      `map.addSource({ data })` erwartet. Das Paket liegt im Baum, aber nur
+      **transitiv** über maplibre-gl, und pnpm löst es von hier aus nicht auf
+      (`TS2307: Cannot find module 'geojson'`). Es als direkte
+      Entwicklungsabhängigkeit einzutragen ist eine Änderung an den
+      Abhängigkeiten und deshalb abzusprechen. Ein selbstgebauter Struktur-Typ
+      wäre kein Ersatz: `addSource` nimmt ihn nicht an.
+
+      Solange stehen an den zwei Stellen, die sie benutzen, benannte Casts
+      statt `any` — das verschiebt die Behauptung an die Stelle, an der sie
+      gemacht wird, statt sie im Typ zu verstecken.
+
 - [ ] **Das Heatmap-Raster ist noch Berlin.** `core/heatmap.ts` rechnet das
       250-m-Raster mit `ORIGIN` 13,0/52,3 und `cos 52,52°` — beides fest
       verdrahtet. **Am 8. September nachgemessen statt geschätzt:** Die Zelle

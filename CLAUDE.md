@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 645 Unit-Tests (core, api, web)
+pnpm test                                           # 649 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -61,8 +61,8 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
-davon Tests: `core` (547), `apps/api` (64, Worker und Zählwerk) und `apps/web`
-(34, Beta-Riegel, Zähler und Besuchszähler). Die beiden letzten haben eine
+davon Tests: `core` (548), `apps/api` (64, Worker und Zählwerk) und `apps/web`
+(37, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung). Die beiden letzten haben eine
 eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -76,7 +76,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=645 E2E_COUNT=154 npx tsx src/build-badges.ts
+TEST_COUNT=649 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -331,6 +331,22 @@ wiederholt.
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
   `lint-workflows.yml` prüft nur, ob die Datei *parst*, nicht ob das Schema
   stimmt; es hätte das nicht gefunden.
+- **Ein Zonenschlüssel ist keine Kennung einer Fläche.** Die Karte färbte über
+  `setFeatureState({ source, id })` mit `promoteId: 'zone'`. In Hamburg tragen
+  **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen
+  Namen —, dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten
+  (A103: 9–20 und 9–23 Uhr) und eine mit verschiedenen Beträgen (E315: 3,50 €
+  und 3,00 €). Alle Flächen mit gleichem Schlüssel teilten sich **einen**
+  Zustandsplatz: Die Schleife schrieb 44-mal hinein, der letzte gewann, und
+  alle 44 bekamen dessen Farbe. Um 21 Uhr stand „frei" über Flächen, die bis
+  22 Uhr kassieren. Das Panel war nie betroffen — `zoneAt` sucht geometrisch.
+  `loadZones` stempelt seitdem jeder Fläche eine laufende Nummer auf, auch in
+  das Objekt, das an `addSource` geht; `promoteId` ist weg.
+
+  **Und die Lehre über den Fehler hinaus:** Ich hatte zuerst behauptet, die
+  Stücke unterschieden sich nur im Stadtteil — vier Beispiele angesehen und
+  verallgemeinert. Der Test auf diese Behauptung fiel sofort. Vier Beispiele
+  sind keine Messung.
 - **Die MapLibre-Worker-Datei gehört von Hand in den Vorrat — sie kommt dort
   nicht von selbst hinein.** Die Liste entsteht aus den `src=`/`href=` der
   index.html, und MapLibre 6 baut die Adresse seines Workers zur Laufzeit
