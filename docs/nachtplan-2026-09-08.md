@@ -114,3 +114,42 @@ vorher selbst prüft, damit sie nicht still kaputtgeht.
 2. **Gegen die Wirklichkeit halten** — jede Datei, die ich angefasst habe, und
    die, die ich nicht angefasst habe.
 3. **Protokoll** in [sitzungsstatistik.md](sitzungsstatistik.md).
+
+**Gemacht — und der Befund war unangenehmer als erwartet.** Die
+Nutzungsstatistik ist das größte Stück dieser Nacht und kam in vier der
+wichtigsten Dokumente mit **null** Erwähnungen vor. Sie stand nur in
+Code-Kommentaren und hier.
+
+| Datei | Was fehlte |
+| --- | --- |
+| [architecture.md](architecture.md) | Der ganze Aufbau. Dazu las sich die Übersicht wie eine Berlin-App, obwohl vier Städte laufen |
+| [hosting.md](hosting.md) | Drei Tabellenzeilen (`feedback`, `events`, `event_budget`), warum `/stats` aus dem KV kommt, warum die Statistikseite ein zweiter Vite-Eintrag ist |
+| [notfall.md](notfall.md) | Was bei Verlust von `events` weg ist — und dass die Verschlüsselung des Abzugs **nicht** ihretwegen nötig ist |
+| [neue-sitzung.md](neue-sitzung.md) | Die Regel „Ort oder Zeit, nie beides", die im SQL wie ein Fehlwert aussieht und Teil des Schlüssels ist |
+| [CLAUDE.md](../CLAUDE.md) | Sieben Regeln aus den Befunden dieser Nacht, die vier Prüfungen und die Testzahlen je Paket |
+| [SECURITY.md](../SECURITY.md) | Die fehlende Drosselung des Anmeldeformulars — und eine Zeile über Fremdkacheln, die seit dem 7. September nicht mehr stimmte |
+| [bericht/index.html](bericht/index.html) | Der siebte Nachtrag. Der sechste beschreibt vier Städte, deren Zonen niemand gesehen hat |
+
+Das **Vernetzen** hat sich unterwegs von einer Fleißaufgabe in eine Prüfung
+verwandelt: `scripts/doku-pruefen.mjs` hält seitdem jeden relativen Verweis
+gegen die Datei und jeden Anker gegen die Überschrift. Querverweise zu setzen
+ist erst dann eine gute Idee, wenn etwas merkt, dass einer bricht.
+
+Das **Protokoll** steht in
+[sitzungsstatistik.md](sitzungsstatistik.md#die-dritte-sitzung-7-auf-8-september-2026),
+gemessen mit `scripts/protokoll.mjs` — das jetzt im Repository liegt, weil
+Zahlen in einer Statistikdatei nachrechenbar sein müssen.
+
+## Was am Morgen offen ist
+
+Nichts davon ist angefangen und liegengeblieben; es sind Entscheidungen, die
+nicht mir gehören.
+
+| | Wartet auf |
+| --- | --- |
+| **Köln und Karlsruhe eintragen** | Drei Dateien, die architektonisch sind. Je ein offener Punkt: Kölns Gebühr (Datei sagt 4,00 €, Stadt sagt 5,00 €) und Karlsruhes 4,8 m breite „Zonen", die keine Ortung trifft |
+| **`NW` im Feiertagskalender** | Fundstelle steht (SGV. NRW. 113, § 2), Wortlaut nicht auslesbar — die Seite lädt per JavaScript nach, das Blatt von 1989 ist ein Scan. Eine Minute in einem echten Browser |
+| **WAF-Regel vor das Anmeldeformular** | Cloudflare-Dashboard. Eine Regel ist im kostenlosen Tarif enthalten |
+| **`CLOUDFLARE_R2_TOKEN`** | Ohne ihn baut der Kachel-Workflow nichts, und die Karte altert still |
+| **`vitest-pool-workers`** | Verlangt Vitest 4, wir sind auf 3.2. Ein Hauptversionssprung des Testläufers über alle Pakete — abzusprechen |
+| **Der Bericht als Artifact** | Die veröffentlichte Fassung ist alt (sie lädt noch Schriften von Google, was seit Audit-Punkt M-018 nicht mehr stimmt). Das Aktualisieren wurde in dieser Sitzung abgelehnt; die gepflegte Fassung liegt im Repository |
