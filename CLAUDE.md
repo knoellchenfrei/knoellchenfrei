@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 694 Unit-Tests (core, api, web)
+pnpm test                                           # 705 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -60,10 +60,11 @@ mit dem Riegel noch Cloudflares Weiterleitungen. Der **308** auf
 ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
-`pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
-davon Tests: `core` (548), `apps/api` (78, Worker und Zählwerk) und `apps/web`
-(68, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen, Formatierung, Speicher). Die beiden letzten haben eine
-eigene `vitest.config.ts`, die eng
+`pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
+**alle vier** Tests: `core` (548), `apps/api` (78, Worker und Zählwerk),
+`apps/web` (68, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+Formatierung, Speicher) und `packages/ingest` (11, die zwei Wächter des
+Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
 ab und scheitert — nicht der Code ist kaputt, der Aufruf ist falsch.
@@ -76,7 +77,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=694 E2E_COUNT=154 npx tsx src/build-badges.ts
+TEST_COUNT=705 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```

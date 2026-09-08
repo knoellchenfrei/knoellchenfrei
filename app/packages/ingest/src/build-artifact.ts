@@ -15,6 +15,10 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { CITIES } from '@knoellchenfrei/core'
 
+// Die beiden Wächter stehen in einer eigenen Datei, damit sie ohne einen
+// gebauten `dist` geprüft werden können — siehe `artifact-guards.ts`.
+import { assertSelfContained, safeJson } from './artifact-guards.js'
+
 const DIST = process.env.DIST_DIR ?? join(process.cwd(), '../../apps/web/dist')
 const OUT = process.env.ARTIFACT_OUT ?? join(process.cwd(), '../../apps/web/artifact.html')
 
@@ -53,32 +57,6 @@ const data = Object.fromEntries(
 )
 
 const read = (name: string): string => readFileSync(join(DIST, name), 'utf8')
-
-/**
- * `</script>` inside a JSON string would close the surrounding tag, and a lone
- * `<!--` opens an HTML comment inside a classic script. Both are escaped rather
- * than trusted, because the data is regenerated from a third-party feed.
- */
-const safeJson = (value: unknown): string =>
-  JSON.stringify(value).replace(/</g, '\\u003c').replace(/-->/g, '--\\u003e')
-
-/**
- * An inlined module cannot resolve a relative import: there is no base URL to
- * resolve it against, so the browser rejects the specifier and the page stays
- * blank with a single console line. This shipped once — the artifact was packed
- * from the ordinary (code-split) build, whose entry imports the MapLibre chunk.
- * Build with `pnpm artifact`, which sets BUILD_TARGET=artifact.
- */
-function assertSelfContained(name: string, source: string): void {
-  const specifier =
-    /(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s+)["'](\.{1,2}\/[^"']+)["']/.exec(source)
-  if (specifier) {
-    throw new Error(
-      `${name} still imports "${specifier[1]}" — the artifact must be one module. ` +
-        'Run `pnpm artifact` from app/ instead of packing the ordinary build.',
-    )
-  }
-}
 
 const bundles = scripts.map((name) => {
   const source = read(name)
@@ -144,7 +122,11 @@ for (const city of CITIES) {
     districts: { features: unknown[] }
   }
   console.log(
-    `  ${city.name}: ${bundled.zones.features.length} Zonen, ` +
+    // „Flächen", nicht „Zonen": Hamburg liefert 145 Flächen für 63 Gebiete,
+    // weil die Quelle sie je Stadtteil schneidet. Genau diese Verwechslung
+    // steckte hinter dem Kartenfehler vom 8. September — sie gehört auch aus
+    // der Bau-Ausgabe heraus, sonst lernt man sie hier wieder.
+    `  ${city.name}: ${bundled.zones.features.length} Flächen, ` +
       `${bundled.poi.features.length} POI, ${bundled.districts.features.length} Ortsteile`
   )
 }

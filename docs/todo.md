@@ -558,20 +558,22 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       Stadtteil und laufender Nummer. Er ändert die erzeugte Zonenliste und
       die bereits gezählten Ausprägungen, also nicht nebenbei.
 
-- [ ] **`packages/ingest` hat keinen einzigen Test**, und darin stehen zwei
-      Funktionen, die je einen Vorfall hinter sich haben:
-      `assertSelfContained` (hat einmal eine schwarze Seite ausgeliefert, bevor
-      es sie gab) und `safeJson` (verhindert, dass ein `</script>` aus den
-      Behördendaten das umgebende Tag schliesst). Beide sind rein und in
-      zwanzig Zeilen geprüft.
+- [x] ~~**`packages/ingest` hat keinen einzigen Test.**~~ **Am 8. September
+      abends erledigt**, als eigener Schritt — in der Nacht war er ausdrücklich
+      zurückgestellt, weil ein Umbau am Artifact-Bau um kurz vor fünf genau der
+      Leichtsinn gewesen wäre, gegen den diese Nacht sonst angeschrieben hat.
 
-      Warum es in der Nacht zum 8. September **nicht** gemacht wurde: Das Modul
-      liest beim Import Dateien aus `dist`, die beiden Funktionen sind nicht
-      exportiert, und ein Test bräuchte erst eine Umbauung in eine eigene
-      Datei plus eine `vitest.config.ts` für das Paket. Beides um kurz vor fünf
-      an einem Build-Skript zu tun, das schon einmal eine kaputte Auslieferung
-      erzeugt hat, wäre genau der Leichtsinn, gegen den diese Nacht sonst
-      angeschrieben hat. Als eigener Schritt, mit wachem Kopf.
+      `assertSelfContained` und `safeJson` stehen jetzt in
+      `src/artifact-guards.ts` und haben 11 Tests. `vitest` musste dafür nicht
+      dazu — es liegt als Wurzel-Abhängigkeit, das Paket brauchte nur ein
+      `test`-Skript und eine `vitest.config.ts`. Nachgeprüft, dass `pnpm
+      artifact` danach dieselbe Datei baut.
+
+      Ein Befund kam dabei heraus: `safeJson(undefined)` wirft einen
+      `TypeError`, weil `JSON.stringify(undefined)` kein JSON zurückgibt. Das
+      **bleibt so** — der bequeme Ausweg `?? 'null'` würde still `null` ins
+      Bündel betten, und genau diese Form hat hier schon die Karte für zwei
+      Tage gekostet.
 
 - [ ] **Drei Datenfelder sind noch ungetypt — und dafür braucht es deine
       Zustimmung.** `loadData` in `apps/web/src/data-source.ts` gab bis zum
