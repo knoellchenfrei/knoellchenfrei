@@ -46,6 +46,20 @@ node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen
 ./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
 ```
 
+Und eine fünfte, die **von Hand** nach einem Deploy läuft und absichtlich nicht
+in der CI (sie braucht die echte Adresse, ein Fork hätte keine):
+
+```bash
+./scripts/ausgeliefert-pruefen.sh   # der Riegel, die Kopfzeilen, keine offene Weiterleitung
+```
+
+Sie schliesst die Lücke, die dieses Projekt zweimal getroffen hat: Die
+E2E-Suite misst gegen `vite preview`, und der kennt weder die Pages-Funktion
+mit dem Riegel noch Cloudflares Weiterleitungen. Der **308** auf
+`/index.html` und die **fehlende MapLibre-Worker-Datei** waren beide nur an der
+ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
+Das Skript sieht deshalb auf Status **und** Content-Type.
+
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
 davon Tests: `core` (541), `apps/api` (62, Worker und Zählwerk) und `apps/web`
 (29, Beta-Riegel und der Zähler in der App). Die beiden letzten haben eine

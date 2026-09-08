@@ -458,6 +458,24 @@ Ohne ihn ist der gespeicherte Hash über den IPv4-Raum in Minuten
 zurückrechenbar — dann steht neben jedem Ort ein Pseudonym für eine
 IP-Adresse statt eines anonymen Merkmals.
 
+### Nach dem Deploy nachmessen
+
+```bash
+./scripts/ausgeliefert-pruefen.sh
+```
+
+Prüft die **ausgelieferte** Adresse: dass der Riegel vor Startseite,
+Statistikseite, Zonendaten, Manifest und Service Worker steht (je `401`), dass
+die Anmeldeseite ihre eigenen Sicherheits-Kopfzeilen trägt, und dass ein
+Einladungslink mit falschem Passwort keine Weiterleitung erzeugt.
+
+Warum das nicht die E2E-Suite tut: Die misst gegen `vite preview`, und der
+kennt weder die Pages-Funktion noch Cloudflares Weiterleitungen. Zwei Fehler
+dieses Projekts waren genau deshalb unsichtbar — der `308` auf `/index.html`,
+der `cache.addAll` scheitern liess, und die fehlende MapLibre-Worker-Datei, die
+`index.html` mit `200 OK` zurückbekam. Beide meldeten Erfolg; das Skript sieht
+deshalb auf Status **und** Content-Type.
+
 ### Telegram anschließen
 
 Der Bot ist kein zweiter Dienst: Er hängt als Route `/telegram` an demselben
