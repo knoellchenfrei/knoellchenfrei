@@ -36,6 +36,23 @@ abruf() { # pfad -> "status content-type"
   curl -s -o /dev/null -w '%{http_code} %{content_type}' --max-time 15 "${BASIS}$1"
 }
 
+# Eine frische Auslieferung braucht ein paar Sekunden, bis ihre Adresse
+# antwortet. Ohne dieses Warten misst der Lauf direkt nach einem Deploy gegen
+# eine Adresse, die es noch nicht gibt — und meldet einen Fehler, der keiner
+# ist. Höchstens eine Minute; danach ist es kein Anlaufen mehr, sondern ein
+# Befund.
+kopf "Warten, bis die Adresse antwortet"
+versuch=0
+until [ "$(abruf / | cut -d' ' -f1)" != "000" ]; do
+  versuch=$((versuch + 1))
+  if [ "$versuch" -ge 12 ]; then
+    weh "${BASIS} antwortet nach 60 s nicht"
+    exit 1
+  fi
+  sleep 5
+done
+ok "${BASIS} antwortet"
+
 kopf "Der Riegel steht vor allem — nicht nur vor der Startseite"
 # Jeder dieser Pfade wäre ohne Riegel offen: das Bündel, die Zonendaten, das
 # Manifest, der Service Worker. Ein Login *in* der App hätte keinen davon

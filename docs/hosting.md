@@ -476,6 +476,14 @@ der `cache.addAll` scheitern liess, und die fehlende MapLibre-Worker-Datei, die
 `index.html` mit `200 OK` zurückbekam. Beide meldeten Erfolg; das Skript sieht
 deshalb auf Status **und** Content-Type.
 
+**Seit dem 8. September läuft dasselbe Skript auch im Deploy**, gegen die
+Vorschauadresse genau dieses Deploys. Das war die grösste offene Stelle des
+Workflows: Ohne `--cwd` findet wrangler das Verzeichnis `functions/` nicht,
+der Deploy klappt trotzdem, und die geschlossene Beta steht offen — der
+Kommentar an jener Stelle sagte das seit dem 7. September und **niemand hat es
+geprüft**. Dasselbe gälte für ein fehlendes `BETA_PASSWORD` (dann antwortet
+die Funktion mit `503`). Jetzt wird der Lauf rot.
+
 ### Telegram anschließen
 
 Der Bot ist kein zweiter Dienst: Er hängt als Route `/telegram` an demselben
