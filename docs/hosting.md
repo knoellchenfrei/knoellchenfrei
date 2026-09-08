@@ -418,6 +418,32 @@ er den Worker ausrollt — mit `continue-on-error`, damit ein Migrationsfehler
 den Rollout nicht blockiert. Vorher lief es überhaupt nicht: Der Worker war
 grün, und die Tabelle war nicht da.
 
+> **Und er läuft bis heute nicht durch.** Nachgesehen im Log des Laufs vom
+> 8. September, 02:51:
+>
+> ```text
+> A request to the Cloudflare API (/accounts/***/d1/database/…/query) failed.
+>   The given account is not valid or is not authorized to access this service
+>   [code: 7403]
+> ```
+>
+> Dem **CI-Token fehlt `D1:Edit`** — es trägt bewusst nur *Workers
+> Scripts:Edit* und *Cloudflare Pages:Edit* (siehe
+> [notfall.md](notfall.md#zwei-zugangsdaten-und-sie-können-verschiedenes)). Der
+> Schritt wurde eingebaut, ohne das Token zu erweitern. Wegen
+> `continue-on-error` steht darüber nur eine gelbe Warnung, und der Lauf ist
+> grün — genau die Sorte „meldet Erfolg und tut nichts", gegen die dieses
+> Projekt sonst Prüfungen baut. Dass das Schema trotzdem stimmt, liegt daran,
+> dass `0002_events.sql` von Hand eingespielt wurde.
+>
+> **Bis das Recht ergänzt ist, gehört jede neue Migration von Hand
+> eingespielt:**
+>
+> ```bash
+> cd app && pnpm install
+> pnpm --filter @knoellchenfrei/api exec wrangler d1 migrations apply knoellchenfrei --remote
+> ```
+
 Danach `ALLOWED_ORIGINS` in `wrangler.toml` auf die Domain der Web-App setzen.
 Ohne diesen Wert antwortet der Worker ohne CORS-Header — er scheitert
 absichtlich geschlossen statt mit einem Wildcard zu öffnen.

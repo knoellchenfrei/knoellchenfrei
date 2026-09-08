@@ -85,7 +85,15 @@ Vorbereitete ist verlinkt; keiner der Punkte braucht mehr als ein paar Klicks.
 6. **`CLOUDFLARE_R2_TOKEN`** als Repository-Secret, ein Recht: *Workers R2
    Storage: Edit*. Ohne ihn baut der Workflow *Kacheln* nichts, und die Karte
    altert still vor sich hin.
-7. **Eine WAF-Regel vor das Anmeldeformular** — Cloudflare-Dashboard,
+7. **`D1:Edit` zum CI-Token hinzufügen.** Der Deploy ruft seit dem
+   7. September `wrangler d1 migrations apply` — und bekommt jedes Mal
+   `code: 7403`, weil das Token nur *Workers Scripts:Edit* und *Cloudflare
+   Pages:Edit* trägt. Wegen `continue-on-error` steht darüber eine gelbe
+   Warnung und der Lauf ist grün. Bis dahin muss **jede neue Migration von
+   Hand** eingespielt werden; das Schema stimmt heute nur, weil
+   `0002_events.sql` so eingespielt wurde. Gefunden am 8. September im Log des
+   Laufs von 02:51, nicht beim Lesen des Workflows.
+8. **Eine WAF-Regel vor das Anmeldeformular** — Cloudflare-Dashboard,
    *Security → WAF → Rate limiting rules*: `http.request.method eq "POST" and
    http.host eq "knoellchenfrei.de"`, etwa 10 Anfragen je Minute je IP,
    Aktion *Block*. Im kostenlosen Tarif ist genau eine solche Regel enthalten;
