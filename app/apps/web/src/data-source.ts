@@ -86,6 +86,46 @@ export function availableCities(): string[] | null {
 }
 
 /**
+ * Eine Datendatei holen — und dabei auf den Inhalt sehen, nicht nur auf den
+ * Status.
+ *
+ * Fehlt eine Datei, antwortet **kein** Server dieses Projekts mit 404: Sowohl
+ * Cloudflare Pages als auch der lokale `vite preview` liefern die
+ * SPA-Rückfalladresse, also `index.html` mit **200 OK** und `text/html`.
+ * Gemessen am 9. September gegen den Vorschauserver:
+ * `/data/berlin/fehlt.json` → `200 text/html`. `response.ok` ist damit wahr,
+ * und der Fehler taucht erst eine Zeile später auf, wenn `response.json()` an
+ * dem `<` scheitert — mit einer Meldung, die die Datei nicht nennt. Auf dem
+ * Schirm stand dann „Daten konnten nicht geladen werden: Unexpected token
+ * '<'", und welche der fünf Dateien fehlt, stand nirgends.
+ *
+ * Genau diese Form hat dieses Projekt schon zweimal getroffen: die fehlende
+ * MapLibre-Worker-Datei (200 mit `text/html`, keine Karte, keine Meldung) und
+ * der `308` auf `/index.html`, der `cache.addAll` scheitern liess. Deshalb
+ * wird hier gegen **HTML** geprüft und nicht auf „ist es JSON": `.geojson`
+ * kommt als `application/geo+json` heraus, eine Prüfung auf
+ * `application/json` würde den Normalfall abweisen.
+ */
+async function holeJson<T>(pfad: string): Promise<T> {
+  const response = await fetch(`./data/${pfad}`)
+  if (!response.ok) throw new Error(`${pfad}: HTTP ${response.status}`)
+
+  const typ = response.headers.get('content-type') ?? ''
+  if (/\bhtml\b/i.test(typ)) {
+    throw new Error(`${pfad}: HTML statt Daten — die Datei fehlt, geantwortet hat die Startseite`)
+  }
+
+  try {
+    // Der einzige Cast hier, und er ist derselbe, den `response.json()` ohnehin
+    // macht: Es liefert `any`. Geprüft wird der Inhalt weiter oben und beim
+    // Lesen in `loadZones`, nicht durch diesen Typ.
+    return (await response.json()) as T
+  } catch {
+    throw new Error(`${pfad}: kein gültiges JSON`)
+  }
+}
+
+/**
  * Lädt die Daten einer Stadt.
  *
  * Die Dateien liegen je Stadt in einem eigenen Verzeichnis und werden zur
@@ -104,12 +144,15 @@ export async function loadData(cityKey: string): Promise<StadtDaten> {
     return city as never
   }
 
-  const [zones, poi, districts, umweltzone, meta] = await Promise.all(
-    ['zones.geojson', 'poi.geojson', 'districts.geojson', 'umweltzone.geojson', 'meta.json'].map(async (name) => {
-      const response = await fetch(`./data/${cityKey}/${name}`)
-      if (!response.ok) throw new Error(`${cityKey}/${name}: HTTP ${response.status}`)
-      return response.json()
-    })
-  )
+  // Einzeln aufgezählt statt über eine Namensliste: Nur so behält jede der
+  // fünf Dateien ihren eigenen Typ, statt dass alle fünf zu einer Vereinigung
+  // verschmelzen.
+  const [zones, poi, districts, umweltzone, meta] = await Promise.all([
+    holeJson<ZonenSammlung>(`${cityKey}/zones.geojson`),
+    holeJson<unknown>(`${cityKey}/poi.geojson`),
+    holeJson<unknown>(`${cityKey}/districts.geojson`),
+    holeJson<unknown>(`${cityKey}/umweltzone.geojson`),
+    holeJson<Meta>(`${cityKey}/meta.json`),
+  ])
   return { zones, poi, districts, umweltzone, meta }
 }
