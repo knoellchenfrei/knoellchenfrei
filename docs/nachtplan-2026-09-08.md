@@ -222,6 +222,28 @@ Das **Protokoll** steht in
 gemessen mit `scripts/protokoll.mjs` — das jetzt im Repository liegt, weil
 Zahlen in einer Statistikdatei nachrechenbar sein müssen.
 
+## Die Nacht in Zahlen
+
+Gemessen um 04:40, nicht geschätzt.
+
+| | |
+| --- | ---: |
+| Commits seit Mitternacht | 44 |
+| Geänderte Zeilen | +8.042 / −1.260 |
+| Unit-Tests | 580 → **694** |
+| End-to-End | 152 → **154** |
+| Abdeckung `apps/api` | keine Messung → **91,3 %** Zeilen, **100 %** Funktionen |
+| Abdeckung `format.ts` | 0 % → 97 % |
+| Abdeckung `storage.ts` | 0 % → 51 % |
+| Befunde mit Test | 11 |
+| Prüfungen, die es vorher nicht gab | 3 (Doku, ausgelieferte Adresse, Riegel im Deploy) |
+| Vorbereitete Städte | 3, keine eingetragen |
+
+Die Zahl, die am meisten sagt, ist keine davon: **Sieben der elf Befunde
+wurden erst sichtbar, als eine Zahl nicht aufging.** 149 + 1 ≠ 154. 145 Flächen
+≠ 63 Zonen. 12 Katalogereignisse ≠ 9 Aufrufstellen. Nachdenken hat keinen
+einzigen davon gefunden.
+
 ## Abschluss: die Befehle in der Doku wurden ausgeführt
 
 Nicht gelesen — ausgeführt, um 04:24. Alle zehn, die `CLAUDE.md` nennt, laufen
