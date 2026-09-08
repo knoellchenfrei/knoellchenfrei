@@ -130,6 +130,12 @@ wiederholt.
 - **Bei Skript-Ketten mit `&&` prüfen, ob das Skript wirklich abgebrochen hat.**
   Ein fehlgeschlagenes Python-Heredoc hat die Kette nicht gestoppt; der Commit
   ging raus und der Erfolg wurde gemeldet, obwohl nichts geändert war.
+  **Zweiter Vorfall am 8. September, andere Ursache, gleiche Wirkung:**
+  `./scripts/sprache-pruefen.sh | tail -1 && git commit …`. Eine Pipeline hat
+  den Status ihres **letzten** Glieds, und `tail` gelingt immer — die rote
+  Prüfung ging als grün durch, der Commit lag draussen, bevor die Meldung
+  gelesen war. Ein Prüfskript wird nie in eine Pipe gehängt; wer die Ausgabe
+  kürzen will, nimmt `set -o pipefail` oder ruft es getrennt auf.
 - **Nach einem Eingriff in die Oberfläche die volle E2E-Suite laufen lassen,
   bevor committet wird.** Ein zweiter `.callout` in den Einstellungen hat einen
   bestehenden Strict-Mode-Test gebrochen; der Commit war da schon draußen.

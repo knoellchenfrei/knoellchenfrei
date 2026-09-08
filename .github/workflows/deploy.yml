@@ -216,15 +216,15 @@ jobs:
       #
       # Der Kommentar zwei Schritte weiter oben sagt es selbst: Ohne `--cwd`
       # findet wrangler das Verzeichnis `functions/` nicht, der Deploy klappt
-      # trotzdem, und die geschlossene Beta steht offen -- "ohne dass irgendwo
+      # trotzdem, und die geschlossene Beta steht offen — „ohne dass irgendwo
       # ein roter Haken erschiene". Genau diesen roten Haken macht dieser
-      # Schritt. Dasselbe gilt fuer ein fehlendes `BETA_PASSWORD` (dann
-      # antwortet die Funktion mit 503) und fuer eine Funktion, die aus
-      # irgendeinem Grund gar nicht laeuft (dann kommt 200 mit der App darin).
+      # Schritt. Dasselbe gilt für ein fehlendes `BETA_PASSWORD` (dann
+      # antwortet die Funktion mit 503) und für eine Funktion, die aus
+      # irgendeinem Grund gar nicht läuft (dann kommt 200 mit der App darin).
       #
-      # Geprueft wird die **Vorschauadresse dieses Deploys**, nicht die
-      # Produktionsadresse: Sie gehoert zu genau dem Stand, der gerade
-      # ausgerollt wurde. Faellt der Riegel dort, faellt er auch in
+      # Geprüft wird die **Vorschauadresse dieses Deploys**, nicht die
+      # Produktionsadresse: Sie gehört zu genau dem Stand, der gerade
+      # ausgerollt wurde. Fällt der Riegel dort, fällt er auch in
       # Produktion.
       - name: Nachmessen, dass der Riegel steht
         if: steps.gate.outputs.ready == 'true'
