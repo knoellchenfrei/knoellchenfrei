@@ -355,6 +355,15 @@ wiederholt.
   `loadZones` stempelt seitdem jeder Fläche eine laufende Nummer auf, auch in
   das Objekt, das an `addSource` geht; `promoteId` ist weg.
 
+  **Dieselbe Verwechslung noch an zwei weiteren Stellen:** Der Zonenschlüssel
+  war auch der **React-Schlüssel** in der Suche und im Meldedialog. Stehen
+  mehrere `-`-Flächen gleichzeitig in einer Liste, sind die Schlüssel doppelt,
+  und React darf beim Umsortieren den falschen Knoten wiederverwenden — die
+  Auswahl springt auf eine andere Zeile als die angeklickte. Beide nehmen
+  jetzt `zone.id`. Und die Wortwahl gehört dazu: In der Oberfläche stand an
+  neun Stellen „Zone -", weil der Platzhalter der Quelle durchgereicht wurde.
+  `src/zone-label.ts` spricht ihn aus, statt ihn weiterzugeben.
+
   **Und die Lehre über den Fehler hinaus:** Ich hatte zuerst behauptet, die
   Stücke unterschieden sich nur im Stadtteil — vier Beispiele angesehen und
   verallgemeinert. Der Test auf diese Behauptung fiel sofort. Vier Beispiele

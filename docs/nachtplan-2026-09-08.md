@@ -102,6 +102,13 @@ Ping absichtlich still bleibt, sieht man davon nichts ausser einer Zahl, die
 sich nicht mehr ändert. Gefunden wurde er, indem der Client gegen die
 Serverregel gehalten wurde, die er bedienen soll.
 
+Und eine dritte aus derselben Wurzel: An zwei Stellen war der Zonenschlüssel
+auch der **React-Schlüssel** einer Liste — in der Suche und im Meldedialog.
+Stehen mehrere Flächen mit `-` gleichzeitig darin, sind die Schlüssel doppelt,
+und React darf beim Umsortieren den falschen Knoten wiederverwenden: Die
+Auswahl springt dann auf eine andere Zeile, als angeklickt wurde. Beide nehmen
+jetzt `zone.id` — genau die Kennung, die es seit diesem Befund gibt.
+
 Aus demselben Befund fiel eine zweite Sache heraus, die niemandem aufgefallen
 war, weil sie nur in Hamburg auftritt: An **neun Stellen in fünf Dateien**
 stand wörtlich „Zone -" — im Panel, in der Ansage für Screenreader, in der

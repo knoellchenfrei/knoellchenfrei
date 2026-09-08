@@ -52,8 +52,12 @@ export function SearchBox({ zones, onPick }: Props) {
       )}
       {matches.length > 0 && (
         <ul className="search__results">
+          {/* Schlüssel ist die Flächenkennung, nicht `properties.zone` — siehe
+              ReportSheet: In Hamburg tragen 44 von 145 Flächen den Schlüssel
+              `-`, und doppelte React-Schlüssel lassen React beim Umsortieren
+              den falschen Knoten wiederverwenden. */}
           {matches.map((zone) => (
-            <li key={zone.properties.zone}>
+            <li key={zone.id}>
               <button
                 type="button"
                 onClick={() => {

@@ -66,7 +66,12 @@ export function ReportSheet({
   }, [onClose])
 
   const zoneChoice = (zone: LoadedZone, detail: string): Choice => ({
-    key: `zone-${zone.properties.zone}`,
+    // Die Flächenkennung, nicht der Zonenschlüssel: In Hamburg tragen 44 von
+    // 145 Flächen den Schlüssel `-`, und mehrere davon können gleichzeitig in
+    // dieser Liste stehen. Doppelte React-Schlüssel lassen React beim
+    // Umsortieren den falschen Knoten wiederverwenden — die Auswahl springt
+    // dann auf eine andere Zeile, als angeklickt wurde.
+    key: `zone-${zone.id}`,
     label: zoneKurz(zone.properties),
     detail,
     point: representativePoint(zone),

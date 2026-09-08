@@ -22,7 +22,7 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Bewohnerparkgebiete in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
@@ -38,6 +38,7 @@ installierbar, ohne Server.
 | **Als App ablegen** | Manifest mit eigenem und zuschnittsicherem Symbol, Bildern für die Installations-Karte und drei Verknüpfungen im Symbol-Menü (Melden, Standort, Kontrollen). Der Hinweis kommt erst ab dem zweiten Besuch und nie wieder, wenn er weggeklickt wurde; auf iOS steht der Weg übers Teilen-Menü. |
 | **Geschlossene Beta** | Bis der Trägerverein eingetragen ist: `noindex` und eine sperrende `robots.txt`, eine Beta-Pille in der Kopfzeile und ein Absatz in den Einstellungen. Hängt an einem Schalter, nicht an einem Gedächtnis — `PUBLIC_LAUNCH=1 pnpm build` hebt beides auf. |
 | **Telegram** | Ein Bot am selben Worker: Standort schicken, Meldung steht auf der Karte. Kein zweiter Dienst, dieselbe Datenbank, dieselbe Meldegrenze. Die Nutzerkennung wird gehasht wie eine IP-Adresse, die Chat-Kennung gar nicht gespeichert. |
+| **Nutzung zählen** | Ein Zählwerk, kein Protokoll: Name, Ausprägung und Stadt, zusammengezählt statt als Folge. **Ort oder Zeit, nie beides** — ein Ereignis mit Ortsbezug bekommt keine Uhrzeit. Keine Kennung, keine Sitzung, keine IP, auch nicht gehasht; abschaltbar in den Einstellungen, und wer `globalPrivacyControl` meldet, wird von vornherein nicht gezählt. Die Auswertung liegt unter `/statistik` als eigene Seite — kein React, keine Karte, und eine Zone wird erst ab fünf Aufrufen beim Namen genannt. |
 | **Updates** | Eine neue Version übernimmt nicht selbst — sie meldet sich in der Kopfzeile und wartet. Ein Wechsel mitten im Melden würde Eingaben verlieren. |
 
 <p align="center">
@@ -69,7 +70,7 @@ Formalie:
 | | Quelle | Lizenz | Bestand |
 | --- | --- | --- | --- |
 | **Berlin** | [GDI Berlin](https://gdi.berlin.de), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 103 Zonen, 45.917 Abschnitte, **210.527 bewirtschaftete Stellplätze**, 1.499 Orte, 97 Ortsteile |
-| **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Bewohnerparkgebiete, 104 Stadtteile |
+| **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Flächen für **63** Gebiete — die Quelle schneidet sie je Stadtteil, und 44 Flächen tragen gar keinen Namen; 104 Stadtteile |
 | **Frankfurt am Main** | [Stadt Frankfurt](https://geowebdienste.frankfurt.de/Parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Stadt Frankfurt am Main, www.frankfurt.de` | 27 von 42 Bewohnerparkbereichen, 921 Parkscheinautomaten als Sachdatenquelle, 458 Behindertenparkplätze, 46 Stadtteile |
 | **München** | [Landeshauptstadt München](https://geoportal.muenchen.de/geoserver/mor_wfs/ows), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de`, je Ebene aus dem ISO-Metadatensatz belegt | 82 Parkraummanagementgebiete, 13.714 Straßenseiten als Sachdatenquelle, **95.903 Stellplätze**, 1.660 Orte, Umweltzone, 25 Stadtbezirke |
 
