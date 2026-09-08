@@ -80,7 +80,17 @@ Speicher für einen ganzen Tag —, und dass die Fehlermeldung der Gegenstelle i
 Log geht und nicht in die Antwort.
 
 Danach **91,3 %** Zeilen und **100 %** Funktionen: Jede Funktion des Workers
-wird jetzt von mindestens einem Test angefasst. Von 602 auf 668 Tests.
+wird jetzt von mindestens einem Test angefasst.
+
+Dieselbe Messung über die reinen Module der Web-App wies `format.ts` mit
+**0 %** aus — 107 Zeilen, keine davon geprüft. Ausgerechnet diese Schicht trägt
+zwei gemeldete Fehler des Projekts: „1 Std. 0 Min." auf der vollen Stunde und
+„1 Plätze" aus dem POI-Feed. Beide sind im Code behoben und kommentiert;
+**geprüft war keiner von beiden.** Jetzt 97 % — und beim Schreiben schlug
+prompt zu, was diese Schicht ausmacht: `Intl` setzt zwischen Zahl und `€` ein
+**geschütztes** Leerzeichen. Die Erwartung sah identisch aus und war es nicht.
+
+Von 602 auf 685 Tests.
 
 ## C — Fehlerjagd
 
