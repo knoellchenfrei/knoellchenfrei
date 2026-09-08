@@ -196,8 +196,10 @@ nicht mir gehören.
 
 | | Wartet auf |
 | --- | --- |
-| **Köln und Karlsruhe eintragen** | Drei Dateien, die architektonisch sind. Je ein offener Punkt: Kölns Gebühr (Datei sagt 4,00 €, Stadt sagt 5,00 €) und Karlsruhes 4,8 m breite „Zonen", die keine Ortung trifft |
-| **`NW` im Feiertagskalender** | Fundstelle steht (SGV. NRW. 113, § 2), Wortlaut nicht auslesbar — die Seite lädt per JavaScript nach, das Blatt von 1989 ist ein Scan. Eine Minute in einem echten Browser |
+| **Köln, Karlsruhe und Düsseldorf eintragen** | Drei bis vier Dateien, die architektonisch sind. Je ein offener Punkt: Kölns Gebühr (Datei sagt 4,00 €, Stadt sagt 5,00 €), Karlsruhes 4,8 m breite „Zonen", die keine Ortung trifft, und Düsseldorfs Automatenebene ohne Lizenzfeld — eine E-Mail an `opendata@duesseldorf.de` |
+| ~~**`NW` im Feiertagskalender**~~ | **Erledigt.** Der Wortlaut von § 2 FeiertagsG NW liegt vor, gefunden über `robots.txt` → Sitemap-Index → statisches HTML. Damit ist auch Kölns Feiertagsfrage beantwortet |
+| **`@types/geojson` als direkte Abhängigkeit** | Drei Felder in `loadData` bleiben sonst ungetypt. Eine Abhängigkeitsänderung, also abzusprechen |
+| **Der Ersatzschlüssel für Hamburgs 44 namenlose Flächen** | Er ändert die erzeugte Zonenliste und bereits gezählte Ausprägungen. Die Oberfläche sagt inzwischen „Bewirtschaftete Fläche" statt „Zone -"; die Statistik zählt sie weiter als eine |
 | **WAF-Regel vor das Anmeldeformular** | Cloudflare-Dashboard. Eine Regel ist im kostenlosen Tarif enthalten |
 | **`CLOUDFLARE_R2_TOKEN`** | Ohne ihn baut der Kachel-Workflow nichts, und die Karte altert still |
 | **`D1:Edit` ans CI-Token** | Bis dahin muss jede neue Migration von Hand eingespielt werden |
