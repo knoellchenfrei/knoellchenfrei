@@ -50,7 +50,7 @@ Und eine fünfte, die **von Hand** nach einem Deploy läuft und absichtlich nich
 in der CI (sie braucht die echte Adresse, ein Fork hätte keine):
 
 ```bash
-./scripts/ausgeliefert-pruefen.sh   # der Riegel, die Kopfzeilen, keine offene Weiterleitung
+./scripts/ausgeliefert-pruefen.sh   # beide Adressen: Riegel, Kopfzeilen, keine offene Weiterleitung
 ```
 
 Sie schliesst die Lücke, die dieses Projekt zweimal getroffen hat: Die

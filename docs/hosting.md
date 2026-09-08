@@ -468,7 +468,13 @@ IP-Adresse statt eines anonymen Merkmals.
 ./scripts/ausgeliefert-pruefen.sh
 ```
 
-Prüft die **ausgelieferte** Adresse: dass der Riegel vor Startseite,
+Prüft ohne Argument **beide** ausgelieferten Adressen — `knoellchenfrei.de`
+und `knoellchenfrei.pages.dev` —, mit Argument die angegebene. Dass beide
+geprüft werden, ist seit dem 9. September so: Die eigene Domain hängt an einer
+Zuordnung, die ein Deploy nicht mitbringt, und vorher stand als Vorgabe
+ausgerechnet die Adresse, die niemand eintippt.
+
+Geprüft wird: dass der Riegel vor Startseite,
 Statistikseite, Zonendaten, Manifest und Service Worker steht (je `401`), dass
 die Anmeldeseite ihre eigenen Sicherheits-Kopfzeilen trägt, und dass ein
 Einladungslink mit falschem Passwort keine Weiterleitung erzeugt.
