@@ -541,6 +541,21 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       Stadtteil und laufender Nummer. Er ändert die erzeugte Zonenliste und
       die bereits gezählten Ausprägungen, also nicht nebenbei.
 
+- [ ] **`packages/ingest` hat keinen einzigen Test**, und darin stehen zwei
+      Funktionen, die je einen Vorfall hinter sich haben:
+      `assertSelfContained` (hat einmal eine schwarze Seite ausgeliefert, bevor
+      es sie gab) und `safeJson` (verhindert, dass ein `</script>` aus den
+      Behördendaten das umgebende Tag schliesst). Beide sind rein und in
+      zwanzig Zeilen geprüft.
+
+      Warum es in der Nacht zum 8. September **nicht** gemacht wurde: Das Modul
+      liest beim Import Dateien aus `dist`, die beiden Funktionen sind nicht
+      exportiert, und ein Test bräuchte erst eine Umbauung in eine eigene
+      Datei plus eine `vitest.config.ts` für das Paket. Beides um kurz vor fünf
+      an einem Build-Skript zu tun, das schon einmal eine kaputte Auslieferung
+      erzeugt hat, wäre genau der Leichtsinn, gegen den diese Nacht sonst
+      angeschrieben hat. Als eigener Schritt, mit wachem Kopf.
+
 - [ ] **Drei Datenfelder sind noch ungetypt — und dafür braucht es deine
       Zustimmung.** `loadData` in `apps/web/src/data-source.ts` gab bis zum
       8. September fünfmal `any` zurück, gegen die eigene Regel und ohne
