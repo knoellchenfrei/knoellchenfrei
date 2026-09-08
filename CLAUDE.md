@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 634 Unit-Tests (core, api, web)
+pnpm test                                           # 640 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -61,7 +61,7 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete. Seit dem 7. September haben drei
-davon Tests: `core` (541), `apps/api` (64, Worker und Zählwerk) und `apps/web`
+davon Tests: `core` (547), `apps/api` (64, Worker und Zählwerk) und `apps/web`
 (29, Beta-Riegel und der Zähler in der App). Die beiden letzten haben eine
 eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
@@ -76,7 +76,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=634 E2E_COUNT=152 npx tsx src/build-badges.ts
+TEST_COUNT=640 E2E_COUNT=152 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -512,6 +512,15 @@ wiederholt.
   Die Umstellung macht eine zweite Falle auf, und die ist teurer: Am **ersten**
   Bündel eines Tages gibt es die Budgetzeile noch nicht, `NULL < 5000` ist
   NULL, und ohne `COALESCE(…, 0)` würde täglich das erste Bündel verworfen.
+- **Eine erzeugte Datei, die niemand nachrechnet, läuft irgendwann
+  auseinander.** `zone-keys.generated.ts` entsteht von Hand aus den
+  `zones.geojson`, der Datenbau läuft im Deploy automatisch — und die Liste ist
+  die einzige Grenze, die der Worker gegen die Ausprägung von `zone.open` hat.
+  Laufen sie auseinander, passiert **nichts Sichtbares**: Zählungen für neue
+  Zonen werden mit `written: 0` verworfen, und „diese Zone sieht sich niemand
+  an" ist von „diese Zone wird verworfen" nicht zu unterscheiden. Ein Test in
+  `core/test/zone-keys-aktuell.test.ts` hält beide Richtungen gegen die
+  ausgelieferten Daten und nennt im Fehlerfall den Befehl.
 - **Eine Liste, die je Stadt erzeugt wird, wird auch je Stadt geprüft.** Der
   Worker prüfte die Zonenkennung gegen `ALL_ZONE_KEYS` — die vier Listen
   flachgeklopft. Berlin und Frankfurt nummerieren beide durch und teilen sich
