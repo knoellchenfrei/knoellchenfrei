@@ -69,6 +69,12 @@ try {
       locale: 'de-DE',
       timezoneId: 'Europe/Berlin',
     })
+    // Feste Uhrzeit, aus demselben Grund wie in `make-docs-images.mjs`:
+    // Sonst zeigt das Bild, was zufaellig gerade gilt. Die Aufnahme vom
+    // 9. September um 00:08 hätte „0 von 103 kassieren" gezeigt — die App in
+    // ihrem seltensten Zustand. Dienstag 10:30 Berliner Zeit kassiert die
+    // gesamte Zonenfläche.
+    await context.clock.setFixedTime(new Date('2026-09-08T08:30:00Z'))
     const page = await context.newPage()
     await page.goto(base)
     // Die Herkunftszeile stammt aus meta.json und erscheint erst, wenn die

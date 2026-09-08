@@ -500,21 +500,45 @@ export function App() {
             type: 'fill',
             source: 'zones',
             paint: {
+              // **Messing statt Orange, seit dem 8. September.** Der Grund ist
+              // nicht Geschmack, sondern eine Messung: An einem Dienstag um
+              // 10:30 kassieren **100 % der Zonenfläche** in allen vier
+              // Städten, und an 45 bis 84 der 168 Wochenstunden liegt der
+              // Anteil über 90 %. Eine Alarmfarbe markierte damit den
+              // Normalfall — die Karte war werktags flächig orange, und das
+              // Farbgewicht lag auf dem Häufigen statt auf dem Bemerkenswerten.
+              //
+              // Dazu zwei gemessene Kollisionen, die Orange nicht auflösen
+              // konnte (ΔE2000, Minimum über Normalsicht und die drei
+              // Dichromasien): gegen die Heatmap-Stufe 0,70 nur **0,9** bei
+              // Tritanopie — dieselbe Farbe für „viel kontrolliert" und
+              // „kostet gerade" —, und die Kontur gegen Ladepunkt und
+              // Umweltzone 7,3.
+              //
+              // `#cd8700` hebt die schlechteste Kollision auf 8,4, den Abstand
+              // zur Heatmap in Normalsicht auf 19,2 und lässt die Trennung
+              // kassierend/frei bei Farbfehlsichtigkeit unangetastet (45,7
+              // gegen vorher 45,3). Der Preis steht in
+              // `docs/farben-parkzonen.md`: Auf dem Rasterrückfall sinkt der
+              // Abstand zum Untergrund von 17,6 auf 10,8.
               'fill-color': [
                 'case',
                 ['boolean', ['feature-state', 'chargeable'], false],
-                '#f97316',
+                '#cd8700',
                 '#22d3ee',
               ],
-              // Drei Stufen statt zwei. Die gebührenfreie Fläche bleibt sichtbar,
-              // aber so schwach, dass sie die kassierende nicht mehr überstimmt.
+              // Drei Stufen statt zwei. Die gebührenfreie Fläche steht seit
+              // dem 8. September bei 0,14 statt 0,07: Sie war auf dem
+              // Rasterrückfall mit ΔE 5,3 praktisch unsichtbar — und sie ist
+              // die **seltene** Aussage, also die interessante. Sie überstimmt
+              // die kassierende trotzdem nicht.
               'fill-opacity': [
                 'case',
                 ['boolean', ['feature-state', 'selected'], false],
-                0.55,
+                0.58,
                 ['boolean', ['feature-state', 'chargeable'], false],
-                0.3,
-                0.07,
+                0.26,
+                0.14,
               ],
             },
           })
@@ -523,11 +547,18 @@ export function App() {
             type: 'line',
             source: 'zones',
             paint: {
+              // Cremefarben und nicht goldfarben, und das ist kein Geschmack:
+              // Die Kontur ist das Bauteil mit dem geringsten Spielraum. Eine
+              // goldene Linie `#f2c94c` liegt bei Deuteranopie **ΔE 1,1** von
+              // der gestrichelten Umweltzone entfernt, `#edb45f` **0,4** vom
+              // Ladepunkt — beides derselbe Strich für jemanden mit
+              // Rot-Grün-Schwäche. `#f5cfa0` hebt die schlechteste
+              // Konturkollision von 7,3 auf 10,4.
               'line-color': [
                 'case',
                 ['boolean', ['feature-state', 'chargeable'], false],
-                '#fb923c',
-                '#67e8f9',
+                '#f5cfa0',
+                '#a5f3fc',
               ],
               // Die Kontur trägt jetzt die Grenze, nicht mehr die Füllung. Sie
               // bleibt deshalb überall vorhanden — nur unterschiedlich laut.
@@ -537,7 +568,7 @@ export function App() {
                 1,
                 ['boolean', ['feature-state', 'chargeable'], false],
                 0.9,
-                0.45,
+                0.55,
               ],
               'line-width': [
                 'case',
@@ -545,7 +576,7 @@ export function App() {
                 2.5,
                 ['boolean', ['feature-state', 'chargeable'], false],
                 1.2,
-                0.8,
+                0.9,
               ],
             },
           })
@@ -1630,7 +1661,18 @@ export function App() {
             </h2>
             <p className="hours">
               {anchor === null
-                ? 'Tippe auf die Karte, wo du stehst. Orange bedeutet: diese Zone kassiert gerade, Türkis heißt gebührenfrei.'
+                ? // Der Farbname steht hier und muss mit der Karte mitgehen.
+                  // Beim Wechsel von Orange auf Messing am 8. September ist er
+                  // zunächst stehengeblieben — die App hätte eine Farbe erklärt,
+                  // die es nicht mehr gibt. Aufgefallen erst auf dem neu
+                  // aufgenommenen Bildschirmfoto, nicht im Code.
+                  //
+                  // „Goldbraun" und nicht „Messing": Messing ist ein Wort für
+                  // die Werkstatt. Über der dunklen Karte liegt die Füllung bei
+                  // 26 % Deckkraft und ergibt zusammengesetzt `#704912` — das
+                  // nennt man goldbraun. Türkis stimmt weiterhin: Die freie
+                  // Füllung ist unverändert `#22d3ee`, nur sichtbarer.
+                  'Tippe auf die Karte, wo du stehst. Goldbraun bedeutet: diese Zone kassiert gerade, Türkis heißt gebührenfrei.'
                 : 'Für diesen Ort führt die Quelle keine Parkzone. Das heißt nicht sicher, dass Parken frei ist: Es gibt Straßen mit Gebühr, die in keiner Zone liegen. Was gilt, steht am Automaten oder am Schild.'}
             </p>
             {/* Parking outside a zone is the common case in most of Berlin, so

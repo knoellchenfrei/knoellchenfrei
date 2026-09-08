@@ -6,8 +6,13 @@
   --muted: #94a3b8;
   /* #2563eb statt #3b82f6: weißer Text erreicht darauf 5,2:1, auf dem alten Blau nur 3,7:1. */
   --accent: #2563eb;
-  --paid: #fb923c;
-  --free: #22d3ee;
+  /* Die beiden Tarifzustaende, dieselben Werte wie auf der Karte. Sie sind
+     seit dem 8. September Messing und Eis statt Orange und Tuerkis; die
+     Begruendung mit allen gemessenen Zahlen steht in
+     docs/farben-parkzonen.md. Wer sie hier aendert, aendert sie auch dort --
+     Panel und Karte duerfen nicht zweierlei sagen. */
+  --paid: #f5cfa0;
+  --free: #a5f3fc;
   --warn: #fbbf24;
   --danger: #ef4444;
   color-scheme: dark;
@@ -110,8 +115,8 @@ body {
   font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.04em;
 }
-.badge--paid { background: rgba(251, 146, 60, 0.16); color: var(--paid); }
-.badge--free { background: rgba(34, 211, 238, 0.16); color: var(--free); }
+.badge--paid { background: rgba(245, 207, 160, 0.16); color: var(--paid); }
+.badge--free { background: rgba(165, 243, 252, 0.16); color: var(--free); }
 
 .facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; margin: 14px 0 0; }
 .facts dt { color: var(--muted); font-size: 12px; }
@@ -564,9 +569,12 @@ body {
 }
 .live__item strong { color: var(--text); font-weight: 650; font-variant-numeric: tabular-nums; }
 .live__item--muted { font-style: italic; }
+/* Ebenfalls ein eigener Wert: Der Punkt zeigt „gerade jemand da", nicht
+   „gebuehrenfrei". Er hing am selben Token, und sein Schattenwert war ohnehin
+   schon fest verdrahtet -- die beiden waeren beim Wechsel auseinandergelaufen. */
 .live__pulse {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--free);
+  background: #22d3ee;
   box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.6);
   animation: live-pulse 2.4s ease-out infinite;
 }
@@ -622,7 +630,11 @@ body {
   opacity: 0.75;
 }
 .chart--days { height: 48px; gap: 1px; }
-.chart__bar--today { background: linear-gradient(180deg, var(--warn), var(--paid)); opacity: 1; }
+/* Eigener Wert statt var(--paid): Der heutige Balken ist ein warmer Akzent im
+   Tagesdiagramm der Kontrolldichte und sagt nichts ueber Gebuehren. Er hing
+   nur am selben Token, und beim Wechsel auf Messing waere er stillschweigend
+   mitgewandert. */
+.chart__bar--today { background: linear-gradient(180deg, var(--warn), #fb923c); opacity: 1; }
 .chart__axis {
   display: flex; justify-content: space-between;
   font-size: 10px; color: var(--muted); margin-top: 3px;

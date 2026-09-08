@@ -336,10 +336,34 @@ eigene Fläche über der Karte.
 **Farbe trägt wieder eine Aussage.** Vorher bekamen alle 103 Zonen dieselbe
 Deckkraft — an einem Sonntag hieß das: ganz Berlin türkis, und Türkis bedeutet
 „hier ist gerade nichts zu beachten". 95 % der Farbe transportierte keine
-Information und nahm der einen orangen Fläche die Wirkung. Jetzt füllt Orange,
-Türkis flüstert (7 % Deckkraft, die Kontur trägt die Grenze). **Nicht** auf null:
-Der Unterschied zwischen „bewirtschaftete Zone, gerade kostenlos" und „gar keine
+Information und nahm der einen orangen Fläche die Wirkung. Seitdem füllt die
+kassierende Fläche und die freie flüstert. **Nicht** auf null: Der Unterschied
+zwischen „bewirtschaftete Zone, gerade kostenlos" und „gar keine
 Bewirtschaftung" ist eine der Antworten, die diese App gibt.
+
+**Nachtrag vom 9. September: der Farbton war falsch, die Gewichtung auch — nur
+andersherum als gedacht.** Der Betreiber sagte, das Orange gefalle ihm nicht,
+ohne Begründung. Gemessen wurde daraufhin, wie oft es überhaupt zu sehen ist:
+An einem Dienstag um 10:30 kassieren **100 % der Zonenfläche** in allen vier
+Städten, an 45 bis 84 der 168 Wochenstunden über 90 %. Eine Alarmfarbe markierte
+also den Normalfall — die Karte war werktags eine Wand aus Orange, und das
+Farbgewicht lag auf dem Häufigen statt auf dem Bemerkenswerten. Dazu zwei
+gemessene Kollisionen: gegen die Heatmap-Stufe 0,70 nur **ΔE 0,9** bei
+Tritanopie („viel kontrolliert" und „kostet gerade" in derselben Farbe), und die
+Kontur gegen Ladepunkt und Umweltzone 7,3.
+
+Jetzt Messing `#cd8700` bei 26 % mit cremefarbener Kontur `#f5cfa0`, und die
+freie Fläche steigt von 7 auf 14 % — sie war auf dem Rasterrückfall mit ΔE 5,3
+unsichtbar und ist die **seltene**, also die interessante Aussage. Die Kontur
+ist bewusst cremefarben und nicht golden: `#f2c94c` liegt bei Deuteranopie
+ΔE 1,1 von der Umweltzone entfernt. Alle Zahlen, die verworfenen Paletten und
+der Preis stehen in [farben-parkzonen.md](farben-parkzonen.md).
+
+Dabei ist zweierlei aufgefallen, was nicht die Farbe betrifft: Der Satz „Orange
+bedeutet …" im Standort-Hinweis wäre stehengeblieben — die App hätte eine Farbe
+erklärt, die es nicht mehr gibt —, und die Bildaufnahme hing an der Systemuhr.
+Das Bild vom 7. September zeigte „103 von 103 kassieren", das vom 9. September
+um 00:08 „0 von 103". Beide Skripte stellen die Uhr jetzt fest.
 
 Zoomabhängige Stile wurden erwogen und verworfen: Zwei Zustände, die beim
 Zoomen umschalten, lesen Nutzer als Fehler, und 103 Polygone sind keine

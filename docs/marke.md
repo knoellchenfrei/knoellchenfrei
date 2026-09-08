@@ -21,6 +21,11 @@ cd app/apps/web && node scripts/make-brand.mjs
 | `brand/telegram-muenchen-512.png` | Gruppe `@knoellchenfrei_M` | 512 × 512 |
 | `brand/*.svg` | Die Quellen dazu | — |
 
+Die Farben **in** der App gehören nicht hierher, mit einer Ausnahme: Die
+Zonenfarbe ist keine Dekoration, sondern eine Aussage. Was sie heute leistet,
+woran sie krankt und welche Ersatzpaletten gemessen wurden, steht in
+[farben-parkzonen.md](farben-parkzonen.md).
+
 ## Telegram: vier Bilder, und warum sie so aussehen
 
 Telegram verlangt ein **Quadrat**, empfohlen 512 × 512 (Minimum 300 × 300),

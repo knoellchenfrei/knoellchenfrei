@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 705 Unit-Tests (core, api, web)
+pnpm test                                           # 712 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -62,7 +62,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (548), `apps/api` (78, Worker und Zählwerk),
-`apps/web` (68, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (75, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
@@ -77,7 +77,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=705 E2E_COUNT=154 npx tsx src/build-badges.ts
+TEST_COUNT=712 E2E_COUNT=154 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -351,6 +351,23 @@ wiederholt.
   roten Haken. Negativmuster gehören in die Liste: `['**', '!dependabot/**']`.
   `lint-workflows.yml` prüft nur, ob die Datei *parst*, nicht ob das Schema
   stimmt; es hätte das nicht gefunden.
+- **Wer eine Farbe ändert, ändert auch die Sätze, die sie nennen.** Am
+  9. September wurde die Zonenfüllung von Orange auf Messing umgestellt — und
+  der Standort-Hinweis sagte weiter „Orange bedeutet: diese Zone kassiert
+  gerade". Die App hätte eine Farbe erklärt, die es nicht mehr gibt. Aufgefallen
+  ist es **auf dem neu aufgenommenen Bildschirmfoto**, nicht im Code; `grep`
+  nach dem Farbwort findet es, aber nur, wenn man daran denkt. Dazu hingen zwei
+  Stellen am selben Token, die nichts mit Gebühren zu tun haben (der heutige
+  Balken im Tagesdiagramm, der Lebendpunkt der Live-Zahlen) — sie wären
+  stillschweigend mitgewandert und haben jetzt eigene Werte.
+- **Bilder, die an der Systemuhr hängen, sind nicht vergleichbar.**
+  `make-screenshots.mjs` und `make-docs-images.mjs` nahmen auf, was gerade galt:
+  Die Aufnahme vom 7. September zeigte „103 von 103 kassieren", die vom
+  9. September um 00:08 „0 von 103" — zwei Bilder derselben App, die nichts
+  miteinander zu tun haben, und die Farbänderung war auf dem zweiten gar nicht
+  zu sehen. Beide Skripte stellen die Uhr jetzt auf Dienstag 10:30 Berliner Zeit
+  (`context.clock.setFixedTime`), die Stunde, in der die gesamte Zonenfläche
+  kassiert.
 - **Ein Zonenschlüssel ist keine Kennung einer Fläche.** Die Karte färbte über
   `setFeatureState({ source, id })` mit `promoteId: 'zone'`. In Hamburg tragen
   **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen

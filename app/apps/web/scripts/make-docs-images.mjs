@@ -63,6 +63,18 @@ async function open(size, scale) {
     locale: 'de-DE',
     timezoneId: 'Europe/Berlin',
   })
+  // **Feste Uhrzeit statt „wann immer jemand das Skript startet".**
+  //
+  // Die Bilder hingen bis zum 9. September an der Systemuhr: Die Aufnahme vom
+  // 7. September zeigte „103 von 103 kassieren" — eine Wand aus Farbe —, die
+  // vom 9. September um 00:08 zeigte „0 von 103". Zwei Bilder derselben App,
+  // die nichts miteinander zu tun haben, und niemand konnte sie vergleichen.
+  //
+  // Dienstag, 10:30 Berliner Zeit: Zu dieser Stunde kassiert in allen vier
+  // Städten die gesamte Zonenfläche — nachgemessen in
+  // `docs/farben-parkzonen.md`. Es ist damit der Zustand, in dem die App die
+  // meiste Zeit ist, und der einzige, in dem die Farbe etwas erklärt.
+  await context.clock.setFixedTime(new Date('2026-09-08T08:30:00Z'))
   const page = await context.newPage()
   await page.goto(base)
   await page.waitForSelector('.provenance', { state: 'attached', timeout: 45_000 })
