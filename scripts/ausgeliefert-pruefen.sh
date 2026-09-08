@@ -17,99 +17,100 @@
 # der etwas anderes ist. Dieses Skript sieht deshalb auf **Status und
 # Content-Type**, nie nur auf den Status.
 #
-# Läuft von Hand nach einem Deploy, nicht in der CI: Es braucht die echte
-# Adresse, und ein Fork hätte keine.
-#
 #   ./scripts/ausgeliefert-pruefen.sh                       # Standardadresse
 #   ./scripts/ausgeliefert-pruefen.sh https://andere.example
 set -uo pipefail
 
 BASIS="${1:-https://knoellchenfrei.pages.dev}"
 BASIS="${BASIS%/}"
-fehler=0
 
-kopf() { printf '\n%s\n' "$1"; }
-ok()   { printf '  ok   %s\n' "$1"; }
-weh()  { printf '  FAIL %s\n' "$1"; fehler=1; }
+# Wie lange eine frische Auslieferung anlaufen darf.
+#
+# **Und warum der ganze Durchgang wiederholt wird, nicht nur der erste Abruf.**
+# Die erste Fassung wartete darauf, dass `/` antwortet, und prüfte dann einmal
+# durch. Eine Vorschauadresse von Cloudflare Pages breitet sich aber **je Pfad**
+# aus: Am 8. September um 04:24 antwortete `/` bereits mit 401, während `/sw.js`
+# noch 404 gab — der Lauf meldete sechs Fehlschläge, die eine Minute später alle
+# grün waren. Gewartet wird deshalb auf das **Gesamtergebnis**.
+DEADLINE=$((SECONDS + 120))
 
 abruf() { # pfad -> "status content-type"
   curl -s -o /dev/null -w '%{http_code} %{content_type}' --max-time 15 "${BASIS}$1"
 }
 
-# Eine frische Auslieferung braucht ein paar Sekunden, bis ihre Adresse
-# antwortet. Ohne dieses Warten misst der Lauf direkt nach einem Deploy gegen
-# eine Adresse, die es noch nicht gibt.
-#
-# **Und „antwortet" heisst nicht „ist da".** Die erste Fassung wartete nur
-# darauf, dass überhaupt ein Status kommt — eine Vorschauadresse von
-# Cloudflare Pages liefert in der ersten Minute aber **404**, und das ist ein
-# Status. Der Lauf vom 8. September ist genau daran gescheitert und hat elf
-# Fehlschläge gemeldet, die eine Minute später alle grün waren. Gewartet wird
-# deshalb, solange `000` oder `404` kommt.
-#
-# Ein `200` bricht die Schleife sofort ab, statt sie auszusitzen: Das ist der
-# schlimmste Fall — die Seite liefert aus, ohne dass der Riegel davorsteht —
-# und er gehört sofort und beim Namen gemeldet, nicht nach 90 Sekunden als
-# „antwortet nicht".
-kopf "Warten, bis die Auslieferung wirklich steht"
-versuch=0
-status="$(abruf / | cut -d' ' -f1)"
-while [ "$status" = "000" ] || [ "$status" = "404" ]; do
-  versuch=$((versuch + 1))
-  if [ "$versuch" -ge 18 ]; then
-    weh "${BASIS} liefert nach 90 s noch ${status} — die Auslieferung steht nicht"
-    exit 1
-  fi
-  sleep 5
-  status="$(abruf / | cut -d' ' -f1)"
-done
-ok "${BASIS} liefert aus (${status})"
+# Ein Durchgang. Schreibt seinen Bericht nach `bericht`, setzt `fehler`.
+pruefe() {
+  fehler=0
+  bericht=""
+  sammle() { bericht="${bericht}$1"$'\n'; }
+  ok()  { sammle "  ok   $1"; }
+  weh() { sammle "  FAIL $1"; fehler=1; }
 
-kopf "Der Riegel steht vor allem — nicht nur vor der Startseite"
-# Jeder dieser Pfade wäre ohne Riegel offen: das Bündel, die Zonendaten, das
-# Manifest, der Service Worker. Ein Login *in* der App hätte keinen davon
-# geschützt.
-for pfad in / /statistik/ /data/berlin/zones.geojson /manifest.webmanifest /sw.js; do
-  antwort="$(abruf "$pfad")"
-  status="${antwort%% *}"
-  if [ "$status" = "401" ]; then
-    ok "$pfad -> 401"
+  sammle ""
+  sammle "Der Riegel steht vor allem — nicht nur vor der Startseite"
+  # Jeder dieser Pfade wäre ohne Riegel offen: das Bündel, die Zonendaten, das
+  # Manifest, der Service Worker. Ein Login *in* der App hätte keinen davon
+  # geschützt.
+  for pfad in / /statistik/ /data/berlin/zones.geojson /manifest.webmanifest /sw.js; do
+    antwort="$(abruf "$pfad")"
+    status="${antwort%% *}"
+    if [ "$status" = "401" ]; then
+      ok "$pfad -> 401"
+    else
+      weh "$pfad -> $antwort (erwartet 401)"
+    fi
+  done
+
+  sammle ""
+  sammle "Die Anmeldeseite trägt ihre eigenen Kopfzeilen"
+  # `_headers` deckt nur die statische Auslieferung ab. Die Anmeldeseite kommt
+  # aus der Funktion und ging deshalb einmal ganz ohne Kopfzeilen hinaus —
+  # ausgerechnet die einzige Seite, die Unangemeldete zu sehen bekommen.
+  kopfzeilen="$(curl -s -o /dev/null -D - --max-time 15 "${BASIS}/")"
+  for erwartet in "content-security-policy" "x-content-type-options" \
+                  "referrer-policy" "x-robots-tag" "cache-control: no-store"; do
+    if printf '%s' "$kopfzeilen" | grep -qi "^${erwartet}"; then
+      ok "$erwartet"
+    else
+      weh "$erwartet fehlt"
+    fi
+  done
+
+  sammle ""
+  sammle "Keine offene Weiterleitung"
+  # `new URL('https://…//evil.com/').pathname` ist `//evil.com/` — als Location
+  # eine protokollrelative Adresse. Mit falschem Passwort darf hier gar keine
+  # Weiterleitung stehen.
+  ziel="$(curl -s -o /dev/null -D - --max-time 15 "${BASIS}//evil.example/?invite=bestimmt-falsch" \
+          | grep -i '^location:' | tr -d '\r')"
+  if [ -z "$ziel" ]; then
+    ok "keine Location-Kopfzeile bei falschem Passwort"
   else
-    weh "$pfad -> $antwort (erwartet 401)"
+    weh "unerwartete Weiterleitung: $ziel"
   fi
+}
+
+versuche=0
+while : ; do
+  versuche=$((versuche + 1))
+  pruefe
+  [ "$fehler" -eq 0 ] && break
+  [ "$SECONDS" -ge "$DEADLINE" ] && break
+  # Ein `200` auf `/` ist der schlimmste Fall — die Seite liefert aus, ohne
+  # dass der Riegel davorsteht. Den sitzt man nicht aus, den meldet man sofort.
+  case "$(abruf / | cut -d' ' -f1)" in
+    200) break ;;
+  esac
+  sleep 10
 done
 
-kopf "Die Anmeldeseite trägt ihre eigenen Kopfzeilen"
-# `_headers` deckt nur die statische Auslieferung ab. Die Anmeldeseite kommt
-# aus der Funktion und ging deshalb einmal ganz ohne Kopfzeilen hinaus —
-# ausgerechnet die einzige Seite, die Unangemeldete zu sehen bekommen.
-kopfzeilen="$(curl -s -o /dev/null -D - --max-time 15 "${BASIS}/")"
-for erwartet in "content-security-policy" "x-content-type-options" \
-                "referrer-policy" "x-robots-tag" "cache-control: no-store"; do
-  if printf '%s' "$kopfzeilen" | grep -qi "^${erwartet}"; then
-    ok "$erwartet"
-  else
-    weh "$erwartet fehlt"
-  fi
-done
-
-kopf "Keine offene Weiterleitung"
-# `new URL('https://…//evil.com/').pathname` ist `//evil.com/` — als Location
-# eine protokollrelative Adresse. Mit falschem Passwort darf hier gar keine
-# Weiterleitung stehen, mit richtigem nur eine, die mit genau einem
-# Schrägstrich anfängt.
-ziel="$(curl -s -o /dev/null -D - --max-time 15 "${BASIS}//evil.example/?invite=bestimmt-falsch" \
-        | grep -i '^location:' | tr -d '\r')"
-if [ -z "$ziel" ]; then
-  ok "keine Location-Kopfzeile bei falschem Passwort"
-else
-  weh "unerwartete Weiterleitung: $ziel"
-fi
-
-kopf "Ergebnis"
+printf '%s' "$bericht"
+printf '\nErgebnis\n'
 if [ "$fehler" -eq 0 ]; then
-  printf '  ✓ %s verhält sich wie erwartet\n' "$BASIS"
+  printf '  ✓ %s verhält sich wie erwartet' "$BASIS"
+  [ "$versuche" -gt 1 ] && printf ' (nach %s Durchgängen — die Auslieferung lief noch an)' "$versuche"
+  printf '\n'
 else
-  printf '  ✗ Es gibt Abweichungen. Was hier rot ist, ist im Betrieb rot.\n'
+  printf '  ✗ Es gibt Abweichungen nach %s Durchgängen. Was hier rot ist, ist im Betrieb rot.\n' "$versuche"
 fi
 exit "$fehler"
