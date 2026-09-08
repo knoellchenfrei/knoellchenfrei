@@ -538,8 +538,8 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       neben der Karte, unsichtbar, während die Liste „am häufigsten
       kontrolliert" dreimal „Außerhalb der Zonen" nannte. Sie stehen jetzt als
       Abstand zu `CITY.center`.
-- [ ] **44 Hamburger Flächen heißen `-`.** Die Quelle vergibt für sie keinen
-      Zonennamen; von 145 Flächen tragen 44 diesen Schlüssel, und die
+- [ ] **44 Hamburger Flächen tragen den Schlüssel `-`.** Die Quelle führt für
+      sie keine Zonennummer; von 145 Flächen tragen 44 diesen Schlüssel, und die
       Kartenfärbung ist deshalb seit dem 8. September nicht mehr daran
       gebunden (siehe `LoadedZone.id`). An drei Stellen wirkt er trotzdem noch:
 
@@ -554,9 +554,46 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
          Stadt; die Zeile ist damit die häufigste und sagt am wenigsten.
       3. **Die Zonensuche** findet unter `-` genau die erste.
 
-      Der saubere Weg ist ein stabiler Ersatzschlüssel im Datenbau — etwa aus
-      Stadtteil und laufender Nummer. Er ändert die erzeugte Zonenliste und
-      die bereits gezählten Ausprägungen, also nicht nebenbei.
+      **Vorlage zur Entscheidung, am 9. September nachgemessen — der Einbau
+      wartet auf dich, weil er die erzeugte Zonenliste ändert.**
+
+      Zuerst eine Korrektur an meiner eigenen Beschreibung: Der Strich steht
+      nicht im Namen, sondern in `bwp_code`. `bwp_name` ist bei **keiner
+      einzigen** der 146 Flächen leer — die 44 heissen dort „Tagesticket,
+      keine Bewohnerparkvorrechte" oder „Nur Kurzzeitparken, keine
+      Bewohnerparkvorrechte". Es sind also keine namenlosen Gebiete, sondern
+      Flächen, die gar keine Bewohnerparkzone sind und deshalb keine
+      Zonennummer haben. `build-data-hamburg.ts` nimmt `bwp_code` als `zone`.
+
+      Der Ersatzschlüssel muss deshalb nicht erfunden werden — die Quelle
+      vergibt selbst einen: `DE.HH.UP_BEWOHNERPARKGEBIETE_32004`, dazu
+      `objectid`. Gegen „Stadtteil und laufende Nummer" spricht, dass eine
+      laufende Nummer sich verschiebt, sobald die Quelle eine Fläche einfügt;
+      danach zeigt eine bereits gezählte Ausprägung auf ein anderes Gebiet.
+
+      Gemessen, zwei Momentaufnahmen im Abstand von zwei Tagen (7. und
+      9. September, beide 146 Flächen):
+
+      | | |
+      | --- | --- |
+      | Quell-IDs identisch | ja, alle 146 |
+      | `bwp_code` an derselben ID geändert | 0 |
+      | Geometrie an derselben ID geändert | 0 |
+
+      Zwei Tage sind kein Beweis für Dauerhaftigkeit, aber es ist die eigene
+      Kennung des Anbieters und damit das Beste, was zu haben ist.
+
+      Und die Zahl, die die Dringlichkeit setzt: In der Produktion stehen
+      **null** bereits gezählte `zone.open`-Ausprägungen mit dem Wert `-`
+      (`SELECT COUNT(*) … WHERE name='zone.open' AND value='-'` → 0). Solange
+      das so ist, kostet der Wechsel keine Migration. Sobald die Beta zählt,
+      kostet er eine.
+
+      Was er anfasst: `build-data-hamburg.ts` (Schlüssel), die erzeugte
+      `zones.geojson`, `ZONE_KEYS` in `core` (der Worker prüft dagegen), die
+      Suche und die Statistikseite. Die Anzeige selbst ist schon fertig — sie
+      geht seit dem 8. September über `zone-label.ts` und nennt den Schlüssel
+      gar nicht mehr.
 
 - [x] ~~**`packages/ingest` hat keinen einzigen Test.**~~ **Am 8. September
       abends erledigt**, als eigener Schritt — in der Nacht war er ausdrücklich

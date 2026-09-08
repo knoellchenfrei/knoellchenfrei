@@ -73,8 +73,9 @@ describe('die erzeugte Zonenliste', () => {
    * Beim Schreiben dieses Tests hatte ich zuerst behauptet, mehrfach
    * vorkommende Zonen unterschieden sich nur im Stadtteil. Vier Beispiele
    * angesehen, verallgemeinert, danebengelegen: Hamburg liefert 145 Flächen
-   * für 63 Schlüssel, **44 davon tragen `-`** — die Quelle vergibt dort keinen
-   * Namen —, und vier Zonen kommen in Stücken mit *verschiedenen* Zeiten
+   * für 63 Schlüssel, **44 davon tragen `-`** — Flächen ohne Bewohnerparkrecht,
+   * für die die Quelle keine Nummer führt —, und vier Zonen kommen in Stücken
+   * mit *verschiedenen* Zeiten
    * (A103: 9–20 und 9–23 Uhr) oder sogar verschiedenen Beträgen (E315: 3,50 €
    * und 3,00 €).
    *

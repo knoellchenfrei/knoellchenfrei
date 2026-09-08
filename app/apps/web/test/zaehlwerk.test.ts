@@ -232,7 +232,7 @@ describe('der Katalog', () => {
  *
  * Die Karte färbt über `setFeatureState({ source, id })`, und `id` kam aus
  * `promoteId: 'zone'`, also aus dem Zonenschlüssel. In Hamburg tragen **44 von
- * 145 Flächen** den Schlüssel `-`, weil die Quelle dort keinen Namen vergibt;
+ * 145 Flächen** den Schlüssel `-`, weil die Quelle für sie keine Nummer führt;
  * dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten.
  *
  * Alle Flächen mit demselben Schlüssel teilten sich damit **einen**
@@ -287,7 +287,7 @@ describe('die Kennung einer Kartenfläche', () => {
 })
 
 /**
- * Wie eine Fläche heißt, der die Quelle keinen Namen gegeben hat.
+ * Wie eine Fläche heißt, für die die Quelle keine Zonennummer führt.
  *
  * Hamburg liefert für 44 seiner 145 Flächen den Schlüssel `-`. An neun Stellen
  * der Oberfläche stand daraufhin wörtlich „Zone -" — im Panel, in der Ansage

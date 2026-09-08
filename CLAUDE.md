@@ -394,8 +394,9 @@ wiederholt.
   kassiert.
 - **Ein Zonenschlüssel ist keine Kennung einer Fläche.** Die Karte färbte über
   `setFeatureState({ source, id })` mit `promoteId: 'zone'`. In Hamburg tragen
-  **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen
-  Namen —, dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten
+  **44 von 145 Flächen** den Schlüssel `-` — es sind die Flächen ohne
+  Bewohnerparkrecht, für die die Quelle im Feld `bwp_code` keine Nummer führt —,
+  dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten
   (A103: 9–20 und 9–23 Uhr) und eine mit verschiedenen Beträgen (E315: 3,50 €
   und 3,00 €). Alle Flächen mit gleichem Schlüssel teilten sich **einen**
   Zustandsplatz: Die Schleife schrieb 44-mal hinein, der letzte gewann, und

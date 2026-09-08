@@ -16,8 +16,9 @@ export interface LoadedZone {
    * Der Unterschied ist der Fehler, gegen den es sie gibt. Die Karte färbt
    * über `setFeatureState({ source, id })`, und `id` kam bis zum 8. September
    * aus `promoteId: 'zone'`, also aus dem Zonenschlüssel. In Hamburg tragen
-   * **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen
-   * Namen —, und weitere vier Zonen kommen in mehreren Stücken mit
+   * **44 von 145 Flächen** den Schlüssel `-` — es sind die Flächen ohne
+   * Bewohnerparkrecht, für die die Quelle im Feld `bwp_code` keine Nummer
+   * führt —, und weitere vier Zonen kommen in mehreren Stücken mit
    * *verschiedenen* Zeiten (A103: 9–20 und 9–23 Uhr; E315 sogar mit
    * verschiedenen Beträgen).
    *
