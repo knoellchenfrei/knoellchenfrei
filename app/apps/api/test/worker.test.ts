@@ -737,3 +737,153 @@ describe('der Deckel je Bündel', () => {
     expect(await response.json()).toEqual({ written: 3 })
   })
 })
+
+/**
+ * `GET /stats` — der einzige öffentliche Lesepfad der Nutzungsstatistik, und
+ * bis zum 8. September ohne einen einzigen Test.
+ *
+ * Gemessen mit v8 lag der Worker bei 75,3 % Zeilen; der grösste
+ * zusammenhängende ungetestete Block war genau dieser Handler. Er ist kurz,
+ * und gerade deshalb: Was hier steht, sind vier Entscheidungen, die man beim
+ * Umbauen leicht kaputtmacht — der ehrliche Leerstand, die zwei
+ * unterschiedlichen Cache-Zeiten und die Tatsache, dass der fertige Stand
+ * **wörtlich** aus dem KV kommt und nicht noch einmal durch `JSON.parse` und
+ * `JSON.stringify` läuft.
+ */
+describe('/stats', () => {
+  const kv = (wert: string | null): KVNamespace =>
+    ({ get: async () => wert, put: async () => undefined }) as unknown as KVNamespace
+
+  const hole = async (wert: string | null): Promise<Response> =>
+    worker.fetch(
+      new Request('https://api.example/stats', {
+        headers: { Origin: 'https://knoellchenfrei.de' },
+      }),
+      umgebung({ CACHE: kv(wert) })
+    )
+
+  it('sagt ehrlich, dass noch nichts gerechnet wurde', async () => {
+    const response = await hole(null)
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ erzeugtAm: null, leer: true })
+    // Kurz zwischengespeichert: Der erste Lauf kann jede Minute kommen.
+    expect(response.headers.get('Cache-Control')).toBe('public, max-age=60')
+  })
+
+  it('liefert den Stand wörtlich aus dem KV', async () => {
+    // Absichtlich mit einer Zahl, die durch parse/stringify ihre Schreibweise
+    // verlöre — der Handler darf den Körper nicht anfassen.
+    const stand = '{"erzeugtAm":"2026-09-08T02:00:00.000Z","kopf":{"heute":1.0}}'
+    const response = await hole(stand)
+    expect(response.status).toBe(200)
+    expect(await response.text()).toBe(stand)
+    expect(response.headers.get('Content-Type')).toBe('application/json; charset=utf-8')
+    expect(response.headers.get('Cache-Control')).toBe('public, max-age=300')
+  })
+
+  it('trägt die CORS-Kopfzeilen — samt `Vary`, sonst mischt ein Zwischenspeicher zwei Herkünfte', async () => {
+    const response = await hole('{"erzeugtAm":null}')
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe('https://knoellchenfrei.de')
+    expect(response.headers.get('Vary')).toBe('Origin')
+  })
+
+  it('ist öffentlich — der Riegel steht vor der Seite, nicht vor dem Worker', async () => {
+    // Ohne Origin, wie ein Aufruf ausserhalb eines Browsers. Das ist eine
+    // Entscheidung und keine Lücke: Deshalb steckt die k-Schwelle im Rollup
+    // und nicht in der Anzeige.
+    const response = await worker.fetch(
+      new Request('https://api.example/stats'),
+      umgebung({ CACHE: kv('{"erzeugtAm":null}') })
+    )
+    expect(response.status).toBe(200)
+  })
+})
+
+/**
+ * Der Weg, für den es den Bot gibt: ein gesendeter Standort wird zur Meldung.
+ *
+ * Die Coverage-Messung vom 8. September hat ihn als grössten ungetesteten
+ * Block im Worker ausgewiesen. Die drei vorhandenen Tests decken den Riegel ab
+ * und der Beschuss die Fehlerfälle — der **Erfolgsfall** war ungeprüft, und er
+ * ist der einzige, bei dem etwas in die Datenbank geht.
+ */
+describe('eine Meldung über Telegram', () => {
+  function botAttrappe(bereitsGemeldet: number) {
+    const anweisungen: string[] = []
+    const db = {
+      prepare: (sql: string) => {
+        anweisungen.push(sql)
+        const self = {
+          bind: () => self,
+          run: async () => ({ success: true }),
+          first: async () => (sql.includes('COUNT(*)') ? { n: bereitsGemeldet } : null),
+          all: async () => ({ results: [] }),
+        }
+        return self
+      },
+      batch: async (a: unknown[]) => a.map(() => ({ results: [] })),
+    }
+    return { db: db as unknown as D1Database, anweisungen }
+  }
+
+  /** Ein Punkt mitten in Berlin — der Parser entscheidet daran die Stadt. */
+  const standort = (lat = 52.52, lon = 13.405): string =>
+    JSON.stringify({
+      message: { from: { id: 4711 }, chat: { id: 4711 }, location: { latitude: lat, longitude: lon } },
+    })
+
+  const zustellen = async (body: string, db: D1Database): Promise<{ antworten: string[]; response: Response }> => {
+    const antworten: string[] = []
+    vi.stubGlobal('fetch', (_url: string, init: { body?: string }) => {
+      antworten.push(String(JSON.parse(init.body ?? '{}').text ?? ''))
+      return Promise.resolve(new Response('{"ok":true}'))
+    })
+    const response = await worker.fetch(
+      post('/telegram', {
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Telegram-Bot-Api-Secret-Token': 'geheim',
+        },
+      }),
+      umgebung({ DB: db, TELEGRAM_TOKEN: 'tok', TELEGRAM_SECRET: 'geheim', CLIENT_SALT: 'salz' })
+    )
+    vi.unstubAllGlobals()
+    return { antworten, response }
+  }
+
+  it('schreibt die Sichtung und bestätigt sie', async () => {
+    const { db, anweisungen } = botAttrappe(0)
+    const { antworten, response } = await zustellen(standort(), db)
+    expect(response.status).toBe(200)
+    expect(anweisungen.some((sql) => /INSERT INTO sightings/.test(sql))).toBe(true)
+    expect(antworten.join(' ')).toContain('Notiert')
+    // Der Satz nennt die Frist, weil eine Meldung ohne Verfallsdatum eine
+    // andere Zusage wäre als die, die das Projekt gibt.
+    expect(antworten.join(' ')).toContain('90 Minuten')
+  })
+
+  it('speichert die Absenderkennung nur gehasht — und die Chat-Kennung gar nicht', async () => {
+    const { db, anweisungen } = botAttrappe(0)
+    await zustellen(standort(), db)
+    // Weder die rohe Telegram-Nutzerkennung noch die Chat-Kennung dürfen in
+    // einer Anweisung stehen.
+    expect(anweisungen.join(' ')).not.toContain('4711')
+  })
+
+  it('lehnt ab, sobald die Stundengrenze erreicht ist — und sagt warum', async () => {
+    const { db, anweisungen } = botAttrappe(99)
+    const { antworten, response } = await zustellen(standort(), db)
+    expect(response.status).toBe(200)
+    expect(anweisungen.some((sql) => /INSERT INTO sightings/.test(sql))).toBe(false)
+    expect(antworten.join(' ')).toMatch(/reicht es/)
+  })
+
+  it('nimmt einen Standort ausserhalb aller Städte nicht als Meldung', async () => {
+    const { db, anweisungen } = botAttrappe(0)
+    // Golf von Guinea — der Punkt, in dem vertauschte Achsen landen.
+    const { response } = await zustellen(standort(0.0, 0.0), db)
+    expect(response.status).toBe(200)
+    expect(anweisungen.some((sql) => /INSERT INTO sightings/.test(sql))).toBe(false)
+  })
+})

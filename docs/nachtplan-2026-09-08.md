@@ -61,6 +61,18 @@ woanders:
 Von 580 auf 602 Tests, ohne dass die Zahl in `core` sich groß bewegt hätte —
 die Lücken lagen im Worker.
 
+**Zweite Runde, am Ende der Nacht und diesmal gemessen statt vermutet.** Für
+`apps/api` gab es nie eine Abdeckungsmessung; nachgeholt mit v8 stand der
+Worker bei **75,3 %** Zeilen. Die beiden grössten zusammenhängenden Lücken
+waren nicht die verwinkelten Stellen, sondern zwei Wege, die man für
+selbstverständlich hält: `GET /stats` — der einzige öffentliche Lesepfad der
+Statistik — und der **Erfolgsfall** des Telegram-Bots, also genau der Weg, für
+den es ihn gibt. Beide jetzt geprüft, dazu vierzehn Sorten Unfug hinter dem
+Bot-Geheimnis: Telegram wiederholt jede Zustellung ohne 2xx unbegrenzt, ein
+geworfener Fehler wäre also keine Panne, sondern eine Schleife.
+
+Danach **85,4 %** Zeilen und 96,4 % Funktionen. Von 602 auf 663 Tests.
+
 ## C — Fehlerjagd
 
 Systematisch statt zufällig: Grenzfälle im Worker, in der App, in den Daten.
