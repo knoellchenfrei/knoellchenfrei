@@ -7,5 +7,5 @@
     "types": ["vite/client"],
     "resolveJsonModule": true
   },
-  "include": ["src", "functions", "test", "vite.config.ts"]
+  "include": ["src", "functions", "statistik", "test", "vite.config.ts"]
 }

@@ -145,6 +145,13 @@ Lücke sichtbar, statt als Null durchzugehen.
 Kostet fast nichts: Der Katalog liegt in `core`, die Seite kennt ihn schon für
 die Anzeigenamen.
 
+> **Eingebaut am 9. September**: Abschnitt „Bisher nie gezählt" auf der
+> Statistikseite, aus `statistik/luecken.ts` gegen `EVENT_NAMES` aus `core`,
+> mit zwei Tests. Er erscheint nur, wenn überhaupt etwas gezählt wurde — auf
+> einem leeren Stand fehlt schlicht alles. Nebenbei: `statistik/` stand bis
+> dahin nicht im `include` der `tsconfig.json` der Web-App und wurde von
+> keinem Compiler angesehen; jetzt schon.
+
 ## 13. Ein Datum an den Daten, sichtbar in der App
 
 Die App sagt „Daten: <Quelle> · <n> Zonen", aber nicht, **wann** sie gezogen

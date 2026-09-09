@@ -11,6 +11,7 @@
  */
 
 import './stil.css'
+import { nieGezaehlt } from './luecken.js'
 
 interface Zeile {
   n: number
@@ -211,6 +212,23 @@ function zeichnen(stand: Stand): HTMLElement {
       )
     )
   )
+
+  // Was im Zeitraum keine einzige Zeile hat, steht hier beim Namen — sonst
+  // wäre eine Lücke im Zählwerk von „macht niemand" nicht zu unterscheiden.
+  // Nur, wenn überhaupt etwas gezählt wurde: Auf einem leeren Stand fehlte
+  // schlicht alles, und das sagt die Seite schon darüber.
+  const luecken = stand.proName.length > 0 ? nieGezaehlt(stand.proName) : []
+  if (luecken.length > 0) {
+    const liste = el('ul', 'nicht')
+    for (const name of luecken) liste.append(el('li', undefined, NAMEN[name] ?? name))
+    wurzel.append(
+      abschnitt(
+        'Bisher nie gezählt',
+        liste,
+        `Diese Ereignisse stehen im Katalog, hatten in den letzten ${stand.tage} Tagen aber keine einzige Zeile. Entweder macht das niemand — oder die Zählung dafür kommt nicht an.`
+      )
+    )
+  }
 
   /**
    * Die Aufschlüsselung: nicht wie oft, sondern **was**.
