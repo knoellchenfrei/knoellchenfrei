@@ -36,15 +36,24 @@ pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 170 End-to-End-Tests
 ```
 
-Und vier Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
-aus `app/`. Alle vier laufen in der CI, und jede hat einen Vorfall hinter sich:
+Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
+aus `app/`. Alle fünf laufen in der CI, und jede hat einen Vorfall hinter sich:
 
 ```bash
 ./scripts/sprache-pruefen.sh    # Prosa mit Umlauten, Bezeichner ohne
 node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen, nichts verwaist
 ./scripts/namen-pruefen.sh      # Ressourcennamen stimmen überein
 ./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
+shellcheck scripts/*.sh app/packages/ingest/scripts/*.sh   # die Shell-Skripte
 ```
+
+**`shellcheck` stand bis zum 9. September nur in der CI und in keiner
+Anleitung** — und genau deshalb ging ein neues Skript rot hinaus, ohne dass es
+jemand vor dem Push gesehen hätte. Zweimal `SC2016`: Backticks in einer
+einfach gequoteten `printf`-Zeichenkette, für shellcheck eine
+Kommandosubstitution, die nicht expandiert. Nur ein Hinweis, aber die Prüfung
+bricht trotzdem ab. Auf macOS liegt das Werkzeug über Homebrew, in der CI kommt
+es aus `apt`; beide finden dasselbe.
 
 Und **zwei weitere von Hand**, absichtlich nicht in der CI — beide brauchen
 etwas, das ein Workflow nicht hat:
