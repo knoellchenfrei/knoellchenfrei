@@ -31,21 +31,22 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1117 Unit-Tests (core, api, web)
+pnpm test                                           # 1120 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 196 End-to-End-Tests
+cd apps/web && npx playwright test                  # 200 End-to-End-Tests
 ```
 
-Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
-aus `app/`. Alle fünf laufen in der CI, und jede hat einen Vorfall hinter sich:
+Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
+aus `app/`. Alle sechs laufen in der CI, und jede hat einen Vorfall hinter sich:
 
 ```bash
 ./scripts/sprache-pruefen.sh    # Prosa mit Umlauten, Bezeichner ohne
 node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen, nichts verwaist
 ./scripts/namen-pruefen.sh      # Ressourcennamen stimmen überein
 ./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
+./scripts/commit-pruefen.sh     # Betreffs seit origin/main: Conventional Commits, ASCII
 shellcheck scripts/*.sh app/packages/ingest/scripts/*.sh   # die Shell-Skripte
 ```
 
@@ -87,7 +88,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (778), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (237, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (240, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, drei Komponenten mit jsdom) und `packages/ingest` (16, die zwei
 Wächter des Artifact-Baus und der Datenstand). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -104,7 +105,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1117 E2E_COUNT=196 npx tsx src/build-badges.ts
+TEST_COUNT=1120 E2E_COUNT=200 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -158,7 +159,9 @@ wiederholt.
   nicht maskiert, auch nicht in einer Fehlermeldung. Wer über sie schreiben
   will, umschreibt sie.
 - **Commit-Nachrichten gehen über ein Heredoc mit gequotetem Begrenzer, nicht
-  über `-m "…"`.** In einem doppelt gequoteten Argument führt die Shell alles
+  über `-m "…"`.** Und seit dem 9. September in der Form `typ(bereich):
+  betreff`, Betreff in ASCII — `CONTRIBUTING.md`, „Commit-Nachrichten";
+  `./scripts/commit-pruefen.sh` vor dem Push, die CI prüft jeden Push. In einem doppelt gequoteten Argument führt die Shell alles
   aus, was zwischen Backticks steht — und Backticks sind in diesem Projekt die
   übliche Auszeichnung für Code. Am 8. September verschwand so ein
   `` `const gueltig =` `` aus einer Commit-Nachricht und hinterliess ein Loch

@@ -181,6 +181,16 @@ export function App() {
   const mapRef = useRef<MapLibreMap | null>(null)
   const carMarkerRef = useRef<maplibregl.Marker | null>(null)
   const meMarkerRef = useRef<maplibregl.Marker | null>(null)
+  /**
+   * Ob der Anker vom Standort kommt (dann wandert er beim Gehen mit) oder
+   * von einem Tipp auf die Karte (dann bleibt er, wo der Finger war).
+   */
+  const anchorFromGps = useRef(false)
+  /** Laufende `watchPosition`-Kennung, solange der Punkt dem Gerät folgt. */
+  const watchIdRef = useRef<number | null>(null)
+  /** Ob gefolgt werden soll — überlebt das Anhalten bei verdecktem Tab. */
+  const trackingRef = useRef(false)
+  const zonesRef = useRef<LoadedZone[]>([])
 
   const [ready, setReady] = useState(false)
   const [zones, setZones] = useState<LoadedZone[]>([])
@@ -236,6 +246,8 @@ export function App() {
   } | null>(null)
   const [stats, setStats] = useState<Stats>({ online: null, today: null })
   const [reporting, setReporting] = useState(false)
+  /** Vom Kartenknopf geöffnet: Das Blatt stellt den Standort vor die angetippte Stelle. */
+  const [reportViaFab, setReportViaFab] = useState(false)
   // Der eigene Vordialog vor dem des Browsers. Erscheint einmal; die
   // Antwort selbst liegt beim Browser, hier steht nur, dass gefragt wurde.
   const [askLocation, setAskLocation] = useState(false)
@@ -882,6 +894,7 @@ export function App() {
               track('zone.answer', zoneAnswer(hit.properties, Date.now()))
               track('zone.source', 'karte')
               setAnnouncement(describeZone(hit.properties, Date.now()))
+              anchorFromGps.current = false
               setAnchor([event.lngLat.lng, event.lngLat.lat])
               setError(null)
               // Picking a zone is a request to see its details, so open the
@@ -906,6 +919,7 @@ export function App() {
           // anchor, so "park here" works on an unmetered street too.
           map.on('click', (event) => {
             if (Date.now() - suppressZoneClick.current < 400) return
+            anchorFromGps.current = false
             setAnchor([event.lngLat.lng, event.lngLat.lat])
             // A tap that hits no zone also ends the previous selection. The
             // panel otherwise kept describing the last zone while "Hier
@@ -1098,11 +1112,91 @@ export function App() {
   useEffect(() => {
     const map = mapRef.current
     if (map === null || position === null) return
-    meMarkerRef.current?.remove()
+    // Beim Gehen kommt alle paar Sekunden ein Punkt; der Marker wandert,
+    // statt jedes Mal neu in den Baum zu kommen.
+    if (meMarkerRef.current !== null) {
+      meMarkerRef.current.setLngLat(position)
+      return
+    }
     const element = document.createElement('div')
     element.className = 'marker marker--me'
     meMarkerRef.current = new maplibregl.Marker({ element }).setLngLat(position).addTo(map)
   }, [position])
+
+  useEffect(() => {
+    zonesRef.current = zones
+  }, [zones])
+
+  /**
+   * Der blaue Punkt folgt dem Gerät, sobald es einmal einen Standort gab.
+   *
+   * Bis zum 9. September stand er, wo „Wo bin ich?" ihn hingesetzt hatte;
+   * wer lief, drückte den Knopf wieder und wieder. Ein `watchPosition` läuft
+   * jetzt, solange die Seite sichtbar ist (verdeckt kostet es nur Akku),
+   * und rückt den Punkt nach. Der Anker — und damit das Zonenblatt — geht
+   * nur mit, wenn er vom Standort kam; wer auf die Karte getippt hat, hat
+   * etwas gemeint, das nicht mitlaufen soll.
+   */
+  const startTracking = useCallback(() => {
+    if (!('geolocation' in navigator) || watchIdRef.current !== null) return
+    trackingRef.current = true
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      ({ coords }) => {
+        const point: [number, number] = [coords.longitude, coords.latitude]
+        setPosition(point)
+        if (!anchorFromGps.current) return
+        setAnchor(point)
+        const found = resolveZone(zonesRef.current, point)
+        setSelected(found?.zone?.properties ?? null)
+        setNearbyMetres(found?.metres ?? null)
+      },
+      (cause) => {
+        // Entzogene Berechtigung: nicht weiter versuchen. Ein Aussetzer
+        // (Timeout, kein Signal) heilt sich von selbst, der Watch bleibt.
+        if (cause.code === cause.PERMISSION_DENIED) stopTracking(true)
+      },
+      { enableHighAccuracy: true, maximumAge: 5_000, timeout: 20_000 },
+    )
+  }, [])
+
+  function stopTracking(forGood: boolean): void {
+    if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current)
+    watchIdRef.current = null
+    if (forGood) trackingRef.current = false
+  }
+
+  useEffect(() => {
+    const onVisibility = (): void => {
+      if (document.hidden) stopTracking(false)
+      else if (trackingRef.current) startTracking()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      stopTracking(true)
+    }
+  }, [startTracking])
+
+  /**
+   * Der Standort für „Kontrolle melden": geholt, sobald der Knopf gedrückt
+   * ist, und im Blatt als erste Wahl gezeigt — bestätigen statt suchen.
+   * Nur, wenn die Frage nach dem Standort schon einmal gestellt war: Der
+   * native Dialog kommt in dieser App nie ohne den eigenen Vordialog.
+   * Der Anker bleibt unberührt; das Blatt bevorzugt den Standort selbst.
+   */
+  const positionForReport = useCallback(() => {
+    if (!('geolocation' in navigator) || !locationAsked()) return
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setLocating(false)
+        setPosition([coords.longitude, coords.latitude])
+        startTracking()
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 30_000 },
+    )
+  }, [startTracking])
 
   // ------------------------------------------------------------- actions
   const locate = useCallback(() => {
@@ -1116,8 +1210,10 @@ export function App() {
       ({ coords }) => {
         const point: [number, number] = [coords.longitude, coords.latitude]
         setPosition(point)
+        anchorFromGps.current = true
         setAnchor(point)
         setLocating(false)
+        startTracking()
         const found = resolveZone(zones, point)
         const hit = found?.zone ?? null
         setSelected(hit?.properties ?? null)
@@ -1170,7 +1266,7 @@ export function App() {
       },
       { enableHighAccuracy: true, timeout: 10_000, maximumAge: 30_000 }
     )
-  }, [zones])
+  }, [zones, startTracking])
 
 
   /**
@@ -1428,6 +1524,7 @@ export function App() {
     const { minLon, minLat, maxLon, maxLat } = zone.bounds
     // Not the bounding-box centre: for an L-shaped or ring-shaped zone that
     // point lies outside it, and the car was recorded in a neighbour.
+    anchorFromGps.current = false
     setAnchor([...representativePoint(zone)])
     // The sidebar sits to the right on a wide screen and below on a phone, so
     // the padding has to follow it. A fixed 420px right inset exceeded the whole
@@ -1846,6 +1943,8 @@ export function App() {
           zones={zones}
           anchor={anchor}
           position={position}
+          locating={locating}
+          preferGps={reportViaFab}
           mapCentre={(mapRef.current?.getCenter().toArray() as Position | undefined) ?? null}
           onFeedback={
             feedback === null
@@ -2012,6 +2111,7 @@ export function App() {
             // Auf dem Handy deckt das Panel die untere Kartenhälfte ab. Wer
             // im Sheet auf "Karte" ausweichen will, braucht sie frei.
             setPanelOpen(false)
+            setReportViaFab(false)
             setReporting(true)
           }}
           onConfirm={(id) => vote(id, 'confirmations')}
@@ -2118,6 +2218,8 @@ export function App() {
         className="report-fab"
         onClick={() => {
           setPanelOpen(false)
+          setReportViaFab(true)
+          positionForReport()
           setReporting(true)
         }}
         inert={modal || undefined}

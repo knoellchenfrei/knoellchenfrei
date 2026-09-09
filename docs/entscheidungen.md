@@ -425,6 +425,27 @@ für Byte, und seine Markierungen der letzten 28 Tage gelten weiter. Der Preis
 ist eine Sonderrolle für Berlin im Code, die im Kommentar von `heatmap.ts`
 steht — billiger als eine Migration, die stillschweigend nicht läuft.
 
+## Der Standort folgt beim Gehen, der Anker nur, wenn er vom Standort kam
+
+**Entschieden am 9. September**, auf zwei Wünsche des Betreibers: „Kontrolle
+melden" soll den Standort selbst holen und zur Bestätigung zeigen, und der
+blaue Punkt soll beim Gehen mitlaufen, statt bei jedem Schritt einen Druck auf
+„Wo bin ich?" zu verlangen.
+
+Ein `watchPosition` läuft, sobald es einmal einen Standort gab, und pausiert,
+solange die Seite verdeckt ist — Akku. Der Punkt wandert immer. Der **Anker**,
+und mit ihm das Zonenblatt, wandert nur mit, wenn er vom Standort kam: Wer
+auf die Karte getippt hat, hat einen Ort gemeint, und der soll nicht unter
+dem Finger weglaufen. Die Karte selbst folgt nicht; ein Ausschnitt, der sich
+gegen das Schwenken wehrt, ist die schlechtere Karte.
+
+Der Kartenknopf holt den Standort nur, wenn die eigene Standortfrage schon
+einmal gestellt war: Der native Dialog kommt in dieser App nie ohne den
+Vordialog, auch nicht auf dem Umweg über das Melden. Im Blatt steht der
+Standort dann vorn und vorausgewählt, mit Zone und Bezirk — bestätigen statt
+suchen. Aus dem Blatt heraus bleibt die angetippte Stelle vorn, denn dort hat
+jemand gezeigt.
+
 ## Als App ablegen
 
 **Getrennte Symbole für `any` und `maskable`.** Vorher war ein einziges SVG als
@@ -548,6 +569,34 @@ kann** — also spätestens, wenn die App öffentlich ist und jemand außer dem
 Betreiber sie einsetzt. Dann gehören Tag, Release und CHANGELOG zusammen
 eingeführt, nicht einzeln.
 
+**Nachtrag vom 9. September:** Die Commit-Betreffs folgen seitdem Conventional
+Commits (nächster Abschnitt). Damit ist die Voraussetzung da, ein CHANGELOG
+aus der Historie zu *erzeugen*, statt ihn abzuschreiben — die Entscheidung
+selbst bleibt, bis es eine Version gibt.
+
+## Conventional Commits
+
+**Entschieden am 9. September 2026, auf Wunsch des Betreibers.** Bis dahin
+hatte die Historie gute Betreffs und keine Form: deutsche Sätze, oft mit
+Umlauten, obwohl `CONTRIBUTING.md` ASCII verlangte — eine Regel, die niemand
+prüfte, wurde nicht gehalten.
+
+Die Form ist `typ(bereich): betreff`. Die Typen sind englisch, weil die
+Werkzeuge, die die Form lesen, sie so kennen; der Betreff bleibt deutsch und
+im Imperativ, wie bisher, und in ASCII, wie die Bezeichner-Regel es für alles
+verlangt, was in Werkzeugen als Zeile steht. Der Rumpf ändert sich nicht: Er
+trägt weiter die Begründung, mit Umlauten.
+
+Was die Form kauft: einen Betreff, den eine Maschine nach Art sortieren kann —
+`fix` von `docs`, `feat` von `chore` — und damit den Weg zu einem erzeugten
+CHANGELOG, sobald es Versionen gibt. Was sie kostet: ein Präfix je Commit und
+`scripts/commit-pruefen.sh`, das in der CI jeden Push und jeden Pull Request
+über den gepushten Bereich hält. Die Historie davor bleibt unangetastet — sie
+umzuschreiben wäre teurer als jeder Nutzen, und sie ist die Wahrheit über das,
+was war. Dependabot bekommt `build(deps)` und `ci(actions)` als Präfix; seine
+Betreffs dürfen länger als 72 Zeichen sein, weil zwei Paketnamen und zwei
+Versionen niemand kürzt.
+
 ## Die Kontrolldichte ist voreingestellt an
 
 *7. September 2026.*
@@ -596,7 +645,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 1117 Unit-Tests und 99,9 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 1120 Unit-Tests und 99,9 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 

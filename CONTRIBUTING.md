@@ -7,7 +7,7 @@ nvm use            # liest .nvmrc — Node 22, dieselbe Zahl wie in der CI
 corepack enable    # holt pnpm in der festgelegten Version
 cd app
 pnpm install
-pnpm test          # 1117 Unit-Tests
+pnpm test          # 1120 Unit-Tests
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
 ```
@@ -170,11 +170,29 @@ schreiben, dann neu bauen.
 
 ## Commit-Nachrichten
 
-Erste Zeile im Imperativ, unter 72 Zeichen, **deutsch und in ASCII** (siehe
-oben: `Kacheln fuer alle vier Staedte`). Der Rumpf erklärt, warum die Änderung
-nötig war — welches Verhalten falsch war und woran man das gemerkt hat.
+**Conventional Commits, seit dem 9. September:** `typ(bereich): betreff`.
 
-Zwei Sorten Nachrichten halten sich nicht daran, und das bleibt so: die von
-**Dependabot** erzeugten und die Standardtexte von `git merge`. Beide kommen
-von Werkzeugen; sie umzuschreiben hieße, den Automaten zu verstecken, der sie
-geschrieben hat (Audit-Punkt M-067).
+```
+feat(web): Kontrolle melden holt den Standort
+fix(core): Status folgt der Zustimmung, nicht dem Alter
+docs(todo): Datenstand als erledigt eintragen
+ci: Commit-Betreffs pruefen
+```
+
+- **Typ** aus `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `build`,
+  `ci`, `chore`, `revert`, `style` — englisch, weil die Werkzeuge, die die
+  Form lesen, sie so kennen.
+- **Bereich** in Klammern, optional, klein, ASCII: `web`, `core`, `api`,
+  `ingest`, `docs`, `hamburg`, … Ein `!` vor dem Doppelpunkt kennzeichnet
+  einen Bruch, der bestehende Daten oder Schnittstellen ändert.
+- **Betreff** deutsch, im Imperativ, unter 72 Zeichen, **in ASCII** —
+  `Staedte`, nicht `Städte` (die Bezeichner-Regel oben; der Betreff ist eine
+  Zeile in Werkzeugen, keine Prosa). Bis zum 9. September gingen Umlaute
+  hier still durch; `scripts/commit-pruefen.sh` hält seitdem beides.
+- **Rumpf** wie bisher, mit Umlauten: warum die Änderung nötig war — welches
+  Verhalten falsch war und woran man das gemerkt hat.
+
+Merge-Commits und `Revert "…"` sind Werkzeugausgaben und bleiben, wie das
+Werkzeug sie schreibt; Dependabot schreibt `build(deps): bump …`. Vor dem
+Push: `./scripts/commit-pruefen.sh` prüft alles seit `origin/main`, die CI
+prüft jeden Push und jeden Pull Request über denselben Bereich.

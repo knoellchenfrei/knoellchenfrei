@@ -1204,3 +1204,50 @@ test.describe('Danksagung', () => {
     await expect(link).toHaveAttribute('href', 'https://freifahren.org')
   })
 })
+
+test.describe('Standort beim Melden und beim Gehen', () => {
+  /** Potsdamer Platz, mitten in einer Zone. */
+  const START = { latitude: 52.5096, longitude: 13.3765 }
+
+  /**
+   * Der Betreiber, 9. September: „Kontrolle melden" soll den Standort selbst
+   * holen und kurz zeigen, damit man ihn bestätigt — so, als hätte man erst
+   * „Wo bin ich?" gedrückt. Der Vordialog gilt als beantwortet; sonst fragt
+   * die App nie nach dem Standort, und das soll sie auch hier nicht.
+   */
+  test('holt beim Kartenknopf den Standort und stellt ihn zur Bestätigung vor', async ({ page }) => {
+    await page.context().grantPermissions(['geolocation'])
+    await page.context().setGeolocation(START)
+    await page.addInitScript(() => localStorage.setItem('knoellchenfrei.locationAsked.v1', 'true'))
+    await ready(page)
+    await page.getByRole('button', { name: 'Kontrolle melden' }).click()
+    const sheet = page.getByRole('dialog', { name: 'Sichtung melden' })
+    await expect(sheet).toBeVisible()
+    const erste = sheet.locator('.sheet__option').first()
+    await expect(erste).toContainText('mein Standort', { timeout: 10_000 })
+    await expect(erste).toHaveClass(/sheet__option--on/)
+    await expect(sheet.locator('.sheet__submit')).toBeEnabled()
+    await expect(sheet.locator('.sheet__submit')).toContainText(/^Melden — Zone/)
+  })
+
+  /**
+   * Und danach folgt der Punkt: Wer einmal „Wo bin ich?" gedrückt hat, soll
+   * beim Gehen nicht wieder drücken müssen. Playwright meldet einen neuen
+   * Standort an `watchPosition`, und der Marker hat zu wandern.
+   */
+  test('lässt den blauen Punkt mitlaufen, ohne dass man erneut drückt', async ({ page }) => {
+    await page.context().grantPermissions(['geolocation'])
+    await page.context().setGeolocation(START)
+    await ready(page)
+    await page.getByRole('button', { name: 'Wo bin ich?' }).click()
+    const marker = page.locator('.marker--me')
+    await expect(marker).toBeVisible({ timeout: 15_000 })
+    await page.waitForTimeout(800)
+    const vorher = (await marker.boundingBox())!
+
+    await page.context().setGeolocation({ latitude: START.latitude, longitude: START.longitude + 0.003 })
+    await expect
+      .poll(async () => (await marker.boundingBox())!.x - vorher.x, { timeout: 10_000 })
+      .toBeGreaterThan(20)
+  })
+})

@@ -13,6 +13,13 @@ interface Props {
   position: Position | null
   /** Fallback for "near here": what the map is currently showing. */
   mapCentre: Position | null
+  /** Ob gerade ein Standort geholt wird — dann sagt das Blatt das, statt zu schweigen. */
+  locating: boolean
+  /**
+   * Vom Kartenknopf geöffnet: Der Standort steht vor der angetippten Stelle.
+   * Aus dem Blatt heraus bleibt der Tipp vorn, denn dort hat jemand gezeigt.
+   */
+  preferGps: boolean
   onSubmit: (point: Position) => void
   onClose: () => void
   /** Null, wenn die Rückmeldung nirgendwo ankäme; dann fehlt der Knopf. */
@@ -45,6 +52,8 @@ export function ReportSheet({
   anchor,
   position,
   mapCentre,
+  locating,
+  preferGps,
   onSubmit,
   onClose,
   onFeedback,
@@ -94,10 +103,14 @@ export function ReportSheet({
   const fromGps = useMemo<Choice | null>(() => {
     if (position === null) return null
     const zone = zoneAt(zones, position)
+    // Die Zone als Name, der Standort als Herkunft: Der Absenden-Knopf sagt
+    // dann „Melden — Zone 12" statt „Melden — Mein Standort", und das ist
+    // die Zeile, die jemand vor dem Bestätigen liest.
     return {
       key: 'gps',
-      label: 'Mein Standort',
-      detail: zone === null ? 'außerhalb der Parkzonen' : zoneKurz(zone.properties),
+      label: zone === null ? 'Mein Standort' : zoneKurz(zone.properties),
+      detail:
+        zone === null ? 'außerhalb der Parkzonen · mein Standort' : `${zone.properties.district} · mein Standort`,
       point: position,
     }
   }, [position, zones])
@@ -143,7 +156,9 @@ export function ReportSheet({
       .map((zone) => zoneChoice(zone, zone.properties.district))
   }, [zones, query])
 
-  const suggestions = [fromMap, fromGps].filter((choice): choice is Choice => choice !== null)
+  const suggestions = (preferGps ? [fromGps, fromMap] : [fromMap, fromGps]).filter(
+    (choice): choice is Choice => choice !== null,
+  )
   const selected = picked ?? suggestions[0] ?? null
 
   const option = (choice: Choice): ReactElement => (
@@ -185,6 +200,11 @@ export function ReportSheet({
           Wo <span className="sheet__required">erforderlich</span>
         </h3>
 
+        {locating && position === null && (
+          <p className="sheet__hint" role="status">
+            Standort wird ermittelt …
+          </p>
+        )}
         {suggestions.length > 0 && <ul className="sheet__options">{suggestions.map(option)}</ul>}
 
         <input

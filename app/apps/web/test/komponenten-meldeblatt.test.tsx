@@ -60,6 +60,8 @@ function zeichne(props: Partial<Parameters<typeof ReportSheet>[0]> = {}) {
       anchor={null}
       position={null}
       mapCentre={null}
+      locating={false}
+      preferGps={false}
       onSubmit={onSubmit}
       onClose={() => undefined}
       onFeedback={null}
@@ -103,5 +105,26 @@ describe('ReportSheet', () => {
     const [punkt] = onSubmit.mock.calls[0] as [[number, number]]
     // Ein Punkt in der gewählten Zone, nicht die angetippte Stelle.
     expect(punkt[0]).toBeGreaterThan(13.415)
+  })
+
+  // Vom Kartenknopf: Der Betreiber will den Standort sehen und bestätigen,
+  // nicht suchen — auch wenn vorher irgendwo auf die Karte getippt wurde.
+  it('stellt vom Kartenknopf aus den Standort vor die angetippte Stelle', () => {
+    zeichne({ anchor: [13.421, 52.521], position: [13.401, 52.521], preferGps: true })
+    const optionen = screen.getAllByRole('button').filter((b) => b.className.includes('sheet__option'))
+    expect(optionen[0]?.textContent).toContain('mein Standort')
+    expect(optionen[0]?.textContent).toContain('Zone 12')
+    expect(screen.getByRole('button', { name: /^Melden — Zone 12/ })).toHaveProperty('disabled', false)
+  })
+
+  it('lässt aus dem Blatt heraus die angetippte Stelle vorn', () => {
+    zeichne({ anchor: [13.421, 52.521], position: [13.401, 52.521], preferGps: false })
+    const optionen = screen.getAllByRole('button').filter((b) => b.className.includes('sheet__option'))
+    expect(optionen[0]?.textContent).toContain('angetippt')
+  })
+
+  it('sagt, dass der Standort noch geholt wird, statt zu schweigen', () => {
+    zeichne({ locating: true })
+    expect(screen.getByRole('status').textContent).toContain('Standort wird ermittelt')
   })
 })
