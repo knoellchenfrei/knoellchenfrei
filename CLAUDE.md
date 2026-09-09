@@ -35,7 +35,7 @@ pnpm test                                           # 1120 Unit-Tests (core, api
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 200 End-to-End-Tests
+cd apps/web && npx playwright test                  # 198 End-to-End-Tests
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -105,7 +105,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1120 E2E_COUNT=200 npx tsx src/build-badges.ts
+TEST_COUNT=1120 E2E_COUNT=198 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -858,6 +858,39 @@ wiederholt.
   sichtbar bleibt (und wie viele Sterne sie hat), und die Zustimmung allein,
   ob sie bestätigt ist. Nachgerechnet, nicht gefühlt: die Tabelle mit neun
   Fällen steht in `core/test/sighting.test.ts`.
+- **MapLibre klappt die Quellenangabe wieder auf, sobald sich ihr Text
+  ändert — ein einmaliges Zuklappen hält nur ohne Vektorkacheln.** Die App
+  entfernte `maplibregl-compact-show` einmal nach dem Kartenaufbau. Mit den
+  Rasterkacheln reichte das; mit dem eigenen Archiv meldet die
+  Vektorquelle ihre Attribution kurz danach, MapLibre klappt auf, und beim
+  Betreiber war das „i" „initial ausgefahren" — in jedem Bildschirmfoto der
+  E2E-Suite aber zu, weil die gegen Rasterkacheln misst. Gefunden, als das
+  Doku-Bild vom Kachelarchiv die Pille offen zeigte und ein Wartepunkt auf
+  „zugeklappt" 45 Sekunden ins Leere lief. Seitdem hält ein
+  MutationObserver sie zu, bis der Mensch sie das erste Mal berührt; ab da
+  gehört sie ihm. Und die Bildskripte warten auf genau dieses Signal, statt
+  auf eine feste Zeit — das Übersichtsbild hatte vorher eine Karte ohne
+  eine einzige Zone, aufgenommen 1,2 Sekunden nach der Herkunftszeile.
+
+## Balance: Tokens und Rechenminuten
+
+Seit dem 9. September abends, auf Wunsch des Betreibers: sparsam, ohne an
+Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
+
+- **Unit-Tests und Typprüfung bei jeder Änderung** — Sekunden, immer.
+- **E2E gezielt beim Bauen** (`npx playwright test -g "…"`), **die volle
+  Suite einmal vor jedem Push auf `main`** — nicht vor jedem Commit. Mehrere
+  zusammengehörige Commits gehen in einem Push; so läuft die Suite lokal
+  einmal und in der CI einmal statt je Commit.
+- **CI:** `concurrency` bricht überholte Läufe desselben Zweigs ab; die
+  E2E-Suite läuft auf `main` und in Pull Requests, nicht auf jedem Push eines
+  Arbeitszweigs. Alles andere (Typen, Tests, Coverage, Sicherheit, Skripte,
+  Doku) läuft weiter überall.
+- **Tokens:** Keine Zwischenberichte; eine kuratierte Zusammenfassung am
+  Ende. Dateien mit `grep` und `sed -n` lesen, nicht ganz; Logs mit
+  Mustern statt als Ganzes; keine Bildschirmfotos, wo eine Messung reicht.
+- **Was nicht verhandelbar bleibt:** kein Commit ohne grüne Unit-Tests, kein
+  Push auf `main` ohne grüne E2E-Suite, kein Abschalten von Coverage-Schwellen.
 
 ## Stil
 
@@ -886,7 +919,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **74 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **75 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

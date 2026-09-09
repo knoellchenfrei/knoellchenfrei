@@ -17,6 +17,14 @@ on:
 permissions:
   contents: read
 
+# Ein Lauf je Zweig: Wer zweimal kurz nacheinander pusht, bekommt den ersten
+# Lauf abgebrochen statt zwei volle. Seit dem 9. September, als die
+# Rechenminuten zum Thema wurden — die Prüfungen selbst bleiben, nur ihre
+# überholten Wiederholungen nicht.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     name: Typen, Tests, Coverage
@@ -49,8 +57,13 @@ jobs:
           path: app/packages/core/coverage/
           retention-days: 14
 
+  # Die Suite läuft 17 Minuten und kostet den grössten Teil der Minuten. Sie
+  # läuft auf main und in Pull Requests — dort, wo etwas ausgeliefert oder
+  # zusammengeführt wird —, nicht auf jedem Push eines Arbeitszweigs. Lokal
+  # läuft sie ohnehin einmal vor jedem Push auf main (CLAUDE.md, „Balance").
   e2e:
     name: End-to-End
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
