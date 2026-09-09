@@ -16,36 +16,47 @@ weil es ein Konto, eine Identität oder eine Entscheidung verlangt.
   hinterlegt sind — ohne sie überspringt der Workflow die Schritte und schreibt
   in die Zusammenfassung, was fehlt. Ein Fork bleibt dadurch grün.
 - Entwürfe für Impressum und Datenschutzerklärung, technisch vollständig
-- Das 2012er MySQL-Entwicklungspasswort ist aus dem aktuellen Stand entfernt
+- Das 2012er MySQL-Entwicklungspasswort steht weder im Code noch in der
+  Doku dieses Repositories — seit dem 9. September auch nicht mehr als
+  Zitat im Abschnitt darunter, wo es zwölf Zeilen lang wörtlich stand
 
 ## Nur du
 
-### 1. Das Passwort in der Historie entscheiden
+### 1. Das Passwort von 2012 — entschieden, aber eine Frage bleibt
 
-In sechs Commits von 2012 steht `root` / `muttikit` auf
-`jdbc:mysql://localhost:3306/parkingzone`. Aus dem aktuellen Stand ist es
-entfernt, in der Historie steht es weiter.
+In sechs Commits von 2012 steht ein MySQL-Zugang im Klartext, auf
+`jdbc:mysql://localhost:3306/parkingzone`. Was daraus geworden ist:
 
-- **Wurde `muttikit` je woanders benutzt?** Dann ändern, unabhängig von diesem
-  Repository. Das ist die eigentliche Gefahr, nicht der localhost-Verweis.
-- **Historie umschreiben oder nicht?** Solange das Repository privat ist, wirkt
-  ein Umschreiben tatsächlich. Danach nie wieder. Wenn es weg soll, dann jetzt:
+- **Das alte Repository `herbeus/parkingzone` ist privat** (am 9. September
+  nachgeprüft), und **dieses hier hat die 2012er Historie gar nicht** — der
+  Umzug hat einen Neuanfang gemacht, der erste Commit ist
+  `knoellchenfrei - Neuanfang mit sauberer Historie` vom 6. September. Ein
+  `filter-repo` ist damit gegenstandslos; die Historie umzuschreiben ist
+  ausserdem eine Projektregel *dagegen*.
+- **Offen bleibt die einzige Frage, auf die es ankommt: Wurde dieses Passwort
+  je woanders benutzt?** Dann gehört es dort geändert, unabhängig von jedem
+  Repository. Das war schon immer die eigentliche Gefahr, nicht der
+  localhost-Verweis.
 
-  ```bash
-  pipx install git-filter-repo
-  git filter-repo --replace-text <(echo 'muttikit==>REDACTED')
-  git push --force-with-lease --all
-  ```
+**Dieser Abschnitt nannte das Passwort bis zum 9. September wörtlich** — und
+zwar in einem Repository, das seit dem 6. September **öffentlich** ist. Ein
+Zugang, der im privaten Altbestand sicher lag, stand damit im Klartext im
+öffentlichen Nachfolger; genau umgekehrt zum Zweck des Umzugs. Aufgefallen ist
+es beim Nachgehen von Audit-Punkt M-026, nicht durch eine Prüfung: GitHubs
+Secret Scanning meldet nichts, weil ein zwölf Jahre altes MySQL-Passwort auf
+kein Anbietermuster passt — und die Erkennung für **generische** Muster
+(`secret_scanning_non_provider_patterns`) steht in diesem Repository auf
+`disabled`. Sie einzuschalten kostet nichts und ist eine Einstellung, also
+deine Entscheidung.
 
-  Das ändert alle Commit-Hashes der 2012er Historie. Bei einem Repository ohne
-  Forks ist das folgenlos. **Deine Entscheidung — ich mache das nicht ungefragt.**
+### 2. Repository öffentlich schalten — erledigt
 
-### 2. Repository öffentlich schalten
-
-*Settings → General → Danger Zone → Change visibility.* Vorher die
-Sicherheitsfunktionen einschalten: *Settings → Code security* → Secret scanning,
-Push protection, Dependabot alerts. Für öffentliche Repositories ist das
-kostenlos.
+Seit dem 6. September öffentlich. Die Sicherheitsfunktionen sind an, am
+9. September über die API nachgeprüft: Secret Scanning `enabled`, Push
+Protection `enabled`, Dependabot-Sicherheitsupdates `enabled`, Private
+Vulnerability Reporting `true`. Auf `disabled` stehen nur die beiden Zusätze
+`secret_scanning_non_provider_patterns` und `secret_scanning_validity_checks`
+— siehe den Absatz oben.
 
 ### 3. Cloudflare einrichten
 
