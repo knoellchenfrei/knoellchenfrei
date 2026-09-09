@@ -174,7 +174,6 @@ export function App() {
   const sidebarRef = useRef<HTMLElement>(null)
   /** Der scrollende Teil des Blatts; der Griff darüber steht fest. */
   const sidebarBodyRef = useRef<HTMLDivElement>(null)
-  const legendRef = useRef<HTMLElement>(null)
   /** Set when a POI popup opened, so the zone handler ignores the same tap. */
   const suppressZoneClick = useRef(0)
   /** Set by a search pick: focus moves into the zone panel once it renders. */
@@ -288,14 +287,6 @@ export function App() {
   /** Zeitstempel des letzten Fingers am Griff; das `click` gleich danach ist derselbe Tipp. */
   const lastGripTouch = useRef(0)
   const [legendOpen, setLegendOpen] = useState(false)
-  /**
-   * Ob rechts von der Chip-Zeile noch Chips liegen. Auf dem Handy scrollt die
-   * Zeile seitlich, und ob der letzte Chip angeschnitten ist, hängt von der
-   * Chip-Zahl und der Schirmbreite ab — bei sieben Chips auf 320 Pixel ja,
-   * bei drei nicht. Ein Verlauf am rechten Rand zeigt es; reines CSS reicht
-   * dafür nicht, weil `scrollWidth > clientWidth` kein Selektor ist.
-   */
-  const [legendMore, setLegendMore] = useState(false)
   // Read by a polite live region: the map and the panel change visually, and a
   // screen reader would otherwise hear nothing when a zone is picked or a
   // session starts.
@@ -382,38 +373,6 @@ export function App() {
     observer.observe(element, { box: 'border-box' })
     return () => observer.disconnect()
   }, [])
-
-  // Der Kantenverlauf der Chip-Zeile: gemessen, nicht geraten. Die Breite
-  // ändert sich mit dem Schirm (ResizeObserver auf der Zeile) und mit jedem
-  // ein- oder ausgeblendeten Chip (ResizeObserver auf dem Chip-Streifen, der
-  // die Zeile selbst nicht breiter macht — die scrollt). Ganz nach rechts
-  // gescrollt gibt es nichts mehr anzudeuten, also fällt der Verlauf weg.
-  useEffect(() => {
-    const element = legendRef.current
-    if (element === null) return
-    const layers = element.querySelector('.legend__layers')
-    if (layers === null) return
-    const apply = (): void => {
-      const overflow = element.scrollWidth - element.clientWidth
-      // Ein Pixel Toleranz: Subpixel-Breiten runden `scrollLeft` auf beiden
-      // Seiten, und der Verlauf flackerte sonst am Ende der Zeile.
-      setLegendMore(overflow > 1 && element.scrollLeft < overflow - 1)
-    }
-    apply()
-    const observer = new ResizeObserver(apply)
-    observer.observe(element)
-    observer.observe(layers)
-    element.addEventListener('scroll', apply, { passive: true })
-    return () => {
-      observer.disconnect()
-      element.removeEventListener('scroll', apply)
-    }
-    // Nicht `[]`: Die Chip-Zeile wird seit dem 9. September nur gerendert,
-    // wenn es Ebenen zu wählen gibt — und das weiss die App erst nach dem
-    // Laden. Ein Effekt ohne Abhängigkeit lief einmal vor dem Laden ins Leere,
-    // und der Verlauf am rechten Rand blieb für immer aus. Gefunden hat es
-    // der E2E-Test, der ihn auf 320 Pixeln verlangt.
-  }, [legendAvailable])
 
   // Ein Verlaufseintrag, solange ein Blatt offen ist — damit „Zurück" das
   // Blatt schließt und nicht die App. Warum ein Eintrag für alle drei und
@@ -949,6 +908,9 @@ export function App() {
           // anchor, so "park here" works on an unmetered street too.
           map.on('click', (event) => {
             if (Date.now() - suppressZoneClick.current < 400) return
+            // Ein Tipp auf die Karte schliesst das Ebenen-Menü: Es liegt
+            // über der Karte, und wer die Karte anfasst, ist damit fertig.
+            setLegendOpen(false)
             anchorFromGps.current = false
             setAnchor([event.lngLat.lng, event.lngLat.lat])
             // A tap that hits no zone also ends the previous selection. The
@@ -1817,8 +1779,7 @@ export function App() {
       */}
       {legendAvailable && (
       <section
-        ref={legendRef}
-        className={`legend${legendMore ? ' legend--more' : ''}${legendOpen ? ' legend--open' : ''}`}
+        className={`legend${legendOpen ? ' legend--open' : ''}`}
         aria-label="Kartenebenen"
       >
         <button

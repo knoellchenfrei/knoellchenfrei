@@ -77,23 +77,61 @@ body {
   pointer-events: none;
 }
 .legend {
-  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px;
-  width: 100%;
+  position: relative;
+  display: flex; align-items: flex-start;
   /* The container spans the width even when it holds one chip; without this it
      was a dead strip that swallowed map taps and blocked dragging the car. */
   pointer-events: none;
 }
 .legend > * { pointer-events: auto; }
 /*
- * The chip wrapper only carries an id for aria-controls; layout stays flat.
- *
- * Steht hier und nicht weiter unten, weil die Handy-Regel (`display: flex`,
- * eigene Berührungsfläche) sonst überschrieben wird: gleiche Spezifität, und
- * die spätere gewinnt. Bis zum 9. September stand sie hinter dem Media-Block,
- * und der Streifen hatte auf dem Handy nie eine Box — der ResizeObserver für
- * den Kantenverlauf hat deshalb kein einziges Mal gefeuert.
+ * Die Ebenen als Menü unter dem Knopf, seit dem 9. September abends. Vorher
+ * standen sie als Chips in der Zeile: auf dem Desktop gewickelt, auf dem
+ * Handy seitlich scrollend mit einem Verlauf am Rand — und der Betreiber
+ * schickte ein Foto, auf dem der Verlauf ein dunkler Block auf dem letzten
+ * Chip war und „Behindertenparkplätze" auf „Abs" endete. Chips sind die Form
+ * für **Filter**, die man einzeln wählt; das hier sind Ebenen, die man an-
+ * und ausschaltet, und dafür hat jede Karten-App ein Menü mit Haken. Es
+ * wächst nach unten statt zur Seite, schneidet also nie einen Namen ab, und
+ * es liegt über der Karte, ohne die Zeile zu verbreitern — der Meldeknopf
+ * bleibt daneben stehen. Zu ist der Streifen leer und hat keine Box.
  */
-.legend__layers { display: contents; }
+.legend__layers:empty { display: none; }
+.legend__layers {
+  position: absolute; left: 0; z-index: 1;
+  /* Auf dem Desktop liegt die Zeile unten links, das Menü öffnet nach oben;
+     auf dem Handy liegt sie unter der Kopfzeile, dort nach unten (siehe den
+     Handy-Block). */
+  bottom: calc(100% + 6px);
+  display: flex; flex-direction: column; gap: 2px;
+  min-width: 232px; max-width: min(320px, calc(100vw - 24px));
+  padding: 6px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 14px;
+  background: rgba(15, 18, 22, 0.96);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(12px);
+}
+.legend__layers .chip {
+  width: 100%;
+  padding: 9px 12px;
+  gap: 10px;
+  border: 0; border-radius: 9px;
+  background: transparent;
+  font-size: 13px;
+  text-align: left;
+}
+.legend__layers .chip:hover { background: rgba(35, 42, 51, 0.7); }
+.legend__layers .chip--on { background: rgba(35, 42, 51, 0.95); }
+/* Der Haken sagt „an"; aus ist er unsichtbar, hält aber seinen Platz. */
+.legend__layers .chip::after {
+  content: '✓';
+  margin-left: auto; padding-left: 12px;
+  color: var(--accent); font-weight: 700;
+  opacity: 0;
+}
+.legend__layers .chip--on::after { opacity: 1; }
+.legend__layers .chip:not(.chip--on) .chip__dot { opacity: 0.45; }
 
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -292,10 +330,6 @@ body {
    Die Zeile selbst lässt Tipps zur Karte durch; nur die Knöpfe fangen sie. */
 .overlay__row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; width: 100%; pointer-events: none; }
 .overlay__row .legend { flex: 1 1 0; width: auto; min-width: 0; }
-/* Offen nimmt die Chip-Zeile die ganze Breite, und der Meldeknopf rückt
-   darunter: Auf 320 Pixeln blieben den Chips sonst 30 Pixel zwischen
-   „Ebenen" und dem Knopf — gesehen auf dem Bildschirmfoto, 9. September. */
-.overlay__row .legend--open { flex-basis: 100%; }
 /* Der Meldeknopf: rot wie die Sterne, nicht blau wie die Hauptknöpfe;
    rechtsbündig mit dem Zahnrad darüber, so hoch wie die Chips daneben. */
 .report-fab {
@@ -466,53 +500,9 @@ body {
     right: max(12px, env(safe-area-inset-right));
     max-width: none;
   }
-  /*
-   * Eine Zeile, die seitlich scrollt, statt drei Zeilen, die die Karte
-   * zudecken. Aufgeklappt nahmen die sieben Chips auf 320 Pixel ein Viertel
-   * der Karte ein; jetzt bleibt es eine Zeile, und der Rest liegt einen
-   * Wisch weiter rechts — wie die Filterchips jeder Kartenanwendung.
-   */
-  .legend {
-    flex-wrap: nowrap;
-    overflow-x: auto; overflow-y: hidden;
-    scrollbar-width: none;
-    /* Rechts endet die Zeile am Meldeknopf, nicht am Schirmrand — kein
-       negativer Rand mehr, der Verlauf läuft bis zur eigenen Kante. */
-    margin-right: 0; padding-right: 0;
-    scroll-snap-type: x proximity;
-  }
-  .legend::-webkit-scrollbar { display: none; }
-  /* Nur der Chip-Streifen nimmt Berührungen an, nicht die ganze Zeile: Zu
-     ist er leer, und die Zeile bleibt der Karte. Offen darf ein Wischen auch
-     in den Lücken zwischen den Chips beginnen. */
-  .legend__layers { display: flex; gap: 6px; pointer-events: auto; }
-  .legend .chip { flex: none; white-space: nowrap; scroll-snap-align: start; }
-  /*
-   * „Da ist mehr": ein Verlauf am rechten Rand, solange rechts noch Chips
-   * liegen. Ob das so ist, misst `App.tsx` (`scrollWidth > clientWidth`,
-   * nicht ganz nach rechts gescrollt) und setzt `legend--more`; CSS allein
-   * kann das nicht sehen. `sticky` statt `absolute`, weil die Zeile selbst
-   * scrollt und ein absolut gesetzter Verlauf mitscrollte. Der negative Rand
-   * nimmt die eigene Breite plus die Lücke zurück, damit der Verlauf keinen
-   * Platz in der Zeile belegt — sonst wäre die Messung, die ihn einblendet,
-   * um genau diese Breite verschoben. Die Ein- und Ausblendung läuft über
-   * `opacity`; `prefers-reduced-motion` setzt den Übergang wie alle anderen
-   * auf 0,01 ms (siehe unten).
-   */
-  .legend::after {
-    content: '';
-    /* `right: -12px`: bis an den Schirmrand, in den die Chips scrollen — der
-       Inhaltsrand der Zeile liegt wegen des Innenabstands 12 px davor, und
-       dort stand der Verlauf zuerst. Gesehen auf dem Bildschirmfoto. */
-    position: sticky; right: 0;
-    flex: none; align-self: stretch;
-    width: 56px; margin-left: -62px;
-    background: linear-gradient(90deg, rgba(15, 18, 23, 0), rgba(15, 18, 23, 0.92));
-    opacity: 0;
-    transition: opacity 160ms ease;
-    pointer-events: none;
-  }
-  .legend--more::after { opacity: 1; }
+  /* Unter der Kopfzeile öffnet das Ebenen-Menü nach unten, auf die Karte. */
+  .legend__layers { bottom: auto; top: calc(100% + 6px); }
+  .legend__layers .chip { padding: 11px 12px; font-size: 14px; }
   /* Die Peek-Zeile im Griff: Zone, Status und Betrag in einer Zeile. Was
      nicht in die Breite passt, endet mit Auslassungspunkten statt in einer
      zweiten Zeile, die den Griff höher machte. */
@@ -665,7 +655,7 @@ body {
    * dem Standort-Knopf, und offene Ebenen-Chips wanderten über die Karte.
    *
    * Jetzt drei Spalten mit fester Rolle: links eine Leiste (Suche, Live-
-   * Zahlen, Ebenen und Meldeknopf, untereinander), rechts das Blatt als
+   * Zahlen, Ebenen-Menü und Meldeknopf, untereinander), rechts das Blatt als
    * Spalte, dazwischen die Karte. Der Standort-Knopf steht unten am linken
    * Rand des Blatts, die Quellenangabe unten links unter der Leiste — die
    * Leiste ist oben verankert und kommt dort nie an. Die Breiten sind
@@ -692,9 +682,7 @@ body {
     width: var(--quer-leiste); max-width: none;
   }
   .live { max-width: 100%; }
-  .legend { flex-wrap: wrap; overflow: visible; margin-right: 0; padding-right: 0; }
-  .legend::after { display: none; }
-  .legend__layers { display: contents; }
+  .legend__layers { bottom: auto; top: calc(100% + 6px); }
 
   .sidebar {
     top: max(8px, env(safe-area-inset-top)); bottom: max(8px, env(safe-area-inset-bottom));

@@ -124,7 +124,7 @@ Dokuments; Elemente, deren Inhalt breiter ist als sie selbst.
 | 7 | Beta-Marke und „n von m kassieren" in die Live-Zeile; Ablesewerte ohne Rand, Chips mit Rand | `LiveStats.tsx`, `styles.css` |
 | 8 | `inert` auf Karte, Kopfzeile, Overlay, Blatt und FAB, solange Einstellungen oder Feedback offen sind; Schleier mit Klick-zum-Schließen | `App.tsx`, `styles.css` |
 | 9 | Meldung unter die Kopfzeile (z-index 4, früher im Baum) | `styles.css` |
-| 10 | Ebenen-Chips auf dem Handy als eine seitlich scrollende Zeile mit Scroll-Snap; nur der Chip-Streifen nimmt Berührungen an | `styles.css` |
+| 10 | Ebenen-Chips auf dem Handy als eine seitlich scrollende Zeile mit Scroll-Snap; nur der Chip-Streifen nimmt Berührungen an — *seit dem Abend des 9. September ein Menü unter dem Knopf, siehe `docs/entscheidungen.md`, „Die Ebenen sind ein Menü"* | `styles.css` |
 | 11 | Quellenangabe: 36 Pixel bei grobem Zeiger; auf dem Handy unten links über dem Blatt, im Querformat eingeklappt; auf Desktop links neben der Seitenleiste | `styles.css`, `App.tsx` |
 | 12 | `overscroll-behavior: contain` auf beiden Scroll-Körpern; Safe-Area links/rechts im Querformat; Marke bricht unter den Titel (≤ 380 px) | `styles.css` |
 | 13 | Einblendung der Blätter (220 ms, `translate` + Deckkraft) und des Schleiers; `prefers-reduced-motion` greift über die bestehende Regel | `styles.css` |
@@ -182,7 +182,9 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
 - Die Ebenen-Chip-Zeile zeigte nicht, dass sie weitergeht — ein Verlauf am
   rechten Rand fehlte. Der letzte Chip war angeschnitten, was es meistens
   verriet, aber nicht bei jeder Chip-Zahl. Seit dem 9. September gemessen
-  und eingeblendet, siehe Punkt 2 unten.
+  und eingeblendet, siehe Punkt 2 unten — und am Abend desselben Tages
+  durch ein Menü ersetzt, weil der Verlauf auf dem Gerät des Betreibers ein
+  dunkler Block auf dem letzten Chip war.
 - Die `visualViewport`-Lösung für das iPhone ist ohne Gerät nur gegen ihre
   Rechnung getestet (Unit-Test), nicht gegen Safari. Die Android-Lösung über
   die Viewport-Angabe ist deterministisch.

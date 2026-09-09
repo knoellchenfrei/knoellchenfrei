@@ -207,57 +207,49 @@ test.describe('Einstellungen als Dialog', () => {
 
 test.describe('Folgepunkte aus dem Audit', () => {
   /**
-   * Punkt 2 der Empfehlung: Auf dem Handy scrollt die Chip-Zeile seitlich,
-   * und ob rechts noch Chips liegen, sah man nur, wenn der letzte zufällig
-   * angeschnitten war. Der Verlauf hängt an einer Messung, nicht an einer
-   * Vermutung: `scrollWidth > clientWidth`, und nicht ganz rechts.
-   *
-   * Zwei Dinge, die der Test nebenbei festhält: Der Verlauf belegt keinen
-   * Platz in der Zeile (sonst verschöbe er die Messung, die ihn einblendet),
-   * und auf dem Desktop, wo die Zeile wickelt, gibt es ihn nie.
+   * Punkt 2 der Empfehlung war ein Verlauf am Rand der seitlich scrollenden
+   * Chip-Zeile. Der Betreiber schickte am 9. September abends ein Foto, auf
+   * dem der Verlauf ein dunkler Block auf dem letzten Chip war und
+   * „Behindertenparkplätze" auf drei Buchstaben endete. Seitdem sind die
+   * Ebenen ein Menü unter dem Knopf: Es wächst nach unten, schneidet nichts
+   * ab und verbreitert die Zeile nicht. Auf dem Desktop liegt die Zeile
+   * unten links, dort öffnet es nach oben.
    */
-  test('zeigt am rechten Rand der Chip-Zeile, dass dort mehr liegt', async ({ page }, testInfo) => {
-    // Auf 320 Pixeln: Seit die Kontrolldichte keinen Chip mehr hat, passen
-    // die fünf Berliner Chips auf ein 412 Pixel breites Handy in die Zeile,
-    // und nichts läuft über. Das schmalste Gerät hat den Überlauf sicher.
+  test('öffnet die Ebenen als Menü, das nichts abschneidet', async ({ page }, testInfo) => {
     if (testInfo.project.name === 'phone') await page.setViewportSize({ width: 320, height: 568 })
     await ready(page)
-    const legend = page.locator('.legend')
-    // Zu: nur der eine Chip, nichts läuft über, kein Verlauf.
-    await expect(legend).not.toHaveClass(/legend--more/)
+    const size = page.viewportSize()!
+    // Zu: kein Menü, keine Box, die Karte darunter ist frei.
+    await expect(page.locator('.legend__layers')).toBeHidden()
+    const toggle = (await page.locator('.chip--toggle').boundingBox())!
     await page.getByRole('button', { name: /Ebenen/ }).click()
-    // Offen: mehr als der eine Umschalter.
-    await expect.poll(() => page.locator('.legend .chip').count()).toBeGreaterThan(1)
-
-    const measure = () =>
-      legend.evaluate((el) => ({
-        overflow: el.scrollWidth - el.clientWidth,
-        scrollLeft: el.scrollLeft,
-        fade: getComputedStyle(el, '::after').opacity,
-      }))
-
-    if (testInfo.project.name !== 'phone') {
-      // Wickelnd, nicht scrollend: nichts anzudeuten.
-      expect((await measure()).overflow).toBeLessThanOrEqual(1)
-      await expect(legend).not.toHaveClass(/legend--more/)
-      return
+    const menu = page.locator('.legend__layers')
+    await expect(menu).toBeVisible()
+    const rows = page.locator('.legend__layers .chip')
+    expect(await rows.count()).toBeGreaterThan(1)
+    const box = (await menu.boundingBox())!
+    // Ganz im Schirm, und jede Zeile ganz im Menü — kein Name endet auf „Abs".
+    expect(box.x).toBeGreaterThanOrEqual(0)
+    expect(box.x + box.width).toBeLessThanOrEqual(size.width)
+    expect(box.y + box.height).toBeLessThanOrEqual(size.height)
+    for (const row of await rows.all()) {
+      const r = (await row.boundingBox())!
+      expect(r.x + r.width).toBeLessThanOrEqual(box.x + box.width)
+      expect(await row.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
+      if (testInfo.project.name === 'phone') expect(r.height).toBeGreaterThanOrEqual(40)
     }
+    // Nach unten unter der Kopfzeile, nach oben über der Zeile unten links.
+    if (testInfo.project.name === 'phone') expect(box.y).toBeGreaterThanOrEqual(toggle.y + toggle.height)
+    else expect(box.y + box.height).toBeLessThanOrEqual(toggle.y)
 
-    expect((await measure()).overflow).toBeGreaterThan(1)
-    await expect(legend).toHaveClass(/legend--more/)
-    await expect.poll(async () => (await measure()).fade).toBe('1')
-
-    // Ganz nach rechts: Der Verlauf verschwindet, und die Zeile ist danach
-    // nicht breiter geworden — der Verlauf selbst hat keinen Platz belegt.
-    const before = (await measure()).overflow
-    await legend.evaluate((el) => el.scrollTo({ left: el.scrollWidth, behavior: 'instant' }))
-    await expect(legend).not.toHaveClass(/legend--more/)
-    await expect.poll(async () => (await measure()).fade).toBe('0')
-    expect((await measure()).overflow).toBe(before)
-
-    // Und zurück an den Anfang: wieder da.
-    await legend.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }))
-    await expect(legend).toHaveClass(/legend--more/)
+    // Ein Tipp auf die Karte schliesst es, ein zweiter auf „Ebenen" auch.
+    // x = 300: rechts vom Menü, auf dem Handy wie auf dem Desktop links vom Blatt.
+    await page.locator('.map canvas').click({ position: { x: 300, y: size.height / 2 } })
+    await expect(menu).toBeHidden()
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    await expect(menu).toBeVisible()
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    await expect(menu).toBeHidden()
   })
 
   /**
@@ -360,7 +352,7 @@ test.describe('der Meldeknopf auf dem Handy', () => {
   /**
    * Eine Zeile für das, was man tun kann: links „Ebenen", rechts der rote
    * Meldeknopf, bündig mit dem Zahnrad. Auf 320 Pixeln teilen sie sich die
-   * Breite, und die Chips scrollen zwischen beiden.
+   * Breite; das Ebenen-Menü klappt darunter auf.
    */
   test('teilt sich die Zeile mit den Ebenen und bleibt im Schirm', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 })
@@ -373,13 +365,14 @@ test.describe('der Meldeknopf auf dem Handy', () => {
     expect(Math.abs(fab.y - ebenen.y)).toBeLessThan(2)
     expect(ebenen.x + ebenen.width).toBeLessThanOrEqual(fab.x)
 
-    // Offen bekommt die Chip-Zeile die ganze Breite, der Knopf rückt darunter
-    // — sonst blieben den Chips 30 Pixel zwischen „Ebenen" und dem Knopf.
+    // Offen bleibt der Knopf, wo er ist: Das Menü liegt unter der Zeile auf
+    // der Karte und verbreitert sie nicht. (Vorher nahm die Chip-Zeile die
+    // ganze Breite, und der Knopf rückte darunter.)
     await page.getByRole('button', { name: /Ebenen/ }).click()
-    const legend = (await page.locator('.legend').boundingBox())!
+    const menu = (await page.locator('.legend__layers').boundingBox())!
     const fabOffen = (await page.locator('.report-fab').boundingBox())!
-    expect(legend.width).toBeGreaterThanOrEqual(280)
-    expect(fabOffen.y).toBeGreaterThanOrEqual(legend.y + legend.height)
+    expect(fabOffen.y).toBe(fab.y)
+    expect(menu.y).toBeGreaterThanOrEqual(fabOffen.y + fabOffen.height)
   })
 })
 

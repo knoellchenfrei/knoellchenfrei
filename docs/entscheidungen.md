@@ -840,9 +840,8 @@ bekommt ein eigenes Layout, weil er es auf iOS ohnehin braucht.
 
 **Drei Spalten mit fester Rolle.** Links eine Leiste von 300 Pixeln
 (`min(300px, 38vw)`): Suche, BETA und Zahnrad in einer Zeile, darunter die
-Live-Zahlen, darunter „Ebenen" und der rote Meldeknopf. Offene Chips brechen
-in der Leiste um, der Meldeknopf rutscht unter sie; nichts davon steht über
-der Karte. Rechts das Blatt als Spalte (`min(320px, 40vw)`), vom oberen bis
+Live-Zahlen, darunter „Ebenen" und der rote Meldeknopf; das Ebenen-Menü
+klappt unter der Leiste auf (siehe den nächsten Abschnitt). Rechts das Blatt als Spalte (`min(320px, 40vw)`), vom oberen bis
 zum unteren Rand, zugeklappt nur die Pille oben rechts. Dazwischen die
 Karte: 434 Pixel breit bei offenem Blatt, die volle Breite bei geschlossenem.
 Der Standort-Knopf steht unten direkt links vom Blatt, die Quellenangabe
@@ -858,3 +857,37 @@ fünf Elemente aufeinanderliegen und das Suchfeld seinen Platzhalter trägt.
 Vorher hat das niemand gemessen: Der Audit vom 9. September hatte 844×390 im
 Raster, aber ohne seitliche Einrückung und ohne offenes Blatt — und genau
 dort lagen alle vier Fehler.
+
+## Die Ebenen sind ein Menü, keine Chip-Zeile
+
+*9. September 2026, abends.*
+
+Der Betreiber, mit Foto: die offenen Ebenen-Chips im Hochformat, der letzte
+Chip als „Abs…" unter einem dunklen Block. Der Block war der Verlauf, der
+seit dem Mobile-Audit „da liegt mehr" sagen sollte — auf der dunklen Karte
+sah er aus wie ein Fehler und liess den Namen abgeschnitten stehen. „Mach
+die Ebene schick."
+
+Die Chip-Zeile war seit dem Audit ein Kompromiss: Gewickelt nahmen die Chips
+auf 320 Pixeln ein Viertel der Karte, also scrollten sie seitlich, und ein
+gemessener Verlauf zeigte den Rest an. Der Kompromiss hatte den falschen
+Ausgangspunkt. Chips sind die Form für **Filter**, die man einzeln wählt;
+Kartenebenen schaltet man an und aus, und dafür hat jede Karten-App ein
+Menü mit Haken — Google Maps, Apple Karten, OsmAnd. Der Audit hatte das
+Blatt erwogen und verworfen, weil es zwei Tipps kostet; ein Menü unter dem
+Knopf kostet einen.
+
+Also ein Menü: „Ebenen" bleibt die Pille in der Zeile, darunter klappt eine
+Liste auf, eine Zeile je Ebene mit Farbpunkt, Name und einem Haken, wenn
+sie an ist. Es wächst nach unten statt zur Seite, schneidet also nie einen
+Namen ab, und es liegt über der Karte, ohne die Zeile zu verbreitern — der
+Meldeknopf bleibt daneben stehen, wo er auch zu ist. Auf dem Desktop liegt
+die Zeile unten links, dort öffnet es nach oben. Ein Tipp auf die Karte
+schliesst es; wer die Karte anfasst, ist mit den Ebenen fertig.
+
+Weg damit sind der Verlauf, die Messung dahinter (`scrollWidth`,
+`scrollLeft`, zwei ResizeObserver) und die Regel, die die Chip-Zeile offen
+auf die ganze Breite zog und den Meldeknopf darunter schob. Die beiden
+E2E-Tests dazu sind ersetzt: Das Menü liegt ganz im Schirm, keine Zeile
+scrollt in sich, auf dem Handy ist jede Zeile 44 Pixel hoch, und die Karte
+schliesst es.
