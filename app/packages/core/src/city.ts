@@ -32,6 +32,7 @@
  */
 
 import type { BoundingBox, Position } from './geo.js'
+import type { HeatGrid } from './heatmap.js'
 import type { Land } from './holidays.js'
 
 export interface Attribution {
@@ -96,6 +97,15 @@ export interface City {
    * Stadtrand parkt und über die Grenze läuft, soll seine Uhr behalten.
    */
   sessionBounds: BoundingBox
+  /**
+   * Das 250-m-Raster der Kontrolldichte, siehe `HeatGrid` in `heatmap.ts`.
+   *
+   * Fest, nie aus den Daten abgeleitet. Ursprung ist die Südwestecke der
+   * `reportBounds` zum Zeitpunkt der Einführung — als Zahl hier abgeschrieben,
+   * nicht als Verweis: Ändern sich die Grenzen später, darf das Raster nicht
+   * mitwandern, sonst liegt jede gespeicherte Zelle woanders.
+   */
+  heatGrid: HeatGrid
   attribution: Attribution
   /**
    * Feste Feiertage, die **nur in dieser Stadt** gelten, als `MM-TT`.
@@ -181,6 +191,9 @@ export const BERLIN: City = {
   zoom: 11.5,
   reportBounds: { minLon: 13.0, minLat: 52.3, maxLon: 13.8, maxLat: 52.7 },
   sessionBounds: { minLon: 12.5, minLat: 52.0, maxLon: 14.5, maxLat: 53.0 },
+  // Das alte, einzige Raster — ohne Namen, damit jeder gespeicherte
+  // Schlüssel bleibt, was er war.
+  heatGrid: { id: '', originLon: 13.0, originLat: 52.3, latitude: 52.52 },
   attribution: {
     source: 'Geodateninfrastruktur Berlin (gdi.berlin.de)',
     datasetUrl: 'https://gdi.berlin.de/services/wfs/parkraumbewirtschaftung',
@@ -221,6 +234,7 @@ export const HAMBURG: City = {
   zoom: 11.5,
   reportBounds: { minLon: 9.7, minLat: 53.35, maxLon: 10.35, maxLat: 53.8 },
   sessionBounds: { minLon: 9.4, minLat: 53.15, maxLon: 10.7, maxLat: 54.0 },
+  heatGrid: { id: 'hamburg', originLon: 9.7, originLat: 53.35, latitude: 53.55 },
   attribution: {
     source: 'Freie und Hansestadt Hamburg, Landesbetrieb Geoinformation und Vermessung',
     datasetUrl: 'https://geodienste.hamburg.de/HH_WFS_bewohnerparkgebiete',
@@ -267,6 +281,7 @@ export const FRANKFURT: City = {
   zoom: 12,
   reportBounds: { minLon: 8.45, minLat: 50.0, maxLon: 8.85, maxLat: 50.25 },
   sessionBounds: { minLon: 8.2, minLat: 49.85, maxLon: 9.1, maxLat: 50.45 },
+  heatGrid: { id: 'frankfurt', originLon: 8.45, originLat: 50.0, latitude: 50.11 },
   attribution: {
     // Wörtlich der Quellenvermerk aus dem ISO-Metadatensatz des Dienstes.
     // Bei DL-DE/Namensnennung ist er Lizenzbedingung, nicht Höflichkeit —
@@ -315,6 +330,7 @@ export const MUENCHEN: City = {
   zoom: 11.5,
   reportBounds: { minLon: 11.35, minLat: 48.05, maxLon: 11.73, maxLat: 48.26 },
   sessionBounds: { minLon: 11.05, minLat: 47.85, maxLon: 12.05, maxLat: 48.5 },
+  heatGrid: { id: 'muenchen', originLon: 11.35, originLat: 48.05, latitude: 48.14 },
   attribution: {
     // Wörtlich der Quellenvermerk aus dem ISO-Metadatensatz beider
     // Parkebenen (`.../records/752539b9-…` und `.../records/1cb25196-…`,
@@ -377,6 +393,7 @@ export const KOELN: City = {
   zoom: 11.5,
   reportBounds: { minLon: 6.75, minLat: 50.82, maxLon: 7.18, maxLat: 51.1 },
   sessionBounds: { minLon: 6.45, minLat: 50.6, maxLon: 7.5, maxLat: 51.35 },
+  heatGrid: { id: 'koeln', originLon: 6.75, originLat: 50.82, latitude: 50.94 },
   attribution: {
     // DL-DE/Zero-2.0 verlangt keine Nennung; der Quellenvermerk steht
     // trotzdem — freiwillig ist nicht verboten, und Berlin hält es genauso.
@@ -426,6 +443,7 @@ export const DUESSELDORF: City = {
   zoom: 12,
   reportBounds: { minLon: 6.66, minLat: 51.11, maxLon: 6.96, maxLat: 51.37 },
   sessionBounds: { minLon: 6.4, minLat: 50.9, maxLon: 7.25, maxLat: 51.6 },
+  heatGrid: { id: 'duesseldorf', originLon: 6.66, originLat: 51.11, latitude: 51.24 },
   attribution: {
     // DL-DE/Zero-2.0 verlangt keine Nennung; der Quellenvermerk steht
     // trotzdem — freiwillig ist nicht verboten, und Berlin hält es genauso.
@@ -487,6 +505,7 @@ export const KARLSRUHE: City = {
   zoom: 12,
   reportBounds: { minLon: 8.27, minLat: 48.93, maxLon: 8.55, maxLat: 49.1 },
   sessionBounds: { minLon: 8.0, minLat: 48.7, maxLon: 8.9, maxLat: 49.35 },
+  heatGrid: { id: 'karlsruhe', originLon: 8.27, originLat: 48.93, latitude: 49.01 },
   // Gemessen, nicht gewählt: Bei 20 m Abstand zur Kante hat jeder Automat
   // eine Fläche und die Zahl der Flächen ohne Automaten erreicht ihren Boden
   // (`docs/staedte-karlsruhe.md`, 2.2). Derselbe Radius, mit dem der Datenbau

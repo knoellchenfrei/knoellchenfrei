@@ -997,6 +997,21 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet).toContainText('ohne Gewährleistung')
   })
 
+  /**
+   * Seit dem 9. September trägt `meta.json` den Zeitpunkt des letzten
+   * erfolgreichen Abrufs, und die Einstellungen nennen ihn: Ein Abzug von
+   * vor drei Wochen hat für „kostet das gerade etwas" eine andere
+   * Verlässlichkeit als einer von gestern — und ein Behördendienst, der
+   * schweigt, lässt den alten Abzug stehen. Das soll er, nur sichtbar.
+   */
+  test('nennt in den Einstellungen, wann die Daten zuletzt geprüft wurden', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    await expect(sheet).toContainText('zuletzt geprüft am')
+    // Ein Datum, kein „Invalid Date": „09.09.2026, 16:12" in Berliner Zeit.
+    await expect(sheet).toContainText(/geprüft am \d{2}\.\d{2}\.\d{4}, \d{2}:\d{2}\./)
+  })
+
   // Und dasselbe für die vierte Stadt. Muenchen ist der interessanteste der
   // vier Fälle: Seine Gebiete heissen nicht "19" oder "N10", sondern
   // "Glockenbachviertel" -- ein Treffer darauf beweist andere Daten, ohne dass

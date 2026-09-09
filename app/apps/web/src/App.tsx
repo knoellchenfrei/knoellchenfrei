@@ -971,7 +971,7 @@ export function App() {
   // is the kind of thing that cost 1.5 s a tick once already.
   const heatDay = useMemo(() => Math.floor(now / 3_600_000), [now])
   const heat = useMemo(
-    () => buildHeatmap(marks, { now: heatDay * 3_600_000 }),
+    () => buildHeatmap(marks, { now: heatDay * 3_600_000, grid: CITY.heatGrid }),
     [marks, heatDay],
   )
   const activity = useMemo(
@@ -1321,7 +1321,7 @@ export function App() {
     // report went straight to the store and the user saw nothing at all until
     // the snapshot came back — and nothing ever, if the write was refused.
     setSightings((current) => [...current, entry])
-    setMarks((current) => [...current, markFor(point, entry.reportedAt)])
+    setMarks((current) => [...current, markFor(point, entry.reportedAt, CITY.heatGrid)])
 
     markOwnReport(entry.id)
     const backend = backendRef.current
@@ -1764,6 +1764,7 @@ export function App() {
           source={meta.source}
           licence={meta.licence}
           licenceUrl={meta.licenceUrl}
+          geprueftAm={meta.geprueftAm}
         />
       )}
 

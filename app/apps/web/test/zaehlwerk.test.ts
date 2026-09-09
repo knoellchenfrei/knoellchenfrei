@@ -328,10 +328,16 @@ describe('der Name einer Fläche', () => {
    * war ausschliesslich der Platzhalter.
    */
   it('lässt die gewohnte Kurzform stehen, wo vorher „Zone 12" stand', async () => {
-    const { zoneKurz } = await import('../src/zone-label.js')
+    const { zoneKurz, zoneTitel, hatNummer } = await import('../src/zone-label.js')
     expect(zoneKurz({ zone: '12' })).toBe('Zone 12')
     expect(zoneKurz({ zone: '3' })).toMatch(/^Zone /)
     expect(zoneKurz({ zone: '-' })).toBe('Fläche ohne Nummer')
+    // Seit dem 9. September trägt eine solche Fläche die Kennung der Quelle
+    // als Schlüssel — eindeutig, aber keine Nummer, die jemand ausspricht.
+    expect(zoneKurz({ zone: 'DE.HH.UP_BEWOHNERPARKGEBIETE_31973' })).toBe('Fläche ohne Nummer')
+    expect(zoneTitel({ zone: 'DE.HH.UP_BEWOHNERPARKGEBIETE_31973' })).toBe('Bewirtschaftete Fläche')
+    expect(hatNummer({ zone: 'DE.HH.UP_BEWOHNERPARKGEBIETE_31973' })).toBe(false)
+    expect(hatNummer({ zone: 'N101' })).toBe(true)
   })
 
   it('behandelt einen leeren Schlüssel wie einen fehlenden', async () => {

@@ -22,11 +22,20 @@ import type { ZoneProperties } from './types.js'
  * den Datenbau und ändert Gezähltes — das steht in `docs/todo.md`.
  */
 
-/** Ohne Nummer vergibt Hamburgs Quelle diesen Platzhalter. */
+/** Ohne Nummer vergab Hamburgs Quelle diesen Platzhalter — bis zum 9. September der Schlüssel. */
 const OHNE_NUMMER = '-'
+/**
+ * Seit dem 9. September trägt eine Hamburger Fläche ohne Nummer die eigene
+ * Kennung der Quelle als Schlüssel (`DE.HH.UP_BEWOHNERPARKGEBIETE_31973`):
+ * eindeutig je Fläche, stabil über Abzüge, aber keine Nummer, die jemand
+ * ausspricht oder auf einem Schild liest. Die Oberfläche nennt sie deshalb
+ * weiter „Fläche ohne Nummer".
+ */
+const QUELL_KENNUNG = /^DE\.HH\.UP_BEWOHNERPARKGEBIETE_\d+$/
 
 export function hatNummer(properties: Pick<ZoneProperties, 'zone'>): boolean {
-  return properties.zone.trim() !== '' && properties.zone.trim() !== OHNE_NUMMER
+  const zone = properties.zone.trim()
+  return zone !== '' && zone !== OHNE_NUMMER && !QUELL_KENNUNG.test(zone)
 }
 
 /**

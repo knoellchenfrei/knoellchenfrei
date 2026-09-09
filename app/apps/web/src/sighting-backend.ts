@@ -69,7 +69,8 @@ export function sanitiseMark(row: unknown): HeatMark | null {
   if (row === null || typeof row !== 'object') return null
   const { day, cell } = row as Partial<HeatMark>
   if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return null
-  if (typeof cell !== 'string' || !/^-?\d{1,6}_-?\d{1,6}$/.test(cell)) return null
+  // Seit dem 9. September mit dem Namen des Rasters davor, ausser in Berlin.
+  if (typeof cell !== 'string' || !/^(?:[a-z]+:)?-?\d{1,6}_-?\d{1,6}$/.test(cell)) return null
   // The hour is optional: marks written before the time-of-day chart existed
   // still count on the map. An out-of-range value drops the field rather than
   // the row, so one bad write cannot erase a cell from the heatmap.
@@ -223,7 +224,7 @@ function artifactBackend(db: Db): SightingBackend {
       // A separate tally mark rather than a copy of the report: one row per
       // report, carrying only the day and the 250 m cell, so the long-lived
       // dataset can never be joined back to the short-lived one.
-      await db.doc(`marks/${newId()}`).set(markFor([safeLon, safeLat], now))
+      await db.doc(`marks/${newId()}`).set(markFor([safeLon, safeLat], now, CITY.heatGrid))
       return entry.id
     },
 

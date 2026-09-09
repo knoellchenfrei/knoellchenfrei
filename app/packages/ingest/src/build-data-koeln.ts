@@ -65,6 +65,7 @@ import {
 } from '@knoellchenfrei/core'
 
 import { simplifyGeometry } from './simplify.js'
+import { geprueftAm } from './abruf-zeit.js'
 import { utm32CoordinatesToWgs84 } from './utm32.js'
 
 /**
@@ -450,6 +451,8 @@ write('meta.json', {
   licenceUrl: KOELN.attribution.licenceUrl,
   attributionRequired: KOELN.attribution.attributionRequired,
   datasetUrl: KOELN.attribution.datasetUrl,
+  // Wann die Quelle zuletzt erfolgreich abgerufen wurde — siehe abruf-zeit.ts.
+  geprueftAm: geprueftAm(RAW),
   zones: zoneFeatures.length,
   districts: 0,
   poi: 0,

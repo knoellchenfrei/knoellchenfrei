@@ -55,6 +55,7 @@ import {
 
 import { citySources, toGeoJsonAxes, type AxisOrder } from './sources.js'
 import { roundPoint, simplifyGeometry } from './simplify.js'
+import { geprueftAm } from './abruf-zeit.js'
 
 const RAW = join(process.env.RAW_DIR ?? join(process.cwd(), '../../.raw'), FRANKFURT.key)
 const OUT = join(
@@ -494,6 +495,8 @@ write('meta.json', {
   licenceUrl: FRANKFURT.attribution.licenceUrl,
   attributionRequired: FRANKFURT.attribution.attributionRequired,
   datasetUrl: FRANKFURT.attribution.datasetUrl,
+  // Wann die Quelle zuletzt erfolgreich abgerufen wurde — siehe abruf-zeit.ts.
+  geprueftAm: geprueftAm(RAW),
   zones: zoneFeatures.length,
   districts: districtFeatures.length,
   poi: poi.length,

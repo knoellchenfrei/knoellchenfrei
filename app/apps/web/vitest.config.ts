@@ -11,7 +11,11 @@ import { defineConfig } from 'vitest/config'
  */
 export default defineConfig({
   test: {
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.{ts,tsx}'],
+    // Node bleibt die Vorgabe. Die Komponententests (`komponenten-*.test.tsx`)
+    // holen sich jsdom je Datei über `@vitest-environment` — ein DOM für alle
+    // wäre langsamer und liesse Speicher-, Format- und Zählwerk-Tests in einer
+    // Umgebung laufen, die sie nicht brauchen und die anders lügt als Node.
     environment: 'node',
   },
 })

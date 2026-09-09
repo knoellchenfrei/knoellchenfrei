@@ -191,6 +191,8 @@ export function parseHamburgMaxStay(raw: string | null | undefined): number | un
 
 /** Rohzeile des Feeds, so weit wir sie lesen. */
 export interface HamburgZoneProperties {
+  /** Laufende Nummer der Quelle; steckt auch in der GML-Kennung des Features. */
+  objectid?: number | null
   bwp_code?: string | null
   bwp_name?: string | null
   bewirtschaftungszeit?: string | null

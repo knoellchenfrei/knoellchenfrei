@@ -31,11 +31,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1092 Unit-Tests (core, api, web)
+pnpm test                                           # 1113 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 192 End-to-End-Tests
+cd apps/web && npx playwright test                  # 194 End-to-End-Tests
 ```
 
 Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -86,11 +86,11 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (770), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (225, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+**alle vier** Tests: `core` (774), `apps/api` (86, Worker und Zählwerk),
+`apps/web` (237, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
-Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
-Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
+Stadtwahl, drei Komponenten mit jsdom) und `packages/ingest` (16, die zwei
+Wächter des Artifact-Baus und der Datenstand). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
 ab und scheitert — nicht der Code ist kaputt, der Aufruf ist falsch.
@@ -104,13 +104,15 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1092 E2E_COUNT=192 npx tsx src/build-badges.ts
+TEST_COUNT=1113 E2E_COUNT=194 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
 #   diff -rq /tmp/neubau/berlin ../../apps/web/public/data/berlin
 # Am 9. September für alle vier Städte gemacht: byteweise identisch.
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
+# Wie alt der Abzug je Stadt ist (geprueftAm in meta.json), vom Wurzelverzeichnis:
+#   node scripts/datenstand-pruefen.mjs
 ```
 
 ## Eigenheiten der Umgebung
@@ -488,7 +490,10 @@ wiederholt.
   Auswahl springt auf eine andere Zeile als die angeklickte. Beide nehmen
   jetzt `zone.id`. Und die Wortwahl gehört dazu: In der Oberfläche stand an
   neun Stellen „Zone -", weil der Platzhalter der Quelle durchgereicht wurde.
-  `src/zone-label.ts` spricht ihn aus, statt ihn weiterzugeben.
+  `src/zone-label.ts` spricht ihn aus, statt ihn weiterzugeben. Seit dem
+  9. September ist der Strich auch als **Schlüssel** weg: Der Datenbau nimmt
+  die GML-Kennung der Quelle (`DE.HH.UP_BEWOHNERPARKGEBIETE_<objectid>`),
+  damit 44 Flächen in der Nutzungsstatistik nicht mehr eine Zone sind.
 
   **Und die Lehre über den Fehler hinaus:** Ich hatte zuerst behauptet, die
   Stücke unterschieden sich nur im Stadtteil — vier Beispiele angesehen und

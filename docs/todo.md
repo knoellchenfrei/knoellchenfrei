@@ -597,7 +597,8 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       neben der Karte, unsichtbar, während die Liste „am häufigsten
       kontrolliert" dreimal „Außerhalb der Zonen" nannte. Sie stehen jetzt als
       Abstand zu `CITY.center`.
-- [ ] **44 Hamburger Flächen tragen den Schlüssel `-`.** Die Quelle führt für
+- [x] **44 Hamburger Flächen tragen den Schlüssel `-`.** **Erledigt am
+      9. September, nach Freigabe — Absatz am Ende.** Die Quelle führt für
       sie keine Zonennummer; von 145 Flächen tragen 44 diesen Schlüssel, und die
       Kartenfärbung ist deshalb seit dem 8. September nicht mehr daran
       gebunden (siehe `LoadedZone.id`). An drei Stellen wirkt er trotzdem noch:
@@ -654,6 +655,15 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       geht seit dem 8. September über `zone-label.ts` und nennt den Schlüssel
       gar nicht mehr.
 
+      **Eingebaut:** `build-data-hamburg.ts` nimmt für eine Fläche ohne
+      `bwp_code` die GML-Kennung des Features (`feature.id`,
+      `DE.HH.UP_BEWOHNERPARKGEBIETE_<objectid>`); `zone-label.ts` erkennt die
+      Form und nennt die Fläche weiter „ohne Nummer"; Suche und Meldeblatt
+      suchen im Schlüssel nur noch bei echten Nummern, sonst kämen auf „de"
+      44 Treffer. `ZONE_KEYS` neu erzeugt: 686 statt 643 Kennungen, der
+      Strich ist weg. Migration keine, weil in der Produktion keine
+      `zone.open`-Ausprägung `-` gezählt war.
+
 - [x] ~~**`packages/ingest` hat keinen einzigen Test.**~~ **Am 8. September
       abends erledigt**, als eigener Schritt — in der Nacht war er ausdrücklich
       zurückgestellt, weil ein Umbau am Artifact-Bau um kurz vor fünf genau der
@@ -692,7 +702,8 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       statt `any` — das verschiebt die Behauptung an die Stelle, an der sie
       gemacht wird, statt sie im Typ zu verstecken.
 
-- [ ] **Das Heatmap-Raster ist noch Berlin.** `core/heatmap.ts` rechnet das
+- [x] **Das Heatmap-Raster ist noch Berlin.** **Erledigt am 9. September, nach
+      Freigabe — Absatz am Ende.** `core/heatmap.ts` rechnete das
       250-m-Raster mit `ORIGIN` 13,0/52,3 und `cos 52,52°` — beides fest
       verdrahtet. **Am 8. September nachgemessen statt geschätzt:** Die Zelle
       ist überall 250 m hoch und in Ost-West-Richtung Berlin 250,0 m,
@@ -711,6 +722,22 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       Migrationsplan, nicht nebenbei — die Zahlen oben stehen jetzt auch im
       Quelltext von `heatmap.ts`, damit die Entscheidung nicht noch einmal
       geschätzt wird.
+
+      **Eingebaut, mit diesem Migrationsplan:** Jede Stadt trägt ihr Raster in
+      `City.heatGrid` (Ursprung: Südwestecke der damaligen `reportBounds`,
+      als Zahl abgeschrieben; Breitengrad: Stadtmitte). `cellOf`,
+      `cellCentre`, `markFor` und `buildHeatmap` verlangen das Raster als
+      Argument — kein Rückfall auf Berlin. Die Migration steckt im Schlüssel:
+      Jede Stadt ausser Berlin schreibt ihren Namen davor (`hamburg:12_34`),
+      und `cellCentre` verwirft einen Schlüssel aus einem fremden Raster,
+      statt ihn an einer falschen Stelle zu verorten. Berlins Raster bleibt
+      das alte ohne Präfix — nachgemessen: `111_98`, `113_88`, `109_97`
+      ergeben dieselben Schlüssel wie vorher, als Test festgehalten. Die
+      D1-Migration `0003_heatmap_raster.sql` löscht die Zeilen der anderen
+      Städte, die noch im Berliner Raster stehen; sie braucht `D1:Edit` am
+      Deploy-Token (Abschnitt 4), bis dahin verwirft der Leser sie ohnehin.
+      Lokal gespeicherte Markierungen brauchen nichts: Berliner bleiben gültig,
+      fremde fallen beim Bauen der Karte heraus.
 
 - [ ] **Drei Rückfragen an München**, `gb1-23.mor@muenchen.de` (MOR-GB1).
       Keine davon ist aus dem Feed zu beantworten:
@@ -1099,8 +1126,9 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
-- [ ] **Die Oberfläche selbst lässt sich nicht als Einheit prüfen — und das
-      ist eine Entscheidung, keine Faulheit.** Stand 9. September deckt
+- [x] **Die Oberfläche selbst lässt sich nicht als Einheit prüfen — und das
+      ist eine Entscheidung, keine Faulheit.** **Am 9. September doch
+      eingebaut, nach Freigabe — Absatz am Ende.** Stand 9. September deckt
       `apps/web` **26,3 %** der Anweisungen ab, nach 13,8 % am Morgen. Was
       fehlt, ist fast vollständig React: `App.tsx` (1.993 Zeilen), die zwölf
       Komponenten und `useZoneStatus.ts`.
@@ -1129,8 +1157,20 @@ Was noch offen ist:
       den Unit-Test gehört und welche in E2E — sonst entstehen zwei Suiten,
       die dasselbe prüfen und beide gepflegt werden wollen.
 
-- [ ] **Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
-      aktuell ist.** Der Deploy holt die Daten je Stadt neu und fällt bei einem
+      **Eingebaut, mit genau dieser Regel** (`CONTRIBUTING.md`, „Was in
+      einen Komponententest gehört"): `jsdom`, `@testing-library/react` und
+      `@testing-library/dom` als Dev-Abhängigkeiten von `apps/web`; die
+      Umgebung wählt jede Datei selbst (`// @vitest-environment jsdom`), die
+      Vorgabe bleibt Node. Drei Dateien, zwölf Tests, an den Stellen, die
+      Fehler hatten: `komponenten-sichtungen` (eigene Meldung, abgegebene
+      Stimme, Knöpfe, leere Liste), `komponenten-meldeblatt` (Vorauswahl,
+      Nähe aus der Kartenmitte, Verdrängen durch die Liste),
+      `komponenten-zonenblatt` (Überschrift einer Fläche ohne Nummer,
+      Abstand zur nächsten Fläche). Was Karte, Speicher oder Neuladen
+      braucht, bleibt in `e2e/`.
+
+- [x] **Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
+      aktuell ist.** **Eingebaut am 9. September**, siehe unten. Der Deploy holt die Daten je Stadt neu und fällt bei einem
       Fehlschlag auf den eingecheckten Abzug zurück — richtig so, ein
       Dienstausfall darf keinen Deploy blockieren. Gemeldet wird das in
       `$GITHUB_STEP_SUMMARY`, also nur für den, der den Lauf öffnet; der Job
@@ -1172,14 +1212,23 @@ Was noch offen ist:
       könnte die Abweichung in die Zusammenfassung schreiben. Das ist eine
       Änderung am Workflow und steht deshalb hier, nicht im Code.
 
-      Vorschlag, nicht eingebaut, weil er das erzeugte Datenformat ändert:
-      ein Feld `geprueftAm` in `meta.json` — der Zeitpunkt des letzten
-      **erfolgreichen Abrufs**, nicht der des Baus. Es wandert dann mit dem
-      Deploy nach draußen: Nach einem gelungenen Abruf ist es frisch, nach
-      einem Rückfall bleibt das alte Datum stehen und fällt auf. Dazu eine
-      Warnung im Deploy, sobald es älter ist als eine Woche. Ändert vier
-      Datenbauten und eine Datei, die die App liest — deshalb erst nach
-      Absprache.
+      **Eingebaut am 9. September, nach Freigabe:** ein Feld `geprueftAm` in
+      `meta.json` — der Zeitpunkt des letzten **erfolgreichen Abrufs**, nicht
+      der des Baus. Er kommt aus `packages/ingest/src/abruf-zeit.ts`: der
+      **älteste** Änderungszeitpunkt unter den Rohdateien der Stadt, weil
+      `fetch-data` jede Ebene einzeln schreibt und eine gescheiterte stehen
+      lässt — „alles hier ist mindestens so frisch" ist die Aussage, die
+      stimmt. Alle sieben Datenbauten schreiben es; ohne Rohdaten steht
+      `null`, kein erfundenes Datum. `scripts/datenstand-pruefen.mjs` liest
+      es je Stadt und läuft im Deploy als Schritt „Datenstand prüfen" hinter
+      dem Auffrischen: älter als eine Woche oder fehlend heisst eine Warnung
+      und eine Zeile in der Zusammenfassung, kein Abbruch. Die Einstellungen
+      der App nennen das Datum unter „Daten" und sagen ab einer Woche dazu,
+      dass der Abruf nicht durchkommt.
+
+      Der erste Lauf hat den Fall prompt vorgeführt: Frankfurts WFS antwortete
+      am 9. September um 16:12 erneut mit `503` auf alle vier Ebenen, und die
+      Prüfung nennt Frankfurt seitdem als einzige Stadt ohne Datum.
 
 - [x] **Bilder neu aufgenommen** — am 7. September, mit Hintergrundkarte
       (Audit-Punkt M-076). Vorher zeigten `public/screenshots/` und

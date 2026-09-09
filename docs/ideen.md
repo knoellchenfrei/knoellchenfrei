@@ -162,6 +162,12 @@ macht einen stehengebliebenen Datenbau sichtbar — der Deploy zieht frische
 Daten, aber ein Behördendienst, der schweigt, lässt den alten Abzug stehen, und
 genau das soll er ja auch.
 
+> **Eingebaut am 9. September**: `geprueftAm` in jeder `meta.json`, gelesen
+> aus den Rohdateien (`packages/ingest/src/abruf-zeit.ts`), in den
+> Einstellungen unter „Daten" als „zuletzt geprüft am …", und im Deploy als
+> Schritt „Datenstand prüfen" (`scripts/datenstand-pruefen.mjs`). Der ganze
+> Weg steht in `todo.md`, Abschnitt 9.
+
 ## Was ich nicht bauen würde
 
 - **Konten.** Alles Nützliche geht ohne, und mit ihnen käme die ganze

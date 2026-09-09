@@ -49,4 +49,9 @@ export interface Meta {
   managedSpaces: number
   poi: number
   crs: string
+  /**
+   * Wann die Quelle zuletzt erfolgreich abgerufen wurde, ISO 8601. Fehlt in
+   * Abzügen von vor dem 9. September und in einem Bau ohne Rohdaten.
+   */
+  geprueftAm?: string | null
 }

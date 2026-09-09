@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { berlinWallClock } from '../src/berlin-time.js'
+import { BERLIN } from '../src/city.js'
 import { markFor, windowStart } from '../src/heatmap.js'
 import { countingWindowStart } from '../src/rate-limit.js'
 import { isChargeable, type ParkingZone } from '../src/tariff.js'
@@ -108,7 +109,7 @@ describe('was an beiden Tagen NICHT springen darf', () => {
 
   it('legt eine Markierung an beiden Tagen auf denselben Kalendertag', () => {
     for (const zeitpunkt of [Date.UTC(2026, 2, 29, 1, 0), Date.UTC(2026, 9, 25, 1, 30)]) {
-      const mark = markFor([13.4, 52.5], zeitpunkt)
+      const mark = markFor([13.4, 52.5], zeitpunkt, BERLIN.heatGrid)
       expect(mark.day).toBe(
         `${berlinWallClock(zeitpunkt).year}-${String(berlinWallClock(zeitpunkt).month).padStart(2, '0')}-${String(berlinWallClock(zeitpunkt).day).padStart(2, '0')}`
       )

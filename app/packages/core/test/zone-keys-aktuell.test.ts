@@ -90,8 +90,13 @@ describe('die erzeugte Zonenliste', () => {
     const hamburg = merkmale('hamburg')
     expect(hamburg.length).toBeGreaterThan(hamburg.map((p) => p['zone']).filter(eindeutig).length)
 
-    const ohneNamen = hamburg.filter((p) => p['zone'] === '-')
-    expect(ohneNamen.length, 'Flächen ohne Zonennamen').toBeGreaterThan(20)
+    // Seit dem 9. September tragen diese Flächen die GML-Kennung der Quelle
+    // statt des Strichs — je Fläche eine eigene, sonst zählte die
+    // Nutzungsstatistik 44 Flächen als eine Zone. Dass es sie gibt, bleibt
+    // die Voraussetzung dieses Tests.
+    const ohneNummer = hamburg.filter((p) => /^DE\.HH\.UP_BEWOHNERPARKGEBIETE_\d+$/.test(String(p['zone'])))
+    expect(ohneNummer.length, 'Flächen ohne Zonennummer').toBeGreaterThan(20)
+    expect(hamburg.filter((p) => p['zone'] === '-'), 'der Strich als Schlüssel').toEqual([])
 
     // Und mindestens eine Gruppe widerspricht sich in den Zeiten. Fiele das
     // eines Tages weg, wäre die Karte trotzdem richtig — der Test sagt dann

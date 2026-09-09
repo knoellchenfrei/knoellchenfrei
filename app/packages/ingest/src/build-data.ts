@@ -17,6 +17,7 @@ import { BERLIN, parseFee, parseSchedule, type Fee } from '@knoellchenfrei/core'
 
 import { CITY_KEY } from './sources.js'
 import { roundPoint, simplifyGeometry } from './simplify.js'
+import { geprueftAm } from './abruf-zeit.js'
 
 // Dieses Skript ist der BERLINER Zweig. Hamburg hat einen eigenen
 // (`build-data-hamburg.ts`), weil die beiden Feeds ausser der Domäne nichts
@@ -343,6 +344,8 @@ write('meta.json', {
   licenceUrl: BERLIN.attribution.licenceUrl,
   attributionRequired: BERLIN.attribution.attributionRequired,
   datasetUrl: BERLIN.attribution.datasetUrl,
+  // Wann die Quelle zuletzt erfolgreich abgerufen wurde — siehe abruf-zeit.ts.
+  geprueftAm: geprueftAm(RAW),
   zones: zones.features.length,
   segments: segments.length,
   managedSpaces: totalSpaces,

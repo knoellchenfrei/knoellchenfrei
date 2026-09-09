@@ -87,82 +87,96 @@ export interface HeatmapOptions {
   now: number
   historyDays?: number
   halfLifeDays?: number
+  /**
+   * Das Raster der Stadt — `buildHeatmap` braucht es, um Zellen zu verorten;
+   * `heatActivity` zählt nur Tage und Stunden und lässt es liegen.
+   */
+  grid?: HeatGrid
 }
 
 /**
- * Metres per degree of longitude at Berlin's latitude (52.52°).
+ * Das Raster einer Stadt.
  *
- * The grid is deliberately metric and fixed rather than a lat/lon degree grid:
- * a 0.001° cell is 111 m tall and 68 m wide here, so a degree grid would draw
- * lopsided rectangles and make "250 m" mean two different things per axis.
+ * Bis zum 9. September gab es genau eines: Ursprung 13,0/52,3 und die Breite
+ * eines Längengrads auf 52,52° — Berlin. Die Zelle war damit überall 250 m
+ * hoch, in Ost-West-Richtung aber in Hamburg 244 m, in Frankfurt 264 m, in
+ * München 274 m breit (nachgemessen, nicht geschätzt). Für „wo wird
+ * **innerhalb dieser Stadt** häufiger kontrolliert" reichte das; richtig war
+ * es nicht. Seitdem trägt jede Stadt ihr Raster in `City.heatGrid`.
  *
- * **Und die 52,52° stehen fest, obwohl vier Städte laufen — nachgemessen,
- * nicht geschätzt.** Die Zelle ist in Nord-Süd-Richtung überall 250 m hoch; in
- * Ost-West-Richtung wird sie nach Süden hin breiter, weil ein Längengrad dort
- * mehr Meter trägt:
+ * Der Name steht **im Zellschlüssel** (`hamburg:12_34`), und das ist die
+ * Migration: Eine Markierung aus einem anderen Raster wird beim Lesen
+ * verworfen, statt an einer falschen Stelle gezeichnet — auch dann, wenn die
+ * D1-Migration, die alte Zeilen löscht, noch nicht gelaufen ist. Berlins
+ * Raster ist das alte und trägt keinen Namen: Seine Schlüssel bleiben Byte für
+ * Byte, was sie waren (`109_97` für die Stadtmitte), und die gespeicherten
+ * Berliner Markierungen gelten weiter.
  *
- * | Stadt | Zellbreite | Abweichung |
- * | --- | ---: | ---: |
- * | Berlin | 250,0 m | 0,0 % |
- * | Hamburg | 244,1 m | −2,4 % |
- * | Frankfurt am Main | 263,5 m | +5,4 % |
- * | München | 274,2 m | +9,7 % |
- *
- * Warum das bleibt: Die Heatmap beantwortet „wo wird **innerhalb dieser Stadt**
- * häufiger kontrolliert". Dafür muss das Raster in sich gleichmässig sein, und
- * das ist es — nur eben mit einer Zelle, die in München 274 statt 250 m breit
- * ist. Die Breite je Stadt zu rechnen wäre richtiger und ändert **jeden
- * gespeicherten Zellschlüssel**: Die Tabelle `marks` hält 28 Tage, und ein
- * Wechsel ohne Migration würde die vorhandene Karte still zerreissen. Das ist
- * ein eigener Schritt mit Migrationsplan, kein Nebenbei — er steht in
- * `docs/todo.md`.
- *
- * Was hier **nicht** passieren darf: die Zahl 250 in der Oberfläche als
- * exakten Meterwert auszugeben. Sie ist ein Rastermass, keine Messung.
+ * Der Ursprung ist fest und steht in der Konfiguration, nie aus den Daten
+ * abgeleitet: Ein Ursprung, der mit der ersten Meldung wandert, legte dieselbe
+ * Strasse bei jedem Deploy in eine andere Zelle. Und die 250 gehören nicht als
+ * Meterwert in die Oberfläche — sie sind ein Rastermass, keine Messung.
  */
+export interface HeatGrid {
+  /** Präfix der Zellschlüssel. Leer nur für Berlin, das alte Raster. */
+  readonly id: string
+  readonly originLon: number
+  readonly originLat: number
+  /** Breitengrad, auf dem die Zelle 250 m breit ist — die Mitte der Stadt. */
+  readonly latitude: number
+}
+
 const LAT_DEG_PER_M = 1 / 111_320
-const LON_DEG_PER_M = 1 / (111_320 * Math.cos((52.52 * Math.PI) / 180))
+const lonDegPerMetre = (grid: HeatGrid): number =>
+  1 / (111_320 * Math.cos((grid.latitude * Math.PI) / 180))
 
 const DAY_MS = 86_400_000
 
-/**
- * Grid origin. Fixed, not derived from the data: an origin that moved with the
- * first report would put the same street in a different cell on every deploy.
- */
-const ORIGIN_LON = 13.0
-const ORIGIN_LAT = 52.3
+/** `<x>_<y>`, davor bei allen Städten ausser Berlin `<raster>:`. */
+const CELL_ID = /^(?:([a-z]+):)?(-?\d+)_(-?\d+)$/
 
 /** The cell a coordinate falls in. Throws on values the grid cannot place. */
-export function cellOf(point: Position): string {
+export function cellOf(point: Position, grid: HeatGrid): string {
   const [lon, lat] = point
   if (!Number.isFinite(lon) || !Number.isFinite(lat)) {
     throw new RangeError(`cellOf needs finite coordinates, got ${lon},${lat}`)
   }
-  const x = Math.floor((lon - ORIGIN_LON) / (CELL_SIZE_M * LON_DEG_PER_M))
-  const y = Math.floor((lat - ORIGIN_LAT) / (CELL_SIZE_M * LAT_DEG_PER_M))
-  return `${x}_${y}`
+  const x = Math.floor((lon - grid.originLon) / (CELL_SIZE_M * lonDegPerMetre(grid)))
+  const y = Math.floor((lat - grid.originLat) / (CELL_SIZE_M * LAT_DEG_PER_M))
+  return grid.id === '' ? `${x}_${y}` : `${grid.id}:${x}_${y}`
 }
 
-/** Centre of a cell, for placing the heat point. */
-export function cellCentre(cell: string): Position {
-  const [rawX, rawY] = cell.split('_')
-  const x = Number(rawX)
-  const y = Number(rawY)
+/**
+ * Centre of a cell, for placing the heat point.
+ *
+ * Wirft, wenn der Schlüssel zu einem anderen Raster gehört: Eine Hamburger
+ * Zelle mit Berlins Ursprung gerechnet läge in Berlin, und die Karte sähe
+ * dabei nur nach einer Meldung aus, nicht nach einem Fehler.
+ */
+export function cellCentre(cell: string, grid: HeatGrid): Position {
+  const match = CELL_ID.exec(cell)
+  if (match === null) throw new RangeError(`not a cell id: ${cell}`)
+  const prefix = match[1] ?? ''
+  if (prefix !== grid.id) {
+    throw new RangeError(`cell ${cell} belongs to grid "${prefix}", not "${grid.id}"`)
+  }
+  const x = Number(match[2])
+  const y = Number(match[3])
   if (!Number.isInteger(x) || !Number.isInteger(y)) {
     throw new RangeError(`not a cell id: ${cell}`)
   }
   return [
-    ORIGIN_LON + (x + 0.5) * CELL_SIZE_M * LON_DEG_PER_M,
-    ORIGIN_LAT + (y + 0.5) * CELL_SIZE_M * LAT_DEG_PER_M,
+    grid.originLon + (x + 0.5) * CELL_SIZE_M * lonDegPerMetre(grid),
+    grid.originLat + (y + 0.5) * CELL_SIZE_M * LAT_DEG_PER_M,
   ]
 }
 
 /** The mark a report at this point and time produces. */
-export function markFor(point: Position, at: Date | number): HeatMark {
+export function markFor(point: Position, at: Date | number, grid: HeatGrid): HeatMark {
   const clock = berlinWallClock(at)
   return {
     day: berlinDateKey(clock),
-    cell: cellOf(point),
+    cell: cellOf(point, grid),
     hour: Math.floor(clock.minuteOfDay / 60),
   }
 }
@@ -317,7 +331,7 @@ export function heatActivity(
  */
 export function buildHeatmap(
   marks: readonly HeatMark[],
-  options: HeatmapOptions,
+  options: HeatmapOptions & { grid: HeatGrid },
 ): Heatmap {
   const days = options.historyDays ?? HISTORY_DAYS
   const halfLife = options.halfLifeDays ?? HALF_LIFE_DAYS
@@ -350,9 +364,12 @@ export function buildHeatmap(
   for (const [cell, entry] of perCell) {
     let centre: Position
     try {
-      centre = cellCentre(cell)
+      centre = cellCentre(cell, options.grid)
     } catch {
-      // A malformed id can only come from a corrupt store or a hostile write.
+      // A malformed id can only come from a corrupt store or a hostile write —
+      // or, seit dem 9. September, aus einem anderen Raster: die Zeilen der
+      // anderen Städte von vor der Umstellung. Sie werden verworfen, nicht
+      // an einer falschen Stelle gezeichnet.
       continue
     }
     cells.push({

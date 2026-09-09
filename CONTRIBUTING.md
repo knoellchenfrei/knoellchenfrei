@@ -7,7 +7,7 @@ nvm use            # liest .nvmrc — Node 22, dieselbe Zahl wie in der CI
 corepack enable    # holt pnpm in der festgelegten Version
 cd app
 pnpm install
-pnpm test          # 1092 Unit-Tests
+pnpm test          # 1113 Unit-Tests
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
 ```
@@ -121,6 +121,30 @@ cd apps/web && npx playwright test
 ```
 
 Die CI führt dasselbe aus.
+
+## Was in einen Komponententest gehört und was in die E2E-Suite
+
+Seit dem 9. September gibt es beides für die Oberfläche: Playwright gegen
+den Produktions-Build (`e2e/`) und Komponententests mit jsdom und Testing
+Library (`test/komponenten-*.test.tsx`). Zwei Suiten, die dasselbe prüfen,
+wollen beide gepflegt werden — deshalb eine Regel, welche wofür da ist:
+
+- **Komponententest:** die Abbildung von Zustand auf Anzeige, ohne Browser.
+  Welche Knöpfe eine Sichtungszeile anbietet, was das Meldeblatt vorauswählt,
+  wie eine Fläche ohne Nummer heisst. Läuft in Millisekunden und nennt beim
+  Scheitern die Komponente. Gerendert wird eine Komponente mit fertigen
+  Props; Hooks über `renderHook`.
+- **E2E:** alles, was erst mit Karte, Speicher, Netz oder Neuladen entsteht.
+  Ein Tipp auf die Karte, der Service Worker, `localStorage` über ein
+  Neuladen hinweg, die Lage eines Knopfs auf 320 Pixeln, der Stadtwechsel.
+  jsdom kennt weder Layout noch MapLibre, und wer ihm dort glaubt, hat schon
+  einmal einen Fehler übersehen, den erst das Gerät zeigte.
+
+Ein Befund aus einem E2E-Lauf bekommt seinen Regressionstest dort, wo er
+sichtbar wurde; ein zweiter im Komponententest nur, wenn er die Abbildung
+selbst betrifft. Die Umgebung wählt jede Datei selbst
+(`// @vitest-environment jsdom` in der ersten Zeile); die Vorgabe bleibt
+Node, siehe `apps/web/vitest.config.ts`.
 
 ## Gegen einen lokalen Worker
 

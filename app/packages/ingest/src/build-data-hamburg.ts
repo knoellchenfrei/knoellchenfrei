@@ -41,6 +41,7 @@ import {
 
 import { citySources, toGeoJsonAxes, type AxisOrder } from './sources.js'
 import { simplifyGeometry } from './simplify.js'
+import { geprueftAm } from './abruf-zeit.js'
 
 const RAW = join(process.env.RAW_DIR ?? join(process.cwd(), '../../.raw'), HAMBURG.key)
 const OUT = join(
@@ -239,10 +240,24 @@ for (const feature of active) {
   const name = (p.bwp_name ?? '').replace(/\s+/g, ' ').trim()
   const art = (p.bewirtschaftungsart ?? '').trim()
 
+  // 44 der 145 Flächen tragen in `bwp_code` den Platzhalter `-`: Es sind die
+  // Flächen ohne Bewohnerparkrecht, für die die Quelle keine Zonennummer
+  // führt. Bis zum 9. September ging der Strich als Schlüssel durch — und
+  // damit zählte die Nutzungsstatistik 44 verschiedene Flächen als eine Zone,
+  // die Suche fand unter `-` genau die erste. Der Ersatz ist nicht erfunden,
+  // sondern die eigene Kennung des Anbieters (`DE.HH.UP_BEWOHNERPARKGEBIETE_<objectid>`);
+  // sie ist über zwei Momentaufnahmen stabil (docs/todo.md, Abschnitt 5).
+  // Die Oberfläche erkennt die Form und nennt die Fläche weiter „ohne Nummer".
+  const code = (p.bwp_code ?? '').trim()
+  const zone =
+    code === '' || code === '-'
+      ? (feature.id ?? `DE.HH.UP_BEWOHNERPARKGEBIETE_${String(p.objectid ?? '?')}`)
+      : code
+
   zoneFeatures.push({
     type: 'Feature',
     properties: {
-      zone: p.bwp_code ?? '?',
+      zone,
       district: district?.name ?? 'Hamburg',
       rawHours: zeiten,
       rawFee: (p.gebuehrenzone ?? '').trim(),
@@ -287,6 +302,8 @@ write('meta.json', {
   licenceUrl: HAMBURG.attribution.licenceUrl,
   attributionRequired: HAMBURG.attribution.attributionRequired,
   datasetUrl: HAMBURG.attribution.datasetUrl,
+  // Wann die Quelle zuletzt erfolgreich abgerufen wurde — siehe abruf-zeit.ts.
+  geprueftAm: geprueftAm(RAW),
   zones: zoneFeatures.length,
   districts: districtFeatures.length,
   poi: 0,

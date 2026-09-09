@@ -407,6 +407,24 @@ der seltene Fall ist. Gemessen auf 320, 390 und 1280 Pixeln: Die Pille liegt
 zwischen dem „i" der Quellenangabe und dem Standort, ohne eines zu berühren,
 und wandert mit dem Blatt hoch.
 
+## Das Raster der Kontrolldichte trägt seinen Namen im Zellschlüssel
+
+**Entschieden am 9. September**, als das eine Berliner 250-m-Raster zu einem
+je Stadt wurde. Ein Rasterwechsel entwertet jede gespeicherte Zelle, und eine
+Markierung hält absichtlich keine Koordinate — umrechnen geht nicht, nur
+verwerfen. Zwei Wege standen offen: eine D1-Migration, die die alten Zeilen
+löscht, oder ein Schlüssel, dem man sein Raster ansieht.
+
+Beides. Die Migration räumt auf, aber sie hängt an einem Deploy-Token, dem
+`D1:Edit` noch fehlt (`todo.md`, Abschnitt 4) — hinge die Richtigkeit der
+Karte daran, zeichnete Hamburg bis zum Nachrüsten Berliner Zellen an falscher
+Stelle, und das sähe aus wie eine Meldung, nicht wie ein Fehler. Deshalb steht
+der Name des Rasters im Schlüssel (`hamburg:12_34`), und `cellCentre` wirft bei
+einem fremden. Berlin bleibt ohne Präfix: Seine Schlüssel sind die alten, Byte
+für Byte, und seine Markierungen der letzten 28 Tage gelten weiter. Der Preis
+ist eine Sonderrolle für Berlin im Code, die im Kommentar von `heatmap.ts`
+steht — billiger als eine Migration, die stillschweigend nicht läuft.
+
 ## Als App ablegen
 
 **Getrennte Symbole für `any` und `maskable`.** Vorher war ein einziges SVG als
@@ -578,7 +596,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 1092 Unit-Tests und 99,9 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 1113 Unit-Tests und 99,9 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 

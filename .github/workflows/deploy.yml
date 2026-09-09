@@ -171,6 +171,17 @@ jobs:
             echo "Ausgeliefert wird der eingecheckte Abzug. Das ist kein Ausfall, aber es gehört gesehen." >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
+      # aktuell ist: Der Git-Zeitstempel misst „zuletzt geändert", nicht
+      # „zuletzt geprüft". Seit dem 9. September trägt jede meta.json den
+      # Zeitpunkt des letzten erfolgreichen Abrufs; hier wird er gelesen und
+      # eine Stadt, deren Datum älter als eine Woche ist oder fehlt, steht in
+      # der Zusammenfassung. Nur eine Warnung — ein schweigender Dienst darf
+      # den Deploy nicht anhalten, er soll nur nicht unbemerkt bleiben.
+      - name: Datenstand prüfen
+        if: steps.gate.outputs.ready == 'true'
+        run: node scripts/datenstand-pruefen.mjs
+
       - name: Web-App bauen
         if: steps.gate.outputs.ready == 'true'
         working-directory: app

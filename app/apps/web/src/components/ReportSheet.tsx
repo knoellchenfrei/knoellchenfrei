@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react'
 import { distanceMetres, type Position } from '@knoellchenfrei/core'
 
 import { representativePoint, zoneAt, type LoadedZone } from '../zones.js'
-import { zoneKurz } from '../zone-label.js'
+import { hatNummer, zoneKurz } from '../zone-label.js'
 
 interface Props {
   zones: readonly LoadedZone[]
@@ -134,7 +134,9 @@ export function ReportSheet({
     return zones
       .filter(
         (zone) =>
-          zone.properties.zone.toLowerCase().startsWith(needle) ||
+          // Nur eine echte Nummer ist suchbar: Hamburgs Quell-Kennungen
+          // (DE.HH.…) sind Schlüssel, keine Namen — auf „de" kämen 44 Treffer.
+          (hatNummer(zone.properties) && zone.properties.zone.toLowerCase().startsWith(needle)) ||
           zone.properties.district.toLowerCase().includes(needle),
       )
       .slice(0, MAX_MATCHES)

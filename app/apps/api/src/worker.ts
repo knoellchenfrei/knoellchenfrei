@@ -1095,7 +1095,7 @@ async function storeSighting(
   // The heatmap's tally is derived here rather than posted by the client: a
   // client that could write marks directly could paint a density it never
   // reported, and only this path is rate-limited.
-  const mark = markFor([coarsen(lon), coarsen(lat)], Date.now())
+  const mark = markFor([coarsen(lon), coarsen(lat)], Date.now(), city.heatGrid)
   await env.DB.prepare('INSERT INTO marks (id, day, cell, city, hour) VALUES (?, ?, ?, ?, ?)')
     .bind(crypto.randomUUID(), mark.day, mark.cell, city.key, mark.hour ?? null)
     .run()

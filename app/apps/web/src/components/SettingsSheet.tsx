@@ -16,6 +16,27 @@ interface Props {
   source: string
   licence: string
   licenceUrl: string
+  /** Wann die Quelle zuletzt erfolgreich abgerufen wurde, ISO 8601 — oder nichts. */
+  geprueftAm: string | null | undefined
+}
+
+/** Sieben Tage: Der Abruf läuft täglich; eine Woche ohne ist ein Ausfall, kein Zufall. */
+const DATENSTAND_ALT_MS = 7 * 86_400_000
+
+/**
+ * „geprüft am 9. Sept. 2026, 04:17" — oder null, wenn das Datum nicht lesbar
+ * ist. Ein unlesbares Datum wird nicht angezeigt, statt als „Invalid Date".
+ */
+function datenstand(iso: string | null | undefined, now: number): { text: string; alt: boolean } | null {
+  if (typeof iso !== 'string') return null
+  const at = Date.parse(iso)
+  if (!Number.isFinite(at)) return null
+  const text = new Intl.DateTimeFormat('de-DE', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Europe/Berlin',
+  }).format(at)
+  return { text, alt: now - at > DATENSTAND_ALT_MS }
 }
 
 const REPO = 'https://github.com/knoellchenfrei/knoellchenfrei'
@@ -209,8 +230,10 @@ export function SettingsSheet({
   source,
   licence,
   licenceUrl,
+  geprueftAm,
 }: Props) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const stand = datenstand(geprueftAm, Date.now())
 
   const install = useInstallState()
 
@@ -420,6 +443,24 @@ export function SettingsSheet({
           </a>
           . Kartenkacheln © OpenStreetMap-Mitwirkende (ODbL).
         </p>
+        {/*
+          Das Datum, nicht nur die Quelle: Ein Abzug von vor drei Wochen hat
+          für „kostet das gerade etwas" eine andere Verlässlichkeit als einer
+          von gestern — und ein Behördendienst, der schweigt, lässt den alten
+          Abzug stehen. Genau das soll er, nur sichtbar.
+        */}
+        {stand !== null && (
+          <p className="sheet__hint">
+            Datenstand: bei der Quelle zuletzt geprüft am {stand.text}.
+            {stand.alt && (
+              <>
+                {' '}
+                <strong>Das ist länger als eine Woche her</strong> — der tägliche Abruf kommt seit dem
+                nicht durch, die Daten können überholt sein.
+              </>
+            )}
+          </p>
+        )}
         {/*
           Bei Hamburg ist die Nennung der Quelle Lizenzbedingung
           (DL-DE/Namensnennung 2.0), bei Berlin freiwillig (DL-DE/Zero).

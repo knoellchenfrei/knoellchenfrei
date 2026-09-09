@@ -71,6 +71,7 @@ import {
 
 import { citySources, toGeoJsonAxes, type AxisOrder } from './sources.js'
 import { roundPoint, simplifyGeometry } from './simplify.js'
+import { geprueftAm } from './abruf-zeit.js'
 
 const RAW = join(process.env.RAW_DIR ?? join(process.cwd(), '../../.raw'), KARLSRUHE.key)
 const OUT = join(
@@ -460,6 +461,8 @@ write('meta.json', {
   licenceUrl: KARLSRUHE.attribution.licenceUrl,
   attributionRequired: KARLSRUHE.attribution.attributionRequired,
   datasetUrl: KARLSRUHE.attribution.datasetUrl,
+  // Wann die Quelle zuletzt erfolgreich abgerufen wurde — siehe abruf-zeit.ts.
+  geprueftAm: geprueftAm(RAW),
   zones: zoneFeatures.length,
   districts: 0,
   poi: poi.length,
