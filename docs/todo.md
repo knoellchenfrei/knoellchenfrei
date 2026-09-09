@@ -359,51 +359,50 @@ Was am neuen Repository noch offen ist — **du**:
       Adresse der teurere Weg; `SECURITY.md` sagt das jetzt ausdrücklich, statt
       die Lücke offenzulassen.
 
-- [ ] **Ein Sicherheitsschalter bei GitHub ist aus** —
-      `secret_scanning_non_provider_patterns`, nachgemessen mit
-      `./scripts/einstellungen-pruefen.sh`. Die anderen vier stehen richtig
-      (Secret Scanning, Push Protection, Dependabot-Sicherheitsupdates,
-      Private Vulnerability Reporting).
+- [ ] **Zwei Sicherheitsschalter bei GitHub sind aus, und sie gehen nur
+      zusammen an.** `secret_scanning_non_provider_patterns` und
+      `secret_scanning_validity_checks`, nachgemessen mit
+      `./scripts/einstellungen-pruefen.sh`. Die anderen vier stehen richtig.
 
-      Er ist kein theoretischer Punkt: Er findet generische Geheimnisse —
-      Passwörter, Verbindungszeichenfolgen, private Schlüssel. Das
-      MySQL-Passwort von 2012, das bis zum 9. September wörtlich in
-      `oeffentlich-machen.md` stand, hätte er gemeldet; das
-      Anbietermuster-Scanning konnte es gar nicht sehen.
+      **Ein einzelnes Feld zu setzen ist wirkungslos** — am 9. September
+      nachgemessen: `gh api -X PATCH repos/… -F
+      'security_and_analysis[secret_scanning_non_provider_patterns][status]=enabled'`
+      antwortet mit **200 und dem vollständigen Repository-Objekt**, in dem das
+      Feld weiter `disabled` steht. Kein Fehler, keine Warnung. Deshalb fehlt
+      der Schalter auch in der Oberfläche: Er wird nicht am Repository geführt,
+      sondern über eine **Sicherheitskonfiguration der Organisation**.
 
-      **Der Weg dorthin hat sich geändert, und meine erste Anleitung war
-      falsch** — vom Betreiber bemerkt. Die Adresse
-      `.../settings/security_analysis` gibt es nicht mehr. Aktuell:
+      Die gibt es bereits — `GitHub recommended`, id 17, `enforcement:
+      unenforced`, in der beide Felder `enabled` sind. Sie ist auf dieses
+      Repository nur nicht angewandt. Das Anwenden ändert vier Dinge:
 
-      > *Settings* → Seitenleiste „Security and quality" → **Advanced
-      > Security** → Abschnitt „Secret Protection" → *Enable* neben
-      > **Generic patterns**.
+      | | jetzt | danach |
+      | --- | --- | --- |
+      | `secret_scanning_non_provider_patterns` | disabled | **enabled** |
+      | `secret_scanning_validity_checks` | disabled | **enabled** |
+      | `secret_scanning_extended_metadata` | aus | **enabled** |
+      | `code_scanning_default_setup` | `not-configured` | **enabled** (`actions`, `javascript-typescript`) |
 
-      Der Schalter heisst in der Oberfläche also nicht mehr „Non-provider
-      patterns", sondern „Generic patterns"; in der API heisst das Feld
-      unverändert `secret_scanning_non_provider_patterns`. Über die
-      Kommandozeile:
+      Der letzte ist der einzige mit spürbarer Wirkung: CodeQL läuft dann bei
+      jedem Push und jedem PR mit. Für ein öffentliches Repository kostenlos,
+      kostet aber Laufzeit und bringt einen neuen Meldungsstrom. Alles andere
+      ist bereits an (Dependabot-Alerts antworten mit 204, Secret Scanning,
+      Push Protection, Private Vulnerability Reporting).
+
+      **Vom Betreiber am 9. September freigegeben; der Aufruf ist dem
+      Auto-Modus dieser Sitzung verwehrt** (Schreiben auf Organisationsebene).
+      Also von Hand:
 
       ```bash
-      gh api -X PATCH repos/knoellchenfrei/knoellchenfrei \
-        -F 'security_and_analysis[secret_scanning_non_provider_patterns][status]=enabled'
+      gh api -X POST orgs/knoellchenfrei/code-security/configurations/17/attach \
+        -f 'scope=selected' -F 'selected_repository_ids[]=1359158283'
       ```
 
-      Rechne beim ersten Lauf mit Fehlalarmen: Dieses Repository zitiert viel
-      Konfiguration, und generische Muster sind unschärfer als
-      Anbietermuster.
-
-      **Was ich nicht behaupten kann:** ob der Schalter für ein öffentliches
-      Repository kostenlos ist. Die Doku sagt dazu nichts Eindeutiges, und
-      die Seitenleiste heisst inzwischen „Advanced Security". Falls er Geld
-      kostet, gehört er hier gestrichen statt eingeschaltet — dieselbe Lage
-      wie bei der WAF-Regel, die aufgehört hat, kostenlos zu sein.
-
-      **`secret_scanning_validity_checks` ist aus der Prüfung heraus.** Das
-      Feld steht nicht mehr in der Liste, die „Update a repository" laut Doku
-      annimmt; gelesen wird es weiter. Ob es sich überhaupt noch setzen
-      lässt, ist offen, und eine Prüfung, die Unmögliches verlangt, ist
-      Lärm. Sie zeigt den Stand jetzt als Hinweis.
+      Danach `./scripts/einstellungen-pruefen.sh` laufen lassen — nach dem
+      stillen 200 von heute Morgen wird jede Einstellung nachgelesen, nicht
+      geglaubt. Sind beide Felder dann `enabled`, gehört
+      `secret_scanning_validity_checks` in der Prüfung wieder von „nur zur
+      Kenntnis" auf „erwartet: enabled".
 
 - [x] **Branch-Schutz für `main`: bewusst aus** — Entscheidung des Betreibers
       vom 7. September (Audit-Punkt M-002).
@@ -1086,6 +1085,36 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
+- [ ] **Die Oberfläche selbst lässt sich nicht als Einheit prüfen — und das
+      ist eine Entscheidung, keine Faulheit.** Stand 9. September deckt
+      `apps/web` **26,3 %** der Anweisungen ab, nach 13,8 % am Morgen. Was
+      fehlt, ist fast vollständig React: `App.tsx` (1.993 Zeilen), die zwölf
+      Komponenten und `useZoneStatus.ts`.
+
+      Der Grund steht in `apps/web/vitest.config.ts`: `environment: 'node'`.
+      Ohne DOM lässt sich keine Komponente rendern. Was es bräuchte, ist eine
+      Umgebung (`jsdom` oder `happy-dom`) und eine Rendering-Bibliothek
+      (`@testing-library/react`) — **zwei bis drei neue
+      Entwicklungsabhängigkeiten**, also abzusprechen.
+
+      Was dafür spricht: Die Komponenten tragen Logik, die heute nur die
+      E2E-Suite sieht — und die läuft drei Minuten, während ein Unit-Test
+      Millisekunden braucht. Der Klick-Handler auf eine Zonenfläche, die
+      Auswahl im Meldedialog, die Wortwahl in `zone-label.ts`: alles Stellen,
+      an denen dieses Projekt schon Fehler hatte.
+
+      Was dagegen spricht: 174 E2E-Tests prüfen die Oberfläche bereits gegen
+      einen echten Browser und einen Produktions-Build. Ein zweiter,
+      schwächerer Weg dorthin kostet Pflege und findet vielleicht nichts, was
+      der erste nicht schon fände. Und `jsdom` ist kein Browser: Wer ihm
+      glaubt, hat schon einmal einen Fehler übersehen, den erst das Gerät
+      zeigte.
+
+      **Mein Vorschlag ist: nicht.** Die Lücke ist benannt und gemessen, der
+      teurere Weg ist da. Wenn doch, dann mit einer Regel, welche Art Logik in
+      den Unit-Test gehört und welche in E2E — sonst entstehen zwei Suiten,
+      die dasselbe prüfen und beide gepflegt werden wollen.
+
 - [ ] **Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
       aktuell ist.** Der Deploy holt die Daten je Stadt neu und fällt bei einem
       Fehlschlag auf den eingecheckten Abzug zurück — richtig so, ein
@@ -1109,6 +1138,25 @@ Was noch offen ist:
       Monate nicht geändert hat, nicht zu unterscheiden. Auch `meta.json`
       hilft nicht: Es trägt Zonen-, Bezirks- und Automatenzahlen, aber **kein
       Datum**.
+
+      **Am 9. September dazugemessen: Der Abzug passt heute zum Code.** Alle
+      vier Städte aus den eingecheckten Rohdaten neu gebaut
+      (`OUT_DIR=… pnpm --filter @knoellchenfrei/ingest build-data…`) und gegen
+      `apps/web/public/data/` gehalten — **byteweise identisch**, alle vier.
+      Der Datenbau ist also bestimmt: gleiche Rohdaten, gleiches Ergebnis.
+
+      Das begrenzt den Schaden und benennt ihn zugleich. Im Normalfall trifft
+      es niemanden, weil der Deploy die Daten ohnehin frisch baut und die
+      frischen ausliefert. Gefährlich wird es nur im Rückfall: Scheitert der
+      Abruf einer Stadt und ändert sich zwischenzeitlich ein Parser, ohne dass
+      jemand den Abzug neu baut, liefert dieser eine Deploy Daten aus, die eine
+      **ältere Lesart** der Quelle sind — und niemandem fällt es auf.
+
+      Eine CI-Prüfung dafür geht nicht: `.raw/` ist 70 MB gross und
+      absichtlich nicht eingecheckt. Was ginge, wäre ein Vergleich **im
+      Deploy** — er hat den frischen Bau und den Abzug beide zur Hand und
+      könnte die Abweichung in die Zusammenfassung schreiben. Das ist eine
+      Änderung am Workflow und steht deshalb hier, nicht im Code.
 
       Vorschlag, nicht eingebaut, weil er das erzeugte Datenformat ändert:
       ein Feld `geprueftAm` in `meta.json` — der Zeitpunkt des letzten

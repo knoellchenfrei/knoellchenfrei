@@ -29,22 +29,31 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 801 Unit-Tests (core, api, web)
+pnpm test                                           # 884 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 174 End-to-End-Tests
 ```
 
-Und vier Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
-aus `app/`. Alle vier laufen in der CI, und jede hat einen Vorfall hinter sich:
+Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
+aus `app/`. Alle fünf laufen in der CI, und jede hat einen Vorfall hinter sich:
 
 ```bash
 ./scripts/sprache-pruefen.sh    # Prosa mit Umlauten, Bezeichner ohne
 node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen, nichts verwaist
 ./scripts/namen-pruefen.sh      # Ressourcennamen stimmen überein
 ./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
+shellcheck scripts/*.sh app/packages/ingest/scripts/*.sh   # die Shell-Skripte
 ```
+
+**`shellcheck` stand bis zum 9. September nur in der CI und in keiner
+Anleitung** — und genau deshalb ging ein neues Skript rot hinaus, ohne dass es
+jemand vor dem Push gesehen hätte. Zweimal `SC2016`: Backticks in einer
+einfach gequoteten `printf`-Zeichenkette, für shellcheck eine
+Kommandosubstitution, die nicht expandiert. Nur ein Hinweis, aber die Prüfung
+bricht trotzdem ab. Auf macOS liegt das Werkzeug über Homebrew, in der CI kommt
+es aus `apt`; beide finden dasselbe.
 
 Und **zwei weitere von Hand**, absichtlich nicht in der CI — beide brauchen
 etwas, das ein Workflow nicht hat:
@@ -70,7 +79,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (570), `apps/api` (82, Worker und Zählwerk),
-`apps/web` (138, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (221, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren, Demodaten,
 Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -86,8 +95,12 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=801 E2E_COUNT=174 npx tsx src/build-badges.ts
+TEST_COUNT=884 E2E_COUNT=174 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
+# Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
+#   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
+#   diff -rq /tmp/neubau/berlin ../../apps/web/public/data/berlin
+# Am 9. September für alle vier Städte gemacht: byteweise identisch.
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
 
