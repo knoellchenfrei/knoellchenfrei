@@ -122,6 +122,17 @@ cd apps/web && npx playwright test
 
 Die CI führt dasselbe aus.
 
+## Gegen einen lokalen Worker
+
+Die E2E-Suite misst den lokalen Modus („nur dieses Gerät"). Was sie nicht
+sieht: ob eine Meldung beim Worker ankommt, ob eine zweite Stimme desselben
+Clients verworfen wird, ob zwei Sitzungen auseinandergehalten werden. Dafür
+gibt es `apps/web/scripts/durchklicken.mjs` — drei Browser mit drei
+Client-Adressen gegen einen Worker aus `wrangler dev --local`. Die drei
+Befehle stehen im Kopf des Skripts; es endet rot, sobald der Worker mit
+4xx/5xx antwortet oder eine Seite einen Fehler in die Konsole schreibt. Am
+9. September hat genau dieser Lauf zwei Fehler gefunden, die kein Test sah.
+
 ## Daten aktualisieren
 
 ```bash

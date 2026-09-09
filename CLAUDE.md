@@ -33,7 +33,7 @@ pnpm test                                           # 884 Unit-Tests (core, api,
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 174 End-to-End-Tests
+cd apps/web && npx playwright test                  # 178 End-to-End-Tests
 ```
 
 Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -62,6 +62,12 @@ etwas, das ein Workflow nicht hat:
 ./scripts/ausgeliefert-pruefen.sh    # beide Adressen: Riegel, Kopfzeilen, keine offene Weiterleitung
 ./scripts/einstellungen-pruefen.sh   # die Sicherheitsschalter bei GitHub
 ```
+
+Und ein dritter Handlauf, der einen **lokalen Worker** braucht:
+`apps/web/scripts/durchklicken.mjs` klickt die App wie drei Nutzer durch
+(melden, bestätigen, „weg", Kontrolldichte, Statistik) — der Weg steht in
+`CONTRIBUTING.md` unter „Gegen einen lokalen Worker". Die E2E-Suite sieht den
+Worker nie; zwei Fehler vom 9. September lagen genau dort.
 
 Die erste braucht die echte Adresse, die ein Fork nicht hätte. Die zweite
 braucht ein Token mit Verwaltungsrecht: Das `GITHUB_TOKEN` eines Workflows darf
@@ -95,7 +101,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=884 E2E_COUNT=174 npx tsx src/build-badges.ts
+TEST_COUNT=884 E2E_COUNT=178 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data

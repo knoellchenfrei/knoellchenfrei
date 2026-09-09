@@ -323,6 +323,59 @@ test.describe('gemeldete Sichtungen', () => {
       page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .demo-note'),
     ).toContainText('erzeugt')
   })
+
+  /**
+   * Der Stimmen-Weg war zweimal kaputt, ohne dass ein Test es sah: Erst gingen
+   * die Stimmen monatelang mit 415 ins Leere (M-046), dann zählte die Anzeige
+   * eine Stimme, die der Worker verworfen hatte. Hier der Weg, den die
+   * Oberfläche selbst verantwortet: Ein Tipp auf „gesehen" hebt die Meldung
+   * auf „bestätigt", ein Tipp auf „weg" senkt sie, und nichts davon meldet
+   * einen Fehler. Im lokalen Modus, also ohne Server — der Worker hat seine
+   * eigenen Tests.
+   */
+  test('hebt eine Meldung mit „gesehen" um einen Stern und senkt sie mit „weg"', async ({ page }) => {
+    await ready(page)
+    await openPanel(page)
+    const rows = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item')
+    // Die erste Zeile ist die höchstbewertete; sie bleibt es nach beiden
+    // Stimmen, weil die Demodaten dahinter älter sind und tiefer stehen.
+    const first = rows.first()
+    const stars = first.locator('.stars')
+    await expect(stars).toHaveText('★')
+    // Nicht „bestätigt": Die Konfidenz verfällt mit dem Alter, und die
+    // jüngste Demo-Meldung ist acht Minuten alt — eine Bestätigung hebt sie
+    // auf 0,55, die Schwelle liegt bei 0,62. Ein Stern mehr ist die Wirkung,
+    // die eine Stimme hier sicher hat; erst eine frische Meldung wird mit
+    // einer Bestätigung „bestätigt".
+    await first.getByRole('button', { name: /bestätigen$/ }).click()
+    await expect(stars).toHaveText('★★')
+    await expect(page.locator('.toast')).toHaveCount(0)
+
+    await first.getByRole('button', { name: /als weg melden$/ }).click()
+    await expect(stars).toHaveText('★')
+    await expect(page.locator('.toast')).toHaveCount(0)
+  })
+
+  /**
+   * Die eigene Meldung trägt keine Stimmknöpfe. Der Worker weist eine Stimme
+   * darauf mit 403 ab (M-047); am 9. September lief sie beim Durchklicken
+   * sogar in ein 404, weil die App noch ihre lokale Kennung schickte. Ein
+   * Knopf, der nur einen Fehler auslöst, ist kein Knopf.
+   */
+  test('bietet auf der eigenen Meldung keine Stimme an', async ({ page }) => {
+    await ready(page)
+    const box = await page.locator('.map').boundingBox()
+    await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
+    await page.waitForTimeout(1000)
+    await openPanel(page)
+    await page.locator('button', { hasText: 'Hier gesehen' }).click()
+    await page.locator('.sheet__submit').click()
+    await expect(page.locator('.sheet')).toHaveCount(0)
+
+    const own = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
+    await expect(own).toContainText('deine Meldung')
+    await expect(own.locator('button')).toHaveCount(0)
+  })
 })
 
 test.describe('Melden scheitert nie still', () => {
