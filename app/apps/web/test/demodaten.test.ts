@@ -51,7 +51,7 @@ afterEach(() => {
 })
 
 describe('Demodaten liegen in der Stadt, die sie zeigen', () => {
-  const staedte = Object.values(CITIES) as City[]
+  const staedte: readonly City[] = CITIES
 
   it('prüft alle eingetragenen Städte, nicht eine Auswahl', () => {
     expect(staedte.length).toBeGreaterThanOrEqual(4)
