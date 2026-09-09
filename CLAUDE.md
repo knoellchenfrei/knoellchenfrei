@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 778 Unit-Tests (core, api, web)
+pnpm test                                           # 787 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -70,7 +70,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (570), `apps/api` (78, Worker und Zählwerk),
-`apps/web` (119, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (128, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren, Demodaten,
 Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -86,7 +86,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=778 E2E_COUNT=170 npx tsx src/build-badges.ts
+TEST_COUNT=787 E2E_COUNT=170 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
