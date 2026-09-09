@@ -1,0 +1,48 @@
+# Prüft die Betreffs der gepushten Commits gegen Conventional Commits und
+# gegen die Sprachregel (ASCII im Betreff) — `scripts/commit-pruefen.sh`.
+#
+# Eingeführt am 9. September 2026 auf Wunsch des Betreibers. Bis dahin hatte
+# die Historie gute Betreffs und keine Form; seitdem gilt `typ(bereich):
+# betreff`, damit sich später ein CHANGELOG aus der Historie erzeugen lässt
+# (docs/entscheidungen.md). Geprüft wird nur, was dieser Push oder dieser
+# Pull Request mitbringt — die Historie davor bleibt, wie sie ist.
+name: Commits prüfen
+
+on:
+  push:
+    branches: ['**', '!dependabot/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  betreffs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Die ganze Historie: Der Bereich reicht bis zur Basis des Pull
+          # Requests beziehungsweise bis zum Stand vor dem Push.
+          fetch-depth: 0
+      - name: Bereich bestimmen
+        id: bereich
+        env:
+          EREIGNIS: ${{ github.event_name }}
+          VORHER: ${{ github.event.before }}
+          NACHHER: ${{ github.sha }}
+          BASIS: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EREIGNIS" = "pull_request" ]; then
+            echo "range=$BASIS..HEAD" >> "$GITHUB_OUTPUT"
+          elif [ "$VORHER" = "0000000000000000000000000000000000000000" ]; then
+            # Neuer Zweig: alles, was main noch nicht hat.
+            git fetch --no-tags origin main
+            echo "range=origin/main..$NACHHER" >> "$GITHUB_OUTPUT"
+          else
+            echo "range=$VORHER..$NACHHER" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Betreffs prüfen
+        env:
+          BEREICH: ${{ steps.bereich.outputs.range }}
+        run: ./scripts/commit-pruefen.sh "$BEREICH"

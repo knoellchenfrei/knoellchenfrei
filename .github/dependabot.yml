@@ -74,11 +74,13 @@ updates:
         dependency-type: production
         update-types: [minor, patch]
     commit-message:
-      # Macht die maschinellen Commits auf einen Blick von den handgeschriebenen
-      # unterscheidbar. Die sind deutsche Sätze, Dependabot schreibt englische
-      # Einzeiler — das ist kein Stilbruch, sondern eine Kennzeichnung.
-      prefix: deps
-      prefix-development: deps-dev
+      # Conventional Commits, seit dem 9. September: `build(deps): bump …`.
+      # Dependabot hängt sein englisches „bump x from a to b" an; der Typ
+      # davor ist unserer, und `scripts/commit-pruefen.sh` lässt diese
+      # Betreffs länger als 72 Zeichen, weil zwei Paketnamen und zwei
+      # Versionen niemand kürzt.
+      prefix: build(deps)
+      prefix-development: build(deps-dev)
 
   # --- GitHub Actions ---------------------------------------------------
   #
@@ -104,4 +106,4 @@ updates:
       actions:
         update-types: [minor, patch]
     commit-message:
-      prefix: ci
+      prefix: ci(actions)
