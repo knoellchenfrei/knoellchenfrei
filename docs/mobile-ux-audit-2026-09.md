@@ -179,9 +179,10 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
 
 ## Verbleibende Probleme
 
-- Die Ebenen-Chip-Zeile zeigt nicht, dass sie weitergeht — ein Verlauf am
-  rechten Rand fehlt. Der letzte Chip ist angeschnitten, was es meistens
-  verrät, aber nicht bei jeder Chip-Zahl.
+- Die Ebenen-Chip-Zeile zeigte nicht, dass sie weitergeht — ein Verlauf am
+  rechten Rand fehlte. Der letzte Chip war angeschnitten, was es meistens
+  verriet, aber nicht bei jeder Chip-Zahl. Seit dem 9. September gemessen
+  und eingeblendet, siehe Punkt 2 unten.
 - Die `visualViewport`-Lösung für das iPhone ist ohne Gerät nur gegen ihre
   Rechnung getestet (Unit-Test), nicht gegen Safari. Die Android-Lösung über
   die Viewport-Angabe ist deterministisch.
@@ -193,8 +194,11 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
 - Das Blatt zeigte beim Aufklappen keinen Vorschauzustand („Peek" mit einer
   Zeile Inhalt); der eingeklappte Griff trug nur die Beschriftung. Seit dem
   9. September steht die Antwort selbst im Griff, siehe Punkt 3 unten.
-- Die Bewertungsknöpfe „gesehen / weg" sind auf dem Desktop 26 Pixel hoch —
-  bei Maus vertretbar, bei einem Touch-Laptop nicht.
+- Die Bewertungsknöpfe „gesehen / weg" waren auf dem Desktop 26 Pixel hoch —
+  bei Maus vertretbar, bei einem Touch-Laptop nicht. Seit dem 9. September
+  hängen die Tippflächen an `any-pointer: coarse` statt `pointer: coarse`:
+  Ein Laptop mit Touchscreen meldet als primären Zeiger die Maus und fiel
+  vorher durch. Mit reiner Maus bleibt alles wie es war.
 
 ## Technische Risiken
 
