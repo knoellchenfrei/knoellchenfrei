@@ -88,6 +88,10 @@ node scripts/make-docs-images.mjs                   # Bilder für README und Dok
 cd ../../packages/ingest
 TEST_COUNT=809 E2E_COUNT=170 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
+# Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
+#   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
+#   diff -rq /tmp/neubau/berlin ../../apps/web/public/data/berlin
+# Am 9. September für alle vier Städte gemacht: byteweise identisch.
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
 

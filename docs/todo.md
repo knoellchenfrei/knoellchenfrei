@@ -1109,6 +1109,25 @@ Was noch offen ist:
       hilft nicht: Es trägt Zonen-, Bezirks- und Automatenzahlen, aber **kein
       Datum**.
 
+      **Am 9. September dazugemessen: Der Abzug passt heute zum Code.** Alle
+      vier Städte aus den eingecheckten Rohdaten neu gebaut
+      (`OUT_DIR=… pnpm --filter @knoellchenfrei/ingest build-data…`) und gegen
+      `apps/web/public/data/` gehalten — **byteweise identisch**, alle vier.
+      Der Datenbau ist also bestimmt: gleiche Rohdaten, gleiches Ergebnis.
+
+      Das begrenzt den Schaden und benennt ihn zugleich. Im Normalfall trifft
+      es niemanden, weil der Deploy die Daten ohnehin frisch baut und die
+      frischen ausliefert. Gefährlich wird es nur im Rückfall: Scheitert der
+      Abruf einer Stadt und ändert sich zwischenzeitlich ein Parser, ohne dass
+      jemand den Abzug neu baut, liefert dieser eine Deploy Daten aus, die eine
+      **ältere Lesart** der Quelle sind — und niemandem fällt es auf.
+
+      Eine CI-Prüfung dafür geht nicht: `.raw/` ist 70 MB gross und
+      absichtlich nicht eingecheckt. Was ginge, wäre ein Vergleich **im
+      Deploy** — er hat den frischen Bau und den Abzug beide zur Hand und
+      könnte die Abweichung in die Zusammenfassung schreiben. Das ist eine
+      Änderung am Workflow und steht deshalb hier, nicht im Code.
+
       Vorschlag, nicht eingebaut, weil er das erzeugte Datenformat ändert:
       ein Feld `geprueftAm` in `meta.json` — der Zeitpunkt des letzten
       **erfolgreichen Abrufs**, nicht der des Baus. Es wandert dann mit dem
