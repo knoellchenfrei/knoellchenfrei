@@ -575,7 +575,15 @@ export function App() {
           // topbar's button; collapsed, it is the usual "i" one tap away.
           // Auch im Querformat: 844 Pixel breit, aber 390 hoch, und der
           // ausgeklappte Streifen lag über dem Seitenpanel.
-          if (window.innerWidth <= 720 || window.innerHeight <= 520) {
+          //
+          // Und auf dem Tablet: Bei 768 Pixeln Breite steht die Seitenleiste
+          // mit 380 Pixeln daneben, der Karte bleiben 372. Dort teilen sich
+          // Chip-Zeile, Standort-Knopf und der ausgeklappte Streifen (201
+          // Pixel) die untere Kante — gemessen am 9. September lag der
+          // Streifen über dem untersten Chip (Mobile-Audit, „Verbleibende
+          // Probleme"). Unter 960 Pixeln Breite ist neben der Leiste nie
+          // Platz für alle drei; das „i" bleibt einen Tipp entfernt.
+          if (window.innerWidth < 960 || window.innerHeight <= 520) {
             map
               .getContainer()
               .querySelector('.maplibregl-ctrl-attrib')

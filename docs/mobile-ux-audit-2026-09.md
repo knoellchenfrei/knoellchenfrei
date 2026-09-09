@@ -189,8 +189,13 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
 - Das Melde-Blatt bleibt ohne `inert` und ohne Schleier, weil die Karte
   dahinter auf dem Desktop den Anker setzen darf. Tab kann dort in die Karte
   laufen.
-- Auf dem Tablet (768 px) teilen sich Chips, FAB und Quellenangabe die
-  untere Kante; mit sieben offenen Chips wird es eng.
+- Auf dem Tablet (768 px) teilten sich Chips, FAB und Quellenangabe die
+  untere Kante; mit sieben offenen Chips wurde es eng — gemessen am
+  9. September lag der ausgeklappte Quellenstreifen (201 px) über dem
+  untersten Chip. Seitdem klappt er unter 960 px Breite von Anfang an zum
+  „i" ein, wie auf dem Handy; der Karte bleiben neben der Leiste 372 px,
+  und dort ist für alle drei nie Platz. Ein E2E-Test in `mobile.spec.ts`
+  hält es fest.
 - Das Blatt zeigte beim Aufklappen keinen Vorschauzustand („Peek" mit einer
   Zeile Inhalt); der eingeklappte Griff trug nur die Beschriftung. Seit dem
   9. September steht die Antwort selbst im Griff, siehe Punkt 3 unten.

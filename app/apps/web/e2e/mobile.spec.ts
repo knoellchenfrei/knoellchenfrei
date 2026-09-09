@@ -263,6 +263,60 @@ test.describe('Folgepunkte aus dem Audit', () => {
    * beides aus dem Panel und verlangt den Griff als dessen Abschrift, statt
    * die Wörter ein drittes Mal hinzuschreiben.
    */
+  /**
+   * Der Tablet-Befund aus „Verbleibende Probleme": Bei 768 Pixeln bleiben der
+   * Karte neben der Seitenleiste 372 Pixel, und der ausgeklappte
+   * Quellenstreifen (201 Pixel) lag über dem untersten Chip. Eingeklappt ist
+   * er ein „i" von 36 Pixeln. Auf dem Desktop bleibt er ausgeklappt, bis die
+   * Karte berührt wird — so wie MapLibre es vorsieht.
+   */
+  test('klappt die Quellenangabe auf dem Tablet ein, auf dem Desktop nicht', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'Die Breite wird hier selbst gesetzt.')
+    await page.setViewportSize({ width: 768, height: 1024 })
+    await ready(page)
+    const attrib = page.locator('.maplibregl-ctrl-attrib')
+    await expect(attrib).not.toHaveClass(/maplibregl-compact-show/)
+    // Und der Streifen steht nicht mehr über der Chip-Zeile.
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    const chips = await page.locator('.legend').boundingBox()
+    const info = await attrib.boundingBox()
+    expect(info!.x).toBeGreaterThanOrEqual(chips!.x + chips!.width - 1)
+
+    await page.setViewportSize({ width: 1280, height: 860 })
+    await ready(page)
+    await expect(page.locator('.maplibregl-ctrl-attrib')).toHaveClass(/maplibregl-compact-show/)
+  })
+
+  /**
+   * Die „kaputte Pille" vom iPhone des Betreibers, 9. September: Die
+   * Handy-Regel macht das „i" 36 Pixel gross, MapLibre rechnet die Pille mit
+   * 24. Zugeklappt ragte der Knopf 12 Pixel links aus Pille und Schirm,
+   * aufgeklappt 8 Pixel rechts aus der Pille. Gehalten wird die Geometrie:
+   * Der Knopf liegt in der Pille, die Pille im Schirm — in beiden Zuständen.
+   */
+  test('hält das „i" der Quellenangabe in der Pille und im Schirm', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'Nur der grobe Zeiger vergrössert das „i".')
+    await ready(page)
+    const pille = page.locator('.maplibregl-ctrl-attrib')
+    const knopf = page.locator('.maplibregl-ctrl-attrib-button')
+    const drin = async (): Promise<void> => {
+      const p = (await pille.boundingBox())!
+      const k = (await knopf.boundingBox())!
+      expect(p.x).toBeGreaterThanOrEqual(0)
+      expect(k.x).toBeGreaterThanOrEqual(p.x)
+      expect(k.x + k.width).toBeLessThanOrEqual(p.x + p.width + 0.5)
+      expect(k.y).toBeGreaterThanOrEqual(p.y)
+      expect(k.y + k.height).toBeLessThanOrEqual(p.y + p.height + 0.5)
+      expect(k.width).toBeGreaterThanOrEqual(36)
+    }
+    await expect(pille).not.toHaveClass(/maplibregl-compact-show/)
+    await drin()
+    await knopf.click()
+    await expect(pille).toHaveClass(/maplibregl-compact-show/)
+    await expect(page.locator('.maplibregl-ctrl-attrib-inner')).toBeVisible()
+    await drin()
+  })
+
   test('trägt im eingeklappten Griff Zone, Status und Betrag', async ({ page }) => {
     // Dienstag 10:30 Berliner Zeit: die Stunde, in der jede Zone kassiert —
     // damit sicher ein Betrag zu sehen ist, nicht nur meistens.

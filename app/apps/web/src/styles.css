@@ -287,7 +287,11 @@ body {
 @media (min-width: 721px) {
   /* Unten rechts auf der Karte, links neben der Seitenleiste und über der
      Quellenangabe, die dort ausgeklappt steht. */
-  .locate { right: calc(32px + min(380px, calc(100% - 32px))); bottom: 44px; }
+  /* 60 statt 44 Pixel: Darunter sitzt seit dem 9. September das eingeklappte
+     „i" der Quellenangabe (36 Pixel plus 10 Rand), und bei 44 lag der Knopf
+     zwei Pixel darauf — auf dem Tablet-Bildschirmfoto als ein Rand, der in
+     den anderen läuft. */
+  .locate { right: calc(32px + min(380px, calc(100% - 32px))); bottom: 60px; }
   /* Die Chips links enden, bevor der Standort-Knopf beginnt, und stehen
      über der Quellenangabe statt in ihr — auf einem Tablet teilen sich
      alle drei die untere Kante. */
@@ -582,12 +586,27 @@ body {
   .search__results button { min-height: 44px; }
   .maplibregl-ctrl-top-left, .maplibregl-ctrl-top-right { display: none; }
   /* MapLibres „i" ist 24 Pixel; die Lizenz verlangt, dass es erreichbar ist,
-     nicht, dass es winzig ist. */
+     nicht, dass es winzig ist.
+
+     Und die Pille muss mitwachsen: MapLibre rechnet sie mit 24 Pixeln
+     (`padding-right: 24px`, Knopf `top: 0; right: 0; left: 0`). Mit einem
+     36-Pixel-Knopf darin ragte er zugeklappt 12 Pixel links aus der Pille
+     und damit aus dem Schirm, aufgeklappt 8 Pixel rechts aus der Pille —
+     auf dem iPhone des Betreibers am 9. September als „kaputte Pille"
+     gemeldet. Deshalb hier Innenabstand, Radius und Knopflage neu, passend
+     zu 36 Pixeln; `left: auto`, weil MapLibre beide Seiten setzt. */
   .maplibregl-ctrl-attrib-button {
     width: 36px; height: 36px; border-radius: 18px;
-    background-size: 24px 24px; background-position: center;
+    top: 2px; right: 2px; left: auto;
+    /* `no-repeat`: Bei 36 Pixeln Kachel und 24 Pixeln Bild wiederholte sich
+       das „i" an den Rändern als vier schwarze Punkte. */
+    background-size: 24px 24px; background-position: center; background-repeat: no-repeat;
   }
-  .maplibregl-ctrl-attrib.maplibregl-compact { min-height: 36px; }
+  .maplibregl-ctrl-attrib.maplibregl-compact { min-height: 36px; padding: 2px 40px 2px 0; border-radius: 20px; }
+  .maplibregl-ctrl-attrib.maplibregl-compact-show { padding: 2px 44px 2px 12px; border-radius: 20px; }
+  /* Der blaue Ring ist MapLibres `:focus`; Safari lässt ihn nach einem Tipp
+     stehen. Für die Tastatur bleibt er, für den Finger nicht. */
+  .maplibregl-ctrl-attrib-button:focus:not(:focus-visible) { box-shadow: none; }
 }
 
 /* --------------------------------------------------- short viewports */
