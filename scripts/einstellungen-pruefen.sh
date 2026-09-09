@@ -57,7 +57,7 @@ print((d.get('$1') or {}).get('status', ''))
 # Ein leeres `security_and_analysis` heisst nicht „alles aus", sondern „darf
 # ich nicht sehen". Beides sähe in einer Feldabfrage gleich aus.
 if [ -z "$(printf '%s' "$antwort" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("security_and_analysis") or "")')" ]; then
-  printf '  ? Das Token darf `security_and_analysis` nicht lesen — nicht prüfbar.\n' >&2
+  printf '  ? Das Token darf security_and_analysis nicht lesen — nicht prüfbar.\n' >&2
   exit 2
 fi
 
@@ -102,7 +102,7 @@ fi
 printf '  ✗ %s Abweichung(en).\n\n' "$fehler"
 printf '    In den Einstellungen: Settings → Seitenleiste „Security and quality"\n'
 printf '    → Advanced Security → Abschnitt „Secret Protection". Der Schalter für\n'
-printf '    `non_provider_patterns` heisst dort inzwischen **Generic patterns**;\n'
+printf '    non_provider_patterns heisst dort inzwischen "Generic patterns";\n'
 printf '    die alte Adresse .../settings/security_analysis gibt es nicht mehr.\n\n'
 printf '    Oder: gh api -X PATCH repos/%s \\\n' "$REPO"
 printf "      -F 'security_and_analysis[<feld>][status]=enabled'\n"
