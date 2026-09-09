@@ -33,7 +33,7 @@ pnpm test                                           # 842 Unit-Tests (core, api,
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 170 End-to-End-Tests
+cd apps/web && npx playwright test                  # 174 End-to-End-Tests
 ```
 
 Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -772,6 +772,25 @@ wiederholt.
   Betriebsfehler sah damit aus wie ein Fehler in der Kryptografie. Signieren
   wirft jetzt mit Begründung, Prüfen sagt `false`, ohne die Kryptografie
   überhaupt anzufassen.
+- **Eine optimistische Kennung ist keine Kennung.** Die App zeigte eine neue
+  Meldung sofort unter einer selbst erfundenen Kennung und liess sie stehen,
+  bis die nächste Abfrage nach 45 Sekunden die Liste ersetzte — obwohl der
+  Worker die echte mit `201 { id }` längst zurückgegeben hatte. Wer in der
+  Zeit die eigene Meldung bewertete, schickte eine Kennung, die der Server nie
+  vergeben hatte, und bekam „http://…/confirm antwortete 404 Not Found" in
+  den Toast: falscher Grund (verfallen statt eigene), rohe Adresse, und der
+  Knopf dafür hätte gar nicht da sein dürfen, denn die eigene Meldung ist
+  seit M-047 nicht bewertbar. Gefunden am 9. September beim Durchklicken mit
+  drei Sitzungen gegen einen lokalen Worker. `report` gibt die Kennung
+  seitdem zurück, die App tauscht sie ein, merkt sich ihre eigenen Meldungen
+  und zeigt dort „deine Meldung"; `fehlerText` übersetzt die Antworten des
+  Workers in einen Satz. Und der Prüfaufbau hat eine eigene Falle: Ein
+  `CF-Connecting-IP` als `extraHTTPHeaders` im Browser erzwingt für **jede**
+  Anfrage einen Preflight, den der Worker nur für `Content-Type` beantwortet
+  — alles scheitert mit „Failed to fetch", und das sieht aus wie ein
+  CORS-Fehler der App. Der Kopf gehört unter die CORS-Schicht
+  (`context.route` → `route.continue({ headers })`), so wie ihn die Kante
+  setzt.
 
 ## Stil
 
@@ -800,7 +819,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **68 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **70 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

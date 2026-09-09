@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  costLabel,
   duration,
   euro,
   feeLabel,
   MAX_STAY_MINUTES,
   maxStayLabel,
+  statusLabel,
   tidyPoiDetail,
   until,
 } from '../src/format.js'
@@ -155,5 +157,27 @@ describe('„bis …"', () => {
     // Dieselbe Mitternacht, gefragt am Tag davor: dann ist es wirklich ein
     // anderer Tag und der Wochentag gehört dazu.
     expect(until(berlin('2026-09-08T22:00:00Z'), berlin('2026-09-07T15:00:00Z'))).not.toBe('24:00')
+  })
+})
+
+describe('Statuswort und Stundenbetrag', () => {
+  /**
+   * Beide stehen seit dem 9. September an zwei Stellen: in der Marke des
+   * Panels und in der Peek-Zeile des eingeklappten Griffs. Der E2E-Test
+   * verlangt, dass der Griff die Abschrift des Panels ist; hier steht, was
+   * beide sagen.
+   */
+  it('nennt „unsicher" vor allem anderen', () => {
+    expect(statusLabel({ chargeable: true, uncertain: true })).toBe('unsicher')
+    expect(statusLabel({ chargeable: false, uncertain: true })).toBe('unsicher')
+    expect(statusLabel({ chargeable: true, uncertain: false })).toBe('gebührenpflichtig')
+    expect(statusLabel({ chargeable: false, uncertain: false })).toBe('keine Gebühr')
+  })
+
+  it('schreibt einen festen Satz als eine Zahl, eine Spanne als zwei', () => {
+    expect(costLabel({ minCents: 200, maxCents: 200, exact: true })).toBe('2,00 €')
+    expect(costLabel({ minCents: 200, maxCents: 400, exact: false })).toBe(
+      '2,00 €–4,00 €',
+    )
   })
 })

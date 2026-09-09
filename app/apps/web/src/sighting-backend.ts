@@ -40,7 +40,15 @@ export interface SightingBackend {
    * four weeks and carry neither a time of day nor a link to a report.
    */
   subscribeMarks?: (handler: (marks: HeatMark[]) => void) => () => void
-  report: (lon: number, lat: number) => Promise<void>
+  /**
+   * Liefert die Kennung, unter der der Speicher die Meldung führt — oder
+   * `null`, wenn er keine nennt. Die App zeigt ihre Meldung sofort unter einer
+   * eigenen, lokalen Kennung; ohne die Rückgabe blieb die 45 Sekunden lang
+   * stehen, bis die nächste Abfrage die Liste ersetzte. Wer in der Zeit die
+   * eigene Meldung bewertete, schickte eine Kennung, die der Server nie
+   * vergeben hatte — und bekam „404 Not Found" statt „eigene Meldung".
+   */
+  report: (lon: number, lat: number) => Promise<string | null>
   vote: (sighting: Sighting, kind: VoteKind) => Promise<void>
 }
 
@@ -208,6 +216,7 @@ function artifactBackend(db: Db): SightingBackend {
       // report, carrying only the day and the 250 m cell, so the long-lived
       // dataset can never be joined back to the short-lived one.
       await db.doc(`marks/${newId()}`).set(markFor([safeLon, safeLat], now))
+      return entry.id
     },
 
     vote: async (sighting, kind) => {
@@ -232,18 +241,55 @@ function artifactBackend(db: Db): SightingBackend {
  * blieb eine Meldung stehen, die es nur auf diesem Schirm gab. Das Panel
  * verspricht „geteilt", und das wäre dann eine Lüge gewesen.
  *
- * Der Statustext kommt bewusst mit: 429 („zu viele Meldungen") und 415 („der
+ * Der Status kommt bewusst mit: 429 („zu viele Meldungen") und 415 („der
  * Aufruf war falsch gebaut") sind für den, der das Protokoll liest, zwei
- * verschiedene Geschichten.
+ * verschiedene Geschichten. Die Adresse kommt **nicht** mehr mit: Sie stand
+ * bis zum 9. September im Toast („http://…/sightings/…/confirm antwortete
+ * 404 Not Found") und sagte dem Lesenden nichts — der Grund steht jetzt als
+ * Satz davor, siehe `fehlerText`.
  */
-async function send(url: string, body: string): Promise<void> {
+async function send(url: string, body: string): Promise<Response> {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body,
   })
-  if (!response.ok) {
-    throw new Error(`${url} antwortete ${response.status} ${response.statusText}`)
+  if (!response.ok) throw new WorkerFehler(response.status, response.statusText)
+  return response
+}
+
+/** Eine Antwort des Workers ausserhalb von 2xx, mit dem Status zum Nachlesen. */
+export class WorkerFehler extends Error {
+  constructor(
+    readonly status: number,
+    statusText: string,
+  ) {
+    super(fehlerText(status, statusText))
+    this.name = 'WorkerFehler'
+  }
+}
+
+/**
+ * Was ein Status für den Menschen vor dem Schirm heisst. Die Sätze folgen den
+ * Antworten des Workers (`apps/api/src/worker.ts`): 403 ist dort ausschliesslich
+ * die eigene Meldung oder ein fremder Origin, 404 eine Meldung, die schon
+ * verfallen ist, 422 ein Ort ausserhalb der bekannten Städte, 429 die
+ * Stundengrenze, 503 ein Worker ohne Salz. Alles andere bleibt nackt.
+ */
+export function fehlerText(status: number, statusText: string): string {
+  switch (status) {
+    case 403:
+      return 'Die eigene Meldung lässt sich nicht bewerten (403)'
+    case 404:
+      return 'Diese Meldung ist schon verfallen (404)'
+    case 422:
+      return 'Der Ort liegt ausserhalb der bekannten Städte (422)'
+    case 429:
+      return 'Zu viele Meldungen in kurzer Zeit — bitte später noch einmal (429)'
+    case 503:
+      return 'Der Server ist noch nicht eingerichtet (503)'
+    default:
+      return `Der Server antwortete ${status} ${statusText}`.trim()
   }
 }
 
@@ -251,7 +297,7 @@ async function send(url: string, body: string): Promise<void> {
  * Polls rather than holding a socket: sightings move on a scale of minutes, and
  * a socket would cost a durable object per viewer for no visible gain.
  */
-function workerBackend(base: string): SightingBackend {
+export function workerBackend(base: string): SightingBackend {
   const POLL_MS = 45_000
 
   // `?city=` ist keine Höflichkeit: Der Worker hält seit der zweiten Stadt
@@ -329,7 +375,11 @@ function workerBackend(base: string): SightingBackend {
       // The worker derives the mark from the report itself: a client that could
       // post marks directly could paint a heatmap without reporting anything,
       // and the rate limit only covers reports.
-      await send(`${base}/sightings`, JSON.stringify({ lon: safeLon, lat: safeLat }))
+      const response = await send(`${base}/sightings`, JSON.stringify({ lon: safeLon, lat: safeLat }))
+      // Der Worker antwortet 201 mit `{ id }`. Ein Rumpf, der das nicht ist,
+      // ist kein Fehler der Meldung — sie steht —, nur keine Kennung.
+      const body = (await response.json().catch(() => null)) as { id?: unknown } | null
+      return typeof body?.id === 'string' && body.id.length > 0 ? body.id : null
     },
 
     vote: async (sighting, kind) => {

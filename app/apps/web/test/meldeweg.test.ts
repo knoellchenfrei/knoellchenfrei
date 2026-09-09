@@ -91,10 +91,19 @@ describe('Schreibzugriffe scheitern laut, nicht still', () => {
     ).rejects.toThrow(/429/)
   })
 
-  it('die Fehlermeldung nennt die Adresse — sonst weiss niemand, welcher Aufruf', async () => {
+  it('die Fehlermeldung nennt den Status, aber nicht mehr die Adresse', async () => {
+    // Bis zum 9. September stand hier die Gegenrichtung: „nennt die Adresse —
+    // sonst weiss niemand, welcher Aufruf". Am selben Tag stand dieselbe
+    // Adresse im Toast eines Nutzers („http://…/confirm antwortete 404 Not
+    // Found"), und dem sagt sie nichts. Der Status bleibt, für den, der das
+    // Protokoll liest; welcher Aufruf, sagt der Satz davor („Meldung konnte
+    // nicht gespeichert werden" gegen „Bewertung konnte …") — siehe
+    // `sichtungen-backend.test.ts` für die Sätze je Status.
     const b = await backend()
     stelleFetch({ ok: false, status: 500 })
-    await expect(b.report(13.4, 52.5)).rejects.toThrow(/api\.example/)
+    const versuch = b.report(13.4, 52.5)
+    await expect(versuch).rejects.toThrow(/500/)
+    await expect(versuch).rejects.not.toThrow(/api\.example/)
   })
 })
 

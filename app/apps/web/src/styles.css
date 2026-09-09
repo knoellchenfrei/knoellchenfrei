@@ -80,6 +80,16 @@ body {
   pointer-events: none;
 }
 .legend > * { pointer-events: auto; }
+/*
+ * The chip wrapper only carries an id for aria-controls; layout stays flat.
+ *
+ * Steht hier und nicht weiter unten, weil die Handy-Regel (`display: flex`,
+ * eigene Berührungsfläche) sonst überschrieben wird: gleiche Spezifität, und
+ * die spätere gewinnt. Bis zum 9. September stand sie hinter dem Media-Block,
+ * und der Streifen hatte auf dem Handy nie eine Box — der ResizeObserver für
+ * den Kantenverlauf hat deshalb kein einziges Mal gefeuert.
+ */
+.legend__layers { display: contents; }
 
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -195,6 +205,7 @@ body {
 .sightings__item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .sightings__meta { flex: 1; color: var(--muted); }
 .sightings__actions { display: flex; gap: 4px; }
+.sightings__own { color: var(--muted); font-size: 12px; font-style: italic; }
 .stars { color: var(--danger); letter-spacing: -1px; min-width: 32px; }
 .stars--0, .stars--1 { opacity: 0.8; }
 
@@ -440,6 +451,39 @@ body {
   .legend__layers { display: flex; gap: 6px; pointer-events: auto; }
   .legend .chip { flex: none; white-space: nowrap; scroll-snap-align: start; }
   /*
+   * „Da ist mehr": ein Verlauf am rechten Rand, solange rechts noch Chips
+   * liegen. Ob das so ist, misst `App.tsx` (`scrollWidth > clientWidth`,
+   * nicht ganz nach rechts gescrollt) und setzt `legend--more`; CSS allein
+   * kann das nicht sehen. `sticky` statt `absolute`, weil die Zeile selbst
+   * scrollt und ein absolut gesetzter Verlauf mitscrollte. Der negative Rand
+   * nimmt die eigene Breite plus die Lücke zurück, damit der Verlauf keinen
+   * Platz in der Zeile belegt — sonst wäre die Messung, die ihn einblendet,
+   * um genau diese Breite verschoben. Die Ein- und Ausblendung läuft über
+   * `opacity`; `prefers-reduced-motion` setzt den Übergang wie alle anderen
+   * auf 0,01 ms (siehe unten).
+   */
+  .legend::after {
+    content: '';
+    /* `right: -12px`: bis an den Schirmrand, in den die Chips scrollen — der
+       Inhaltsrand der Zeile liegt wegen des Innenabstands 12 px davor, und
+       dort stand der Verlauf zuerst. Gesehen auf dem Bildschirmfoto. */
+    position: sticky; right: -12px;
+    flex: none; align-self: stretch;
+    width: 56px; margin-left: -62px;
+    background: linear-gradient(90deg, rgba(15, 18, 23, 0), rgba(15, 18, 23, 0.92));
+    opacity: 0;
+    transition: opacity 160ms ease;
+    pointer-events: none;
+  }
+  .legend--more::after { opacity: 1; }
+  /* Die Peek-Zeile im Griff: Zone, Status und Betrag in einer Zeile. Was
+     nicht in die Breite passt, endet mit Auslassungspunkten statt in einer
+     zweiten Zeile, die den Griff höher machte. */
+  .panel-toggle__label {
+    max-width: 100%;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /*
    * Hidden on touch: the buttons are 29px, below any sane touch target, they
    * collided with the layer chips, and pinch-zoom already does the job.
    */
@@ -523,8 +567,15 @@ body {
 /*
  * Keyed to the pointer, not the viewport width. A phone held sideways is 844px
  * wide and was getting 26px tap targets from the desktop rules.
+ *
+ * `any-pointer`, nicht `pointer`: Ein Laptop mit Touchscreen meldet als
+ * primären Zeiger die Maus, und `pointer: coarse` sah ihn deshalb nie — die
+ * Bewertungsknöpfe „gesehen / weg" blieben dort 26 Pixel hoch, obwohl der
+ * Finger sie trifft (Mobile-Audit, „Verbleibende Probleme"). `any-pointer`
+ * fragt, ob *irgendein* Zeiger grob ist. Der Preis: Auf so einem Laptop sind
+ * auch mit der Maus alle Knöpfe 44 Pixel. Das ist der richtige Fehler.
  */
-@media (pointer: coarse) {
+@media (any-pointer: coarse) {
   .button, .chip, .search__input, .panel-toggle { min-height: 44px; }
   .button--chip { min-height: 44px; padding: 12px 16px; }
   .chip { padding: 11px 14px; font-size: 13px; }
@@ -568,6 +619,7 @@ body {
   .topbar { padding: 6px max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left)); }
   .overlay { top: auto; right: auto; bottom: 8px; left: max(8px, env(safe-area-inset-left)); max-width: 46vw; }
   .legend { flex-wrap: wrap; overflow: visible; margin-right: 0; padding-right: 0; }
+  .legend__layers { display: contents; }
   /* Unten rechts auf der Karte, neben dem Seitenpanel. */
   .locate { right: calc(16px + max(8px, env(safe-area-inset-right)) + min(320px, 42vw)); bottom: 8px; }
   .maplibregl-ctrl-bottom-right { top: auto; bottom: 0; }
@@ -630,9 +682,6 @@ body {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
 }
-
-/* The chip wrapper only carries an id for aria-controls; layout stays flat. */
-.legend__layers { display: contents; }
 
 /*
  * MapLibre honours this for easeTo/fitBounds itself; the remaining motion is
@@ -1047,7 +1096,7 @@ body {
    über der Karte, statt eine Balkenzeile zu belegen — wie bei FreiFahren. */
 .topbar__row { display: flex; align-items: center; gap: 8px; }
 .topbar__row .search { flex: 1 1 auto; width: auto; min-width: 0; }
-@media (pointer: coarse) {
+@media (any-pointer: coarse) {
   .topbar__icon { width: 44px; height: 44px; }
 }
 

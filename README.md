@@ -248,7 +248,7 @@ pnpm test                              # 842 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 170 End-to-End-Tests
+cd apps/web && npx playwright test     # 174 End-to-End-Tests
 ```
 
 **Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
