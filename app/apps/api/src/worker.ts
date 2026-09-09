@@ -70,6 +70,14 @@ export interface Env {
    * kennt sie" ist keine Zugangskontrolle.
    */
   TELEGRAM_SECRET?: string
+  /**
+   * Chat-Kennung des Admin-Kanals, in den Rückmeldungen aus dem Formular
+   * weitergereicht werden. Ein Secret, keine Variable: Wer sie kennt, kann
+   * über den Bot hineinschreiben. Fehlt sie, bleibt die Rückmeldung allein
+   * in der Datenbank — so wie bis zum 9. September, als sie dort praktisch
+   * verloren war, weil der einzige Leseweg `scripts/sichern.sh` ist.
+   */
+  TELEGRAM_ADMIN_CHAT?: string
 }
 
 /*
@@ -849,7 +857,8 @@ const FEEDBACK_MAX_AGE_MS = 90 * 86_400_000
 async function createFeedback(
   request: Request,
   env: Env,
-  cors: Record<string, string>
+  cors: Record<string, string>,
+  ctx?: ExecutionContext
 ): Promise<Response> {
   const blocked = rejectsCrossSite(request, env)
   if (blocked !== null) return blocked
@@ -889,7 +898,55 @@ async function createFeedback(
     .bind(crypto.randomUUID(), kind, text, Math.floor(Date.now() / 3_600_000) * 3_600_000, hash)
     .run()
 
+  // Nach dem Schreiben, nicht davor, und ohne die Antwort aufzuhalten:
+  // Telegram ist von aussen. Ein Timeout dort darf nicht dazu führen, dass
+  // jemand „hat nicht geklappt" liest, obwohl die Zeile steht. Ohne `ctx`
+  // (in den Tests) läuft das Senden einfach nebenher.
+  const nachricht = feedbackNachricht(kind, text)
+  const senden = telegramAdmin(env, nachricht)
+  if (ctx !== undefined) ctx.waitUntil(senden)
+  else void senden
+
   return json({ ok: true }, { status: 201 }, cors)
+}
+
+/**
+ * Was im Admin-Kanal ankommt: Art und Text, sonst nichts. Der Client-Hash
+ * bleibt draussen — er ist ein Pseudonym und hat in einem Chat nichts zu
+ * suchen; die Stunde steht am Beitrag ohnehin.
+ */
+export function feedbackNachricht(kind: string, text: string): string {
+  return `Rückmeldung (${kind}):\n${text}`
+}
+
+/**
+ * Schickt eine Nachricht in den Admin-Kanal — wenn es ihn gibt.
+ *
+ * Beide Geheimnisse müssen stehen, sonst passiert nichts und es steht auch
+ * nichts im Log: Ein Kanal, der nicht eingerichtet ist, ist keine Panne.
+ * Scheitert das Senden, geht **das** ins Log und nirgendwo sonst hin — die
+ * Antwort an die Nutzerin ist längst raus, und die Rückmeldung steht in der
+ * Datenbank, wo `scripts/sichern.sh` sie weiterhin findet.
+ */
+async function telegramAdmin(env: Env, text: string): Promise<void> {
+  const chat = Number(env.TELEGRAM_ADMIN_CHAT ?? '')
+  if (env.TELEGRAM_TOKEN === undefined || env.TELEGRAM_ADMIN_CHAT === undefined) return
+  if (!Number.isFinite(chat) || env.TELEGRAM_ADMIN_CHAT.trim() === '') {
+    console.error('TELEGRAM_ADMIN_CHAT ist keine Chat-Kennung')
+    return
+  }
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // Mit Benachrichtigung — anders als die Bestätigung an Meldende: Der
+      // Kanal ist dafür da, dass jemand hinsieht.
+      body: JSON.stringify({ chat_id: chat, text }),
+    })
+    if (!response.ok) console.error(`Telegram-Admin-Kanal: ${response.status}`)
+  } catch (cause) {
+    console.error('Telegram-Admin-Kanal nicht erreichbar', cause)
+  }
 }
 
 async function createSighting(
@@ -1175,7 +1232,9 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  // `ctx` ist optional, weil die Tests den Worker ohne Laufzeit aufrufen;
+  // Cloudflare übergibt ihn immer.
+  async fetch(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
     const cors = corsHeaders(request, env)
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors })
 
@@ -1246,7 +1305,7 @@ export default {
       })
     }
     if (path === '/events' && request.method === 'POST') return recordEvents(request, env, cors)
-    if (path === '/feedback' && request.method === 'POST') return createFeedback(request, env, cors)
+    if (path === '/feedback' && request.method === 'POST') return createFeedback(request, env, cors, ctx)
     if (path === '/sightings' && request.method === 'POST') {
       return createSighting(request, env, cors)
     }

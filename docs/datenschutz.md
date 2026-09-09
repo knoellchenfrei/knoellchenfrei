@@ -104,6 +104,12 @@ nichts. Es gibt **kein Kontaktfeld**:
 Wer keine Adresse abfragt, speichert auch keine. Der Preis ist, dass auf eine
 Rückmeldung nicht geantwortet werden kann; das Formular sagt das.
 
+Seit dem 9. September reicht der Server **Kategorie und Text** zusätzlich in
+einen geschlossenen Telegram-Kanal des Betreibers weiter, sobald dieser
+eingerichtet ist — damit eine Rückmeldung gelesen wird, statt nur in der
+Datenbank zu liegen. Der Hash der IP-Adresse geht dabei **nicht** mit.
+Telegram ist damit ein weiterer Empfänger des Textes; siehe Abschnitt 3.
+
 Das ist der einzige Freitext in dieser Anwendung und damit der einzige Inhalt,
 der personenbezogene Daten enthalten kann — nicht weil danach gefragt wird,
 sondern weil Menschen sie in ein offenes Feld schreiben. Deshalb: ein Hinweis im
@@ -227,7 +233,7 @@ ohne Rückfrage und ohne Begründung. Ein Gerät, das
 | ⟨Cloudflare, Inc.⟩ | Auslieferung, Worker, Datenbank | Vertrag zur Auftragsverarbeitung erforderlich. **Nur die Datenbank** ist per `--jurisdiction eu` verbindlich auf die EU beschränkt; der KV-Cache wird weltweit repliziert und der Worker läuft am nächstgelegenen Rand-Knoten. Das trägt trotzdem, weil im KV ausschließlich zwischengespeicherte Behördendaten liegen und der Worker die IP-Adresse zwar verarbeitet, aber nie speichert — geschrieben wird der gesalzene Hash. Hier stand vorher pauschal, die Verarbeitung sei auf die EU beschränkt (Audit-Punkt M-055). |
 | OpenStreetMap Foundation | Rasterkacheln | Sieht beim Kachelabruf die IP-Adresse der Nutzenden. **Entfällt in der ausgelieferten Fassung:** Seit dem 7. September liegt für alle vier Städte ein eigenes Vektorarchiv in R2, und `VITE_TILES_URL` ist gesetzt. Die Rasterkacheln sind nur noch der Rückfall für Bauten ohne diese Variable — lokal und in der Testsuite. |
 | ~~GitHub, Inc. (`protomaps.github.io`)~~ | ~~Schriften der Vektorkarte~~ | **Entfällt seit dem 7. September.** Die Schriften liegen im eigenen R2-Eimer neben den Kacheln; die Karte macht damit **keinen einzigen fremden Abruf** mehr. Vorher ging die IP-Adresse jedes Betrachters an GitHub, und hier stand zwischenzeitlich, der Abfluss „entfalle" durch das eigene Kachelarchiv — das war falsch, solange die Schriften fehlten (Audit-Punkt M-017). |
-| ⟨Telegram Messenger Inc.⟩ | Meldungen über den Bot | Nur für Nutzende des Bots. Die Verarbeitung dort richtet sich nach Telegrams eigenen Bestimmungen und liegt außerhalb des Einflusses dieses Projekts. Entfällt, wenn kein Bot betrieben wird. |
+| ⟨Telegram Messenger Inc.⟩ | Meldungen über den Bot; Kategorie und Text von Rückmeldungen aus dem Formular (an einen geschlossenen Kanal des Betreibers, ohne IP-Hash) | Die Verarbeitung dort richtet sich nach Telegrams eigenen Bestimmungen und liegt außerhalb des Einflusses dieses Projekts. Entfällt, wenn kein Bot betrieben wird; die Weiterleitung der Rückmeldungen entfällt, solange `TELEGRAM_ADMIN_CHAT` nicht gesetzt ist. |
 
 | Anthropic PBC | nur in der Artifact-Fassung | Dort liegen Meldungen und Anwesenheit im Speicher der Artifact-Laufzeit, gebunden an das Claude-Konto des Betreibers. In der selbst gehosteten Fassung kommt Anthropic nicht vor (Audit-Punkt M-057). |
 

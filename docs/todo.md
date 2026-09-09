@@ -1203,9 +1203,19 @@ Was noch offen ist:
       Test hält heute fest, dass sich die vier Rahmen nicht überlappen; bei
       vielen Städten überlappen Rechtecke zwangsläufig, es bräuchte Polygone).
 
-- [ ] **Rückmeldungen von der Webseite in den Admin-Kanal des Telegram-Bots.**
-      Wunsch des Betreibers vom 7. September. Heute landet Freitext aus dem
-      Formular in `feedback` in D1 — und **bleibt dort**: Es gibt absichtlich
+- [~] **Rückmeldungen von der Webseite in den Admin-Kanal des Telegram-Bots.**
+      Wunsch des Betreibers vom 7. September. **Eingebaut am 9. September,
+      wartet auf ein Secret:** `createFeedback` schickt nach dem `INSERT` über
+      `ctx.waitUntil` Kategorie und Text an `TELEGRAM_ADMIN_CHAT`, ohne den
+      Hash; ohne das Secret passiert nichts, ein Fehlschlag steht im Log und
+      kippt die Antwort nicht — vier Tests in `worker.test.ts`. Der Weg zum
+      Secret steht in `hosting.md` („Telegram", Punkt 4), die Datenschutz-
+      erklärung nennt Telegram unter 2.5 und in Abschnitt 3 als Empfänger.
+      **Was fehlt, ist der Handgriff des Betreibers:** Kanal anlegen, Bot
+      hinzufügen, `wrangler secret put TELEGRAM_ADMIN_CHAT`, deployen.
+
+      Der Stand davor, zum Verständnis: Freitext aus dem Formular landete in
+      `feedback` in D1 — und **blieb dort**: Es gibt absichtlich
       keinen Lesepfad über die API, der einzige Weg an eine Rückmeldung ist
       `./scripts/sichern.sh`. Das ist unbequem genug, dass es niemand tut, und
       damit ist eine Rückmeldung praktisch verloren.

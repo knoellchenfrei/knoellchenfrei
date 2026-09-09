@@ -975,3 +975,100 @@ describe('eine Telegram-Zustellung mit kaputtem Körper', () => {
     expect(response.status).toBe(200)
   })
 })
+
+/**
+ * Rückmeldungen in den Admin-Kanal des Bots — Wunsch des Betreibers vom
+ * 7. September, eingebaut am 9. Bis dahin lag Freitext aus dem Formular nur
+ * in D1, und der einzige Leseweg war `scripts/sichern.sh`: unbequem genug,
+ * dass es niemand tat.
+ *
+ * Vier Zusicherungen aus `docs/todo.md`, jede hier gemessen: Ohne Secret
+ * geht nichts hinaus. Der Client-Hash geht nie mit. Ein scheiterndes Senden
+ * kippt die Antwort nicht. Und gesendet wird nach dem Schreiben, über
+ * `ctx.waitUntil`, damit die Antwort nicht auf Telegram wartet.
+ */
+describe('Rückmeldungen in den Admin-Kanal', () => {
+  const rueckmeldung = (): Request =>
+    post('/feedback', {
+      body: JSON.stringify({ kind: 'idee', text: 'Bitte auch Potsdam.' }),
+      headers: { 'Content-Type': 'application/json', 'CF-Connecting-IP': '203.0.113.7' },
+    })
+
+  it('schickt ohne TELEGRAM_ADMIN_CHAT nichts hinaus', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const response = await worker.fetch(rueckmeldung(), umgebung({ TELEGRAM_TOKEN: 'tok' }))
+      expect(response.status).toBe(201)
+      expect(fetchMock).not.toHaveBeenCalled()
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('reicht Art und Text weiter, aber nicht den Client-Hash', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const gewartet: Promise<unknown>[] = []
+      const ctx = { waitUntil: (p: Promise<unknown>) => gewartet.push(p), passThroughOnException: () => undefined }
+      const response = await worker.fetch(
+        rueckmeldung(),
+        umgebung({ TELEGRAM_TOKEN: 'tok', TELEGRAM_ADMIN_CHAT: '-1001234' }),
+        ctx as unknown as ExecutionContext
+      )
+      expect(response.status).toBe(201)
+      // Über `waitUntil`, nicht vor der Antwort.
+      expect(gewartet).toHaveLength(1)
+      await Promise.all(gewartet)
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('https://api.telegram.org/bottok/sendMessage')
+      const rumpf = JSON.parse(String(init.body)) as { chat_id: number; text: string }
+      expect(rumpf.chat_id).toBe(-1001234)
+      expect(rumpf.text).toBe('Rückmeldung (idee):\nBitte auch Potsdam.')
+      // Kein Hash, keine IP — auch nicht in irgendeinem Feld.
+      expect(String(init.body)).not.toMatch(/203\.0\.113\.7|client|hash/)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('kippt die Antwort nicht, wenn Telegram nicht erreichbar ist', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
+    const stille = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      const gewartet: Promise<unknown>[] = []
+      const ctx = { waitUntil: (p: Promise<unknown>) => gewartet.push(p), passThroughOnException: () => undefined }
+      const response = await worker.fetch(
+        rueckmeldung(),
+        umgebung({ TELEGRAM_TOKEN: 'tok', TELEGRAM_ADMIN_CHAT: '42' }),
+        ctx as unknown as ExecutionContext
+      )
+      expect(response.status).toBe(201)
+      await expect(Promise.all(gewartet)).resolves.toBeDefined()
+      expect(stille).toHaveBeenCalled()
+    } finally {
+      stille.mockRestore()
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('lehnt eine Chat-Kennung ab, die keine Zahl ist, statt sie zu senden', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const stille = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      const response = await worker.fetch(
+        rueckmeldung(),
+        umgebung({ TELEGRAM_TOKEN: 'tok', TELEGRAM_ADMIN_CHAT: '@knoellchen_admin' })
+      )
+      expect(response.status).toBe(201)
+      expect(fetchMock).not.toHaveBeenCalled()
+      expect(stille).toHaveBeenCalled()
+    } finally {
+      stille.mockRestore()
+      vi.unstubAllGlobals()
+    }
+  })
+})

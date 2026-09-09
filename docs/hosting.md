@@ -578,6 +578,22 @@ Solange eines der beiden Geheimnisse fehlt, antwortet `/telegram` mit 404 —
 dieselbe Regel wie beim Feedback: Was nicht eingerichtet ist, existiert auch
 nicht als Endpunkt.
 
+4. Optional, ein drittes Geheimnis: der **Admin-Kanal** für Rückmeldungen aus
+   dem Formular. Einen privaten Kanal oder eine private Gruppe anlegen, den Bot
+   als Mitglied hinzufügen, dort eine Nachricht schreiben und die Chat-Kennung
+   aus `getUpdates` lesen — bei Kanälen und Gruppen ist sie **negativ**
+   (`-100…`). Dann:
+
+```bash
+$W secret put TELEGRAM_ADMIN_CHAT           # die Zahl, nicht der @-Name
+```
+
+Ab dem nächsten Deploy schickt der Worker jede Rückmeldung nach dem Schreiben
+in die Datenbank als Nachricht dorthin — Kategorie und Text, ohne den Hash.
+Ein Fehlschlag beim Senden steht im Log und kippt die Antwort nicht; die
+Rückmeldung liegt dann weiterhin in D1. Der Kanal ist ein Empfänger im Sinne
+von `datenschutz.md`, Abschnitt 3.
+
 Was der Bot kann: einen gesendeten Standort als Meldung eintragen, `/hilfe`
 beantworten, und sonst höflich erklären, dass er nur Standorte versteht.
 Meldungen aus Gruppen mitzulesen ist ausdrücklich **nicht** enthalten — dafür
