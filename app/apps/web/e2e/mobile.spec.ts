@@ -163,7 +163,7 @@ test.describe('das Blatt auf dem Handy', () => {
     // von vor dem Audit. Zwei Zeilen sind 116 Pixel.
     expect(topbar!.height).toBeLessThan(130)
     await expect(page.locator('.topbar__row')).toHaveCount(2)
-    await expect(page.locator('.live')).toContainText('kassieren')
+    await expect(page.locator('.live')).toContainText('heute')
   })
 })
 
@@ -449,13 +449,14 @@ test.describe('die Live-Zahlen als eine Karte', () => {
     if (testInfo.project.name === 'phone') await page.setViewportSize({ width: 320, height: 568 })
     await ready(page)
     const live = page.locator('.live')
-    await expect(live.locator('.live__item')).toHaveCount(3)
+    // Lokal zwei Spalten (Meldungen heute, „nur dieses Gerät"), geteilt drei.
+    await expect(live.locator('.live__item')).toHaveCount(2)
     const boxes = await live.locator('.live__item').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
     // Alle drei auf einer Höhe: keine Zeile bricht.
     expect(Math.max(...boxes) - Math.min(...boxes)).toBeLessThan(2)
     const box = (await live.boundingBox())!
     expect(box.width).toBeLessThanOrEqual(page.viewportSize()!.width - 24)
-    await expect(live).toContainText('kassieren')
-    await expect(live).not.toContainText('heute')
+    await expect(live).toContainText('Meldungen heute')
+    await expect(live).not.toContainText('kassieren')
   })
 })

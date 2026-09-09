@@ -490,6 +490,14 @@ Karte. Ohne Server steht in der dritten Spalte „nur dieses Gerät", damit der
 Unterschied sichtbar bleibt. Auf 320 Pixeln bleibt die Karte einzeilig; ein
 Test misst das.
 
+**Nachtrag, eine Stunde später — andere Zahlen.** Der Betreiber: Wichtig sind,
+wie viele die App nutzen und wie viele Meldungen heute waren; wie viele Zonen
+kassieren, eher nicht. Die Spalten heissen jetzt Meldungen heute (aus der
+Strichliste, die je Meldung einen Kalendertag führt — die Sichtungsliste kennt
+nur 90 Minuten), Geräte gerade offen, Geräte heute. Die Zonenzahl ist weg; die
+Farbe der Karte sagt es. Ohne Server bleiben zwei Spalten: Meldungen heute
+und „nur dieses Gerät".
+
 ## Als App ablegen
 
 **Getrennte Symbole für `any` und `maskable`.** Vorher war ein einziges SVG als

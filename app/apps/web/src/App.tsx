@@ -6,6 +6,7 @@ import * as maplibregl from 'maplibre-gl'
 import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl'
 import {
   activeSightings,
+  berlinDateKey,
   berlinWallClock,
   buildHeatmap,
   heatActivity,
@@ -1710,10 +1711,13 @@ export function App() {
   )
 
   const status = useZoneStatus(selected, now)
-  const chargingNow = useMemo(
-    () => zones.filter((zone) => isChargeable(toParkingZone(zone.properties), now)).length,
-    [zones, now]
-  )
+  // Meldungen heute: die Strichliste zählt je Meldung eine Zeile mit dem
+  // Berliner Kalendertag — auf dem Server wie lokal. Die Sichtungsliste
+  // selbst kennt nur die letzten 90 Minuten.
+  const reportsToday = useMemo(() => {
+    const heute = berlinDateKey(berlinNow)
+    return marks.filter((mark) => mark.day === heute).length
+  }, [marks, berlinNow])
 
   // Solange Einstellungen oder Feedback offen sind, ist der Rest der Seite
   // `inert`: kein Tab in die Karte dahinter, kein Vorlesen der Seitenleiste.
@@ -1813,9 +1817,8 @@ export function App() {
       <div className="overlay" inert={modal || undefined}>
       <LiveStats
         stats={stats}
-        active={activeSightings(sightings, { now }).length}
+        reportsToday={reportsToday}
         shared={shared}
-        charging={zones.length > 0 ? { now: chargingNow, total: zones.length } : null}
       />
 
       {/*
