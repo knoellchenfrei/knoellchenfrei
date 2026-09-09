@@ -154,15 +154,13 @@ test.describe('das Blatt auf dem Handy', () => {
     await expect(body).toBeVisible()
   })
 
-  test('lässt die Kopfzeile bei Suche und Meldeknopf', async ({ page }) => {
+  test('lässt die Kopfzeile bei einer Zeile', async ({ page }) => {
     await ready(page)
     const topbar = await page.locator('.topbar').boundingBox()
-    // Suchfeld plus der rote Meldeknopf darunter (seit dem 9. September
-    // abends, auf Wunsch des Betreibers) — und sonst nichts: Marke, Zahl und
-    // Standort stehen nicht mehr hier, die waren die vierzeilige Kopfzeile
-    // von vor dem Audit. Zwei Zeilen sind 116 Pixel.
-    expect(topbar!.height).toBeLessThan(130)
-    await expect(page.locator('.topbar__row')).toHaveCount(2)
+    // Suchfeld, Beta-Marke und Zahnrad in einer Zeile. 112 Pixel waren es
+    // einmal — und 116 noch einmal am 9. September abends, als der
+    // Meldeknopf kurz eine eigene Zeile bekam.
+    expect(topbar!.height).toBeLessThan(80)
     await expect(page.locator('.live')).toContainText('heute')
   })
 })
@@ -360,19 +358,28 @@ test.describe('der Meldeknopf auf dem Handy', () => {
   })
 
   /**
-   * Oben rechts unter dem Zahnrad, seit dem 9. September abends: Der Knopf
-   * gehört zur Kopfzeile, die ihn mitmisst, und die Chips stehen darunter —
-   * auch auf 320 Pixeln, wo die erste Chip-Zeile fast die Breite füllt.
+   * Eine Zeile für das, was man tun kann: links „Ebenen", rechts der rote
+   * Meldeknopf, bündig mit dem Zahnrad. Auf 320 Pixeln teilen sie sich die
+   * Breite, und die Chips scrollen zwischen beiden.
    */
-  test('steht unter dem Zahnrad und schiebt die Chips unter sich', async ({ page }) => {
+  test('teilt sich die Zeile mit den Ebenen und bleibt im Schirm', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 })
     await ready(page)
     const fab = (await page.locator('.report-fab').boundingBox())!
+    const ebenen = (await page.locator('.chip--toggle').boundingBox())!
     const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
-    const overlay = (await page.locator('.overlay').boundingBox())!
-    const size = page.viewportSize()!
-    expect(fab.y).toBeGreaterThanOrEqual(gear.y + gear.height)
-    expect(fab.x + fab.width).toBeLessThanOrEqual(size.width)
-    expect(overlay.y).toBeGreaterThanOrEqual(fab.y + fab.height)
+    expect(fab.x + fab.width).toBeLessThanOrEqual(320)
+    expect(Math.abs(fab.x + fab.width - (gear.x + gear.width))).toBeLessThan(2)
+    expect(Math.abs(fab.y - ebenen.y)).toBeLessThan(2)
+    expect(ebenen.x + ebenen.width).toBeLessThanOrEqual(fab.x)
+
+    // Offen bekommt die Chip-Zeile die ganze Breite, der Knopf rückt darunter
+    // — sonst blieben den Chips 30 Pixel zwischen „Ebenen" und dem Knopf.
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    const legend = (await page.locator('.legend').boundingBox())!
+    const fabOffen = (await page.locator('.report-fab').boundingBox())!
+    expect(legend.width).toBeGreaterThanOrEqual(280)
+    expect(fabOffen.y).toBeGreaterThanOrEqual(legend.y + legend.height)
   })
 })
 

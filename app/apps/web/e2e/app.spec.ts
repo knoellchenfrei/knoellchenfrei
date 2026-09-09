@@ -428,16 +428,21 @@ test.describe('der Meldeknopf auf der Karte', () => {
     ).toHaveCount(1)
   })
 
-  // Seit dem 9. September abends oben rechts unter den Einstellungen, rot —
-  // und die Chip-Zeile rückt darunter, weil die Kopfzeile ihn mitmisst.
-  test('steht oben rechts unter den Einstellungen, die Chips darunter', async ({ page }) => {
+  // Seit dem 9. September abends rechts in der Zeile der Ebenen, unter den
+  // Live-Zahlen, rechtsbündig mit dem Zahnrad — auf dem Handy. Auf dem
+  // Desktop liegt die Zeile unten links, dort zählt nur die Zeile selbst.
+  test('steht rechts neben den Ebenen, unter den Live-Zahlen', async ({ page }, testInfo) => {
     await ready(page)
     const fab = (await page.locator('.report-fab').boundingBox())!
-    const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
-    const overlay = (await page.locator('.overlay').boundingBox())!
-    expect(fab.y).toBeGreaterThanOrEqual(gear.y + gear.height)
-    expect(Math.abs(fab.x + fab.width - (gear.x + gear.width))).toBeLessThan(2)
-    expect(overlay.y).toBeGreaterThanOrEqual(fab.y + fab.height)
+    const live = (await page.locator('.live').boundingBox())!
+    const ebenen = (await page.locator('.chip--toggle').boundingBox())!
+    expect(fab.y).toBeGreaterThanOrEqual(live.y + live.height)
+    expect(Math.abs(fab.y - ebenen.y)).toBeLessThan(2)
+    expect(ebenen.x + ebenen.width).toBeLessThanOrEqual(fab.x)
+    if (testInfo.project.name === 'phone') {
+      const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
+      expect(Math.abs(fab.x + fab.width - (gear.x + gear.width))).toBeLessThan(2)
+    }
   })
 })
 

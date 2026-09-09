@@ -1,5 +1,4 @@
 import type { LiveStats as Stats } from '../presence.js'
-import { BetaBadge } from './BetaBadge.js'
 
 interface Props {
   stats: Stats
@@ -26,7 +25,6 @@ export function LiveStats({ stats, reportsToday, shared }: Props) {
 
   return (
     <div className="live" aria-label="Live-Zahlen">
-      <BetaBadge />
       <span className="live__item live__item--zones">
         <strong>{reportsToday}</strong>
         <span className="live__label">{reportsToday === 1 ? 'Meldung heute' : 'Meldungen heute'}</span>

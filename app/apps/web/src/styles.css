@@ -288,19 +288,25 @@ body {
    könnte. */
 .sidebar--full ~ .locate { display: none; }
 
-/* Der Meldeknopf: rechts in der Kopfzeile, unter dem Zahnrad, rot — die
-   Farbe der Sterne, nicht das Blau der Hauptknöpfe. Er stand einen Tag lang
-   unten neben dem Standort; dort teilte er sich die Kante mit Griff und
-   Quellenangabe. In der Kopfzeile misst `--topbar-height` ihn mit, die Chips
-   rücken darunter. */
-.topbar__row--actions { display: flex; justify-content: flex-end; }
+/* Die Zeile unter den Live-Zahlen: links die Ebenen, rechts der Meldeknopf.
+   Die Zeile selbst lässt Tipps zur Karte durch; nur die Knöpfe fangen sie. */
+.overlay__row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; width: 100%; pointer-events: none; }
+.overlay__row .legend { flex: 1 1 0; width: auto; min-width: 0; }
+/* Offen nimmt die Chip-Zeile die ganze Breite, und der Meldeknopf rückt
+   darunter: Auf 320 Pixeln blieben den Chips sonst 30 Pixel zwischen
+   „Ebenen" und dem Knopf — gesehen auf dem Bildschirmfoto, 9. September. */
+.overlay__row .legend--open { flex-basis: 100%; }
+/* Der Meldeknopf: rot wie die Sterne, nicht blau wie die Hauptknöpfe;
+   rechtsbündig mit dem Zahnrad darüber, so hoch wie die Chips daneben. */
 .report-fab {
-  height: 44px; padding: 0 18px;
+  flex: none; margin-left: auto;
+  height: 40px; padding: 0 16px;
   font: inherit; font-size: 14px; font-weight: 700; line-height: 1; white-space: nowrap;
   color: #fff; background: #dc2626;
   border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px;
   box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.8);
   cursor: pointer;
+  pointer-events: auto;
 }
 .report-fab:hover { background: #b91c1c; }
 
@@ -470,8 +476,9 @@ body {
     flex-wrap: nowrap;
     overflow-x: auto; overflow-y: hidden;
     scrollbar-width: none;
-    /* Bis an den rechten Rand scrollen, obwohl die Spalte vorher endet. */
-    margin-right: -12px; padding-right: 12px;
+    /* Rechts endet die Zeile am Meldeknopf, nicht am Schirmrand — kein
+       negativer Rand mehr, der Verlauf läuft bis zur eigenen Kante. */
+    margin-right: 0; padding-right: 0;
     scroll-snap-type: x proximity;
   }
   .legend::-webkit-scrollbar { display: none; }
@@ -497,7 +504,7 @@ body {
     /* `right: -12px`: bis an den Schirmrand, in den die Chips scrollen — der
        Inhaltsrand der Zeile liegt wegen des Innenabstands 12 px davor, und
        dort stand der Verlauf zuerst. Gesehen auf dem Bildschirmfoto. */
-    position: sticky; right: -12px;
+    position: sticky; right: 0;
     flex: none; align-self: stretch;
     width: 56px; margin-left: -62px;
     background: linear-gradient(90deg, rgba(15, 18, 23, 0), rgba(15, 18, 23, 0.92));
@@ -801,12 +808,6 @@ body {
 .live__label { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; letter-spacing: 0.02em; }
 .live__item--muted strong { color: var(--muted); }
 .live__item--muted .live__label { font-style: italic; }
-/* Die Beta-Marke als Ecke der Karte, nicht als eigene Pille davor. */
-.live .beta {
-  position: absolute; top: -9px; right: 10px;
-  padding: 1px 7px; font-size: 9px; line-height: 14px;
-  pointer-events: auto;
-}
 /* Ebenfalls ein eigener Wert: Der Punkt zeigt „gerade jemand da", nicht
    „gebuehrenfrei". Er hing am selben Token, und sein Schattenwert war ohnehin
    schon fest verdrahtet -- die beiden waeren beim Wechsel auseinandergelaufen. */

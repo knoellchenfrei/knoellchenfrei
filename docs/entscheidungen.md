@@ -416,6 +416,17 @@ misst den Knopf mit, sodass die Chip-Zeile von selbst darunter rückt. Rot ist
 die Farbe der Sterne, nicht das Blau der Hauptknöpfe. Also: `Kontrolle
 melden` als rote Pille in der Kopfzeile, rechtsbündig.
 
+**Nachtrag vom 9. September abends, zweimal.** Erst wanderte der Knopf auf
+Wunsch des Betreibers nach oben rechts unter das Zahnrad, rot und gross — als
+eigene Zeile der Kopfzeile. Das war wörtlich umgesetzt und nicht als Ganzes
+beurteilt: vier Zeilen mit vier Ausrichtungen, ein Knopf allein in einer
+leeren Zeile, die Beta-Marke auf der Kante der Live-Karte. Die Rückfrage
+„hat das der UI-Experte so durchgewunken?" war berechtigt. Jetzt: Suche mit
+Beta-Marke und Zahnrad in einer Zeile, darunter die Live-Karte, darunter
+**eine** Zeile für das, was man tun kann — links „Ebenen", rechts der rote
+Meldeknopf, rechtsbündig mit dem Zahnrad, so hoch wie die Chips. Linke
+Kanten fluchten, rechte Kanten fluchten, die Abstände sind gleich.
+
 ## Das Raster der Kontrolldichte trägt seinen Namen im Zellschlüssel
 
 **Entschieden am 9. September**, als das eine Berliner 250-m-Raster zu einem

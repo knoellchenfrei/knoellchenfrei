@@ -37,6 +37,7 @@ import { UpdateBar } from './components/UpdateBar.js'
 import { CitySuggestion } from './components/CitySuggestion.js'
 import { HeatPanel } from './components/HeatPanel.js'
 import { InstallBanner, useInstallState } from './components/InstallHint.js'
+import { BetaBadge } from './components/BetaBadge.js'
 import { LiveStats } from './components/LiveStats.js'
 import { LocationPrompt } from './components/LocationPrompt.js'
 import { QuietDayNote } from './components/QuietDayNote.js'
@@ -1773,6 +1774,9 @@ export function App() {
         */}
         <div className="topbar__row">
           <SearchBox zones={zones} onPick={focusZone} />
+          {/* Die Beta-Marke gehört zum Kopf der App, nicht auf die Kante der
+              Live-Karte, wo sie bis zum 9. September abends klebte. */}
+          <BetaBadge />
           <button
             type="button"
             className="topbar__icon"
@@ -1781,29 +1785,6 @@ export function App() {
             title="Einstellungen"
           >
             <span aria-hidden="true">⚙</span>
-          </button>
-        </div>
-        {/*
-          Der Meldeknopf: oben rechts unter den Einstellungen, rot, seit dem
-          9. September abends auf Wunsch des Betreibers. Er stand einen Tag
-          lang unten neben dem Standort-Knopf, wo er sich die Kante mit dem
-          Griff und der Quellenangabe teilte. In der Kopfzeile wächst deren
-          gemessene Höhe mit, und die Chip-Zeile rückt von selbst darunter.
-          Ohne angetippten Punkt bietet das Blatt Standort, Kartenmitte und
-          die nächsten Zonen zur Auswahl.
-        */}
-        <div className="topbar__row topbar__row--actions">
-          <button
-            type="button"
-            className="report-fab"
-            onClick={() => {
-              setPanelOpen(false)
-              setReportViaFab(true)
-              positionForReport()
-              setReporting(true)
-            }}
-          >
-            Kontrolle melden
           </button>
         </div>
         <UpdateBar />
@@ -1822,13 +1803,22 @@ export function App() {
       />
 
       {/*
+        Eine Zeile für das, was man tun kann: links die Ebenen, rechts der
+        Meldeknopf — rot, bündig mit dem Zahnrad darüber. Er stand am
+        9. September erst unten neben dem Standort, dann allein in einer
+        eigenen Zeile der Kopfzeile; beides liess die linke Seite leer und die
+        Ausrichtungen springen. Der Betreiber fragte, ob das „der UI-Experte
+        so durchgewunken" habe. Hatte er nicht.
+      */}
+      <div className="overlay__row">
+      {/*
         Nur, wenn es etwas zu wählen gibt: Ohne Umweltzone und ohne POI-Ebenen
         (Hamburg) stünde hier ein Knopf, der eine leere Liste aufklappt.
       */}
       {legendAvailable && (
       <section
         ref={legendRef}
-        className={`legend${legendMore ? ' legend--more' : ''}`}
+        className={`legend${legendMore ? ' legend--more' : ''}${legendOpen ? ' legend--open' : ''}`}
         aria-label="Kartenebenen"
       >
         <button
@@ -1887,6 +1877,19 @@ export function App() {
         </div>
       </section>
       )}
+      <button
+        type="button"
+        className="report-fab"
+        onClick={() => {
+          setPanelOpen(false)
+          setReportViaFab(true)
+          positionForReport()
+          setReporting(true)
+        }}
+      >
+        Kontrolle melden
+      </button>
+      </div>
       </div>
 
       {/*
