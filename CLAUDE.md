@@ -371,6 +371,25 @@ wiederholt.
   nicht mehr am Compiler scheitern. Diese Sperre war ein Zufall und ist jetzt
   ein Test — `packages/core/test/kein-node-in-core.test.ts`, mit Gegenprobe
   nachgemessen.
+- **Ein `200` auf ein `PATCH` ist keine Änderung.** Am 9. September sollte
+  `secret_scanning_non_provider_patterns` eingeschaltet werden.
+  `gh api -X PATCH repos/… -F 'security_and_analysis[…][status]=enabled'`
+  antwortete mit **200 und dem vollständigen Repository-Objekt** — in dem das
+  Feld weiter auf `disabled` stand. Kein Fehler, keine Warnung, kein Hinweis
+  auf eine fehlende Berechtigung; die Antwort sah aus wie ein Erfolg und war
+  ein Verwerfen. Aufgefallen ist es nur, weil direkt danach gemessen wurde.
+
+  Die Ursache lag eine Ebene höher: Die Organisation führt eine
+  Sicherheitskonfiguration („GitHub recommended", `enforcement: unenforced`),
+  in der das Feld `enabled` ist — sie ist auf dieses Repository nur nicht
+  angewandt. Deshalb fehlt der Schalter auch in der Oberfläche. Ein einzelnes
+  Feld gegen eine Konfiguration zu setzen, die es nicht gibt, ist wirkungslos,
+  und die API sagt das nicht.
+
+  **Nach jedem Schreibzugriff auf eine Einstellung wird gelesen.** Dafür gibt
+  es `./scripts/einstellungen-pruefen.sh`; sie ist an genau diesem Fall
+  gewachsen.
+
 - **Ein Test, den kein Compiler ansieht, behauptet mehr, als er prüft.**
   `tsc` sah bis zum 9. September nur `packages/core/test/`. In `apps/web`,
   `apps/api` und `packages/ingest` stand `test` nicht im `include` — **180 der
