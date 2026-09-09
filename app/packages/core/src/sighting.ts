@@ -114,17 +114,29 @@ export function confidenceOf(sighting: Sighting, options: ConfidenceOptions): Co
   // not a hypothetical.
   const expired = ageMs >= maxAgeMs || rawAgeMs < -FUTURE_TOLERANCE_MS
 
-  const score = expired
-    ? 0
-    : evidence(sighting.confirmations, sighting.disputes) * decay(ageMs, halfLifeMs)
+  const agreement = evidence(sighting.confirmations, sighting.disputes)
+  const score = expired ? 0 : agreement * decay(ageMs, halfLifeMs)
 
-  return { score, status: statusOf(score), stars: starsOf(score), ageMs }
+  return { score, status: statusOf(score, agreement), stars: starsOf(score), ageMs }
 }
 
-function statusOf(score: number): SightingStatus {
-  if (score >= CONFIRMED_THRESHOLD) return 'confirmed'
-  if (score >= VISIBLE_THRESHOLD) return 'unconfirmed'
-  return 'expired'
+/**
+ * Zwei Fragen, zwei Zahlen. Ob eine Sichtung noch *gilt*, sagt der
+ * zerfallende `score`: Unter der Sichtbarkeitsschwelle ist sie weg. Ob sie
+ * *bestätigt* ist, sagt die Zustimmung allein — die altert nicht.
+ *
+ * Bis zum 9. September hing beides am zerfallenen Wert, und damit war
+ * „bestätigt" ein Zustand, den es praktisch nicht gab: Eine saubere
+ * Bestätigung hielt ihn drei Minuten, zwei hielten ihn acht, drei
+ * Bestätigungen nach 27 Minuten standen mit 0,43 als „unbestätigt" da. Der
+ * Betreiber sah drei eigene Stimmen und fragte, ob die noch eine extra
+ * Bestätigung brauchen — sie hätten nie gereicht. Der Kommentar über
+ * `CONFIRMED_THRESHOLD` versprach „a single clean confirmation still
+ * promotes"; jetzt stimmt er für die ganze Lebensdauer der Meldung.
+ */
+function statusOf(score: number, agreement: number): SightingStatus {
+  if (score < VISIBLE_THRESHOLD) return 'expired'
+  return agreement >= CONFIRMED_THRESHOLD ? 'confirmed' : 'unconfirmed'
 }
 
 function starsOf(score: number): 0 | 1 | 2 | 3 {

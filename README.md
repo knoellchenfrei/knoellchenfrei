@@ -208,7 +208,7 @@ melden, von anderen bestätigen lassen, Sterne-Bewertung, automatischer Verfall.
 Der Konfidenzwert kombiniert ein Laplace-geglättetes Zustimmungsverhältnis mit
 exponentiellem Zeitverfall (Halbwertszeit 30 Minuten), harter Cutoff nach 90
 Minuten. Positionen werden auf ~10 m gerundet, Zeitstempel auf 5-Minuten-Raster.
-Es wird keine Historie geführt.
+Es wird keine Historie geführt. Seit dem 9. September entscheidet der verfallende Wert nur noch, ob eine Sichtung sichtbar bleibt; ob sie „bestätigt" ist, sagt die Zustimmung allein — sonst gab es den Status nach drei Minuten nicht mehr.
 
 Rechtlicher Rahmen: § 23 Abs. 1c StVO richtet sich an Fahrzeugführende während
 der Fahrt, nicht an Betreiber — deshalb existieren Dienste wie blitzer.de legal.
@@ -247,7 +247,7 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 1113 Unit-Tests
+pnpm test                              # 1117 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -286,7 +286,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 1113 — 774 in `core`, 86 für Worker und Zählwerk, 237 für die Web-App, 16 für Artifact-Bau und Datenstand. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 73 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| Unit-Tests | 1117 — 778 in `core`, 86 für Worker und Zählwerk, 237 für die Web-App, 16 für Artifact-Bau und Datenstand. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 74 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 196 über Desktop und Handy, gegen den Produktions-Build; 186 bestehen, zehn überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, neun auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

@@ -178,6 +178,15 @@ bei 0,62, nicht 0,6: Der häufige Fall „zwei bestätigen, einer widerspricht"
 ergibt exakt 3/5, und ein Schwellwert genau auf einem häufigen Wert entscheidet
 echte Meldungen per Float-Vergleich.
 
+**Zwei Fragen, zwei Zahlen — seit dem 9. September.** Ob eine Sichtung noch
+*gilt*, entscheidet die Konfidenz mit Verfall: Unter 0,25 ist sie weg, die
+Sterne zeigen ihr Alter. Ob sie *bestätigt* ist, entscheidet die Zustimmung
+**allein**, ohne Verfall. Vorher hing beides am verfallenen Wert, und damit gab
+es „bestätigt" praktisch nicht: Eine saubere Bestätigung hielt den Status drei
+Minuten, zwei hielten ihn acht, drei Bestätigungen standen nach 27 Minuten bei
+0,43 als „unbestätigt". Der Betreiber sah drei eigene Stimmen und fragte, ob die
+noch eine extra Bestätigung brauchen — sie hätten nie gereicht.
+
 ## Zwei Datensätze für zwei Fragen
 
 „Steht gerade jemand da?" und „wo wird oft kontrolliert?" sehen verwandt aus und

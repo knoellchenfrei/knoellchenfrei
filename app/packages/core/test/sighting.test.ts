@@ -109,3 +109,33 @@ describe('activeSightings', () => {
     expect(result.map((entry) => entry.sighting.id)).toEqual(['strong', 'weak'])
   })
 })
+
+describe('Zustimmung altert nicht, Sichtbarkeit schon', () => {
+  // Der Betreiber, 9. September: drei Meldungen mit „du: gesehen", alle
+  // „unbestätigt". Nachgerechnet: eine Bestätigung hielt „bestätigt" drei
+  // Minuten, zwei acht, drei Bestätigungen standen nach 27 Minuten bei 0,43.
+  const base = { id: 's', lon: 13.4, lat: 52.5, disputes: 0 }
+  const now = Date.UTC(2026, 8, 9, 14, 0)
+  const at = (minutes: number, confirmations: number, disputes = 0) =>
+    confidenceOf({ ...base, confirmations, disputes, reportedAt: now - minutes * 60_000 }, { now })
+
+  it('bleibt nach einer sauberen Bestätigung bestätigt, solange die Meldung sichtbar ist', () => {
+    expect(at(7, 1).status).toBe('confirmed')
+    expect(at(27, 1).status).toBe('confirmed')
+    expect(at(27, 3).status).toBe('confirmed')
+  })
+
+  it('zeigt das Alter weiter in den Sternen, nicht im Status', () => {
+    expect(at(27, 1).stars).toBeLessThan(at(1, 1).stars)
+    expect(at(27, 1).status).toBe(at(1, 1).status)
+  })
+
+  it('macht ein Widerspruch weiter unbestätigt, auch bei einer frischen Meldung', () => {
+    expect(at(2, 1, 1).status).toBe('unconfirmed')
+    expect(at(2, 2, 1).status).toBe('unconfirmed')
+  })
+
+  it('kennt kein Bestätigt mehr, sobald die Meldung unter die Sichtbarkeit fällt', () => {
+    expect(at(80, 5).status).toBe('expired')
+  })
+})

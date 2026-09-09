@@ -31,7 +31,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1113 Unit-Tests (core, api, web)
+pnpm test                                           # 1117 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -86,7 +86,7 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (774), `apps/api` (86, Worker und Zählwerk),
+**alle vier** Tests: `core` (778), `apps/api` (86, Worker und Zählwerk),
 `apps/web` (237, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, drei Komponenten mit jsdom) und `packages/ingest` (16, die zwei
@@ -104,7 +104,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1113 E2E_COUNT=196 npx tsx src/build-badges.ts
+TEST_COUNT=1117 E2E_COUNT=196 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -843,6 +843,18 @@ wiederholt.
   `observe(element, { box: 'border-box' })` und ein E2E-Test, der die
   Einrückung absichtlich spät setzt. Die Lehre darüber hinaus: Sieben
   Viewports ohne Einrückung sind keine Messung für ein Gerät mit einer.
+- **Was altert, ist die Sichtung — nicht die Zustimmung.** `confidenceOf`
+  leitete Status *und* Sichtbarkeit aus demselben verfallenen Wert ab. Damit
+  war „bestätigt" ein Zustand, den es praktisch nicht gab: Eine saubere
+  Bestätigung hielt ihn drei Minuten, zwei acht, drei Bestätigungen standen
+  nach 27 Minuten bei 0,43 als „unbestätigt" — während der Kommentar über
+  der Schwelle versprach, eine einzige saubere Bestätigung stufe hoch. Der
+  Betreiber sah am 9. September drei eigene „du: gesehen" neben dreimal
+  „unbestätigt" und fragte, ob die noch eine extra Bestätigung brauchen. Sie
+  hätten nie gereicht. Seitdem entscheidet der Verfall, ob eine Sichtung
+  sichtbar bleibt (und wie viele Sterne sie hat), und die Zustimmung allein,
+  ob sie bestätigt ist. Nachgerechnet, nicht gefühlt: die Tabelle mit neun
+  Fällen steht in `core/test/sighting.test.ts`.
 
 ## Stil
 
@@ -871,7 +883,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **73 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **74 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
