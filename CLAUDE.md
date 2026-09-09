@@ -100,6 +100,7 @@ Erzeugte Dateien, nur bei Bedarf neu bauen:
 ```bash
 cd app/apps/web
 node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quelle
+node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für die zwei Zeilen darunter
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest

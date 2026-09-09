@@ -1195,11 +1195,15 @@ Was noch offen ist:
       Archiv einmal herunterzuladen und lokal auszuliefern:
 
       ```bash
-      curl -o /tmp/berlin.pmtiles https://tiles.knoellchenfrei.de/v<datum>/berlin.pmtiles
-      # kleiner Server mit Range-Unterstützung und Access-Control-Allow-Origin: *
-      VITE_TILES_URL=http://127.0.0.1:4190/ pnpm --filter @knoellchenfrei/web build
-      cd apps/web && node scripts/make-screenshots.mjs && node scripts/make-docs-images.mjs
+      curl -o /tmp/kacheln/berlin.pmtiles https://tiles.knoellchenfrei.de/aktuell/berlin.pmtiles
+      cd apps/web && node scripts/kacheln-lokal.mjs /tmp/kacheln 4190   # Range, CORS, ETag
+      VITE_TILES_URL=http://127.0.0.1:4190/ pnpm build
+      node scripts/make-screenshots.mjs && node scripts/make-docs-images.mjs
       ```
+
+      Der Server liegt seit dem 9. September im Repository — bis dahin stand
+      hier nur „kleiner Server mit Range-Unterstützung", und jede Aufnahme
+      fing damit an, ihn neu zu schreiben.
 
       Die CORS-Regel selbst bleibt eng — sie für die Bilder aufzumachen wäre
       der falsche Weg herum.
