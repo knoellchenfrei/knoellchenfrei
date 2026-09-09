@@ -1099,6 +1099,14 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
+- [ ] **Die Bildschirmfotos zeigen noch Demodaten.** `public/screenshots/` und
+      `docs/images/` sind vom 9. September morgens, mit vier erzeugten
+      Sichtungen und einem erzeugten Kontrolldichte-Muster. Seit dem Abend
+      erzeugt die App nichts mehr; die Bilder zeigen damit einen Zustand, den
+      es nicht gibt. Neu aufnehmen nach dem Rezept unter „Bilder neu
+      aufgenommen" — mit lokal ausgeliefertem Kachelarchiv, sonst ist die
+      Karte leer.
+
 - [ ] **Die Oberfläche selbst lässt sich nicht als Einheit prüfen — und das
       ist eine Entscheidung, keine Faulheit.** Stand 9. September deckt
       `apps/web` **26,3 %** der Anweisungen ab, nach 13,8 % am Morgen. Was

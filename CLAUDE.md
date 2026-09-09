@@ -31,11 +31,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1099 Unit-Tests (core, api, web)
+pnpm test                                           # 1084 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 182 End-to-End-Tests
+cd apps/web && npx playwright test                  # 180 End-to-End-Tests
 ```
 
 Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -87,8 +87,8 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (769), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (233, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
-Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren, Demodaten,
+`apps/web` (218, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
@@ -103,7 +103,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1099 E2E_COUNT=182 npx tsx src/build-badges.ts
+TEST_COUNT=1084 E2E_COUNT=180 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -212,7 +212,9 @@ wiederholt.
   Parkplatzes, im Worker und im Telegram-Parser. Laufen zwei davon auseinander,
   nimmt die App eine Meldung an, die der Server danach verwirft, und niemand
   erfährt, warum.
-- **Demodaten sind auch Daten — sie hängen an der Stadt.** `seed.ts` streute
+- **Demodaten sind auch Daten — sie hängen an der Stadt.** *(Seit dem
+  9. September gibt es keine Demodaten mehr, siehe die Regel darunter; die
+  Lehre gilt für alles, was an der Stadt hängt.)* `seed.ts` streute
   sechs Beispielmeldungen und acht Heatmap-Ecken über feste **Berliner**
   Koordinaten. In München lagen sie damit 500 km neben der Karte: nichts zu
   sehen, kein Fehler im Log, und die einzige sichtbare Spur war die Liste „am
@@ -799,6 +801,16 @@ wiederholt.
   CORS-Fehler der App. Der Kopf gehört unter die CORS-Schicht
   (`context.route` → `route.continue({ headers })`), so wie ihn die Kante
   setzt.
+- **Erzeugte Daten sehen aus wie echte — also gibt es keine mehr.** Bis zum
+  9. September füllte `seed.ts` eine leere Sichtungsliste mit sechs erzeugten
+  Meldungen und die Kontrolldichte mit einem erzeugten Muster, jeweils mit
+  Hinweis. Der Betreiber sah auf dem Handy „4 Meldungen" und wollte wissen,
+  welche — es waren keine. Ein Hinweis unter einer Liste ist keine Antwort
+  auf die Frage, die die Liste stellt. Seitdem zeigt die App, was gemeldet
+  wurde, oder sagt, dass nichts gemeldet wurde; und ein leerer gemeinsamer
+  Speicher leert auch die Anzeige, statt Reste stehen zu lassen. Was ein
+  Test zum Zeichnen braucht, legt er selbst ab (`mitStrichen` in
+  `app.spec.ts`), im Format von `saveMarks`.
 
 ## Stil
 
@@ -827,7 +839,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **70 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **71 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

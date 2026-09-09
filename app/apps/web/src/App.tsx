@@ -46,7 +46,6 @@ import { SettingsSheet } from './components/SettingsSheet.js'
 import { SightingPanel } from './components/SightingPanel.js'
 import { TowInfo } from './components/TowInfo.js'
 import { ZonePanel } from './components/ZonePanel.js'
-import { seedMarks, seedSightings } from './seed.js'
 import { track, trackNow } from './track.js'
 import { zoneImDativ, zoneKurz, zoneTitel } from './zone-label.js'
 import {
@@ -213,12 +212,6 @@ export function App() {
    * die Tafel daneben sagt, warum.
    */
   const [showHeat, setShowHeat] = useState(true)
-  // True while the heatmap is drawn from generated data rather than reports.
-  const [seeded, setSeeded] = useState(false)
-  // Same for the sighting list. Separate flags on purpose: sightings expire
-  // after 90 minutes and marks after four weeks, so a shared store routinely
-  // has real marks and no real sightings.
-  const [sightingsSeeded, setSightingsSeeded] = useState(false)
   /**
    * Welche Ebenen die geladene Stadt überhaupt hat.
    *
@@ -406,15 +399,13 @@ export function App() {
     if ('Notification' in window) setNotificationsBlocked(Notification.permission !== 'granted')
     setSession(loadSession())
     setSessionRestored(true)
-    const stored = loadSightings()
-    // Seeded against the render clock, not Date.now(): the seed "8 minutes
-    // ago" otherwise read "vor 7 Min." until the first tick.
-    setSightings(stored.length > 0 ? stored : seedSightings(now))
-    setSightingsSeeded(stored.length === 0)
-    const storedMarks = loadMarks()
-    setMarks(storedMarks.length > 0 ? storedMarks : seedMarks(now))
+    // Keine Demodaten mehr, seit dem 9. September auf Wunsch des Betreibers:
+    // Bis dahin füllte `seed.ts` eine leere Liste mit sechs erzeugten
+    // Sichtungen und die Kontrolldichte mit einem erzeugten Muster. Was jetzt
+    // hier steht, ist gemeldet — oder die Liste ist leer und sagt das.
+    setSightings(loadSightings())
+    setMarks(loadMarks())
     if (!locationAsked() && 'geolocation' in navigator) setAskLocation(true)
-    setSeeded(storedMarks.length === 0)
   }, [])
 
   // Attach to the shared store if this view has one. It can take seconds and may
@@ -428,26 +419,15 @@ export function App() {
       setShared(true)
       // The backend sanitises rows before they get here; they are written by
       // other viewers and are never trusted.
+      // Der gemeinsame Speicher ist die Wahrheit, auch wenn er leer ist: Bis
+      // zum 9. September hielt ein `if (rows.length === 0) return` hier die
+      // Demodaten fest; ohne Demodaten hielte es nur noch Reste aus dem
+      // lokalen Speicher eines früheren Betriebs ohne Server.
       unsubscribe = backend.subscribe((rows) => {
-        // An empty shared store does NOT clear the demo list. It used to: the
-        // seeded sightings showed for the second or two the capability took to
-        // answer and then vanished, which reads as the app losing them.
-        if (rows.length === 0) return
         setSightings(rows)
-        setSightingsSeeded(false)
       })
       unsubscribeMarks = backend.subscribeMarks?.((rows) => {
-        // Dieselbe Regel wie bei den Sichtungen darüber, und sie fehlte hier:
-        // Ein **leerer** gemeinsamer Speicher löscht das Beispielmuster nicht.
-        // Solange in D1 keine Striche stehen — am 7. September gemessen,
-        // `/marks` antwortet `{"marks":[]}` —, ersetzte diese Zeile die
-        // erzeugte Verteilung durch nichts und setzte mit `setSeeded(false)`
-        // auch noch den Hinweis zurück, der erklärt hätte, warum da nichts
-        // ist. Auf der ausgelieferten Seite war die Kontrolldichte damit eine
-        // leere Ebene ohne Begründung; lokal, ohne API, sah sie richtig aus.
-        if (rows.length === 0) return
         setMarks(rows)
-        setSeeded(false)
       })
     })
     return () => {
@@ -1256,8 +1236,8 @@ export function App() {
   }, [shared, sightings])
 
   useEffect(() => {
-    if (!shared && !seeded && marks.length > 0) saveMarks(marks)
-  }, [shared, seeded, marks])
+    if (!shared && marks.length > 0) saveMarks(marks)
+  }, [shared, marks])
 
   const setReminder = useCallback(
     (minutes: number | null) => {
@@ -1322,11 +1302,8 @@ export function App() {
     // Shown immediately, whichever backend is in play. Previously a shared
     // report went straight to the store and the user saw nothing at all until
     // the snapshot came back — and nothing ever, if the write was refused.
-    // The first real report clears the demo list rather than joining it.
-    setSightings((current) => [...(sightingsSeeded ? [] : current), entry])
-    setSightingsSeeded(false)
-    setMarks((current) => [...(seeded ? [] : current), markFor(point, entry.reportedAt)])
-    setSeeded(false)
+    setSightings((current) => [...current, entry])
+    setMarks((current) => [...current, markFor(point, entry.reportedAt)])
 
     ownReports.current.add(entry.id)
     const backend = backendRef.current
@@ -1354,7 +1331,7 @@ export function App() {
           }`,
         )
       })
-  }, [position, anchor, seeded, sightingsSeeded])
+  }, [position, anchor])
 
   const vote = useCallback(
     (id: string, key: 'confirmations' | 'disputes') => {
@@ -2005,11 +1982,9 @@ export function App() {
           own={(id) => ownReports.current.has(id)}
           canReport={position !== null || anchor !== null}
           shared={shared}
-          seeded={sightingsSeeded}
         />
 
         <HeatPanel
-          seeded={seeded}
           top={heatTop}
           heat={heat}
           activity={activity}

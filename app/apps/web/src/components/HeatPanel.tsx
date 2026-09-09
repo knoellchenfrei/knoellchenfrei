@@ -25,8 +25,6 @@ interface Props {
   onToggle: () => void
   /** True when marks reach a shared store rather than only this device. */
   shared: boolean
-  /** True while the picture is generated rather than reported. */
-  seeded: boolean
 }
 
 const WEEKDAY_NAMES = [
@@ -58,7 +56,6 @@ export function HeatPanel({
   visible,
   onToggle,
   shared,
-  seeded,
 }: Props) {
   const missing = MIN_MARKS_FOR_PATTERN - heat.totalMarks
   const dayName = WEEKDAY_NAMES[weekday] ?? 'Tag'
@@ -219,13 +216,6 @@ export function HeatPanel({
           Noch {missing} {missing === 1 ? 'Meldung' : 'Meldungen'} bis sich ein Muster zeigen
           lässt. Aus {heat.totalMarks} {heat.totalMarks === 1 ? 'Meldung' : 'Meldungen'} eine
           Karte zu färben sähe nach Wissen aus und wäre Rauschen.
-        </p>
-      )}
-
-      {seeded && (
-        <p className="demo-note">
-          <strong>Beispielmuster.</strong> Noch niemand hat hier gemeldet — die Verteilung ist
-          erzeugt, damit die Ebene etwas zeigt. Die erste echte Meldung ersetzt sie.
         </p>
       )}
 

@@ -299,7 +299,8 @@ test.describe('gemeldete Sichtungen', () => {
     await openPanel(page)
 
     const sightings = page.locator('section[aria-label="Ordnungsamt-Sichtungen"]')
-    await expect(sightings.locator('.demo-note')).toContainText('erzeugt')
+    // Leer, und ehrlich leer: keine erzeugten Zeilen mehr.
+    await expect(sightings.locator('.sightings__item')).toHaveCount(0)
 
     // The button opens the report sheet; the tapped point is offered first.
     await page.locator('button', { hasText: 'Hier gesehen' }).click()
@@ -308,52 +309,25 @@ test.describe('gemeldete Sichtungen', () => {
     await expect(page.locator('.sheet')).toHaveCount(0)
     await page.waitForTimeout(600)
 
-    // The first real report replaces the generated list rather than joining it:
-    // a real report sitting among demo rows makes both unreadable.
     await expect(sightings.locator('.sightings__item')).toHaveCount(1)
     await expect(sightings.locator('.demo-note')).not.toContainText('erzeugt')
   })
 
-  test('kennzeichnet erzeugte Meldungen als Demodaten', async ({ page }) => {
-    await ready(page)
-    await openPanel(page)
-    // Scoped to the sightings panel: the heatmap carries its own demo note, and
-    // an unscoped selector matches both.
-    await expect(
-      page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .demo-note'),
-    ).toContainText('erzeugt')
-  })
-
   /**
-   * Der Stimmen-Weg war zweimal kaputt, ohne dass ein Test es sah: Erst gingen
-   * die Stimmen monatelang mit 415 ins Leere (M-046), dann zählte die Anzeige
-   * eine Stimme, die der Worker verworfen hatte. Hier der Weg, den die
-   * Oberfläche selbst verantwortet: Ein Tipp auf „gesehen" hebt die Meldung
-   * auf „bestätigt", ein Tipp auf „weg" senkt sie, und nichts davon meldet
-   * einen Fehler. Im lokalen Modus, also ohne Server — der Worker hat seine
-   * eigenen Tests.
+   * Bis zum 9. September stand hier „kennzeichnet erzeugte Meldungen als
+   * Demodaten": Eine leere Liste bekam sechs erzeugte Sichtungen, mit
+   * Hinweis. Der Betreiber will echte Daten sehen — also ist eine Liste ohne
+   * Meldungen jetzt leer und sagt das, statt etwas zu zeigen, das aussieht
+   * wie eine Aussage über die Stadt.
    */
-  test('hebt eine Meldung mit „gesehen" um einen Stern und senkt sie mit „weg"', async ({ page }) => {
+  test('erfindet ohne Meldungen keine — die Liste ist leer und sagt es', async ({ page }) => {
     await ready(page)
     await openPanel(page)
-    const rows = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item')
-    // Die erste Zeile ist die höchstbewertete; sie bleibt es nach beiden
-    // Stimmen, weil die Demodaten dahinter älter sind und tiefer stehen.
-    const first = rows.first()
-    const stars = first.locator('.stars')
-    await expect(stars).toHaveText('★')
-    // Nicht „bestätigt": Die Konfidenz verfällt mit dem Alter, und die
-    // jüngste Demo-Meldung ist acht Minuten alt — eine Bestätigung hebt sie
-    // auf 0,55, die Schwelle liegt bei 0,62. Ein Stern mehr ist die Wirkung,
-    // die eine Stimme hier sicher hat; erst eine frische Meldung wird mit
-    // einer Bestätigung „bestätigt".
-    await first.getByRole('button', { name: /bestätigen$/ }).click()
-    await expect(stars).toHaveText('★★')
-    await expect(page.locator('.toast')).toHaveCount(0)
-
-    await first.getByRole('button', { name: /als weg melden$/ }).click()
-    await expect(stars).toHaveText('★')
-    await expect(page.locator('.toast')).toHaveCount(0)
+    const sightings = page.locator('section[aria-label="Ordnungsamt-Sichtungen"]')
+    await expect(sightings).toContainText('0 aktiv')
+    await expect(sightings).toContainText('Keine aktuellen Sichtungen')
+    await expect(sightings.locator('.sightings__item')).toHaveCount(0)
+    await expect(sightings).not.toContainText('erzeugt')
   })
 
   /**
@@ -597,17 +571,50 @@ test.describe('Zahlen im Betrieb', () => {
   })
 })
 
+/**
+ * Striche im lokalen Speicher, wie sie eigene Meldungen der letzten Tage
+ * hinterlassen — damit die Tafel etwas zu zeichnen hat. Seit dem 9. September
+ * erzeugt die App selbst keine Demodaten mehr; was ein Test zum Zeichnen
+ * braucht, legt er hier ab, als Datei mit demselben Format, das `saveMarks`
+ * schreibt. Die Zellen sind Berliner Innenstadtzellen des 250-m-Rasters.
+ */
+async function mitStrichen(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const zellen = ['109_97', '109_97', '110_97', '109_98', '108_96']
+    const stunden = [8, 9, 10, 10, 11, 14, 17]
+    const tag = (vorTagen: number): string =>
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(
+        new Date(Date.now() - vorTagen * 86_400_000),
+      )
+    const striche: { day: string; cell: string; hour: number }[] = []
+    for (let d = 0; d < 12; d += 1) {
+      for (let i = 0; i <= d % 3; i += 1) {
+        striche.push({ day: tag(d), cell: zellen[(d + i) % zellen.length]!, hour: stunden[(d + i) % stunden.length]! })
+      }
+    }
+    localStorage.setItem('knoellchenfrei.marks.v1', JSON.stringify(striche))
+  })
+}
+
 test.describe('Kontrolldichte', () => {
   const heatPanel = 'section[aria-label="Kontrolldichte"]'
 
-  test('sagt, worauf das Bild beruht, und dass es erzeugt ist', async ({ page }) => {
+  /**
+   * Bis zum 9. September stand hier „sagt, worauf das Bild beruht, und dass
+   * es erzeugt ist" — ein Beispielmuster mit Hinweis. Ohne Meldungen gibt es
+   * jetzt kein Bild und keinen Ersatz dafür, nur den Satz, wie viele fehlen.
+   */
+  test('erfindet ohne Meldungen kein Muster', async ({ page }) => {
     await ready(page)
     await openPanel(page)
-    await expect(page.locator(heatPanel)).toContainText('Meldungen')
-    await expect(page.locator(`${heatPanel} .demo-note`)).toContainText('Beispielmuster')
+    await expect(page.locator(heatPanel)).toContainText('Noch keine Auswertung')
+    await expect(page.locator(heatPanel)).toContainText(/Noch \d+ Meldungen bis sich ein Muster/)
+    await expect(page.locator(`${heatPanel} .demo-note`)).toHaveCount(0)
+    await expect(page.locator(`${heatPanel} header button`)).toBeDisabled()
   })
 
   test('ist von Anfang an eingeschaltet und lässt sich abschalten', async ({ page }) => {
+    await mitStrichen(page)
     await ready(page)
     await openPanel(page)
     const visible = async (): Promise<string> =>
@@ -628,6 +635,7 @@ test.describe('Kontrolldichte', () => {
   })
 
   test('nennt die Zahlen, die die Farbe nicht tragen kann', async ({ page }) => {
+    await mitStrichen(page)
     await ready(page)
     await openPanel(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
@@ -638,6 +646,7 @@ test.describe('Kontrolldichte', () => {
   })
 
   test('zeichnet das Tagesdiagramm immer — es braucht keine Uhrzeit', async ({ page }) => {
+    await mitStrichen(page)
     await ready(page)
     await openPanel(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
@@ -650,6 +659,7 @@ test.describe('Kontrolldichte', () => {
   })
 
   test('zeichnet ein Stundenprofil mit einer Marke für die laufende Stunde', async ({ page }) => {
+    await mitStrichen(page)
     await ready(page)
     await openPanel(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')

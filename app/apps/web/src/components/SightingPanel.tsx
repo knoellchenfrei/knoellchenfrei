@@ -13,8 +13,6 @@ interface Props {
   canReport: boolean
   /** True when reports reach a shared store rather than only this device. */
   shared: boolean
-  /** True while the list is the generated demo rather than real reports. */
-  seeded: boolean
 }
 
 const STARS = ['', '★', '★★', '★★★']
@@ -28,7 +26,6 @@ export function SightingPanel({
   own,
   canReport,
   shared,
-  seeded,
 }: Props) {
   const active = activeSightings(sightings, { now })
 
@@ -70,7 +67,6 @@ export function SightingPanel({
             <strong>Nur auf diesem Gerät.</strong> Ohne Server bleiben Meldungen lokal.
           </>
         )}
-        {seeded && ' Die unten stehenden Sichtungen sind erzeugt, nicht real — die erste echte Meldung ersetzt sie.'}
       </p>
 
       {active.length === 0 ? (

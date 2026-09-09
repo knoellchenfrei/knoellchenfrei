@@ -184,6 +184,16 @@ test.describe('Kurzbefehle vom App-Symbol', () => {
   })
 
   test('?start=kontrollen schaltet die Heatmap ein', async ({ page }) => {
+    // Ohne Striche gibt es keine Ebene zum Einschalten — seit dem 9. September
+    // erzeugt die App keine mehr, also legt der Test welche ab.
+    await page.addInitScript(() => {
+      const tag = (vorTagen: number): string =>
+        new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(
+          new Date(Date.now() - vorTagen * 86_400_000),
+        )
+      const striche = Array.from({ length: 14 }, (_, i) => ({ day: tag(i % 7), cell: i % 2 ? '109_97' : '110_97', hour: 9 + (i % 8) }))
+      localStorage.setItem('knoellchenfrei.marks.v1', JSON.stringify(striche))
+    })
     await page.goto('/?start=kontrollen')
     await ready(page)
     if (!(await page.locator('.sidebar__body').isVisible())) await page.locator('.panel-toggle').click()
