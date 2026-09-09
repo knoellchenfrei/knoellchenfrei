@@ -35,7 +35,7 @@ pnpm test                                           # 1120 Unit-Tests (core, api
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 202 End-to-End-Tests
+cd apps/web && npx playwright test                  # 204 End-to-End-Tests
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -105,7 +105,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1120 E2E_COUNT=202 npx tsx src/build-badges.ts
+TEST_COUNT=1120 E2E_COUNT=204 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data

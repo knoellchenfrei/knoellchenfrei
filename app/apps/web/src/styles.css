@@ -657,32 +657,79 @@ body {
  */
 @media (max-height: 520px) and (min-width: 520px) {
   /*
-   * Below 720px wide the sheet rules above also apply (a 1280px desktop at
-   * 200% zoom is 640×360). Every property the sheet sets is reset here, or
-   * the panel ended up top-left under the title with left:0 and top:auto.
+   * Querformat auf dem Handy (852×393 beim iPhone, seitlich je 59 Pixel
+   * Safe-Area). Bis zum 9. September galt hier das Hochformat mit drei
+   * Korrekturen — und das Ergebnis war eine Kollision je Ecke: Das Suchfeld
+   * war auf „Zone oder Bezir" gestutzt, Live-Karte und Meldeknopf standen
+   * unten links auf dem Standort-Knopf, das „i" der Quellenangabe lag auf
+   * dem Standort-Knopf, und offene Ebenen-Chips wanderten über die Karte.
+   *
+   * Jetzt drei Spalten mit fester Rolle: links eine Leiste (Suche, Live-
+   * Zahlen, Ebenen und Meldeknopf, untereinander), rechts das Blatt als
+   * Spalte, dazwischen die Karte. Der Standort-Knopf steht unten am linken
+   * Rand des Blatts, die Quellenangabe unten links unter der Leiste — die
+   * Leiste ist oben verankert und kommt dort nie an. Die Breiten sind
+   * Variablen, weil drei Regeln sie brauchen; laufen sie auseinander, stehen
+   * die Knöpfe wieder aufeinander.
+   *
+   * Unter 720px Breite gelten auch die Blatt-Regeln des Hochformats (ein
+   * 1280px-Desktop bei 200 % Zoom ist 640×360). Jede Eigenschaft, die das
+   * Blatt setzt, wird hier zurückgesetzt, sonst landete das Panel oben links
+   * unter dem Titel mit left:0 und top:auto.
    */
+  .app { --quer-leiste: min(300px, 38vw); --quer-blatt: min(320px, 40vw); }
+
+  .topbar {
+    left: max(12px, env(safe-area-inset-left)); right: auto;
+    width: var(--quer-leiste);
+    padding: 8px 0 0;
+    padding-top: max(8px, env(safe-area-inset-top));
+  }
+  .overlay {
+    bottom: auto; right: auto;
+    top: calc(var(--topbar-height, 52px) + 8px);
+    left: max(12px, env(safe-area-inset-left));
+    width: var(--quer-leiste); max-width: none;
+  }
+  .live { max-width: 100%; }
+  .legend { flex-wrap: wrap; overflow: visible; margin-right: 0; padding-right: 0; }
+  .legend::after { display: none; }
+  .legend__layers { display: contents; }
+
   .sidebar {
-    top: calc(var(--topbar-height, 44px) + 4px); bottom: 8px; left: auto;
-    right: max(8px, env(safe-area-inset-right));
-    width: min(320px, 42vw);
+    top: max(8px, env(safe-area-inset-top)); bottom: max(8px, env(safe-area-inset-bottom));
+    left: auto; right: max(8px, env(safe-area-inset-right));
+    width: var(--quer-blatt);
     max-height: none;
-    padding: 0; gap: 12px;
+    padding: 0; gap: 8px;
     background: none; border-top: 0; border-radius: 0; box-shadow: none; backdrop-filter: none;
   }
-  .sidebar.sidebar--collapsed { top: calc(var(--topbar-height, 44px) + 4px); bottom: auto; }
+  .sidebar.sidebar--collapsed { top: max(8px, env(safe-area-inset-top)); bottom: auto; }
   .sidebar__body { padding: 0; }
   .panel-toggle {
-    flex-direction: row; min-height: 0; border-radius: 999px;
+    flex-direction: row; min-height: 0; padding: 8px 12px; border-radius: 999px;
     border: 1px solid var(--panel-edge); background: rgba(23, 28, 34, 0.96);
   }
+  .sidebar--collapsed .panel-toggle { padding-bottom: 8px; }
   .panel-toggle__grip { display: none; }
-  .topbar { padding: 6px max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left)); }
-  .overlay { top: auto; right: auto; bottom: 8px; left: max(8px, env(safe-area-inset-left)); max-width: 46vw; }
-  .legend { flex-wrap: wrap; overflow: visible; margin-right: 0; padding-right: 0; }
-  .legend__layers { display: contents; }
-  /* Unten rechts auf der Karte, neben dem Seitenpanel. */
-  .locate { right: calc(16px + max(8px, env(safe-area-inset-right)) + min(320px, 42vw)); bottom: 8px; }
-  .maplibregl-ctrl-bottom-right { top: auto; bottom: 0; }
+
+  /* Unten auf der Karte, direkt links vom Blatt. */
+  .locate {
+    right: calc(max(8px, env(safe-area-inset-right)) + var(--quer-blatt) + 8px);
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  /* Unten links unter der Leiste; die Leiste hängt oben und reicht nie bis
+     hierher, auch nicht mit offenen Ebenen. */
+  .maplibregl-ctrl-bottom-right {
+    top: auto; bottom: env(safe-area-inset-bottom, 0px);
+    right: auto; left: max(0px, env(safe-area-inset-left));
+  }
+  .app:has(.sidebar--full) .maplibregl-ctrl-bottom-right { display: block; }
+  .toast {
+    left: calc(max(12px, env(safe-area-inset-left)) + var(--quer-leiste) + 12px);
+    right: calc(max(8px, env(safe-area-inset-right)) + var(--quer-blatt) + 12px);
+    top: max(8px, env(safe-area-inset-top));
+  }
   .panel { padding: 12px 14px; }
   .panel__title { font-size: 16px; }
   .facts { gap: 8px 12px; }

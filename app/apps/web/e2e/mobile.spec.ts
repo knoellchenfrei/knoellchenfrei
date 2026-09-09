@@ -467,3 +467,58 @@ test.describe('die Live-Zahlen als eine Karte', () => {
     await expect(live).not.toContainText('kassieren')
   })
 })
+
+test.describe('das Querformat auf dem Handy', () => {
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'Gedreht wird nur das Handy.')
+  })
+  test.use({ viewport: { width: 852, height: 393 } })
+
+  /**
+   * Der Betreiber, 9. September: „Im Querformat ist die Seite ja
+   * schrecklich!" Gemessen auf 852×393 mit je 59 Pixeln Safe-Area seitlich:
+   * Suchfeld auf „Zone oder Bezir" gestutzt, Live-Karte und Meldeknopf unten
+   * links auf dem Standort-Knopf, das „i" der Quellenangabe auf dem
+   * Standort-Knopf, offene Chips über der Karte. Verhindern lässt sich das
+   * Drehen nur in der abgelegten Android-App (`orientation` im Manifest);
+   * Safari dreht immer. Also drei Spalten: Leiste links, Karte, Blatt rechts.
+   */
+  test('drei Spalten, und keine zwei Knöpfe aufeinander', async ({ page, context }) => {
+    await ready(page)
+    const cdp = await context.newCDPSession(page)
+    await cdp.send('Emulation.setSafeAreaInsetsOverride', {
+      insets: { top: 0, left: 59, bottom: 21, right: 59 },
+    })
+    await page.waitForTimeout(400)
+    await page.locator('.map canvas').click({ position: { x: 380, y: 300 } })
+    await expect(page.locator('.panel__title').first()).toBeVisible()
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    await expect(page.locator('.legend--open')).toBeVisible()
+
+    const box = async (s: string) => (await page.locator(s).first().boundingBox())!
+    const overlap = (a: { x: number; y: number; width: number; height: number }, b: typeof a) =>
+      a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+
+    const search = await box('.search__input')
+    // Das Suchfeld trägt seinen Platzhalter ganz, 16 Pixel Schrift eingerechnet.
+    expect(search.width).toBeGreaterThanOrEqual(180)
+
+    const sidebar = await box('.sidebar')
+    const overlay = await box('.overlay')
+    const fab = await box('.report-fab')
+    const locate = await box('.locate')
+    const attrib = await box('.maplibregl-ctrl-attrib')
+    const size = page.viewportSize()!
+    // Leiste links, Blatt rechts, dazwischen bleibt Karte.
+    expect(overlay.x + overlay.width).toBeLessThan(sidebar.x - 100)
+    expect(sidebar.x + sidebar.width).toBeLessThanOrEqual(size.width - 59)
+    // Die offenen Chips und der Meldeknopf bleiben in der Leiste.
+    expect(fab.x + fab.width).toBeLessThanOrEqual(overlay.x + overlay.width + 1)
+    // Vier Dinge, die vorher paarweise aufeinanderlagen. Der Meldeknopf
+    // steht in der Leiste, deshalb wird er gegen die anderen drei geprüft.
+    const named = { overlay, locate, attrib, sidebar }
+    const keys = Object.keys(named) as (keyof typeof named)[]
+    for (const a of keys) for (const b of keys) if (a < b) expect(overlap(named[a], named[b]), `${a} über ${b}`).toBe(false)
+    for (const k of ['locate', 'attrib', 'sidebar'] as const) expect(overlap(fab, named[k]), `fab über ${k}`).toBe(false)
+  })
+})

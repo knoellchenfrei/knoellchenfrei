@@ -812,3 +812,49 @@ Problem unsichtbar.
 Also ein eigener Zweig, `staedte/koeln-karlsruhe-vorbereitet`. Die Berichte
 liegen auf beiden Zweigen, der Code nur auf jenem; wer die Städte anschalten
 will, findet in Abschnitt „Was einzutragen bleibt" fertige Schnipsel.
+
+## Querformat: nicht verhindern, sondern in drei Spalten legen
+
+*9. September 2026.*
+
+Der Betreiber, mit dem Handy quer: „Im Querformat ist die Seite ja
+schrecklich! Können wir Querformat irgendwie vermeiden?" Gemessen auf 852×393
+mit je 59 Pixeln Safe-Area seitlich (iPhone mit Kerbe): Das Suchfeld war auf
+„Zone oder Bezir" gestutzt, Live-Karte und Meldeknopf standen unten links auf
+dem Standort-Knopf, das „i" der Quellenangabe lag auf dem Standort-Knopf, und
+offene Ebenen-Chips wanderten über die Karte. Das Hochformat mit drei
+Korrekturen, und jede Ecke eine Kollision.
+
+**Verhindern geht nicht — nicht dort, wo es zählt.** Das Manifest kann eine
+Ausrichtung verlangen, aber nur die *abgelegte* App auf Android hält sich
+daran; Safari und die abgelegte App auf iOS ignorieren das Feld, und die
+Screen-Orientation-API sperrt auf iOS gar nicht und auf Android nur im
+Vollbild. Ein „Bitte Gerät drehen"-Vorhang wäre die zweite Möglichkeit und
+die schlechtere: Wer das Handy quer in der Halterung im Auto hat, bekäme
+statt einer Karte eine Anweisung.
+
+Also beides. Das Manifest sagt jetzt `"orientation": "natural"` statt `any`:
+auf einem Android-Handy Hochformat, auf einem Android-Tablet Querformat —
+`portrait` hätte das Tablet in die falsche Lage gezwungen. Und der Rest
+bekommt ein eigenes Layout, weil er es auf iOS ohnehin braucht.
+
+**Drei Spalten mit fester Rolle.** Links eine Leiste von 300 Pixeln
+(`min(300px, 38vw)`): Suche, BETA und Zahnrad in einer Zeile, darunter die
+Live-Zahlen, darunter „Ebenen" und der rote Meldeknopf. Offene Chips brechen
+in der Leiste um, der Meldeknopf rutscht unter sie; nichts davon steht über
+der Karte. Rechts das Blatt als Spalte (`min(320px, 40vw)`), vom oberen bis
+zum unteren Rand, zugeklappt nur die Pille oben rechts. Dazwischen die
+Karte: 434 Pixel breit bei offenem Blatt, die volle Breite bei geschlossenem.
+Der Standort-Knopf steht unten direkt links vom Blatt, die Quellenangabe
+unten links unter der Leiste — die Leiste hängt oben und reicht nie bis
+dorthin, auch nicht mit offenen Chips. Die beiden Breiten sind Variablen
+(`--quer-leiste`, `--quer-blatt`), weil drei Regeln sie brauchen; als Zahl an
+drei Stellen wären sie irgendwann auseinandergelaufen, und die Knöpfe stünden
+wieder aufeinander.
+
+Ein E2E-Test in `mobile.spec.ts` dreht das Handy per Viewport, setzt die
+Einrückung per CDP, öffnet Blatt und Ebenen und prüft, dass keine zwei der
+fünf Elemente aufeinanderliegen und das Suchfeld seinen Platzhalter trägt.
+Vorher hat das niemand gemessen: Der Audit vom 9. September hatte 844×390 im
+Raster, aber ohne seitliche Einrückung und ohne offenes Blatt — und genau
+dort lagen alle vier Fehler.

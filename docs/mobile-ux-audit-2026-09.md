@@ -41,7 +41,7 @@ Wischgeste nur am Griff und die Ebenen-Chips ohne Kantenhinweis.
 | s375 | 375 × 667 | Touch, mobil |
 | s390 | 390 × 844 | Touch, mobil — **Priorität** |
 | s430 | 430 × 932 | Touch, mobil |
-| l844 | 844 × 390 | Touch, Querformat |
+| l844 | 844 × 390 | Touch, Querformat — ohne seitliche Einrückung; das Querformat mit Kerbe wurde erst am Abend des 9. September vermessen, siehe `docs/entscheidungen.md`, „Querformat" |
 | t768 | 768 × 1024 | Touch, Tablet |
 | d1280 | 1280 × 860 | Maus, Desktop |
 
