@@ -350,6 +350,94 @@ test.describe('gemeldete Sichtungen', () => {
     await expect(own).toContainText('deine Meldung')
     await expect(own.locator('button')).toHaveCount(0)
   })
+
+  /**
+   * Der Betreiber, 9. September, mit Bildschirmfoto: „Nach dem Reload
+   * verschwindet die Anzeige, dass ich diese gemeldet habe." Die Kennungen
+   * standen nur in einem Ref. Jetzt im Speicher des Geräts.
+   */
+  test('weiss nach dem Neuladen noch, welche Meldung die eigene ist', async ({ page }) => {
+    await ready(page)
+    await page.locator('.report-fab').click()
+    await page.locator('.sheet__option').first().click()
+    await page.locator('.sheet__submit').click()
+    await expect(page.locator('.sheet')).toHaveCount(0)
+
+    await page.reload()
+    await ready(page)
+    await openPanel(page)
+    const own = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
+    await expect(own).toContainText('deine Meldung')
+    await expect(own.locator('button')).toHaveCount(0)
+  })
+
+  /**
+   * Zweite Hälfte desselben Befunds: „Wenn ich dann alle drei anklicke, hab
+   * ich das Gefühl, dass nicht alle als gesehen akzeptiert werden." Der
+   * Server zählt je Meldung und Client eine Stimme; die zweite ging still
+   * zurück. Die Zeile sagt jetzt, was dieses Gerät schon gestimmt hat, und
+   * sagt es auch nach dem Neuladen noch.
+   */
+  test('merkt sich die eigene Stimme und bietet keine zweite an', async ({ page }) => {
+    // Eine fremde Meldung, vor fünf Minuten, mitten in der Stadt.
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'knoellchenfrei.sightings',
+        JSON.stringify([
+          { id: 'fremd-1', lon: 13.405, lat: 52.52, reportedAt: Date.now() - 300_000, confirmations: 0, disputes: 0 },
+        ]),
+      )
+    })
+    await ready(page)
+    await openPanel(page)
+    const row = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
+    await row.getByRole('button', { name: /bestätigen$/ }).click()
+    await expect(row).toContainText('du: gesehen')
+    await expect(row.locator('button')).toHaveCount(0)
+
+    await page.reload()
+    await ready(page)
+    await openPanel(page)
+    const again = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
+    await expect(again).toContainText('du: gesehen')
+    await expect(again.locator('button')).toHaveCount(0)
+  })
+})
+
+test.describe('der Meldeknopf auf der Karte', () => {
+  /**
+   * Bis zum 9. September war Melden drei unsichtbare Schritte: Karte
+   * antippen, Blatt öffnen, den kleinen Knopf im Kopf des Abschnitts finden.
+   * Der Betreiber hat ihn nicht gefunden. Jetzt steht er auf der Karte, neben
+   * dem Standort — und braucht keinen Tipp vorher, das Blatt bietet die Nähe an.
+   */
+  test('öffnet das Meldeblatt ohne vorherigen Tipp auf die Karte', async ({ page }) => {
+    await ready(page)
+    const fab = page.getByRole('button', { name: 'Kontrolle melden' })
+    await expect(fab).toBeVisible()
+    await fab.click()
+    const sheet = page.getByRole('dialog', { name: 'Sichtung melden' })
+    await expect(sheet).toBeVisible()
+    await expect(sheet).toContainText('In der Nähe')
+    await page.locator('.sheet__option').first().click()
+    await page.locator('.sheet__submit').click()
+    await expect(sheet).toHaveCount(0)
+    await openPanel(page)
+    await expect(
+      page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item'),
+    ).toHaveCount(1)
+  })
+
+  test('liegt neben dem Standort-Knopf und nicht auf ihm', async ({ page }) => {
+    await ready(page)
+    const fab = await page.locator('.report-fab').boundingBox()
+    const locate = await page.locator('.locate').boundingBox()
+    const size = page.viewportSize()!
+    expect(fab!.x + fab!.width).toBeLessThanOrEqual(locate!.x)
+    expect(Math.abs(fab!.y - locate!.y)).toBeLessThan(2)
+    expect(fab!.x).toBeGreaterThan(0)
+    expect(fab!.y + fab!.height).toBeLessThanOrEqual(size.height)
+  })
 })
 
 test.describe('Melden scheitert nie still', () => {

@@ -284,6 +284,27 @@ body {
    könnte. */
 .sidebar--full ~ .locate { display: none; }
 
+/* Der Meldeknopf, links neben dem Standort-Knopf und in derselben Höhe: eine
+   Pille mit Text, weil ein Symbol allein für „Ordnungsamt gesehen" nichts
+   Verständliches hergibt. Dunkel statt Akzentblau — das Blau gehört dem
+   Standort und den Hauptknöpfen im Blatt; zwei blaue Knöpfe nebeneinander
+   wären ein Paar, das keines ist. */
+.report-fab {
+  position: absolute;
+  right: calc(max(12px, env(safe-area-inset-right)) + 48px + 10px);
+  bottom: calc(var(--sheet-height, 60px) + 12px);
+  z-index: 4;
+  height: 48px; padding: 0 18px;
+  font: inherit; font-size: 14px; font-weight: 700; line-height: 1; white-space: nowrap;
+  color: #fff; background: rgba(23, 28, 34, 0.96);
+  border: 1px solid var(--panel-edge); border-radius: 999px;
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: bottom 220ms ease;
+}
+.report-fab:hover { background: rgba(38, 45, 54, 0.98); }
+.sidebar--full ~ .report-fab { display: none; }
+
 @media (min-width: 721px) {
   /* Unten rechts auf der Karte, links neben der Seitenleiste und über der
      Quellenangabe, die dort ausgeklappt steht. */
@@ -292,12 +313,14 @@ body {
      zwei Pixel darauf — auf dem Tablet-Bildschirmfoto als ein Rand, der in
      den anderen läuft. */
   .locate { right: calc(32px + min(380px, calc(100% - 32px))); bottom: 60px; }
-  /* Die Chips links enden, bevor der Standort-Knopf beginnt, und stehen
+  .report-fab { right: calc(32px + 58px + min(380px, calc(100% - 32px))); bottom: 60px; }
+  /* Die Chips links enden, bevor der Meldeknopf beginnt, und stehen
      über der Quellenangabe statt in ihr — auf einem Tablet teilen sich
-     alle drei die untere Kante. */
+     alle vier die untere Kante. 72 Pixel für den Standort-Knopf, dazu rund
+     170 für die Pille. */
   .overlay {
     bottom: 44px;
-    max-width: min(420px, calc(100% - 32px - min(380px, calc(100% - 32px)) - 72px));
+    max-width: min(420px, calc(100% - 32px - min(380px, calc(100% - 32px)) - 242px));
   }
 }
 
@@ -641,6 +664,7 @@ body {
   .legend__layers { display: contents; }
   /* Unten rechts auf der Karte, neben dem Seitenpanel. */
   .locate { right: calc(16px + max(8px, env(safe-area-inset-right)) + min(320px, 42vw)); bottom: 8px; }
+  .report-fab { right: calc(16px + 58px + max(8px, env(safe-area-inset-right)) + min(320px, 42vw)); bottom: 8px; }
   .maplibregl-ctrl-bottom-right { top: auto; bottom: 0; }
   .panel { padding: 12px 14px; }
   .panel__title { font-size: 16px; }

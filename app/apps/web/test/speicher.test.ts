@@ -310,3 +310,59 @@ describe('die beiden Merker sind wahr oder gar nichts', () => {
     expect(modul.installHidden()).toBe(true)
   })
 })
+
+describe('was dieses Gerät selbst getan hat', () => {
+  const OWN_KEY = 'knoellchenfrei.own.v1'
+  const laden = async (now?: number) => (await import('../src/storage.js')).loadOwn(now)
+
+  // Der Anlass: Nach einem Neuladen war „deine Meldung" weg und jede Zeile
+  // bot wieder zwei Knöpfe an — der Betreiber konnte nicht mehr sehen, was
+  // er noch bewerten darf, und die stille zweite Stimme sah aus wie eine,
+  // die nicht angenommen wurde.
+  it('kommt nach dem Speichern unverändert zurück', async () => {
+    const { saveOwn, loadOwn } = await import('../src/storage.js')
+    const jetzt = Date.now()
+    saveOwn({ reports: { 'abc-1': jetzt }, votes: { 'def-2': { kind: 'confirm', at: jetzt } } })
+    expect(loadOwn(jetzt)).toEqual({
+      reports: { 'abc-1': jetzt },
+      votes: { 'def-2': { kind: 'confirm', at: jetzt } },
+    })
+  })
+
+  it('vergisst, was älter ist als drei Stunden — eine Meldung lebt 90 Minuten', async () => {
+    const jetzt = Date.now()
+    const alt = jetzt - 3 * 3_600_000
+    inhalt[OWN_KEY] = JSON.stringify({
+      reports: { frisch: jetzt - 60_000, alt },
+      votes: { frisch: { kind: 'dispute', at: jetzt - 60_000 }, alt: { kind: 'confirm', at: alt } },
+    })
+    const own = await laden(jetzt)
+    expect(Object.keys(own.reports)).toEqual(['frisch'])
+    expect(Object.keys(own.votes)).toEqual(['frisch'])
+  })
+
+  it.each([
+    ['kein JSON', '{kaputt'],
+    ['eine Liste statt eines Objekts', '[]'],
+    ['null', 'null'],
+    ['Felder mit falschem Typ', '{"reports":"x","votes":7}'],
+  ])('%s ergibt einen leeren Stand', async (_name, roh) => {
+    inhalt[OWN_KEY] = roh
+    expect(await laden()).toEqual({ reports: {}, votes: {} })
+  })
+
+  it('verwirft einzelne Einträge, nicht den ganzen Stand', async () => {
+    const jetzt = Date.now()
+    inhalt[OWN_KEY] = JSON.stringify({
+      reports: { 'gut-1': jetzt, 'schlecht id': jetzt, 'keine-zahl': 'gestern' },
+      votes: {
+        'gut-2': { kind: 'confirm', at: jetzt },
+        'falsche-art': { kind: 'maybe', at: jetzt },
+        'kein-objekt': 'confirm',
+      },
+    })
+    const own = await laden(jetzt)
+    expect(Object.keys(own.reports)).toEqual(['gut-1'])
+    expect(Object.keys(own.votes)).toEqual(['gut-2'])
+  })
+})

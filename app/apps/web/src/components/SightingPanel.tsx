@@ -1,6 +1,7 @@
 import { activeSightings, type Sighting } from '@knoellchenfrei/core'
 
 import { duration } from '../format.js'
+import type { VoteKind } from '../storage.js'
 
 interface Props {
   sightings: Sighting[]
@@ -10,6 +11,8 @@ interface Props {
   onDispute: (id: string) => void
   /** Ob diese Meldung aus dieser Sitzung stammt — dann gibt es keine Stimme darauf. */
   own: (id: string) => boolean
+  /** Welche Stimme dieses Gerät auf die Meldung schon abgegeben hat, wenn eine. */
+  voted: (id: string) => VoteKind | null
   canReport: boolean
   /** True when reports reach a shared store rather than only this device. */
   shared: boolean
@@ -24,6 +27,7 @@ export function SightingPanel({
   onConfirm,
   onDispute,
   own,
+  voted,
   canReport,
   shared,
 }: Props) {
@@ -36,26 +40,26 @@ export function SightingPanel({
           <h2 className="panel__eyebrow">Gemeldete Sichtungen</h2>
           <p className="panel__title">{active.length} aktiv</p>
         </div>
-        {/*
-          Deliberately never disabled. It was disabled until a point was set,
-          and users read that as a broken button rather than as a missing step —
-          twice. Pressing it now says what is missing instead of doing nothing.
-        */}
-        <button type="button" className="button button--ghost" onClick={onReport}>
-          Hier gesehen
-        </button>
       </header>
 
-      {!canReport && (
-        <p className="hours">
-          Tippe zuerst die Stelle auf der Karte an, an der du das Ordnungsamt gesehen hast — dann
-          wird der Knopf aktiv.
-        </p>
-      )}
+      {/*
+        Deliberately never disabled. It was disabled until a point was set,
+        and users read that as a broken button rather than as a missing step —
+        twice. Pressing it now says what is missing instead of doing nothing.
 
-      {canReport && (
-        <p className="hours">Gemeldet wird die zuletzt auf der Karte angetippte Stelle.</p>
-      )}
+        Seit dem 9. September so gross wie „Hier geparkt" und nicht mehr klein
+        im Kopf: Der Betreiber hat ihn dort nicht gefunden. Ohne angetippte
+        Stelle bietet das Blatt Standort, Kartenmitte und die nächsten Zonen an.
+      */}
+      <button type="button" className="button button--primary button--block" onClick={onReport}>
+        Hier gesehen
+      </button>
+
+      <p className="hours">
+        {canReport
+          ? 'Gemeldet wird die zuletzt auf der Karte angetippte Stelle — oder eine Zone aus der Liste.'
+          : 'Ordnungsamt unterwegs? Melde die Stelle: aus der Nähe deines Standorts oder aus der Liste.'}
+      </p>
 
       <p className="demo-note">
         {shared ? (
@@ -91,6 +95,13 @@ export function SightingPanel({
                 // Der Worker weist die Stimme auf die eigene Meldung ab; ein
                 // Knopf, der nur einen Fehler auslöst, ist kein Knopf.
                 <span className="sightings__actions sightings__own">deine Meldung</span>
+              ) : voted(sighting.id) !== null ? (
+                // Eine Stimme je Meldung und Gerät, so hält es der Server.
+                // Die Zeile sagt, welche — sonst sieht eine zweite, nicht
+                // gezählte Stimme aus wie eine, die nicht angenommen wurde.
+                <span className="sightings__actions sightings__own">
+                  du: {voted(sighting.id) === 'confirm' ? 'gesehen' : 'weg'}
+                </span>
               ) : (
               <span className="sightings__actions">
                 {/*

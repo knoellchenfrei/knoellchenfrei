@@ -30,7 +30,7 @@ import { isEmbedded, loadData } from './data-source.js'
 import { openFeedback } from './feedback.js'
 import { forgetStaleLayer, layerOf, syncLayer } from './layer-history.js'
 import { openLiveStats, type LiveStats as Stats } from './presence.js'
-import { openSightingBackend, type SightingBackend } from './sighting-backend.js'
+import { WorkerFehler, openSightingBackend, type SightingBackend } from './sighting-backend.js'
 import { ParkingTimer } from './components/ParkingTimer.js'
 import { SearchBox } from './components/SearchBox.js'
 import { UpdateBar } from './components/UpdateBar.js'
@@ -54,13 +54,17 @@ import {
   installHidden,
   loadSession,
   loadMarks,
+  loadOwn,
   loadSightings,
   locationAsked,
   saveSession,
   rememberLocationAsked,
   saveMarks,
+  saveOwn,
   saveSightings,
   type ParkingSession,
+  type OwnState,
+  type VoteKind,
 } from './storage.js'
 import { loadZones, representativePoint, zoneAt, zoneNear, type LoadedZone } from './zones.js'
 import { toParkingZone, useZoneStatus } from './useZoneStatus.js'
@@ -285,13 +289,27 @@ export function App() {
   // everyone who opens the link rather than only on this device.
   const backendRef = useRef<SightingBackend | null>(null)
   /**
-   * Kennungen der Meldungen aus dieser Sitzung. Der Worker weist eine Stimme
-   * auf die eigene Meldung mit 403 ab (Audit-Punkt M-047); die Knöpfe dafür
-   * anzubieten hiesse, einen Fehler einzuladen. Nur im Speicher, nicht im
-   * `localStorage`: Eine Meldung lebt 90 Minuten, und wer neu lädt, bekommt
-   * vom Server ohnehin die deutliche Antwort.
+   * Eigene Meldungen und eigene Stimmen dieses Geräts. Der Worker weist eine
+   * Stimme auf die eigene Meldung mit 403 ab (Audit-Punkt M-047) und zählt
+   * eine zweite Stimme desselben Clients nicht; die Knöpfe dafür anzubieten
+   * hiesse, einen Fehler einzuladen. Bis zum 9. September stand das nur in
+   * einem Ref: Nach dem Neuladen war „deine Meldung" weg, und der Betreiber
+   * konnte nicht mehr sehen, welche Zeilen er noch bewerten kann. Jetzt im
+   * `localStorage`, siehe `loadOwn`.
    */
-  const ownReports = useRef(new Set<string>())
+  const [own, setOwn] = useState<OwnState>(() => loadOwn())
+  useEffect(() => saveOwn(own), [own])
+  const markOwnReport = useCallback((id: string) => {
+    setOwn((current) => ({ ...current, reports: { ...current.reports, [id]: Date.now() } }))
+  }, [])
+  const markVote = useCallback((id: string, kind: VoteKind | null) => {
+    setOwn((current) => {
+      const votes = { ...current.votes }
+      if (kind === null) delete votes[id]
+      else votes[id] = { kind, at: Date.now() }
+      return { ...current, votes }
+    })
+  }, [])
   const [shared, setShared] = useState(false)
   // A single clock drives every time-dependent view, so the badge, the panel and
   // the map colouring can never disagree by a tick.
@@ -1305,7 +1323,7 @@ export function App() {
     setSightings((current) => [...current, entry])
     setMarks((current) => [...current, markFor(point, entry.reportedAt)])
 
-    ownReports.current.add(entry.id)
+    markOwnReport(entry.id)
     const backend = backendRef.current
     if (backend === null) return
     void backend
@@ -1315,7 +1333,7 @@ export function App() {
         // zur nächsten Abfrage (45 s) stand hier sonst eine Kennung, die der
         // Server nie vergeben hatte — jede Stimme darauf lief in ein 404.
         if (serverId === null || serverId === entry.id) return
-        ownReports.current.add(serverId)
+        markOwnReport(serverId)
         setSightings((current) =>
           current.map((item) => (item.id === entry.id ? { ...item, id: serverId } : item)),
         )
@@ -1331,7 +1349,7 @@ export function App() {
           }`,
         )
       })
-  }, [position, anchor])
+  }, [position, anchor, markOwnReport])
 
   const vote = useCallback(
     (id: string, key: 'confirmations' | 'disputes') => {
@@ -1341,17 +1359,21 @@ export function App() {
       setSightings((list) =>
         list.map((item) => (item.id === id ? { ...item, [key]: item[key] + 1 } : item))
       )
+      const kind: VoteKind = key === 'confirmations' ? 'confirm' : 'dispute'
+      // Sofort gemerkt, nicht erst nach der Antwort: Die Zeile zeigt ab jetzt
+      // „du: gesehen" statt zweier Knöpfe, und das bleibt über ein Neuladen.
+      markVote(id, kind)
       const backend = backendRef.current
       if (backend === null) return
       const current = sightings.find((item) => item.id === id)
       if (current === undefined) return
       void backend
-        .vote(current, key === 'confirmations' ? 'confirm' : 'dispute')
+        .vote(current, kind)
         .then((counted) => {
-          // Nicht gezählt heisst: derselbe Client hatte schon abgestimmt. Der
-          // optimistische Zähler geht ohne Meldung zurück — es ist kein
-          // Fehler, und eine Meldung „du hast schon abgestimmt" wäre mehr
-          // Text als Erkenntnis.
+          // Nicht gezählt heisst: derselbe Client hatte schon abgestimmt —
+          // etwa vor einem Neuladen, bevor dieses Gerät sich Stimmen merkte.
+          // Der optimistische Zähler geht zurück, die Markierung bleibt: Der
+          // Server hat eine Stimme von hier, welche auch immer.
           if (counted) return
           setSightings((list) =>
             list.map((item) => (item.id === id ? { ...item, [key]: item[key] - 1 } : item))
@@ -1361,6 +1383,11 @@ export function App() {
           setSightings((list) =>
             list.map((item) => (item.id === id ? { ...item, [key]: item[key] - 1 } : item))
           )
+          markVote(id, null)
+          // 403 heisst: die eigene Meldung, nur wusste dieses Gerät das nicht
+          // mehr (Speicher geleert, anderer Browser auf derselben Adresse).
+          // Ab jetzt weiss es das wieder, und die Knöpfe verschwinden.
+          if (cause instanceof WorkerFehler && cause.status === 403) markOwnReport(id)
           setError(
             `Bewertung konnte nicht gespeichert werden: ${
               cause instanceof Error ? cause.message : 'unbekannter Fehler'
@@ -1368,7 +1395,7 @@ export function App() {
           )
         })
     },
-    [sightings]
+    [sightings, markVote, markOwnReport]
   )
 
   const focusZone = useCallback((zone: LoadedZone) => {
@@ -1966,8 +1993,6 @@ export function App() {
           </section>
         )}
 
-        <TowInfo />
-
         <SightingPanel
           sightings={sightings}
           now={now}
@@ -1979,7 +2004,8 @@ export function App() {
           }}
           onConfirm={(id) => vote(id, 'confirmations')}
           onDispute={(id) => vote(id, 'disputes')}
-          own={(id) => ownReports.current.has(id)}
+          own={(id) => id in own.reports}
+          voted={(id) => own.votes[id]?.kind ?? null}
           canReport={position !== null || anchor !== null}
           shared={shared}
         />
@@ -1997,6 +2023,13 @@ export function App() {
           }}
           shared={shared}
         />
+
+        {/*
+          Hinter den Sichtungen und der Kontrolldichte, seit dem 9. September:
+          „Auto weg?" ist der seltene Fall und stand zugeklappt vor dem
+          Abschnitt, um den es im Alltag geht.
+        */}
+        <TowInfo />
 
         {meta !== null && (
           <footer className="provenance">
@@ -2059,6 +2092,26 @@ export function App() {
         ihn per CSS verdecken kann — dann gibt es keine Karte, auf die er
         zeigen könnte.
       */}
+      {/*
+        Der Meldeknopf auf der Karte, links neben dem Standort-Knopf. Bis zum
+        9. September gab es ihn nur im Blatt, klein im Kopf des
+        Sichtungs-Abschnitts und erst nach einem Tipp auf die Karte — drei
+        Schritte, von denen keiner sichtbar war. FreiFahren, das Vorbild,
+        hat genau einen Knopf auf der Karte, und der ist die ganze App. Das
+        Blatt braucht er nicht: Ohne angetippten Punkt bietet es Standort,
+        Kartenmitte und die nächsten Zonen zur Auswahl.
+      */}
+      <button
+        type="button"
+        className="report-fab"
+        onClick={() => {
+          setPanelOpen(false)
+          setReporting(true)
+        }}
+        inert={modal || undefined}
+      >
+        Kontrolle melden
+      </button>
       <button
         type="button"
         className="locate"

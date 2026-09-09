@@ -44,6 +44,7 @@ const MARKS_KEY = 'knoellchenfrei.marks.v1'
 const LOCATION_ASKED_KEY = 'knoellchenfrei.locationAsked.v1'
 const VISITS_KEY = 'knoellchenfrei.visits.v1'
 const INSTALL_HIDDEN_KEY = 'knoellchenfrei.installHidden.v1'
+const OWN_KEY = 'knoellchenfrei.own.v1'
 
 /**
  * Stored state is not trusted on the way back in.
@@ -192,3 +193,57 @@ export function installHidden(): boolean {
 }
 
 export const hideInstall = (): void => write(INSTALL_HIDDEN_KEY, true)
+
+/**
+ * Was dieses Gerät selbst getan hat: eigene Meldungen und eigene Stimmen.
+ *
+ * Bis zum 9. September stand das nur im Speicher der Sitzung. Nach einem
+ * Neuladen war die Markierung „deine Meldung" weg, alle Zeilen boten wieder
+ * „gesehen" und „weg" an, und wer sie drückte, bekam auf die eigene Meldung
+ * einen 403 und auf eine schon bewertete ein stilles `counted: false` — die
+ * Anzeige ging hoch und wieder zurück, und das sah aus, als würde die Stimme
+ * nicht angenommen. Der Betreiber hat genau das gemeldet. Der Server kennt
+ * pro Meldung und Client genau eine Stimme (Primärschlüssel in `votes`);
+ * dieses Gerät merkt sich deshalb dasselbe, damit die Liste sagt, was noch
+ * offen ist.
+ */
+export type VoteKind = 'confirm' | 'dispute'
+
+export interface OwnState {
+  /** Kennung → Zeitpunkt der Meldung. */
+  reports: Record<string, number>
+  /** Kennung → Stimme und ihr Zeitpunkt. */
+  votes: Record<string, { kind: VoteKind; at: number }>
+}
+
+/**
+ * Eine Meldung verfällt nach 90 Minuten; was älter ist als drei Stunden, kann
+ * in keiner Liste mehr auftauchen und muss nicht mitgeschleppt werden.
+ */
+const OWN_MAX_AGE_MS = 3 * 60 * 60_000
+const ID = /^[\w-]{1,64}$/
+
+export function loadOwn(now = Date.now()): OwnState {
+  const raw = read<unknown>(OWN_KEY)
+  const own: OwnState = { reports: {}, votes: {} }
+  if (raw === null || typeof raw !== 'object') return own
+  const { reports, votes } = raw as Partial<OwnState>
+  if (reports !== null && typeof reports === 'object') {
+    for (const [id, at] of Object.entries(reports)) {
+      const when = Number(at)
+      if (ID.test(id) && Number.isFinite(when) && now - when < OWN_MAX_AGE_MS) own.reports[id] = when
+    }
+  }
+  if (votes !== null && typeof votes === 'object') {
+    for (const [id, vote] of Object.entries(votes)) {
+      if (vote === null || typeof vote !== 'object') continue
+      const { kind, at } = vote as Partial<{ kind: unknown; at: unknown }>
+      const when = Number(at)
+      if (!ID.test(id) || !Number.isFinite(when) || now - when >= OWN_MAX_AGE_MS) continue
+      if (kind === 'confirm' || kind === 'dispute') own.votes[id] = { kind, at: when }
+    }
+  }
+  return own
+}
+
+export const saveOwn = (own: OwnState): void => write(OWN_KEY, own)

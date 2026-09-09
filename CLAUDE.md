@@ -31,11 +31,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1085 Unit-Tests (core, api, web)
+pnpm test                                           # 1092 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 182 End-to-End-Tests
+cd apps/web && npx playwright test                  # 192 End-to-End-Tests
 ```
 
 Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -87,7 +87,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (770), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (218, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (225, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -104,7 +104,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1085 E2E_COUNT=182 npx tsx src/build-badges.ts
+TEST_COUNT=1092 E2E_COUNT=192 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -812,6 +812,20 @@ wiederholt.
   Speicher leert auch die Anzeige, statt Reste stehen zu lassen. Was ein
   Test zum Zeichnen braucht, legt er selbst ab (`mitStrichen` in
   `app.spec.ts`), im Format von `saveMarks`.
+- **Was eine Sitzung über sich weiß, weiß das Gerät — sonst weiß es nach dem
+  Neuladen nichts.** Die Kennungen der eigenen Meldungen standen in einem
+  `useRef`, mit der Begründung, eine Meldung lebe nur 90 Minuten. Der
+  Betreiber lud neu, „deine Meldung" war weg, jede Zeile bot wieder
+  „gesehen" und „weg" an — und wer drückte, bekam auf die eigene Meldung
+  einen 403 und auf eine schon bewertete ein stilles `counted: false`: Die
+  Anzeige ging hoch und wieder zurück, was aussah, als würde die Stimme
+  nicht angenommen. Der Server hält je Meldung und Client genau eine Stimme
+  (Primärschlüssel in `votes`); das Gerät merkt sich jetzt dasselbe
+  (`loadOwn`/`saveOwn` in `storage.ts`, drei Stunden Frist), und die Zeile
+  sagt „du: gesehen" statt zwei Knöpfe zu zeigen. Ein 403 auf eine Stimme
+  trägt die Meldung nachträglich als eigene ein — der Speicher kann geleert
+  worden sein, der Server weiß es noch. Was bleibt: Zwei Browser hinter
+  derselben Adresse sind für den Worker **ein** Client.
 
 ## Stil
 
@@ -840,7 +854,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **71 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **72 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

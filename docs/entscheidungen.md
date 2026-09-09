@@ -375,6 +375,38 @@ der POI-Daten wegzuwerfen für eine Ebene, die niemanden stört, der sie nicht
 einschaltet. In Signalgelb war sie allerdings die lauteste der Karte; jetzt Sand,
 kleinere Punkte, weniger Deckkraft.
 
+## Der Meldeknopf steht auf der Karte
+
+**Entschieden am 9. September, auf die Frage des Betreibers, ob der Knopf
+nicht prominenter sein müsse — „am besten ganz oben im Blatt".** Prominenter:
+ja. Ganz oben im Blatt: nein. Die Abwägung:
+
+Bis dahin war Melden drei Schritte, von denen keiner sichtbar war: die Karte
+antippen, das Blatt öffnen, im Kopf des Sichtungs-Abschnitts einen kleinen
+Geist-Knopf finden. Der Betreiber hat ihn nicht gefunden; zwei Tester vorher
+hielten ihn für kaputt, weil er ausgegraut war. Für ein Netz, das erst ab etwa
+zwölf Meldungen ein Muster zeigt, ist jede verlorene Meldung teuer — und
+FreiFahren, das Vorbild, ist im Kern **nur** dieser eine Knopf auf der Karte.
+
+Dagegen spricht, das Blatt umzusortieren: Sein Anfang beantwortet die Frage,
+für die jemand die App öffnet — was kostet es hier, gerade jetzt. Steht die
+Meldung darüber, muss jede Tarifauskunft erst an einem Aufruf vorbei, der die
+meiste Zeit niemanden betrifft. Und ein Knopf, der im Blatt oben steht, ist
+auf dem Handy trotzdem erst nach dem Aufklappen zu sehen; auf der Karte ist er
+es immer.
+
+Also: eine Pille **„Kontrolle melden"** auf der Karte, links neben dem
+Standort-Knopf, in Textform, weil ein Symbol für „Ordnungsamt gesehen" nichts
+Verständliches hergibt. Dunkel, nicht blau — das Blau gehört dem Standort und
+den Hauptknöpfen im Blatt; zwei blaue Knöpfe nebeneinander wären ein Paar, das
+keines ist. Sie braucht keinen Tipp vorher: Das Meldeblatt bietet Standort,
+Kartenmitte und die nächsten Zonen zur Auswahl. Im Blatt bleibt „Hier
+gesehen", jetzt so gross wie „Hier geparkt" und unter der Überschrift statt
+klein daneben; „Auto weg?" rückt hinter Sichtungen und Kontrolldichte, weil es
+der seltene Fall ist. Gemessen auf 320, 390 und 1280 Pixeln: Die Pille liegt
+zwischen dem „i" der Quellenangabe und dem Standort, ohne eines zu berühren,
+und wandert mit dem Blatt hoch.
+
 ## Als App ablegen
 
 **Getrennte Symbole für `any` und `maskable`.** Vorher war ein einziges SVG als
@@ -546,7 +578,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 1085 Unit-Tests und 99,9 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 1092 Unit-Tests und 99,9 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 

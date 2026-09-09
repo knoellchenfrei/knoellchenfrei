@@ -134,14 +134,16 @@ try {
   await bereit(B.page)
   await blattAuf(B.page)
   const zeileB = B.page.locator('.sightings__item').first()
-  const sterneVorher = await zeileB.locator('.stars').innerText()
   await zeileB.getByRole('button', { name: /bestätigen$/ }).click()
   await B.page.waitForTimeout(1500)
-  const sterneNachher = await zeileB.locator('.stars').innerText()
-  erwarte(sterneNachher.length > sterneVorher.length, `B: Bestätigung hebt die Sterne (${sterneVorher} → ${sterneNachher})`)
-  await zeileB.getByRole('button', { name: /bestätigen$/ }).click()
-  await B.page.waitForTimeout(1500)
-  erwarte((await zeileB.locator('.stars').innerText()) === sterneNachher, 'B: zweite Stimme ändert nichts')
+  // Nicht an den Sternen gemessen: Sie sind ein Rastermaß der Konfidenz, und
+  // eine Stimme auf eine drei Minuten alte Meldung landet mit 0,62 genau auf
+  // der Schwelle — je nach Sekunde zwei oder drei Sterne. Genau deshalb sah
+  // eine angenommene Stimme für den Betreiber aus wie eine abgelehnte; die
+  // Zeile sagt seit dem 9. September „du: gesehen", und der Zählerstand kommt
+  // unten vom Worker.
+  erwarte((await zeileB.innerText()).includes('du: gesehen'), 'B: die Zeile nennt die eigene Stimme')
+  erwarte((await zeileB.locator('button').count()) === 0, 'B: keine Knöpfe mehr auf der bewerteten Meldung')
   erwarte((await toast(B.page)) === null, 'B: keine Fehlermeldung')
   // Der Serverstand, beim Worker nachgelesen statt aus den Sternen geraten:
   // Die Konfidenz verfällt mit dem Alter, ein Vergleich der Sterne über
@@ -157,6 +159,10 @@ try {
   await bereit(B.page)
   await blattAuf(B.page)
   log('B:', await sichtungen(B.page))
+  erwarte(
+    (await B.page.locator('.sightings__item').first().innerText()).includes('du: gesehen'),
+    'B: die Stimme steht auch nach dem Neuladen an der Zeile',
+  )
 
   // C sagt „weg" und meldet eine zweite Stelle.
   const C = await nutzer('C', '10.1.0.3', false)

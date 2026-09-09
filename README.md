@@ -247,11 +247,11 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 1085 Unit-Tests
+pnpm test                              # 1092 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 182 End-to-End-Tests
+cd apps/web && npx playwright test     # 192 End-to-End-Tests
 ```
 
 **Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
@@ -286,8 +286,8 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 1085 — 770 in `core`, 86 für Worker und Zählwerk, 218 für die Web-App, 11 für den Artifact-Bau. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 71 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
-| End-to-End | 182 über Desktop und Handy, gegen den Produktions-Build; 174 bestehen, acht überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, sieben auf dem Gerät, für das sie nicht gedacht sind |
+| Unit-Tests | 1092 — 770 in `core`, 86 für Worker und Zählwerk, 225 für die Web-App, 11 für den Artifact-Bau. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 72 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| End-to-End | 192 über Desktop und Handy, gegen den Produktions-Build; 183 bestehen, neun überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, acht auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |

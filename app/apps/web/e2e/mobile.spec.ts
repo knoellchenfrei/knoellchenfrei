@@ -344,3 +344,29 @@ test.describe('Folgepunkte aus dem Audit', () => {
     expect(box!.height).toBeLessThan(28)
   })
 })
+
+test.describe('der Meldeknopf auf dem Handy', () => {
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'Die Lage über dem Blatt gibt es nur auf dem Handy.')
+  })
+
+  /**
+   * Der Knopf teilt sich die untere Kante mit dem „i" der Quellenangabe links
+   * und dem Standort rechts. Auf 320 Pixeln bleiben 26 Pixel zwischen „i"
+   * und Pille — gemessen, nicht geschätzt. Und offen schiebt das Blatt beide
+   * Knöpfe mit hoch, statt sie zu verdecken.
+   */
+  test('steht frei zwischen Quellenangabe und Standort, auch über dem offenen Blatt', async ({ page }) => {
+    await ready(page)
+    const fab = page.locator('.report-fab')
+    const info = await page.locator('.maplibregl-ctrl-attrib-button').boundingBox()
+    let box = await fab.boundingBox()
+    expect(box!.x).toBeGreaterThanOrEqual(info!.x + info!.width)
+
+    await openPanel(page)
+    await page.waitForTimeout(400)
+    box = await fab.boundingBox()
+    const toggle = await page.locator('.panel-toggle').boundingBox()
+    expect(box!.y + box!.height).toBeLessThanOrEqual(toggle!.y + 1)
+  })
+})
