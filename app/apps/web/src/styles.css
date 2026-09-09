@@ -97,6 +97,12 @@ body {
  * bleibt daneben stehen. Zu ist der Streifen leer und hat keine Box.
  */
 .legend__layers:empty { display: none; }
+/* Offen steht das Menü über allem, auch über dem Blatt: Auf dem Handy liegt
+   das offene Blatt (z-index 3, später im Baum) sonst über den unteren
+   Zeilen, und „P+R" war nicht zu treffen — gefunden von der E2E-Suite am
+   9. September. Nur solange es offen ist, damit der Streifen sonst unter
+   Kopfzeile und Toast bleibt. */
+.overlay:has(.legend--open) { z-index: 6; }
 .legend__layers {
   position: absolute; left: 0; z-index: 1;
   /* Auf dem Desktop liegt die Zeile unten links, das Menü öffnet nach oben;

@@ -242,6 +242,21 @@ test.describe('Folgepunkte aus dem Audit', () => {
     if (testInfo.project.name === 'phone') expect(box.y).toBeGreaterThanOrEqual(toggle.y + toggle.height)
     else expect(box.y + box.height).toBeLessThanOrEqual(toggle.y)
 
+    // Auch über dem offenen Blatt: Die volle Suite fand am 9. September,
+    // dass „P+R" hinter dem Griff lag und nicht zu treffen war.
+    if (testInfo.project.name === 'phone') {
+      await openPanel(page)
+      const last = rows.last()
+      await expect(last).toBeVisible()
+      await last.click({ trial: true })
+      // Der Griff liegt jetzt unter dem Menü; erst das Menü zu, dann das Blatt.
+      await page.getByRole('button', { name: /Ebenen/ }).click()
+      await expect(menu).toBeHidden()
+      await page.locator('.panel-toggle').click()
+      await expect(page.locator('.sidebar__body')).toBeHidden()
+      await page.getByRole('button', { name: /Ebenen/ }).click()
+      await expect(menu).toBeVisible()
+    }
     // Ein Tipp auf die Karte schliesst es, ein zweiter auf „Ebenen" auch.
     // x = 300: rechts vom Menü, auf dem Handy wie auf dem Desktop links vom Blatt.
     await page.locator('.map canvas').click({ position: { x: 300, y: size.height / 2 } })
