@@ -438,3 +438,24 @@ test.describe('die Seite zoomt nicht, nur die Karte', () => {
     expect(await page.locator('body').evaluate((el) => getComputedStyle(el).touchAction)).toBe('pan-x pan-y')
   })
 })
+
+test.describe('die Live-Zahlen als eine Karte', () => {
+  /**
+   * Der Betreiber, 9. September, mit Bildschirmfoto: fünf Pillen in vier
+   * Zeilen, „sieht UI/UX-mässig nicht perfekt aus". Jetzt eine Karte mit
+   * drei Spalten — und sie bleibt auf 320 Pixeln schmaler als die Karte.
+   */
+  test('zeigt drei Kennzahlen in einer Reihe, nicht fünf Pillen untereinander', async ({ page }, testInfo) => {
+    if (testInfo.project.name === 'phone') await page.setViewportSize({ width: 320, height: 568 })
+    await ready(page)
+    const live = page.locator('.live')
+    await expect(live.locator('.live__item')).toHaveCount(3)
+    const boxes = await live.locator('.live__item').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
+    // Alle drei auf einer Höhe: keine Zeile bricht.
+    expect(Math.max(...boxes) - Math.min(...boxes)).toBeLessThan(2)
+    const box = (await live.boundingBox())!
+    expect(box.width).toBeLessThanOrEqual(page.viewportSize()!.width - 24)
+    await expect(live).toContainText('kassieren')
+    await expect(live).not.toContainText('heute')
+  })
+})

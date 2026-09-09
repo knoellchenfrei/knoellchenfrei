@@ -474,6 +474,22 @@ Systemeinstellung. Für eine Karten-App, deren Oberfläche aus Knöpfen und
 einem Blatt besteht, wiegt ein festhängendes Layout schwerer als das
 Aufziehen einer 13-Pixel-Zeile.
 
+## Die Live-Zahlen sind eine Karte, keine Pillen
+
+**Entschieden am 9. September abends**, auf ein Bildschirmfoto des Betreibers:
+Beta-Marke, „97 von 103 kassieren", „1 gerade offen", „5 heute" und „1
+Meldung" standen als fünf Pillen verschiedener Breite in vier Zeilen. Jede
+hatte ihren eigenen Rand, und nichts ordnete sich — es sah nach fünf Dingen
+aus, die zufällig nebeneinander liegen.
+
+Jetzt eine Karte mit drei Spalten: Zahl oben, Wort darunter — Zonen, die
+kassieren; aktive Meldungen; Geräte, die gerade offen sind. „Heute" ist raus:
+Die Zahl beantwortet keine Frage, die jemand auf der Karte hat, und steht
+weiter auf der Statistikseite. Die Beta-Marke sitzt als kleine Ecke an der
+Karte. Ohne Server steht in der dritten Spalte „nur dieses Gerät", damit der
+Unterschied sichtbar bleibt. Auf 320 Pixeln bleibt die Karte einzeilig; ein
+Test misst das.
+
 ## Als App ablegen
 
 **Getrennte Symbole für `any` und `maskable`.** Vorher war ein einziges SVG als
