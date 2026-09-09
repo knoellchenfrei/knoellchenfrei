@@ -270,6 +270,14 @@ export function App() {
   // Non-null once a shared backend answers; sightings are then visible to
   // everyone who opens the link rather than only on this device.
   const backendRef = useRef<SightingBackend | null>(null)
+  /**
+   * Kennungen der Meldungen aus dieser Sitzung. Der Worker weist eine Stimme
+   * auf die eigene Meldung mit 403 ab (Audit-Punkt M-047); die Knöpfe dafür
+   * anzubieten hiesse, einen Fehler einzuladen. Nur im Speicher, nicht im
+   * `localStorage`: Eine Meldung lebt 90 Minuten, und wer neu lädt, bekommt
+   * vom Server ohnehin die deutliche Antwort.
+   */
+  const ownReports = useRef(new Set<string>())
   const [shared, setShared] = useState(false)
   // A single clock drives every time-dependent view, so the badge, the panel and
   // the map colouring can never disagree by a tick.
@@ -1271,19 +1279,32 @@ export function App() {
     setMarks((current) => [...(seeded ? [] : current), markFor(point, entry.reportedAt)])
     setSeeded(false)
 
+    ownReports.current.add(entry.id)
     const backend = backendRef.current
     if (backend === null) return
-    void backend.report(point[0], point[1]).catch((cause: unknown) => {
-      // Take the optimistic entry back rather than leaving a report that only
-      // exists on this screen: the panel says reports are shared, and a row
-      // that never arrived would make that a lie.
-      setSightings((current) => current.filter((item) => item.id !== entry.id))
-      setError(
-        `Meldung konnte nicht gespeichert werden: ${
-          cause instanceof Error ? cause.message : 'unbekannter Fehler'
-        }`,
-      )
-    })
+    void backend
+      .report(point[0], point[1])
+      .then((serverId) => {
+        // Die Kennung des Servers ersetzt die lokale, sobald sie da ist. Bis
+        // zur nächsten Abfrage (45 s) stand hier sonst eine Kennung, die der
+        // Server nie vergeben hatte — jede Stimme darauf lief in ein 404.
+        if (serverId === null || serverId === entry.id) return
+        ownReports.current.add(serverId)
+        setSightings((current) =>
+          current.map((item) => (item.id === entry.id ? { ...item, id: serverId } : item)),
+        )
+      })
+      .catch((cause: unknown) => {
+        // Take the optimistic entry back rather than leaving a report that only
+        // exists on this screen: the panel says reports are shared, and a row
+        // that never arrived would make that a lie.
+        setSightings((current) => current.filter((item) => item.id !== entry.id))
+        setError(
+          `Meldung konnte nicht gespeichert werden: ${
+            cause instanceof Error ? cause.message : 'unbekannter Fehler'
+          }`,
+        )
+      })
   }, [position, anchor, seeded, sightingsSeeded])
 
   const vote = useCallback(
@@ -1920,6 +1941,7 @@ export function App() {
           }}
           onConfirm={(id) => vote(id, 'confirmations')}
           onDispute={(id) => vote(id, 'disputes')}
+          own={(id) => ownReports.current.has(id)}
           canReport={position !== null || anchor !== null}
           shared={shared}
           seeded={sightingsSeeded}

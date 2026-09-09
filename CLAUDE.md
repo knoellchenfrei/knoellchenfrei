@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 780 Unit-Tests (core, api, web)
+pnpm test                                           # 785 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -70,7 +70,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (570), `apps/api` (78, Worker und Zählwerk),
-`apps/web` (121, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (126, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren, Demodaten,
 Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -86,7 +86,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=780 E2E_COUNT=174 npx tsx src/build-badges.ts
+TEST_COUNT=785 E2E_COUNT=174 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -740,6 +740,25 @@ wiederholt.
   Betriebsfehler sah damit aus wie ein Fehler in der Kryptografie. Signieren
   wirft jetzt mit Begründung, Prüfen sagt `false`, ohne die Kryptografie
   überhaupt anzufassen.
+- **Eine optimistische Kennung ist keine Kennung.** Die App zeigte eine neue
+  Meldung sofort unter einer selbst erfundenen Kennung und liess sie stehen,
+  bis die nächste Abfrage nach 45 Sekunden die Liste ersetzte — obwohl der
+  Worker die echte mit `201 { id }` längst zurückgegeben hatte. Wer in der
+  Zeit die eigene Meldung bewertete, schickte eine Kennung, die der Server nie
+  vergeben hatte, und bekam „http://…/confirm antwortete 404 Not Found" in
+  den Toast: falscher Grund (verfallen statt eigene), rohe Adresse, und der
+  Knopf dafür hätte gar nicht da sein dürfen, denn die eigene Meldung ist
+  seit M-047 nicht bewertbar. Gefunden am 9. September beim Durchklicken mit
+  drei Sitzungen gegen einen lokalen Worker. `report` gibt die Kennung
+  seitdem zurück, die App tauscht sie ein, merkt sich ihre eigenen Meldungen
+  und zeigt dort „deine Meldung"; `fehlerText` übersetzt die Antworten des
+  Workers in einen Satz. Und der Prüfaufbau hat eine eigene Falle: Ein
+  `CF-Connecting-IP` als `extraHTTPHeaders` im Browser erzwingt für **jede**
+  Anfrage einen Preflight, den der Worker nur für `Content-Type` beantwortet
+  — alles scheitert mit „Failed to fetch", und das sieht aus wie ein
+  CORS-Fehler der App. Der Kopf gehört unter die CORS-Schicht
+  (`context.route` → `route.continue({ headers })`), so wie ihn die Kante
+  setzt.
 
 ## Stil
 
@@ -768,7 +787,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **68 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **69 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

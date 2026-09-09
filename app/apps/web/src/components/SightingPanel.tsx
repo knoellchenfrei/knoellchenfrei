@@ -8,6 +8,8 @@ interface Props {
   onReport: () => void
   onConfirm: (id: string) => void
   onDispute: (id: string) => void
+  /** Ob diese Meldung aus dieser Sitzung stammt — dann gibt es keine Stimme darauf. */
+  own: (id: string) => boolean
   canReport: boolean
   /** True when reports reach a shared store rather than only this device. */
   shared: boolean
@@ -23,6 +25,7 @@ export function SightingPanel({
   onReport,
   onConfirm,
   onDispute,
+  own,
   canReport,
   shared,
   seeded,
@@ -88,6 +91,11 @@ export function SightingPanel({
                 vor {duration(confidence.ageMs)} ·{' '}
                 {confidence.status === 'confirmed' ? 'bestätigt' : 'unbestätigt'}
               </span>
+              {own(sighting.id) ? (
+                // Der Worker weist die Stimme auf die eigene Meldung ab; ein
+                // Knopf, der nur einen Fehler auslöst, ist kein Knopf.
+                <span className="sightings__actions sightings__own">deine Meldung</span>
+              ) : (
               <span className="sightings__actions">
                 {/*
                   Four rows of "gesehen" / "weg" are indistinguishable in a
@@ -110,6 +118,7 @@ export function SightingPanel({
                   weg
                 </button>
               </span>
+              )}
             </li>
           ))}
         </ul>
