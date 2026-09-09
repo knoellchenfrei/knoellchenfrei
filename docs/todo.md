@@ -359,6 +359,38 @@ Was am neuen Repository noch offen ist — **du**:
       Adresse der teurere Weg; `SECURITY.md` sagt das jetzt ausdrücklich, statt
       die Lücke offenzulassen.
 
+- [ ] **Zwei Sicherheitsschalter bei GitHub sind aus** — nachgemessen am
+      9. September mit `./scripts/einstellungen-pruefen.sh`:
+      `secret_scanning_non_provider_patterns` und
+      `secret_scanning_validity_checks`, beide `disabled`. Die anderen vier
+      (Secret Scanning, Push Protection, Dependabot-Sicherheitsupdates,
+      Private Vulnerability Reporting) stehen richtig.
+
+      Der erste ist kein theoretischer Punkt: Er ist der Schalter, der
+      generische Geheimnisse findet — Passwörter, Verbindungszeichenfolgen,
+      private Schlüssel. Das MySQL-Passwort von 2012, das bis zum
+      9. September wörtlich in `oeffentlich-machen.md` stand, hätte er
+      gemeldet; das Anbietermuster-Scanning konnte es gar nicht sehen.
+
+      Beide sind für öffentliche Repositories kostenlos. Es ist eine
+      Einstellung am Konto, also deine:
+
+      ```
+      https://github.com/knoellchenfrei/knoellchenfrei/settings/security_analysis
+      ```
+
+      Oder von der Kommandozeile:
+
+      ```bash
+      gh api -X PATCH repos/knoellchenfrei/knoellchenfrei \
+        -F 'security_and_analysis[secret_scanning_non_provider_patterns][status]=enabled' \
+        -F 'security_and_analysis[secret_scanning_validity_checks][status]=enabled'
+      ```
+
+      Rechne beim ersten Lauf mit Fehlalarmen: Dieses Repository zitiert viel
+      Konfiguration, und generische Muster sind unschärfer als
+      Anbietermuster. Danach meldet `einstellungen-pruefen.sh` grün.
+
 - [x] **Branch-Schutz für `main`: bewusst aus** — Entscheidung des Betreibers
       vom 7. September (Audit-Punkt M-002).
 

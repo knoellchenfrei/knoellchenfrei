@@ -98,6 +98,37 @@ personenbezogenen Daten über ihre Nutzer, außer dem, was sie selbst melden.
 
 ## Getroffene Maßnahmen
 
+**Was geprüft wird, statt erinnert zu werden**
+
+Vier Sicherheitsnetze werden nachgemessen, nicht angenommen — jedes hat einen
+Vorfall hinter sich:
+
+| Prüfung | Was sie hält |
+| --- | --- |
+| `./scripts/geheimnisse-pruefen.sh` | Kein Secret im gebauten Bündel |
+| `./scripts/ausgeliefert-pruefen.sh` | Der Riegel steht vor **beiden** Adressen, mit den richtigen Kopfzeilen und ohne offene Weiterleitung |
+| `pnpm audit --audit-level moderate` (CI) | Keine verwundbare Abhängigkeit |
+| `./scripts/einstellungen-pruefen.sh` | Die Sicherheitsschalter bei GitHub stehen so, wie sie hier festgelegt sind |
+
+Die letzte ist seit dem 9. September dabei und schliesst die Lücke, die die
+anderen drei offen liessen: Die Schalter stehen in einer Weboberfläche, sind
+mit zwei Klicks aus, und niemand merkt es. Ein Schutz, der nur in einer
+Erinnerung existiert, ist keiner.
+
+Ihr Anlass war ein Fund: In `docs/oeffentlich-machen.md` stand ein
+MySQL-Passwort von 2012 wörtlich — in einem seit dem 6. September öffentlichen
+Repository. Secret Scanning hat nichts gemeldet, und das war richtig: Ein zwölf
+Jahre altes Passwort passt auf kein Anbietermuster. Der Schalter, der es
+gefunden hätte, heisst `secret_scanning_non_provider_patterns`, und er stand
+aus. Gefunden hat es ein Mensch beim Lesen.
+
+Zwei Dinge an dieser Prüfung sind Absicht. Sie läuft **nicht** in der CI: Das
+`GITHUB_TOKEN` eines Workflows darf die Einstellungen gar nicht lesen und bekäme
+für jedes Feld `null`. Und sie unterscheidet **„nicht prüfbar" von „in
+Ordnung"** — ohne `gh`, ohne Anmeldung oder ohne Verwaltungsrecht endet sie mit
+Rückgabewert 2, nicht 0. Eine Prüfung, die beim Wegsehen grün meldet, ist
+schlimmer als keine.
+
 **Eingabevalidierung**
 - Fahrplan- und Gebührenparser mit Längengrenze (200 bzw. 100 Zeichen); die
   längste echte Angabe hat 51. Ohne Grenze brauchte ein 100k-Zeichen-String
