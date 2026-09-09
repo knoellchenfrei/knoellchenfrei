@@ -1,7 +1,10 @@
 # Weitere Städte: was dafür an Daten da sein muss
 
 > **Stand 7. September 2026:** Angeschlossen sind **vier** Städte — Berlin,
-> Hamburg, Frankfurt am Main und München. Dieses Dokument hieß einmal „Zweite
+> Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
+> Düsseldorf und Karlsruhe, je mit eigenem Bericht:
+> [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
+> [staedte-karlsruhe.md](staedte-karlsruhe.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,

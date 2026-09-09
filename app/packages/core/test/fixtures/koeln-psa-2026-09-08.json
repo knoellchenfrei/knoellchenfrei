@@ -1,0 +1,264 @@
+{
+ "abgerufenAm": "2026-09-08",
+ "quelle": "https://www.offenedaten-koeln.de/sites/default/files/distribution/psa_2016.csv",
+ "automatenGesamt": 2315,
+ "automatenOhneKoordinate": 106,
+ "automatenAusserhalbKoeln": 19,
+ "gebuehrenzeiten": [
+  {
+   "text": "Mo-Sa 09:00 - 23:00",
+   "anzahl": 878
+  },
+  {
+   "text": "Mo-Sa 09:00 - 18:00",
+   "anzahl": 338
+  },
+  {
+   "text": "Mo-Sa 09:00 - 01:00",
+   "anzahl": 159
+  },
+  {
+   "text": "Mo-Sa 09:00 - 21:00",
+   "anzahl": 140
+  },
+  {
+   "text": "Mo-Fr 09:00 - 21:00 + Sa 10:00 - 15:00",
+   "anzahl": 139
+  },
+  {
+   "text": "Mo-Fr 09:00 - 21:00 + Sa 09:00 - 13:00",
+   "anzahl": 138
+  },
+  {
+   "text": "Mo-Fr 08:00 - 17:00",
+   "anzahl": 87
+  },
+  {
+   "text": "Mo-So 09:00 - 23:00",
+   "anzahl": 68
+  },
+  {
+   "text": "Mo-Fr 11:00 - 21:00 + Sa 10:00 - 15:00",
+   "anzahl": 56
+  },
+  {
+   "text": "Mo-Sa 09:00 - 20:00",
+   "anzahl": 47
+  },
+  {
+   "text": "Mo-Fr 09:00 - 19:00 + Sa 09:00 - 16:00",
+   "anzahl": 37
+  },
+  {
+   "text": "Mo-Fr 09:00 - 18:00 + Sa 09:00 - 14:00",
+   "anzahl": 29
+  },
+  {
+   "text": "Mo-Sa 09:00 - 16:00",
+   "anzahl": 29
+  },
+  {
+   "text": "Mo-Fr 09:00 - 22:00 + Sa 09:00 - 13:00",
+   "anzahl": 22
+  },
+  {
+   "text": "Mo-Fr 09:00 - 18:00 + Sa 09:00 - 13:00",
+   "anzahl": 15
+  },
+  {
+   "text": "Mo-Sa 09:00 - 13:00",
+   "anzahl": 15
+  },
+  {
+   "text": "Mo-Fr 09:00 - 16:00",
+   "anzahl": 12
+  },
+  {
+   "text": "Mo-So 09:00 - 21:00",
+   "anzahl": 12
+  },
+  {
+   "text": "Mo-Fr 08:00 - 21:00 + Sa 08:00 - 15:00",
+   "anzahl": 8
+  },
+  {
+   "text": "Mo-Fr 09:00 - 17:00 + Sa 09:00 - 13:00",
+   "anzahl": 7
+  },
+  {
+   "text": "Mo-Fr 09:00 - 18:00",
+   "anzahl": 7
+  },
+  {
+   "text": "Mo-Fr 09:00 - 23:00 + Sa 10:00 - 15:00",
+   "anzahl": 7
+  },
+  {
+   "text": "Mo-Sa 11:00 - 23:00",
+   "anzahl": 7
+  },
+  {
+   "text": "Mo-Sa 10:00 - 18:00",
+   "anzahl": 6
+  },
+  {
+   "text": "Mo-So 09:00 - 18:00",
+   "anzahl": 6
+  },
+  {
+   "text": "Mo-Fr 08:00 - 16:00",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo-Fr 08:00 - 19:00 + Sa 08:00 - 14:00",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo-Fr 09:00 - 16:00 + Sa 09:00 - 13:00",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo-Fr 09:00 - 20:00 + Sa 09:00 - 16:00",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo-Sa 12:00 - 20:00",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo-Sa 12:00/18:00 - 20:00",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo-Mi+Fr 09:00 - 20:00; Do + Sa 15:00 - 20:00",
+   "anzahl": 3
+  },
+  {
+   "text": "Mo-Sa 19:00 - 01:00",
+   "anzahl": 3
+  },
+  {
+   "text": "Mo-Fr 08:00 - 22:00",
+   "anzahl": 2
+  },
+  {
+   "text": "Mo-Mi+Fr 09:00 - 18:00; Do 14:00 - 18:00 + Sa 09:00 - 14:00",
+   "anzahl": 2
+  },
+  {
+   "text": "Mo-Sa 09:00/18:00 - 20:00",
+   "anzahl": 2
+  },
+  {
+   "text": "Mo-Di+Do-Fr 09:00 - 20:00; Mi+Sa 14:00 - 20:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Fr 08:00 - 18:00 + Sa 08:00 - 14:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Fr 08:00 - 19:00 + Sa 08:00 - 16:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Fr 09:00 - 13:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Fr 09:00 - 18:00; Sa 09:00 - 14:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Fr 09:00 - 21:00 + Sa 09:00 - 13:00 Uhr",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Sa 08:00 - 18:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Sa 09:00/12:00 - 20:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Sa 12:00 - 23:00",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-So 09:00 - 01:00",
+   "anzahl": 1
+  }
+ ],
+ "gebuehren": [
+  {
+   "text": "0,50 €",
+   "anzahl": 1313
+  },
+  {
+   "text": "1,00 €",
+   "anzahl": 1002
+  }
+ ],
+ "hoechstparkdauern": [
+  {
+   "text": "4",
+   "anzahl": 1697
+  },
+  {
+   "text": "9",
+   "anzahl": 189
+  },
+  {
+   "text": "12",
+   "anzahl": 157
+  },
+  {
+   "text": "2",
+   "anzahl": 93
+  },
+  {
+   "text": "14",
+   "anzahl": 92
+  },
+  {
+   "text": "7",
+   "anzahl": 44
+  },
+  {
+   "text": "10",
+   "anzahl": 23
+  },
+  {
+   "text": "11",
+   "anzahl": 5
+  },
+  {
+   "text": "0",
+   "anzahl": 4
+  },
+  {
+   "text": "16",
+   "anzahl": 4
+  },
+  {
+   "text": "8",
+   "anzahl": 4
+  },
+  {
+   "text": "1",
+   "anzahl": 3
+  }
+ ],
+ "tagesgebuehr": [
+  {
+   "text": "",
+   "anzahl": 1825
+  },
+  {
+   "text": "JA",
+   "anzahl": 490
+  }
+ ],
+ "csvAuszug": "PSA-Nr;Aufstellort;PLZ;Bezirk/Gebiet;Abschnitt von;Abschnitt bis;Stellplätze;Roter Punkt;Gebührenzeit;Gebühr je 20 Minuten;Höchstparkdauer;Tagesgebühr 4,00 €;GeoKoordinateNord;GeoKoordinateOst\r\n1;Deutzer Freiheit 53;50679;Deutz I;Siegburger Str.;Düppelstr.;10;;Mo-Sa 09:00 - 21:00;0,50 €;2;;50,93686078;6,97249396\r\n2;Offenbachplatz 3;50667;City/Martinsviertel;;;8;;Mo-Sa 09:00 - 23:00;1,00 €;4;;50,93795;6,95324\r\n3;Turkuplatz;50765;Chorweiler;Athener Ring;Willi-Suth-Allee;33;;Mo-Sa 09:00 - 20:00;0,50 €;4;;51,01951411;6,89767251\r\n5;Liverpooler Platz A;50765;Chorweiler;Platzfläche;;69;;\"Mo-Mi+Fr 09:00 - 20:00; Do + Sa 15:00 - 20:00\";0,50 €;4;;51,021261;6,898092\r\n28;An der Kemperwiese 4;51069;Mülheim;;;43;;\"Mo-Mi+Fr 09:00 - 18:00; Do 14:00 - 18:00 + Sa 09:00 - 14:00\";0,50 €;4;;50,975594;7,074815\r\n128;Liverpooler Platz;50765;Chorweiler;Platzfläche;;165;;\"Mo-Mi+Fr 09:00 - 20:00; Do + Sa 15:00 - 20:00\";0,50 €;4;;51,02116;6,897974\r\n414;Liverpooler Platz;50765;Chorweiler;Platzfläche ggü. PSA 5;;69;;\"Mo-Mi+Fr 09:00 - 20:00; Do + Sa 15:00 - 20:00\";0,50 €;4;;51,021261;6,898092\r\n880;Dellbrücker Hauptstr. 73;;Mülheim;Kemperbachstraße;Im Wieschen;4;;\"Mo-Fr 09:00 - 18:00; Sa 09:00 - 14:00\";0,50 €;4;;50,9749005;7,0741653\r\n1492;An der Kemperwiese 2;51069;Mülheim;Dellbrücker Hauptstr.;Wiesenstr.;44;;\"Mo-Mi+Fr 09:00 - 18:00; Do 14:00 - 18:00 + Sa 09:00 - 14:00\";0,50 €;4;;50,97559152;7,07449218\r\n1508;Gottfried-Hagen-Str.;;Kalk;Stichstraße RTZ;\"\"\"Hagen\"\"-Gelände\";10;;Mo-Fr 09:00 - 18:00;0,50 €;4;;50,9320429;7,0026302\r\n1768;Emil-Schreiterer-Platz;;Weiden-Nord;Goethestr.;Schillerstr.;32;Weiden-N;\"Mo-Di+Do-Fr 09:00 - 20:00; Mi+Sa 14:00 - 20:00\";0,50 €;4;;50,9405856;6,8338618\r\n2111;Graf-Adolf-Str. 79;;Mülheim;Frankfurter Str.;Sonderburger Str.;16;MÜLH;Mo-Sa 09:00 - 23:00;0,50 €;4;;50,957921;7008383\r\n167;Cäcilienstr. 44;;Nördlich Neumarkt;Antonsgasse;Neumarkt;13;;Mo-Sa 09:00 - 23:00;1,00 €;4;;;\r\n102;Josefstr. 6;;Porz;;;13;;Mo-Fr 08:00 - 19:00 + Sa 08:00 - 16:00;0,50 €;0;;50,88412;7,05781\r\n287;Olpener Str. 9-13 (Post);51103;Kalk;;;12;;Mo-Fr 09:00 - 18:00;0,50 €;0;;50,94022225;7,01830805\r\n"
+}

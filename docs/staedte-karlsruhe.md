@@ -352,6 +352,10 @@ Verteilung der Tarife über die 279 Flächen: 184 × 3,00 €/h, 93 × 6,00 €/
 
 ## 4. Die Schnipsel — bitte hier eintragen
 
+> **Eingetragen am 9. September 2026**, auf Anweisung des Betreibers — die
+> Schnipsel unten stehen seitdem so im Code. Der Abschnitt bleibt als Beleg
+> dafür, was wie begründet ist.
+
 ### 4.1 `app/packages/core/src/city.ts`
 
 Einfügen nach `MUENCHEN`, und `CITIES` erweitern.
@@ -569,6 +573,14 @@ Und in `BY_CITY`:
 ## 5. Was offen bleibt
 
 ### 5.1 **Blockierend:** Eine 4,8 m breite Zone trifft keine Ortung
+
+> **Beantwortet am 9. September mit Frage 1:** `zoneAt` bleibt strikt, daneben
+> steht `zoneNear` mit dem Radius aus `City.zoneSnapMetres` — für Karlsruhe
+> 20 m, derselbe gemessene Wert wie bei der Zuordnung Automat → Fläche in
+> Abschnitt 2.2. Nur Städte mit dem Feld bekommen den Rückfall; in Berlin,
+> Hamburg, Frankfurt und München ändert sich nichts. Das Panel sagt den
+> Abstand („nächste Fläche, etwa 12 m entfernt"). Frage 2, die Rückfrage an
+> das Tiefbauamt, bleibt lohnend und ist nicht gestellt.
 
 `zoneAt` in `apps/web/src/zones.ts` fragt strikt Punkt-in-Polygon, ohne
 Rückfall. Karlsruhes Zonen sind im Median 128 m² groß und 4,8 m breit; eine

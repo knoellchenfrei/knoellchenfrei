@@ -12,7 +12,7 @@ Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
 Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg, Frankfurt am
-Main und München**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
+Main, München, Köln, Düsseldorf und Karlsruhe**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
 die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
@@ -22,7 +22,7 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
@@ -73,6 +73,9 @@ Formalie:
 | **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Flächen für **63** Gebiete — die Quelle schneidet sie je Stadtteil, und 44 Flächen führen keine Zonennummer, weil sie kein Bewohnerparkrecht kennen; 104 Stadtteile |
 | **Frankfurt am Main** | [Stadt Frankfurt](https://geowebdienste.frankfurt.de/Parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Stadt Frankfurt am Main, www.frankfurt.de` | 27 von 42 Bewohnerparkbereichen, 921 Parkscheinautomaten als Sachdatenquelle, 458 Behindertenparkplätze, 46 Stadtteile |
 | **München** | [Landeshauptstadt München](https://geoportal.muenchen.de/geoserver/mor_wfs/ows), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de`, je Ebene aus dem ISO-Metadatensatz belegt | 82 Parkraummanagementgebiete, 13.714 Straßenseiten als Sachdatenquelle, **95.903 Stellplätze**, 1.660 Orte, Umweltzone, 25 Stadtbezirke |
+| **Köln** | [Stadt Köln](https://geoportal.stadt-koeln.de/wss/service/bewohnerparken_wfs/guest), WFS 2.0.0 und CSV | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 45 Bewohnerparkgebiete mit Automaten (von 47), 2.315 Automaten; Tarif nur, wo die CSV ihn nennt |
+| **Düsseldorf** | [Landeshauptstadt Düsseldorf](https://maps.duesseldorf.de/services/verkehr/wfs), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional*; Tarife der Automaten bis zur Lizenzklärung nicht ausgeliefert | 44 Bewohnerparkgebiete aus 65 Stücken, 50 Stadtteile, Umweltzone |
+| **Karlsruhe** | [Stadt Karlsruhe über die TechnologieRegion](https://mobil.trk.de/geoserver/TBA/ows), WFS 2.0.0 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — Namensnennung ist **Lizenzbedingung** | 279 Stellplatzreihen (die Zonen sind die Reihen selbst, 4,8 m breit — deshalb der Rückfall auf die nächste Fläche), keine Stadtteile |
 
 Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
 Oberfläche: Eine Hamburg-, Frankfurt- oder München-Ansicht ohne Quellenangabe
@@ -244,7 +247,7 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 890 Unit-Tests
+pnpm test                              # 1099 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -283,7 +286,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 890 — 570 in `core`, 86 für Worker und Zählwerk, 223 für die Web-App, 11 für den Artifact-Bau. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 70 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| Unit-Tests | 1099 — 769 in `core`, 86 für Worker und Zählwerk, 233 für die Web-App, 11 für den Artifact-Bau. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 70 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 182 über Desktop und Handy, gegen den Produktions-Build; 174 bestehen, acht überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, sieben auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

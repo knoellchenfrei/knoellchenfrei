@@ -63,7 +63,7 @@ import {
   saveSightings,
   type ParkingSession,
 } from './storage.js'
-import { loadZones, representativePoint, zoneAt, type LoadedZone } from './zones.js'
+import { loadZones, representativePoint, zoneAt, zoneNear, type LoadedZone } from './zones.js'
 import { toParkingZone, useZoneStatus } from './useZoneStatus.js'
 import type { Meta, PoiKind, ZoneProperties } from './types.js'
 
@@ -110,6 +110,25 @@ function zoneAnswer(properties: ZoneProperties, now: number): 'frei' | 'pflichti
   if (properties.sourceDefect !== null) return 'quelldefekt'
   if (isUncertainAt(zone, now)) return 'unsicher'
   return isChargeable(zone, now) ? 'pflichtig' : 'frei'
+}
+
+/**
+ * Die Fläche zu einem Punkt — strikt, und in Städten mit `zoneSnapMetres` mit
+ * dem zweiten Versuch „nächste Fläche in Reichweite". Karlsruhes Zonen sind
+ * die Stellplatzreihen selbst, 4,8 m breit; eine Ortung trifft sie fast nie,
+ * obwohl das Auto darin steht. `metres` ist null bei einem echten Treffer,
+ * sonst der Abstand, den die Oberfläche dazusagt.
+ */
+function resolveZone(
+  zones: readonly LoadedZone[],
+  point: Position,
+): { zone: LoadedZone; metres: number | null } | null {
+  const strict = zoneAt(zones, point)
+  if (strict !== null) return { zone: strict, metres: null }
+  const reach = CITY.zoneSnapMetres
+  if (reach === undefined) return null
+  const near = zoneNear(zones, point, reach)
+  return near === null ? null : { zone: near.zone, metres: near.metres }
 }
 
 const POI_LABELS: Record<PoiKind, string> = {
@@ -164,6 +183,8 @@ export function App() {
   const [zones, setZones] = useState<LoadedZone[]>([])
   const [meta, setMeta] = useState<Meta | null>(null)
   const [selected, setSelected] = useState<ZoneProperties | null>(null)
+  /** Wie weit die Ortung neben der gewählten Fläche lag; null bei einem Treffer darin. */
+  const [nearbyMetres, setNearbyMetres] = useState<number | null>(null)
   const [position, setPosition] = useState<[number, number] | null>(null)
   // Where the user last pointed on the map. Geolocation is unavailable in an
   // embedded frame without an explicit permission policy — no prompt appears and
@@ -847,6 +868,7 @@ export function App() {
                   : undefined
             if (hit !== undefined) {
               setSelected(hit.properties)
+              setNearbyMetres(null)
               track('zone.open', hit.properties.zone)
               track('zone.answer', zoneAnswer(hit.properties, Date.now()))
               track('zone.source', 'karte')
@@ -881,7 +903,24 @@ export function App() {
             // geparkt" recorded the car outside it — the panel said "Zone 34",
             // the timer "außerhalb einer Parkzone".
             if (map.queryRenderedFeatures(event.point, { layers: ['zones-fill'] }).length === 0) {
-              setSelected(null)
+              // In Karlsruhe der zweite Versuch: die Reihe daneben, wenn sie
+              // in Reichweite liegt. Sonst endet die Auswahl wie bisher.
+              const near =
+                CITY.zoneSnapMetres === undefined
+                  ? null
+                  : zoneNear(loaded, [event.lngLat.lng, event.lngLat.lat], CITY.zoneSnapMetres)
+              if (near === null) {
+                setSelected(null)
+                setNearbyMetres(null)
+              } else {
+                setSelected(near.zone.properties)
+                setNearbyMetres(near.metres)
+                track('zone.open', near.zone.properties.zone)
+                track('zone.answer', zoneAnswer(near.zone.properties, Date.now()))
+                track('zone.source', 'karte')
+                setAnnouncement(describeZone(near.zone.properties, Date.now()))
+                setPanelOpen(true)
+              }
             }
           })
           map.on('mouseenter', 'zones-fill', () => {
@@ -1039,7 +1078,7 @@ export function App() {
     // unavailable, which in an embedded frame it always is.
     marker.on('dragend', () => {
       const { lng, lat } = marker.getLngLat()
-      const hit = zoneAt(zones, [lng, lat])
+      const hit = resolveZone(zones, [lng, lat])?.zone ?? null
       setSession((current) =>
         current === null ? current : { ...current, lon: lng, lat, zone: hit?.properties.zone ?? null }
       )
@@ -1070,8 +1109,10 @@ export function App() {
         setPosition(point)
         setAnchor(point)
         setLocating(false)
-        const hit = zoneAt(zones, point)
+        const found = resolveZone(zones, point)
+        const hit = found?.zone ?? null
         setSelected(hit?.properties ?? null)
+        setNearbyMetres(found?.metres ?? null)
         track('locate', 'use')
         if (hit === null) track('zone.outside')
         else {
@@ -1166,7 +1207,7 @@ export function App() {
       setError(`Dieser Ort liegt außerhalb von ${CITY.name} — hier kann kein Parkplatz gemerkt werden.`)
       return
     }
-    const hit = zoneAt(zones, point)
+    const hit = resolveZone(zones, point)?.zone ?? null
     setSession({
       lon: point[0],
       lat: point[1],
@@ -1355,6 +1396,7 @@ export function App() {
 
   const focusZone = useCallback((zone: LoadedZone) => {
     setSelected(zone.properties)
+    setNearbyMetres(null)
     track('zone.open', zone.properties.zone)
     track('zone.answer', zoneAnswer(zone.properties, Date.now()))
     track('zone.source', 'suche')
@@ -1911,6 +1953,7 @@ export function App() {
           <ZonePanel
             properties={selected}
             status={status}
+            nearbyMetres={nearbyMetres}
             now={now}
             onPark={park}
             parked={session !== null}

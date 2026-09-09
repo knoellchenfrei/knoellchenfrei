@@ -413,6 +413,10 @@ gehört ersetzt, sobald der Eintrag steht.
 
 ## Was einzutragen bleibt
 
+> **Eingetragen am 9. September 2026**, auf Anweisung des Betreibers — die
+> Schnipsel unten stehen seitdem so im Code. Der Abschnitt bleibt als Beleg
+> dafür, was wie begründet ist.
+
 Drei Dateien sind hier bewusst nicht angefasst worden. Solange die erste Zeile
 fehlt, schlägt `pnpm --filter @knoellchenfrei/ingest typecheck` mit zehn
 `TS2305`-Fehlern fehl — `build-data-koeln.ts` importiert Symbole, die das

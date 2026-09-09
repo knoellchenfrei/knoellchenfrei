@@ -454,8 +454,22 @@ dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
 **vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
 angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 
-> **Köln und Karlsruhe sind seit dem 8. September vorbereitet, aber nicht
-> eingetragen** — Zweig `staedte/koeln-karlsruhe-vorbereitet`. Zwei Agenten
+> **Angeschaltet am 9. September, auf Anweisung des Betreibers: Köln,
+> Düsseldorf und Karlsruhe.** Der vorbereitete Zweig hatte keine gemeinsame
+> Basis mehr mit `main` (Neuanfang der Historie nach dem Passwort-Fund) und
+> ist als Patch übernommen worden. Dazu kamen die Feiertagskalender `NW` und
+> `BW` mit Beleg, Kölns CSV-Abruf als `FileSource` in `fetch.ts`, die
+> Stadtlisten in `deploy.yml` und `kacheln.yml`, und für Karlsruhe der
+> Rückfall „nächste Fläche in Reichweite" (`City.zoneSnapMetres`, 20 m —
+> derselbe gemessene Radius, mit dem der Datenbau die Automaten zuordnet),
+> weil eine 4,8 m breite Stellplatzreihe keine Ortung trifft. Die Oberfläche
+> sagt dabei den Abstand. Was je Stadt offen bleibt, steht unverändert in
+> den drei Berichten unter „Was offen bleibt" — Rückfragen an die Städte,
+> Düsseldorfs Tariflizenz, Kölns Stadtbezirke.
+>
+> Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
+> 8. September vorbereitet, aber nicht eingetragen — Zweig
+> `staedte/koeln-karlsruhe-vorbereitet`. Zwei Agenten
 > haben je eine Stadt gegen die echten Dienste vermessen, Parser samt Tests
 > geschrieben (82 bzw. 69) und die Datenbauten laufen lassen. Keiner hat
 > `core/city.ts`, `core/index.ts` oder `ingest/src/sources.ts` angefasst; genau

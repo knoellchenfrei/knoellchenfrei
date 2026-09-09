@@ -7,7 +7,9 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 
 Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
 kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
-Angeschlossen sind Berlin, Hamburg, Frankfurt am Main und München.
+Angeschlossen sind Berlin, Hamburg, Frankfurt am Main, München, Köln,
+Düsseldorf und Karlsruhe — die letzten drei seit dem 9. September, siehe
+`docs/staedte-koeln.md`, `docs/staedte-duesseldorf.md`, `docs/staedte-karlsruhe.md`.
 Ausgeliefert wird sie hinter einem Passwort-Riegel — der Stand ist geschlossener
 Testbetrieb, siehe `apps/web/functions/_middleware.ts` und `docs/hosting.md`.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.
@@ -29,7 +31,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 890 Unit-Tests (core, api, web)
+pnpm test                                           # 1099 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -84,8 +86,8 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (570), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (223, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+**alle vier** Tests: `core` (769), `apps/api` (86, Worker und Zählwerk),
+`apps/web` (233, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren, Demodaten,
 Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -101,7 +103,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=890 E2E_COUNT=182 npx tsx src/build-badges.ts
+TEST_COUNT=1099 E2E_COUNT=182 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -851,7 +853,7 @@ wiederholt.
 | [docs/notfall.md](docs/notfall.md) | Was läuft, was bei Verlust weg ist, in welcher Reihenfolge es zurückkommt |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
-| [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg, Frankfurt und München im Einzelnen |
+| [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg, Frankfurt und München im Einzelnen; Köln, Düsseldorf und Karlsruhe in eigenen Berichten |
 | [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
 | [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |

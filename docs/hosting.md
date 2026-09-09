@@ -718,7 +718,7 @@ nicht wiederholen, denn ein Fehler wäre nicht seiner.
 
 ## 4. Eigene Kartenkacheln
 
-**Läuft, für alle vier Städte.** Die App zeichnet Vektorkacheln aus PMTiles-
+**Läuft, für alle Städte** — für eine neu angeschaltete erst, sobald der Kachel-Workflow (`kacheln.yml`, `workflow_dispatch` mit dem Stadtschlüssel) einmal gelaufen ist; bis dahin bleibt ihr Hintergrund leer. Die App zeichnet Vektorkacheln aus PMTiles-
 Archiven in R2, hinter `tiles.knoellchenfrei.de`. Ohne `VITE_TILES_URL` fällt
 sie auf die Rasterkacheln von OpenStreetMap zurück — das ist der Weg für lokale
 Bauten und die Testsuite, nicht für die Auslieferung.

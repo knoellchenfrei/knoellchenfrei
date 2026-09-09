@@ -1,0 +1,294 @@
+{
+ "abgerufenAm": "2026-09-08",
+ "quelle": "https://geoportal.stadt-koeln.de/wss/service/bewohnerparken_wfs/guest",
+ "numberMatched": 47,
+ "gebiete": [
+  {
+   "gid": "7",
+   "Name": "Porz-Grengel",
+   "Abkürzung": "Grengel",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03982/index.html"
+  },
+  {
+   "gid": "13",
+   "Name": "Porz-City",
+   "Abkürzung": "Porz",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03981/index.html"
+  },
+  {
+   "gid": "47",
+   "Name": "Mülheim",
+   "Abkürzung": "MÜLH",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/61482/index.html"
+  },
+  {
+   "gid": "46",
+   "Name": "Keupstr.",
+   "Abkürzung": "KEUP",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03974/index.html"
+  },
+  {
+   "gid": "27",
+   "Name": "Kalk",
+   "Abkürzung": "Kalk",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/leben-in-koeln/verkehr/parken/64107/index.html"
+  },
+  {
+   "gid": "43",
+   "Name": "Deutz III",
+   "Abkürzung": "Deutz III",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03967/index.html"
+  },
+  {
+   "gid": "44",
+   "Name": "Deutz II",
+   "Abkürzung": "Deutz II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03966/index.html"
+  },
+  {
+   "gid": "45",
+   "Name": "Deutz V",
+   "Abkürzung": "Deutz V",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03968/index.html"
+  },
+  {
+   "gid": "25",
+   "Name": "Deutz I",
+   "Abkürzung": "Deutz I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03965/index.html"
+  },
+  {
+   "gid": "9",
+   "Name": "Nördliche Neustadt",
+   "Abkürzung": "NORD",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03979/index.html"
+  },
+  {
+   "gid": "39",
+   "Name": "Agnesviertel II",
+   "Abkürzung": "AGN II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03962/index.html"
+  },
+  {
+   "gid": "38",
+   "Name": "Severinsviertel",
+   "Abkürzung": "SEV",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03984/index.html"
+  },
+  {
+   "gid": "22",
+   "Name": "Südliche Neustadt II",
+   "Abkürzung": "SÜD II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03987/index.html"
+  },
+  {
+   "gid": "23",
+   "Name": "Georgsviertel",
+   "Abkürzung": "GEO",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03970/index.html"
+  },
+  {
+   "gid": "4",
+   "Name": "City-Martinsviertel",
+   "Abkürzung": "CITY",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03964/index.html"
+  },
+  {
+   "gid": "6",
+   "Name": "Kunibertsviertel",
+   "Abkürzung": "KUN",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03975/index.html"
+  },
+  {
+   "gid": "19",
+   "Name": "Nippes III",
+   "Abkürzung": "Nippes III",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/08075/index.html"
+  },
+  {
+   "gid": "26",
+   "Name": "Nippes IV",
+   "Abkürzung": "Nippes IV",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/08076/index.html"
+  },
+  {
+   "gid": "16",
+   "Name": "Nippes I",
+   "Abkürzung": "Nippes I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03977/index.html"
+  },
+  {
+   "gid": "3",
+   "Name": "Gereonsviertel",
+   "Abkürzung": "GER",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03971/index.html"
+  },
+  {
+   "gid": "18",
+   "Name": "Eigelstein",
+   "Abkürzung": "EIGEL",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03969/index.html"
+  },
+  {
+   "gid": "12",
+   "Name": "Nippes",
+   "Abkürzung": "Nippes",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03976/index.html"
+  },
+  {
+   "gid": "40",
+   "Name": "Agnesviertel I",
+   "Abkürzung": "AGN I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03961/index.html"
+  },
+  {
+   "gid": "21",
+   "Name": "Pantaleonsviertel",
+   "Abkürzung": "PAN",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03980/index.html"
+  },
+  {
+   "gid": "24",
+   "Name": "Südliche Neustadt I",
+   "Abkürzung": "SÜD I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03986/index.html"
+  },
+  {
+   "gid": "32",
+   "Name": "Nördlich Neumarkt",
+   "Abkürzung": "NEU",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03978/index.html"
+  },
+  {
+   "gid": "28",
+   "Name": "Griechenmarktviertel",
+   "Abkürzung": "GRI",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03972/index.html"
+  },
+  {
+   "gid": "15",
+   "Name": "Nippes II",
+   "Abkürzung": "Nippes II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/08077/index.html"
+  },
+  {
+   "gid": "14",
+   "Name": "Nippes EAW",
+   "Abkürzung": "Nippes EAW",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/08074/index.html"
+  },
+  {
+   "gid": "11",
+   "Name": "Belgisches Viertel",
+   "Abkürzung": "BELG",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03963/index.html"
+  },
+  {
+   "gid": "8",
+   "Name": "Südbahnhof",
+   "Abkürzung": "SBF",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03985/index.html"
+  },
+  {
+   "gid": "1",
+   "Name": "Rathenauviertel",
+   "Abkürzung": "RATH",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03983/index.html"
+  },
+  {
+   "gid": "36",
+   "Name": "Ehrenfeld III",
+   "Abkürzung": "Ehre III",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/68468/index.html"
+  },
+  {
+   "gid": "34",
+   "Name": "Lindenthal-Nord III/Piusstraße",
+   "Abkürzung": "PIUS",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/68237/index.html"
+  },
+  {
+   "gid": "37",
+   "Name": "Ehrenfeld IV",
+   "Abkürzung": "Ehre IV",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/68469/index.html"
+  },
+  {
+   "gid": "10",
+   "Name": "Ehrenfeld I",
+   "Abkürzung": "Ehre I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/68429/index.html"
+  },
+  {
+   "gid": "31",
+   "Name": "Sülz-Nord I",
+   "Abkürzung": "Sülz-N. I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/67004/index.html"
+  },
+  {
+   "gid": "35",
+   "Name": "Lindenthal-Süd I",
+   "Abkürzung": "Lind-S. I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/08078/index.html"
+  },
+  {
+   "gid": "29",
+   "Name": "Sülz-Nord II",
+   "Abkürzung": "Sülz-N. II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/67006/index.html"
+  },
+  {
+   "gid": "42",
+   "Name": "Lindenthal-Süd II",
+   "Abkürzung": "Lind-S. II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/08073/index.html"
+  },
+  {
+   "gid": "5",
+   "Name": "Lindenthal-Nord I",
+   "Abkürzung": "Lind-N. I",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/62887/index.html"
+  },
+  {
+   "gid": "33",
+   "Name": "Ehrenfeld II",
+   "Abkürzung": "Ehre II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/68466/index.html"
+  },
+  {
+   "gid": "30",
+   "Name": "Lindenthal-Nord II",
+   "Abkürzung": "Lind-N. II",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/62889/index.html"
+  },
+  {
+   "gid": "20",
+   "Name": "Hültzviertel",
+   "Abkürzung": "HV",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/20144/index.html"
+  },
+  {
+   "gid": "17",
+   "Name": "Weiden Süd",
+   "Abkürzung": "Weiden-S",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/62153/index.html"
+  },
+  {
+   "gid": "2",
+   "Name": "Weiden Nord",
+   "Abkürzung": "Weiden-N",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03992/index.html"
+  },
+  {
+   "gid": "41",
+   "Name": "Hohenlind",
+   "Abkürzung": "H.-lind",
+   "Weitere_Informationen": "https://www.stadt-koeln.de/artikel/03973/index.html"
+  }
+ ],
+ "ersterStuetzpunktUtm": [
+  366433.216,
+  5638278.57
+ ],
+ "ersterStuetzpunktGebiet": "Porz-Grengel"
+}

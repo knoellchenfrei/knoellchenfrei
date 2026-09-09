@@ -15,19 +15,27 @@ const defectLabel = (code: string): string => DEFECT_LABELS[code] ?? code
 interface Props {
   properties: ZoneProperties
   status: ZoneStatus
+  /** Abstand der Ortung zur Fläche in Metern, wenn sie daneben lag; null bei einem Treffer darin. */
+  nearbyMetres: number | null
   now: number
   onPark: () => void
   parked: boolean
 }
 
-export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
+export function ZonePanel({ properties, status, nearbyMetres, now, onPark, parked }: Props) {
   const { chargeable, changesAt, hourly, uncertain } = status
 
   return (
     <section className="panel" aria-label={zoneTitel(properties)}>
       <header className="panel__head">
         <div>
-          <p className="panel__eyebrow">{properties.district}</p>
+          <p className="panel__eyebrow">
+            {properties.district}
+            {/* Ein Treffer 18 m neben der Reihe ist keiner in der Reihe, und
+                auf der anderen Straßenseite kann eine andere Regel gelten —
+                deshalb steht der Abstand dabei. */}
+            {nearbyMetres !== null && ` · nächste Fläche, etwa ${Math.max(1, Math.round(nearbyMetres))} m entfernt`}
+          </p>
           {/* Focus target after a search pick; tabIndex -1 keeps it out of the Tab order. */}
           <h2 className="panel__title" id="zone-panel-title" tabIndex={-1}>
             {zoneTitel(properties)}

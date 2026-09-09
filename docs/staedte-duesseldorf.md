@@ -642,6 +642,10 @@ gelesene Tatsache.
 
 ## 4. Was einzutragen bleibt
 
+> **Eingetragen am 9. September 2026**, auf Anweisung des Betreibers — die
+> Schnipsel unten stehen seitdem so im Code. Der Abschnitt bleibt als Beleg
+> dafür, was wie begründet ist.
+
 Vier Dateien sind hier bewusst nicht angefasst worden. Solange sie fehlen,
 schlägt `pnpm --filter @knoellchenfrei/ingest typecheck` mit **zwölf**
 `TS2305`-Fehlern fehl, alle in `build-data-duesseldorf.ts`, alle in der Form

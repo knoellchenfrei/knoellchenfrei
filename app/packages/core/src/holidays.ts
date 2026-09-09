@@ -19,7 +19,7 @@
 import { berlinDateKey, type BerlinWallClock } from './berlin-time.js'
 
 /** Amtliche Kürzel der Bundesländer, so weit belegt. */
-export type Land = 'BE' | 'HH' | 'HE' | 'BY'
+export type Land = 'BE' | 'HH' | 'HE' | 'BY' | 'NW' | 'BW'
 
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
@@ -113,6 +113,35 @@ const NATIONWIDE_FROM_EASTER = [
  *   Stadt, nicht des Landes. Quelle:
  *   <https://www.gesetze-bayern.de/Content/Document/BayFTG-1>, abgerufen am
  *   7. September 2026.
+ * - **NW** — Nordrhein-Westfalen hat **elf**: die neun bundesweiten plus
+ *   Fronleichnam und Allerheiligen. Kein Reformationstag, kein Buß- und
+ *   Bettag, kein Frauentag — und, anders als in Bayern, **keine gemeindeweise
+ *   Regelung**: § 2 des Gesetzes über die Sonn- und Feiertage (SGV. NRW. 113)
+ *   kennt keinen Vorbehalt wie Art. 1 Abs. 1 Nr. 2 BayFTG; die einzige
+ *   gemeindebezogene Vorschrift ist § 8 Abs. 3 und betrifft *kirchliche*
+ *   Feiertage, die nach § 5 Abs. 1 nur zur Gottesdienstzeit geschützt und
+ *   nicht arbeitsfrei sind. Wörtlich, § 2 Abs. 1: „der Neujahrstag, der
+ *   Karfreitag, der Ostermontag, der 1. Mai …, der Christi-Himmelfahrts-Tag,
+ *   der Pfingstmontag, der Fronleichnamstag (Donnerstag nach dem Sonntag
+ *   Trinitatis), der 3. Oktober als Tag der Deutschen Einheit, der
+ *   Allerheiligentag (1. November), der 1. Weihnachtstag, der
+ *   2. Weihnachtstag". Quelle: <https://recht.nrw.de/lrgv/gesetz/01012000-bekanntmachung-der-neufassung-des-gesetzes-ueber-die-sonn-und-feiertage>,
+ *   abgerufen am 8. September 2026. Gilt für Köln und Düsseldorf.
+ * - **BW** — Baden-Württemberg hat **zwölf** landesweite Feiertage: die neun
+ *   bundesweiten plus Heilige Drei Könige, Fronleichnam und Allerheiligen.
+ *   Der Eintrag ist damit **zeichengleich mit dem bayerischen** — und
+ *   trotzdem eine eigene Zeile, weil er einen eigenen Beleg hat und weil sich
+ *   die beiden Länder jederzeit auseinanderentwickeln können. Der Unterschied
+ *   liegt woanders: Bayerns Mariä Himmelfahrt gilt gemeindeweise und hängt
+ *   deshalb an `City.holidays`; Baden-Württemberg kennt **keine**
+ *   gemeindeweise Regelung, Karlsruhe braucht also kein `holidays`-Feld.
+ *   Reformationstag und Buß- und Bettag sind in Baden-Württemberg
+ *   ausdrücklich **keine** gesetzlichen Feiertage, sondern kirchliche (der
+ *   31. Oktober ist schulfrei, mehr nicht) — wer sie mitnimmt, meldet an zwei
+ *   Werktagen im Jahr „gebührenfrei". Quellen: § 1 Abs. 1 FTG BW und die
+ *   Feiertagsseite des Innenministeriums,
+ *   <https://im.baden-wuerttemberg.de/de/service/feiertage>, abgerufen am
+ *   8. September 2026.
  */
 interface RegionalHolidays {
   /** Feste Daten als `MM-TT`. */
@@ -126,6 +155,8 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   HH: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag
   HE: { fixed: [], fromEaster: [60] }, // Fronleichnam
   BY: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
+  NW: { fixed: ['11-01'], fromEaster: [60] }, // Allerheiligen, Fronleichnam
+  BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
 }
 
 /**

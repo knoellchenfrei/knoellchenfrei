@@ -19,6 +19,9 @@ in `packages/core/src/city.ts` trägt den Unterschied bis in die Oberfläche.
 | Hamburg | Freie und Hansestadt Hamburg, Landesbetrieb Geoinformation und Vermessung | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
 | Frankfurt am Main | Stadt Frankfurt am Main, www.frankfurt.de | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
 | München | Landeshauptstadt München – opendata.muenchen.de | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
+| Köln | Stadt Köln, Amt für Verkehrsmanagement — offenedaten-koeln.de | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig |
+| Düsseldorf | Landeshauptstadt Düsseldorf, Amt für Verkehrsmanagement — opendata.duesseldorf.de | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig; die Tarife der Parkscheinautomaten werden nicht ausgeliefert, solange ihre Lizenz nicht belegt ist |
+| Karlsruhe | Stadt Karlsruhe (Digitale Mobilität), transparenz.karlsruhe.de | [Creative Commons Namensnennung 4.0 International](https://creativecommons.org/licenses/by/4.0/) — Nennung des Urhebers, Hinweis auf die Lizenz und auf Veränderungen |
 
 **Die Daten sind verändert.** Aus den amtlichen Diensten werden Teilmengen
 gebildet, Geometrien vereinfacht (Douglas-Peucker, siehe

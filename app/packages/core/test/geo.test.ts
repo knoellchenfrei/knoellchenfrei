@@ -7,6 +7,8 @@ import {
   polygonContains,
   withinBounds,
   type PolygonRings,
+  distanceToPolygonMetres,
+  type Position,
 } from '../src/geo.js'
 
 /** A unit square with a square hole in the middle, in [lon, lat] order. */
@@ -113,5 +115,45 @@ describe('boundsOf an den Rändern', () => {
   // Geometrie und keine grössere Zone.
   it('misst nur den äusseren Ring', () => {
     expect(boundsOf([withHole])).toEqual({ minLon: 0, minLat: 0, maxLon: 4, maxLat: 4 })
+  })
+})
+
+describe('distanceToPolygonMetres', () => {
+  // Ein 20 m × 10 m grosses Rechteck bei 49° Nord, Karlsruher Breite.
+  const lat = 49.0094
+  const dLon = 20 / (Math.cos((lat * Math.PI) / 180) * 111_320)
+  const dLat = 10 / 110_540
+  const rechteck: PolygonRings = [
+    [
+      [8.4, lat],
+      [8.4 + dLon, lat],
+      [8.4 + dLon, lat + dLat],
+      [8.4, lat + dLat],
+      [8.4, lat],
+    ],
+  ]
+
+  it('ist null innen und misst aussen den Abstand zur Kante, nicht zum Stützpunkt', () => {
+    expect(distanceToPolygonMetres([rechteck], [8.4 + dLon / 2, lat + dLat / 2])).toBe(0)
+    // 15 m südlich der Mitte der Unterkante: 15, nicht die 18 zur Ecke.
+    const suedlich: Position = [8.4 + dLon / 2, lat - 15 / 110_540]
+    expect(distanceToPolygonMetres([rechteck], suedlich)).toBeCloseTo(15, 0)
+    // 30 m westlich der Westkante.
+    const westlich: Position = [8.4 - 30 / (Math.cos((lat * Math.PI) / 180) * 111_320), lat + dLat / 2]
+    expect(distanceToPolygonMetres([rechteck], westlich)).toBeCloseTo(30, 0)
+  })
+
+  it('nimmt bei mehreren Polygonen das nächste', () => {
+    const fern: PolygonRings = [
+      [
+        [8.5, lat],
+        [8.5 + dLon, lat],
+        [8.5 + dLon, lat + dLat],
+        [8.5, lat + dLat],
+        [8.5, lat],
+      ],
+    ]
+    const punkt: Position = [8.4 + dLon / 2, lat - 5 / 110_540]
+    expect(distanceToPolygonMetres([fern, rechteck], punkt)).toBeCloseTo(5, 0)
   })
 })

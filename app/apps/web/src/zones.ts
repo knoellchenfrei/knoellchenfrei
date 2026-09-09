@@ -1,4 +1,5 @@
 import {
+  distanceToPolygonMetres,
   multiPolygonContains,
   boundsOf,
   withinBounds,
@@ -106,6 +107,50 @@ export function zoneAt(zones: readonly LoadedZone[], point: Position): LoadedZon
     if (multiPolygonContains(zone.polygons, point)) return zone
   }
   return null
+}
+
+/** Eine Fläche in Reichweite: die Zone und wie weit die Ortung daneben lag. */
+export interface NearbyZone {
+  zone: LoadedZone
+  metres: number
+}
+
+/**
+ * Die nächste Fläche innerhalb von `maxMetres` — für Städte, deren „Zonen"
+ * die Stellplatzreihen selbst sind und eine Ortung deshalb fast nie treffen
+ * (Karlsruhe: 4,8 m breit, siehe `City.zoneSnapMetres`).
+ *
+ * Strikt bleibt `zoneAt`; das hier ist ausdrücklich der zweite Versuch, und
+ * die Oberfläche sagt dazu, wie weit daneben es lag. Ohne die Angabe wäre ein
+ * Treffer 18 m neben der Reihe von einem in der Reihe nicht zu unterscheiden,
+ * und auf der anderen Straßenseite kann eine andere Regel gelten.
+ *
+ * Gesucht wird erst grob über die Rahmen, um `maxMetres` erweitert, dann
+ * genau über den Kantenabstand — bei 279 Flächen sonst je Tipp fünfstellig
+ * viele Kanten.
+ */
+export function zoneNear(
+  zones: readonly LoadedZone[],
+  point: Position,
+  maxMetres: number,
+): NearbyZone | null {
+  const dLat = maxMetres / 110_540
+  const dLon = maxMetres / (Math.cos((point[1] * Math.PI) / 180) * 111_320)
+  let best: NearbyZone | null = null
+  for (const zone of zones) {
+    const b = zone.bounds
+    if (
+      point[0] < b.minLon - dLon ||
+      point[0] > b.maxLon + dLon ||
+      point[1] < b.minLat - dLat ||
+      point[1] > b.maxLat + dLat
+    ) {
+      continue
+    }
+    const metres = distanceToPolygonMetres(zone.polygons, point)
+    if (metres <= maxMetres && (best === null || metres < best.metres)) best = { zone, metres }
+  }
+  return best
 }
 
 /**

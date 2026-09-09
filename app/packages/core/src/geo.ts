@@ -93,3 +93,51 @@ export function distanceMetres(a: Position, b: Position): number {
     Math.sin(dLat / 2) ** 2 + Math.sin(dLon / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2)
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)))
 }
+
+/**
+ * Der kürzeste Abstand von einem Punkt zum Rand eines Multipolygons, in
+ * Metern. Null, wenn der Punkt innen liegt.
+ *
+ * Wofür: Karlsruhes „Zonen" sind die Stellplatzreihen selbst — im Median
+ * 128 m² und 4,8 m breit. Eine Ortung auf 10 bis 20 m Genauigkeit trifft so
+ * eine Fläche fast nie, obwohl das Auto darin steht. `zoneAt` bleibt strikt;
+ * dieser Abstand trägt den Rückfall „nächste Fläche in Reichweite", und nur
+ * für Städte, die ihn in `City.zoneSnapMetres` ausdrücklich erlauben.
+ *
+ * Gerechnet auf einer lokal abgewickelten Ebene (Längengrad mit cos der
+ * Breite gestaucht): Bei Abständen unter hundert Metern liegt der Fehler
+ * weit unter einem Meter, und eine Ellipsoid-Rechnung je Kante wäre für die
+ * vier- bis fünfstellige Kantenzahl einer Stadt zu teuer für jeden Tipp.
+ */
+export function distanceToPolygonMetres(polygons: readonly PolygonRings[], point: Position): number {
+  if (multiPolygonContains(polygons, point)) return 0
+  const kx = Math.cos((point[1] * Math.PI) / 180) * 111_320
+  const ky = 110_540
+  let best = Infinity
+  for (const rings of polygons) {
+    for (const ring of rings) {
+      for (let i = 0; i < ring.length; i += 1) {
+        const a = ring[i] as Position
+        const b = ring[(i + 1) % ring.length] as Position
+        const d = segmentDistance(point, a, b, kx, ky)
+        if (d < best) best = d
+      }
+    }
+  }
+  return best
+}
+
+function segmentDistance(p: Position, a: Position, b: Position, kx: number, ky: number): number {
+  const ax = (a[0] - p[0]) * kx
+  const ay = (a[1] - p[1]) * ky
+  const bx = (b[0] - p[0]) * kx
+  const by = (b[1] - p[1]) * ky
+  const dx = bx - ax
+  const dy = by - ay
+  const len2 = dx * dx + dy * dy
+  // Ein Punkt als Kante (aufeinanderfolgende gleiche Stützpunkte): Abstand zum Punkt.
+  const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2))
+  const cx = ax + t * dx
+  const cy = ay + t * dy
+  return Math.sqrt(cx * cx + cy * cy)
+}

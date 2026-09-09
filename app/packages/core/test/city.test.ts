@@ -432,9 +432,19 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // — Link, Nummer und Name fest verdrahtet. Wer in München sein Auto suchte,
   // bekam eine Berliner Telefonnummer, und das ist schlechter als gar keine
   // Angabe: Es sieht aus wie eine Auskunft.
+  // Wo sich keine amtliche Seite mit Namen und Nummer belegen liess, fehlt
+  // das Feld, und die App zeigt den Abschnitt nicht — eine Nummer aus zweiter
+  // Hand wäre schlechter als keine. Die Liste ist ausdrücklich, damit ein
+  // vergessenes Feld bei einer neuen Stadt weiter auffällt.
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe'])
+
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
       const info = city.towedVehicles
+      if (OHNE_BELEG.has(city.key)) {
+        expect(info, city.name).toBeUndefined()
+        continue
+      }
       expect(info, city.name).toBeDefined()
       expect(info?.authority.length ?? 0, city.name).toBeGreaterThan(3)
       expect(info?.url ?? '', city.name).toMatch(/^https:\/\//)
@@ -446,6 +456,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
 
   it('trägt ein Prüfdatum, weil eine Nummer veraltet', () => {
     for (const city of CITIES) {
+      if (OHNE_BELEG.has(city.key)) continue
       expect(city.towedVehicles?.checkedOn, city.name).toMatch(/^\d{4}-\d{2}$/)
     }
   })

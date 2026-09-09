@@ -79,7 +79,7 @@ jobs:
           # kann. Und sie wird geprüft, statt geglaubt.
           for stadt in $STAEDTE; do
             case "$stadt" in
-              berlin|hamburg|frankfurt|muenchen) ;;
+              berlin|hamburg|frankfurt|muenchen|koeln|duesseldorf|karlsruhe) ;;
               *) echo "::error::Unbekannte Stadt: $stadt"; exit 2 ;;
             esac
           done
@@ -93,7 +93,7 @@ jobs:
       - name: Nachmessen, dass die Archive ausgeliefert werden
         run: |
           fehler=0
-          for stadt in berlin hamburg frankfurt muenchen; do
+          for stadt in berlin hamburg frankfurt muenchen koeln duesseldorf karlsruhe; do
             code="$(curl -s -o /dev/null -r 0-99 -w '%{http_code}' \
               "https://tiles.knoellchenfrei.de/aktuell/${stadt}.pmtiles")"
             if [ "$code" = "206" ]; then

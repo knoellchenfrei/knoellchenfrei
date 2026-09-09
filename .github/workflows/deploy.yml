@@ -156,7 +156,7 @@ jobs:
         working-directory: app
         run: |
           gescheitert=""
-          for stadt in berlin hamburg frankfurt muenchen; do
+          for stadt in berlin hamburg frankfurt muenchen koeln duesseldorf karlsruhe; do
             skript="build-data"
             [ "$stadt" = "berlin" ] || skript="build-data-$stadt"
             if CITY="$stadt" pnpm --filter @knoellchenfrei/ingest fetch-data && CITY="$stadt" pnpm --filter @knoellchenfrei/ingest "$skript"; then

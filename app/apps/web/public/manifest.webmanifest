@@ -2,7 +2,7 @@
   "id": "./",
   "name": "knoellchenfrei",
   "short_name": "knoellchenfrei",
-  "description": "Parkzonen in Berlin und Hamburg: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen.",
+  "description": "Parkzonen in Berlin, Hamburg, Frankfurt am Main, München, Köln, Düsseldorf und Karlsruhe: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

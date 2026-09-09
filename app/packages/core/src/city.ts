@@ -101,6 +101,21 @@ export interface City {
    */
   holidays?: readonly string[]
   /**
+   * Wie weit eine Ortung neben einer Fläche liegen darf, damit die App sie
+   * dieser Fläche zuordnet — in Metern, und nur für Städte, deren „Zonen"
+   * keine Gebiete sind, sondern die Stellplatzreihen selbst.
+   *
+   * Karlsruhe ist der Fall: 279 Flächen, im Median 128 m² und 4,8 m breit.
+   * Eine Ortung auf 10 bis 20 m trifft so eine Fläche fast nie, und die App
+   * hätte an jedem Karlsruher Automaten „außerhalb der Parkraumbewirtschaftung"
+   * gesagt (`docs/staedte-karlsruhe.md`, Punkt 5.1). In Berlin, Hamburg,
+   * Frankfurt und München sind die Zonen Gebiete mit Straßen als Grenze; dort
+   * hiesse ein Rückfall, jemanden von der falschen Straßenseite in eine Zone
+   * zu ziehen. Deshalb je Stadt, nicht global — und ohne Wert gibt es keinen
+   * Rückfall.
+   */
+  zoneSnapMetres?: number
+  /**
    * Wer Auskunft gibt, wenn das Auto weg ist.
    *
    * Bis zum 7. September stand in `TowInfo.tsx` fest verdrahtet die
@@ -319,7 +334,167 @@ export const MUENCHEN: City = {
   },
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN]
+/**
+ * Köln — die fünfte Stadt.
+ *
+ * Die Box ist gemessen, nicht geschätzt: Der Umriss der Gemeinde Köln aus
+ * `dvg:nw_dvg1_gem` des Landes-WFS (4.508 Stützpunkte, abgerufen am
+ * 8. September 2026) misst 6,7726–7,1620 / 50,8304–51,0850; nach außen
+ * gerundet steht das unten. Die 47 Bewohnerparkgebiete reichen nur
+ * 6,8278–7,1075 / 50,8755–50,9752 — wer die Box daraus nähme, wiese eine
+ * Meldung aus Chorweiler oder Rodenkirchen als „außerhalb" ab, obwohl dort
+ * bewirtschaftet wird und nur kein Bewohnerparkgebiet liegt.
+ *
+ * Der Mittelpunkt ist der Dom. Der Zoom ist Berlins, Hamburgs und Münchens:
+ * 0,39° Länge und 0,25° Breite liegen zwischen Frankfurts 0,40°/0,21° bei
+ * Zoom 12 und Hamburgs 0,65°/0,45° bei 11,5 — und Kölns Nord-Süd-Ausdehnung
+ * ist die größere von beiden, weil die Stadt von Worringen bis Godorf 28 km
+ * misst. Bei 12 fielen Chorweiler im Norden und Porz im Süden aus dem Bild,
+ * und in beiden stehen Automaten.
+ */
+export const KOELN: City = {
+  key: 'koeln',
+  name: 'Köln',
+  land: 'NW',
+  center: [6.9583, 50.9413],
+  zoom: 11.5,
+  reportBounds: { minLon: 6.75, minLat: 50.82, maxLon: 7.18, maxLat: 51.1 },
+  sessionBounds: { minLon: 6.45, minLat: 50.6, maxLon: 7.5, maxLat: 51.35 },
+  attribution: {
+    // DL-DE/Zero-2.0 verlangt keine Nennung; der Quellenvermerk steht
+    // trotzdem — freiwillig ist nicht verboten, und Berlin hält es genauso.
+    // Wörtlich aus `ows:AccessConstraints` des WFS: „Bereitstellung als
+    // OpenData unter Datenlizenz Deutschland - Zero - Version 2.0."
+    source: 'Stadt Köln, Amt für Verkehrsmanagement — offenedaten-koeln.de',
+    datasetUrl: 'https://geoportal.stadt-koeln.de/wss/service/bewohnerparken_wfs/guest',
+    licence: 'Datenlizenz Deutschland Zero 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
+    attributionRequired: false,
+  },
+  // `towedVehicles` fehlt mit Absicht: Für die Kölner Verwahrstelle ließ sich
+  // am 8. September keine amtliche Seite mit Namen und Nummer belegen. Fehlt
+  // das Feld, zeigt die App den Abschnitt nicht — eine Nummer aus zweiter
+  // Hand wäre schlechter als keine.
+}
+
+/**
+ * Düsseldorf.
+ *
+ * Die Box ist gemessen, nicht geschätzt: Der Umriss der Stadt aus
+ * `grenzen:stadtgrenze` (abgerufen am 8. September 2026) misst
+ * 6,6888–6,9399 / 51,1244–51,3525; nach außen gerundet steht das unten. Die
+ * 44 Bewohnerparkgebiete reichen nur 6,7275–6,8742 / 51,1733–51,3027 — wer die
+ * Box daraus nähme, wiese eine Meldung aus Garath oder Kalkum als „außerhalb"
+ * ab, obwohl dort bewirtschaftet werden kann und nur kein
+ * Bewohnerparkgebiet liegt.
+ *
+ * **Achtung bei Köln.** Kölns vorgeschlagene `reportBounds` enden im Norden
+ * bei 51,10, Düsseldorfs beginnen bei 51,11 — 0,01°, also gut einen
+ * Kilometer. Die beiden Boxen überschneiden sich damit nicht, und der Test in
+ * `city.test.ts` bleibt grün; wer eine der beiden nach außen erweitert, macht
+ * `cityAt` zum Zufall.
+ *
+ * Der Mittelpunkt ist die Mitte des Rahmens der 44 Gebiete, nicht die
+ * Altstadt: Bei Zoom 12 (Frankfurts Wert, rund 0,40° × 0,21°) liegen damit
+ * alle 44 im Bild, und ihre Nord-Süd-Ausdehnung von 0,130° passt gerade so
+ * hinein. Vom Altstadt-Zentroid (6,7706 / 51,2211) aus fiele der Flughafen im
+ * Norden knapp heraus.
+ */
+export const DUESSELDORF: City = {
+  key: 'duesseldorf',
+  name: 'Düsseldorf',
+  land: 'NW',
+  center: [6.8009, 51.238],
+  zoom: 12,
+  reportBounds: { minLon: 6.66, minLat: 51.11, maxLon: 6.96, maxLat: 51.37 },
+  sessionBounds: { minLon: 6.4, minLat: 50.9, maxLon: 7.25, maxLat: 51.6 },
+  attribution: {
+    // DL-DE/Zero-2.0 verlangt keine Nennung; der Quellenvermerk steht
+    // trotzdem — freiwillig ist nicht verboten, und Berlin hält es genauso.
+    // Belegt am DCAT-AP.de-Datensatz `aec4ca40-…`: `dct:license` ist
+    // `dl-zero-de/2.0` in allen vier Distributionen, `dct:publisher` ist
+    // „Landeshauptstadt Düsseldorf – Amt für Verkehrsmanagement".
+    source: 'Landeshauptstadt Düsseldorf, Amt für Verkehrsmanagement — opendata.duesseldorf.de',
+    datasetUrl: 'https://maps.duesseldorf.de/services/verkehr/wfs',
+    licence: 'Datenlizenz Deutschland Zero 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
+    attributionRequired: false,
+  },
+  // Belegt auf der Seite des Ordnungsamts, wörtlich und mit beiden Nummern.
+  // Zuständig ist das Ordnungsamt, nicht das Amt für Verkehrsmanagement; eine
+  // städtische Verwahrstelle gibt es nicht, die Fahrzeuge stehen beim
+  // beauftragten Abschleppunternehmen.
+  towedVehicles: {
+    authority: 'Leitstelle des Ordnungsamtes der Landeshauptstadt Düsseldorf',
+    url: 'https://www.duesseldorf.de/ordnungsamt/verkehrueb/schlepp',
+    phone: '0211 89-94000',
+    checkedOn: '2026-09',
+    note:
+      'Die Stadt rät, zuerst die nächste Polizeidienststelle zu fragen ' +
+      '(0211 870-0): Dort ist bekannt, zu welchem Abschleppunternehmen das ' +
+      'Fahrzeug gebracht wurde.',
+  },
+}
+
+/**
+ * Karlsruhe — die fünfte Stadt, und die erste unter einer dritten
+ * Lizenzfamilie: Creative Commons Namensnennung 4.0 statt Datenlizenz
+ * Deutschland.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt **nicht** aus der
+ * Parkebene: Die bewirtschafteten Flächen liegen zwischen 8,3421 und 8,4764
+ * Länge — wer die Box daraus nähme, wiese eine Meldung aus Neureut oder
+ * Grötzingen als „außerhalb" ab, obwohl sie mitten in Karlsruhe liegt. Der
+ * Umriss kommt aus den 188 Wahlbezirken des Wahlkreises „Karlsruhe-Stadt"
+ * (Transparenzportal, Datensatz `bundestagswahl-2017`, GeoJSON in CRS84): Sie
+ * decken das ganze Stadtgebiet ab und messen 8,2774–8,5418 / 48,9405–49,0912.
+ * Nach außen gerundet steht das unten; es entspricht der amtlichen Ausdehnung
+ * von rund 19 km Ost-West und 16 km Nord-Süd.
+ *
+ * Der Mittelpunkt ist der Marktplatz mit der Pyramide. Der Zoom ist Frankfurts
+ * 12 und nicht Berlins 11,5: 0,28° Länge sind weniger als Frankfurts 0,40°,
+ * und die 279 Stellplatzflächen liegen in einem Band von 9,8 × 5,3 km zwischen
+ * Mühlburg und Durlach.
+ *
+ * `holidays` fehlt mit Absicht: Baden-Württemberg kennt anders als Bayern
+ * keine gemeindeweise geregelten Feiertage (Begründung in `holidays.ts` beim
+ * neuen `BW`-Eintrag).
+ */
+export const KARLSRUHE: City = {
+  key: 'karlsruhe',
+  name: 'Karlsruhe',
+  land: 'BW',
+  center: [8.4037, 49.0094],
+  zoom: 12,
+  reportBounds: { minLon: 8.27, minLat: 48.93, maxLon: 8.55, maxLat: 49.1 },
+  sessionBounds: { minLon: 8.0, minLat: 48.7, maxLon: 8.9, maxLat: 49.35 },
+  // Gemessen, nicht gewählt: Bei 20 m Abstand zur Kante hat jeder Automat
+  // eine Fläche und die Zahl der Flächen ohne Automaten erreicht ihren Boden
+  // (`docs/staedte-karlsruhe.md`, 2.2). Derselbe Radius, mit dem der Datenbau
+  // die Automaten zuordnet, gilt für die Ortung.
+  zoneSnapMetres: 20,
+  attribution: {
+    /**
+     * Anders als Frankfurt und München nennt der Metadatensatz **keinen**
+     * wörtlichen Quellenvermerk. Was er nennt: die herausgebende Stelle
+     * (`organization.title` = „Stadt Karlsruhe"), den Urheber
+     * (`author` = „Digitale Mobilität") und das Portal. CC BY 4.0 § 3 a) 1) A)
+     * verlangt die Nennung des Urhebers „in any reasonable manner"; beides
+     * zusammen ist die belegbare Form.
+     */
+    source: 'Stadt Karlsruhe (Digitale Mobilität), transparenz.karlsruhe.de',
+    // Die Adresse, die der Datenbau wirklich abruft — nicht die Portalseite.
+    datasetUrl: 'https://mobil.trk.de/geoserver/TBA/ows',
+    licence: 'Creative Commons Namensnennung 4.0 International (CC BY 4.0)',
+    licenceUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    attributionRequired: true,
+  },
+  // Bewusst ohne `towedVehicles`: Aus dieser Sitzung liess sich keine
+  // Karlsruher Verwahrstelle aus einer amtlichen Seite belegen. Fehlt das
+  // Feld, zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
+}
+
+export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.

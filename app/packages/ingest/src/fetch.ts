@@ -22,7 +22,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { CITY_KEY, SOURCES, wfsUrl } from './sources.js'
+import { CITY_KEY, SOURCES, cityFiles, wfsUrl } from './sources.js'
 
 const RAW = join(process.env.RAW_DIR ?? join(process.cwd(), '../../.raw'), CITY_KEY)
 
@@ -95,7 +95,30 @@ for (const source of SOURCES) {
   }
 }
 
+// Dateien, die kein WFS sind — heute nur Kölns Automaten-CSV. Ohne die
+// JSON-Prüfung von oben: Eine CSV beginnt nicht mit `{`, und `JSON.parse`
+// würde sie verwerfen. Geprüft wird stattdessen, dass etwas Nennenswertes
+// kam: Ein leerer Rumpf oder eine HTML-Fehlerseite wäre sonst als Datei
+// gelandet, und der Datenbau hätte aus null Zeilen gebaut.
+const dateien = cityFiles(CITY_KEY)
+for (const datei of dateien) {
+  process.stdout.write(`${datei.key} (Datei) … `)
+  try {
+    const response = await fetch(datei.url, { signal: AbortSignal.timeout(180_000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.text()
+    if (body.length < 1000 || body.trimStart().startsWith('<')) {
+      throw new Error(`nur ${body.length} Bytes oder HTML statt einer Datei`)
+    }
+    writeFileSync(join(RAW, datei.file), body)
+    console.log(`${body.length} Bytes`)
+  } catch (error) {
+    failed += 1
+    console.log(`FAILED: ${(error as Error).message}`)
+  }
+}
+
 if (failed > 0) {
-  console.error(`\n${failed} of ${SOURCES.length} sources failed.`)
+  console.error(`\n${failed} of ${SOURCES.length + dateien.length} sources failed.`)
   process.exit(1)
 }
