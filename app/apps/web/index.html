@@ -10,7 +10,16 @@
       über die Tastatur. Das iPhone kennt die Angabe nicht; dort übernimmt
       `src/viewport.ts` dieselbe Aufgabe über `visualViewport`.
     -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <!--
+      `maximum-scale=1, user-scalable=no`: Die Seite selbst zoomt nicht, nur die
+      Karte — sie hat ihren eigenen Zoom. Bis zum 9. September liess sich auf
+      dem iPhone das Blatt, die Kopfzeile und die Chip-Zeile aufziehen, und
+      der Zustand blieb; die Bedienung war danach kaputt (Betreiber). Der
+      Preis ist bekannt: Wer grössere Schrift braucht, bekommt sie über die
+      Systemeinstellung, nicht über Aufziehen. In der abgelegten App gilt die
+      Angabe, in Safari hilft `touch-action` in styles.css nach.
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#101418" />
     <meta name="description" content="Parkzonen in Berlin, Hamburg, Frankfurt am Main, München, Köln, Düsseldorf und Karlsruhe: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen." />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />

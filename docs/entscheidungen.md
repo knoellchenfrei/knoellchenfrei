@@ -455,6 +455,25 @@ Standort dann vorn und vorausgewählt, mit Zone und Bezirk — bestätigen statt
 suchen. Aus dem Blatt heraus bleibt die angetippte Stelle vorn, denn dort hat
 jemand gezeigt.
 
+## Die Seite zoomt nicht, nur die Karte
+
+**Entschieden am 9. September abends**, auf den Befund des Betreibers: Auf
+dem iPhone liess sich das Blatt aufziehen, der Zustand blieb, und danach war
+die Bedienung kaputt; das Suchfeld zog beim Fokus hinein.
+
+Drei Massnahmen, weil keine allein überall greift: `maximum-scale=1,
+user-scalable=no` in der Viewport-Angabe (gilt in der abgelegten App),
+`touch-action: pan-x pan-y` auf `body` und ein abgefangenes `gesturestart`
+ausserhalb der Karte (für Safari, das die Viewport-Angabe ignoriert), und
+16 Pixel Schrift in jedem Eingabefeld auf grobem Zeiger — unter 16 zoomt iOS
+beim Fokus, das Meldeblatt hatte die Regel schon, das Suchfeld nicht.
+
+Der Preis ist ausgesprochen: Aufziehen als Hilfsmittel für kleine Schrift
+entfällt. Die Karte zoomt weiter, und die Schrift folgt der
+Systemeinstellung. Für eine Karten-App, deren Oberfläche aus Knöpfen und
+einem Blatt besteht, wiegt ein festhängendes Layout schwerer als das
+Aufziehen einer 13-Pixel-Zeile.
+
 ## Als App ablegen
 
 **Getrennte Symbole für `any` und `maskable`.** Vorher war ein einziges SVG als

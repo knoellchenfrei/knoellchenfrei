@@ -413,3 +413,28 @@ test.describe('die Safe-Area des iPhones', () => {
     expect(fab.y + fab.height).toBeLessThanOrEqual(toggle.y)
   })
 })
+
+test.describe('die Seite zoomt nicht, nur die Karte', () => {
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'Nur der grobe Zeiger zoomt beim Fokus.')
+  })
+
+  /**
+   * Der Betreiber, 9. September: „Ich kann in den Layer zoomen, der bleibt
+   * dann in dem Zustand" und „wenn ich das Suchfeld nutze, wird reingezoomt".
+   * Ersteres hält die Viewport-Angabe, letzteres die Schriftgrösse: iOS
+   * zoomt in jedes Feld unter 16 Pixeln hinein.
+   */
+  test('sperrt das Aufziehen der Seite und hält Eingabefelder bei 16 Pixeln', async ({ page }) => {
+    await ready(page)
+    const viewport = await page.locator('meta[name="viewport"]').getAttribute('content')
+    expect(viewport).toContain('maximum-scale=1')
+    expect(viewport).toContain('user-scalable=no')
+    const size = async (s: string) =>
+      Number.parseFloat(await page.locator(s).first().evaluate((el) => getComputedStyle(el).fontSize))
+    expect(await size('.search__input')).toBeGreaterThanOrEqual(16)
+    await page.getByRole('button', { name: 'Kontrolle melden' }).click()
+    expect(await size('.sheet__search')).toBeGreaterThanOrEqual(16)
+    expect(await page.locator('body').evaluate((el) => getComputedStyle(el).touchAction)).toBe('pan-x pan-y')
+  })
+})

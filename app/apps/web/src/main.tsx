@@ -85,6 +85,17 @@ if (TILES_BASE !== undefined) {
   installVectorBasemap(layers('protomaps', namedFlavor('dark'), { lang: 'de' }))
 }
 
+// Safari ignoriert `user-scalable=no` ausserhalb der abgelegten App; die
+// Pinch-Geste ausserhalb der Karte wird deshalb hier abgefangen. Auf der
+// Karte bleibt sie: MapLibre hört selbst auf sie.
+document.addEventListener(
+  'gesturestart',
+  (event) => {
+    if (!(event.target instanceof Element) || event.target.closest('.map') === null) event.preventDefault()
+  },
+  { passive: false },
+)
+
 const container = document.getElementById('root')
 if (container === null) throw new Error('#root missing')
 createRoot(container).render(

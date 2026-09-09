@@ -30,6 +30,10 @@
 * { box-sizing: border-box; }
 
 html, body, #root { height: 100%; margin: 0; }
+/* Kein Aufziehen der Seite, nur der Karte: MapLibre setzt auf seinem Behälter
+   `touch-action: none` und zoomt selbst; alles andere darf scrollen, aber
+   nicht skalieren. Dazu die Viewport-Angabe in index.html. */
+body { touch-action: pan-x pan-y; }
 
 body {
   background: var(--bg);
@@ -326,6 +330,12 @@ body {
   background: rgba(23, 28, 34, 0.92);
   color: var(--text);
   font: inherit; font-size: 13px;
+}
+/* 16 Pixel auf dem Handy: Unter 16 zoomt iOS beim Fokus in das Feld hinein,
+   und der Zoom blieb — „wenn ich das Suchfeld nutze, wird reingezoomt"
+   (Betreiber, 9. September). Das Meldeblatt hatte die Regel schon. */
+@media (any-pointer: coarse) {
+  .search__input, .sheet__search, textarea, select { font-size: 16px; }
 }
 .search__input::placeholder { color: var(--muted); }
 .search__results {
