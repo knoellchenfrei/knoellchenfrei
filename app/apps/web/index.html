@@ -2,7 +2,15 @@
 <html lang="de">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!--
+      `interactive-widget=resizes-content`: Seit Chrome 108 verkleinert die
+      Bildschirmtastatur auf Android sonst nur den sichtbaren Ausschnitt, nicht
+      die Seite. Der Fuß eines Blatts mit dem Absenden-Knopf lag damit hinter
+      der Tastatur. Mit dieser Angabe schrumpft die Seite, und der Fuß rückt
+      über die Tastatur. Das iPhone kennt die Angabe nicht; dort übernimmt
+      `src/viewport.ts` dieselbe Aufgabe über `visualViewport`.
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#101418" />
     <meta name="description" content="Parkzonen in Berlin, Hamburg, Frankfurt am Main und München: gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen." />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />

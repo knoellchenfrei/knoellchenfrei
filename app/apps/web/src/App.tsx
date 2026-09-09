@@ -28,12 +28,12 @@ import { baseStyle } from './map-style.js'
 import { tidyPoiDetail } from './format.js'
 import { isEmbedded, loadData } from './data-source.js'
 import { openFeedback } from './feedback.js'
+import { forgetStaleLayer, layerOf, syncLayer } from './layer-history.js'
 import { openLiveStats, type LiveStats as Stats } from './presence.js'
 import { openSightingBackend, type SightingBackend } from './sighting-backend.js'
 import { ParkingTimer } from './components/ParkingTimer.js'
 import { SearchBox } from './components/SearchBox.js'
 import { UpdateBar } from './components/UpdateBar.js'
-import { BetaBadge } from './components/BetaBadge.js'
 import { CitySuggestion } from './components/CitySuggestion.js'
 import { HeatPanel } from './components/HeatPanel.js'
 import { InstallBanner, useInstallState } from './components/InstallHint.js'
@@ -149,6 +149,8 @@ export function App() {
   const [installDismissed, setInstallDismissed] = useState(installHidden)
   const showInstall = visits >= 2 && !installDismissed
   const sidebarRef = useRef<HTMLElement>(null)
+  /** Der scrollende Teil des Blatts; der Griff darüber steht fest. */
+  const sidebarBodyRef = useRef<HTMLDivElement>(null)
   /** Set when a POI popup opened, so the zone handler ignores the same tap. */
   const suppressZoneClick = useRef(0)
   /** Set by a search pick: focus moves into the zone panel once it renders. */
@@ -240,6 +242,17 @@ export function App() {
     if (typeof window === 'undefined') return true
     return window.innerWidth > 720
   })
+  /**
+   * Die dritte Raststufe des Blatts auf dem Handy: ganz hoch, bis unter die
+   * Kopfzeile. Nur über eine Wischgeste am Griff erreichbar; ein Tipp wechselt
+   * weiter zwischen zu und halb, wie es Tests und Gewohnheit erwarten. Auf
+   * dem Desktop hat die Stufe keine Wirkung, das Blatt steht dort seitlich.
+   */
+  const [sheetFull, setSheetFull] = useState(false)
+  /** Wo die Wischgeste am Griff begann; null, solange keine läuft. */
+  const sheetDrag = useRef<{ y: number; moved: boolean } | null>(null)
+  /** Zeitstempel des letzten Fingers am Griff; das `click` gleich danach ist derselbe Tipp. */
+  const lastGripTouch = useRef(0)
   const [legendOpen, setLegendOpen] = useState(false)
   // Read by a polite live region: the map and the panel change visually, and a
   // screen reader would otherwise hear nothing when a zone is picked or a
@@ -275,6 +288,51 @@ export function App() {
     const observer = new ResizeObserver(apply)
     observer.observe(element)
     return () => observer.disconnect()
+  }, [])
+
+  // Dasselbe für das Blatt unten: Der Standort-Knopf schwebt darüber und
+  // muss mitwandern, wenn es auf- oder zuklappt. Zugeklappt ist es nur der
+  // Griff, halb offen gut die Hälfte des Schirms.
+  useEffect(() => {
+    const element = sidebarRef.current
+    if (element === null) return
+    const apply = (): void => {
+      document.documentElement.style.setProperty(
+        '--sheet-height',
+        `${Math.ceil(element.getBoundingClientRect().height)}px`
+      )
+    }
+    apply()
+    const observer = new ResizeObserver(apply)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  // Ein Verlaufseintrag, solange ein Blatt offen ist — damit „Zurück" das
+  // Blatt schließt und nicht die App. Warum ein Eintrag für alle drei und
+  // nicht einer je Blatt, steht in `layer-history.ts`.
+  const activeLayer = settingsOpen
+    ? 'einstellungen'
+    : feedbackOpen
+      ? 'feedback'
+      : reporting
+        ? 'melden'
+        : null
+  const previousLayer = useRef<string | null>(null)
+  useEffect(() => {
+    syncLayer(window.history, previousLayer.current, activeLayer)
+    previousLayer.current = activeLayer
+  }, [activeLayer])
+  useEffect(() => {
+    forgetStaleLayer(window.history)
+    const onPop = (event: PopStateEvent): void => {
+      if (layerOf(event.state) !== null) return
+      setSettingsOpen(false)
+      setFeedbackOpen(false)
+      setReporting(false)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
   }, [])
 
   useEffect(() => {
@@ -471,7 +529,9 @@ export function App() {
           // MapLibre shows the compact attribution expanded until the first
           // touch on the map. On a phone that put a 190px strip over the
           // topbar's button; collapsed, it is the usual "i" one tap away.
-          if (window.innerWidth <= 720) {
+          // Auch im Querformat: 844 Pixel breit, aber 390 hoch, und der
+          // ausgeklappte Streifen lag über dem Seitenpanel.
+          if (window.innerWidth <= 720 || window.innerHeight <= 520) {
             map
               .getContainer()
               .querySelector('.maplibregl-ctrl-attrib')
@@ -1282,13 +1342,92 @@ export function App() {
     [schalteEbene, visiblePoi]
   )
 
+  /**
+   * Das Blatt am Griff ziehen: nach oben eine Stufe höher, nach unten eine
+   * tiefer. Drei Stufen — zu, halb, ganz — wie bei jedem Karten-Sheet auf
+   * dem Handy. Nur der Griff nimmt die Geste an, nicht der Inhalt: Der
+   * scrollt, und eine Geste, die mal scrollt und mal zieht, ist die
+   * schlechteste von beiden.
+   *
+   * Ein Klick bleibt ein Klick. Erst ab 24 Pixel Weg zählt die Bewegung als
+   * Wischen; darunter kommt nach `pointerup` das gewohnte `click`, und der
+   * Griff schaltet wie bisher zwischen zu und halb um.
+   */
+  const SWIPE = 24
+  const onGripPointerDown = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === 'mouse') return
+    sheetDrag.current = { y: event.clientY, moved: false }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    // Während der Finger zieht, folgt das Blatt sofort; der Übergang gilt
+    // erst wieder beim Rasten, sonst hinkt es 220 ms hinterher.
+    if (sidebarRef.current !== null) sidebarRef.current.style.transition = 'none'
+  }, [])
+  const onGripPointerMove = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      const drag = sheetDrag.current
+      if (drag === null) return
+      const dy = event.clientY - drag.y
+      if (Math.abs(dy) > SWIPE) drag.moved = true
+      // Das offene Blatt folgt dem Finger nach unten; nach oben gibt es
+      // nichts zu zeigen, solange die nächste Stufe nicht gerastet ist.
+      if (panelOpen && dy > 0 && sidebarRef.current !== null) {
+        sidebarRef.current.style.transform = `translateY(${Math.round(dy)}px)`
+      }
+    },
+    [panelOpen]
+  )
+  const onGripPointerEnd = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      const drag = sheetDrag.current
+      if (drag === null) return
+      sheetDrag.current = null
+      if (sidebarRef.current !== null) {
+        sidebarRef.current.style.transform = ''
+        sidebarRef.current.style.transition = ''
+      }
+      const dy = event.clientY - drag.y
+      // Der Tipp wird hier entschieden, nicht im `click`: Nach einem echten
+      // Wischen schickt der Browser gar kein `click`, und ein Merker, der auf
+      // eines wartet, hätte den nächsten Tipp verschluckt — genau das ist im
+      // E2E-Test passiert. Also: Tipp hier ausführen und das `click`, das der
+      // Browser unmittelbar nach einem Tipp nachschickt, am Zeitstempel
+      // erkennen und verwerfen. Ein zweiter Tipp Sekunden später ist neu.
+      lastGripTouch.current = event.timeStamp
+      if (!drag.moved) {
+        setSheetFull(false)
+        setPanelOpen((value) => !value)
+        return
+      }
+      if (dy > 0) {
+        if (sheetFull) setSheetFull(false)
+        else setPanelOpen(false)
+      } else if (!panelOpen) {
+        setPanelOpen(true)
+      } else {
+        setSheetFull(true)
+      }
+    },
+    [panelOpen, sheetFull]
+  )
+  const onGripClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    if (event.timeStamp - lastGripTouch.current < 150) return
+    setSheetFull(false)
+    setPanelOpen((value) => !value)
+  }, [])
+
+  // Zugeklappt ist auch nicht mehr ganz hoch — sonst spränge das Blatt beim
+  // nächsten Öffnen gleich auf die volle Höhe.
+  useEffect(() => {
+    if (!panelOpen) setSheetFull(false)
+  }, [panelOpen])
+
   const activeLayerCount = visiblePoi.size + (showLowEmission ? 1 : 0) + (showHeat ? 1 : 0)
   // Selecting another zone, or starting a session, replaces what the panel is
   // about. Keeping the old scroll position showed the sightings list while the
   // user was looking for the zone they just picked — or hid the timer they had
   // just created above it.
   useEffect(() => {
-    sidebarRef.current?.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    sidebarBodyRef.current?.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
   }, [selected?.zone, session?.startedAt])
 
   useEffect(() => {
@@ -1318,9 +1457,16 @@ export function App() {
     [zones, now]
   )
 
+  // Solange Einstellungen oder Feedback offen sind, ist der Rest der Seite
+  // `inert`: kein Tab in die Karte dahinter, kein Vorlesen der Seitenleiste.
+  // `aria-modal` allein sagt das nur Screenreadern, nicht der Tastatur. Das
+  // Melde-Blatt bleibt ausgenommen — auf dem Desktop darf die Karte hinter
+  // ihm den Anker setzen.
+  const modal = settingsOpen || feedbackOpen
+
   return (
     <div className="app">
-      <main ref={containerRef} className="map" aria-label="Karte" />
+      <main ref={containerRef} className="map" aria-label="Karte" inert={modal || undefined} />
 
       <div className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
         {announcement}
@@ -1346,16 +1492,25 @@ export function App() {
         </div>
       )}
 
-      <header className="topbar" ref={topbarRef}>
+      <header className="topbar" ref={topbarRef} inert={modal || undefined}>
         {/*
           Bleibt im Dokument, verschwindet von der Karte: Eine Seite ohne
           Überschrift ist für Screenreader ein Rückschritt, und den Namen tragen
           Tab-Titel und Manifest ohnehin.
         */}
         <h1 className="visually-hidden">knoellchenfrei — {CITY.name}</h1>
-        <SearchBox zones={zones} onPick={focusZone} />
-        <div className="hud">
-          <BetaBadge />
+        {/*
+          Eine Zeile, nicht zwei. Bis zum 9. September stand unter der Suche
+          eine zweite Zeile mit Beta-Marke, Zahnrad, Statuszahl und
+          Standort-Knopf — 112 Pixel Kopfzeile auf einem 568 Pixel hohen
+          Schirm, und der wichtigste Knopf der App sass oben rechts, wo der
+          Daumen am schlechtesten hinkommt. Der Standort-Knopf schwebt jetzt
+          unten rechts über dem Blatt, die Zahlen stehen bei den anderen
+          Zahlen unter der Kopfzeile, und hier bleibt, was hierher gehört:
+          Suche und Einstellungen.
+        */}
+        <div className="topbar__row">
+          <SearchBox zones={zones} onPick={focusZone} />
           <button
             type="button"
             className="topbar__icon"
@@ -1364,19 +1519,6 @@ export function App() {
             title="Einstellungen"
           >
             <span aria-hidden="true">⚙</span>
-          </button>
-          <p className="topbar__stat">
-            {zones.length > 0 ? `${chargingNow} von ${zones.length} kassieren` : 'lädt …'}
-          </p>
-          <button
-            type="button"
-            className="topbar__icon topbar__icon--accent"
-            onClick={locate}
-            disabled={locating}
-            aria-label="Wo bin ich?"
-            title="Wo bin ich?"
-          >
-            <span aria-hidden="true">{locating ? '…' : '◎'}</span>
           </button>
         </div>
         <UpdateBar />
@@ -1387,8 +1529,13 @@ export function App() {
         separately and landed on top of each other on a phone, where the legend
         also sits under the topbar.
       */}
-      <div className="overlay">
-      <LiveStats stats={stats} active={activeSightings(sightings, { now }).length} shared={shared} />
+      <div className="overlay" inert={modal || undefined}>
+      <LiveStats
+        stats={stats}
+        active={activeSightings(sightings, { now }).length}
+        shared={shared}
+        charging={zones.length > 0 ? { now: chargingNow, total: zones.length } : null}
+      />
 
       <section className="legend" aria-label="Kartenebenen">
         <button
@@ -1459,6 +1606,22 @@ export function App() {
         </div>
       </section>
       </div>
+
+      {/*
+        Ein Schleier hinter den beiden Dialogen, die nichts von der Karte
+        brauchen. Auf dem Handy liegt er unsichtbar hinter dem bildfüllenden
+        Blatt; auf Tablet und Desktop sagt er, dass die Karte gerade nicht
+        dran ist, und ein Klick darauf schließt — wie bei jedem Dialog.
+      */}
+      {modal && (
+        <div
+          className="scrim"
+          onClick={() => {
+            setSettingsOpen(false)
+            setFeedbackOpen(false)
+          }}
+        />
+      )}
 
       {settingsOpen && meta !== null && (
         <SettingsSheet
@@ -1574,14 +1737,21 @@ export function App() {
       <aside
         id="sidebar"
         ref={sidebarRef}
-        className={`sidebar${panelOpen ? '' : ' sidebar--collapsed'}`}
+        className={`sidebar${panelOpen ? '' : ' sidebar--collapsed'}${
+          panelOpen && sheetFull ? ' sidebar--full' : ''
+        }`}
+        inert={modal || undefined}
       >
         <button
           type="button"
           className={`panel-toggle${
             session?.remindAt != null && now >= session.remindAt ? ' panel-toggle--alert' : ''
           }`}
-          onClick={() => setPanelOpen((value) => !value)}
+          onClick={onGripClick}
+          onPointerDown={onGripPointerDown}
+          onPointerMove={onGripPointerMove}
+          onPointerUp={onGripPointerEnd}
+          onPointerCancel={onGripPointerEnd}
           aria-expanded={panelOpen}
           aria-controls="sidebar-body"
         >
@@ -1605,7 +1775,7 @@ export function App() {
           </span>
         </button>
 
-        <div id="sidebar-body" className="sidebar__body" hidden={!panelOpen}>
+        <div id="sidebar-body" ref={sidebarBodyRef} className="sidebar__body" hidden={!panelOpen}>
         {session !== null && (
           <ParkingTimer
             session={session}
@@ -1771,6 +1941,25 @@ export function App() {
         )}
         </div>
       </aside>
+
+      {/*
+        Unten rechts, über dem Blatt: Dort ist der Daumen, und dort hat jede
+        Karten-App ihren Standort-Knopf. Nach dem Blatt im Baum, damit er in
+        der Tab-Reihenfolge hinter dessen Inhalt kommt und das volle Blatt
+        ihn per CSS verdecken kann — dann gibt es keine Karte, auf die er
+        zeigen könnte.
+      */}
+      <button
+        type="button"
+        className="locate"
+        onClick={locate}
+        disabled={locating}
+        aria-label="Wo bin ich?"
+        title="Wo bin ich?"
+        inert={modal || undefined}
+      >
+        <span aria-hidden="true">{locating ? '…' : '◎'}</span>
+      </button>
     </div>
   )
 }
