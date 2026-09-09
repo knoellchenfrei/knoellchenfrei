@@ -1085,6 +1085,36 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
+- [ ] **Die Oberfläche selbst lässt sich nicht als Einheit prüfen — und das
+      ist eine Entscheidung, keine Faulheit.** Stand 9. September deckt
+      `apps/web` **26,3 %** der Anweisungen ab, nach 13,8 % am Morgen. Was
+      fehlt, ist fast vollständig React: `App.tsx` (1.993 Zeilen), die zwölf
+      Komponenten und `useZoneStatus.ts`.
+
+      Der Grund steht in `apps/web/vitest.config.ts`: `environment: 'node'`.
+      Ohne DOM lässt sich keine Komponente rendern. Was es bräuchte, ist eine
+      Umgebung (`jsdom` oder `happy-dom`) und eine Rendering-Bibliothek
+      (`@testing-library/react`) — **zwei bis drei neue
+      Entwicklungsabhängigkeiten**, also abzusprechen.
+
+      Was dafür spricht: Die Komponenten tragen Logik, die heute nur die
+      E2E-Suite sieht — und die läuft drei Minuten, während ein Unit-Test
+      Millisekunden braucht. Der Klick-Handler auf eine Zonenfläche, die
+      Auswahl im Meldedialog, die Wortwahl in `zone-label.ts`: alles Stellen,
+      an denen dieses Projekt schon Fehler hatte.
+
+      Was dagegen spricht: 174 E2E-Tests prüfen die Oberfläche bereits gegen
+      einen echten Browser und einen Produktions-Build. Ein zweiter,
+      schwächerer Weg dorthin kostet Pflege und findet vielleicht nichts, was
+      der erste nicht schon fände. Und `jsdom` ist kein Browser: Wer ihm
+      glaubt, hat schon einmal einen Fehler übersehen, den erst das Gerät
+      zeigte.
+
+      **Mein Vorschlag ist: nicht.** Die Lücke ist benannt und gemessen, der
+      teurere Weg ist da. Wenn doch, dann mit einer Regel, welche Art Logik in
+      den Unit-Test gehört und welche in E2E — sonst entstehen zwei Suiten,
+      die dasselbe prüfen und beide gepflegt werden wollen.
+
 - [ ] **Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
       aktuell ist.** Der Deploy holt die Daten je Stadt neu und fällt bei einem
       Fehlschlag auf den eingecheckten Abzug zurück — richtig so, ein
