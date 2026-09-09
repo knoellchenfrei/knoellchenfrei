@@ -731,7 +731,7 @@ describe('der Deckel je Bündel', () => {
     const response = await sende([
       { name: 'app.open', value: '', n: 2 },
       { name: 'zone.source', value: 'karte', n: 4 },
-      { name: 'layer.on', value: 'heat', n: 1 },
+      { name: 'layer.on', value: 'umweltzone', n: 1 },
     ])
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ written: 3 })

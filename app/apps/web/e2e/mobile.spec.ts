@@ -154,12 +154,15 @@ test.describe('das Blatt auf dem Handy', () => {
     await expect(body).toBeVisible()
   })
 
-  test('lässt die Kopfzeile bei einer Zeile', async ({ page }) => {
+  test('lässt die Kopfzeile bei Suche und Meldeknopf', async ({ page }) => {
     await ready(page)
     const topbar = await page.locator('.topbar').boundingBox()
-    // Suchfeld plus Ränder; die zweite Zeile mit Marke, Zahl und Standort ist
-    // weg. 112 Pixel waren es vorher.
-    expect(topbar!.height).toBeLessThan(80)
+    // Suchfeld plus der rote Meldeknopf darunter (seit dem 9. September
+    // abends, auf Wunsch des Betreibers) — und sonst nichts: Marke, Zahl und
+    // Standort stehen nicht mehr hier, die waren die vierzeilige Kopfzeile
+    // von vor dem Audit. Zwei Zeilen sind 116 Pixel.
+    expect(topbar!.height).toBeLessThan(130)
+    await expect(page.locator('.topbar__row')).toHaveCount(2)
     await expect(page.locator('.live')).toContainText('kassieren')
   })
 })
@@ -216,6 +219,10 @@ test.describe('Folgepunkte aus dem Audit', () => {
    * und auf dem Desktop, wo die Zeile wickelt, gibt es ihn nie.
    */
   test('zeigt am rechten Rand der Chip-Zeile, dass dort mehr liegt', async ({ page }, testInfo) => {
+    // Auf 320 Pixeln: Seit die Kontrolldichte keinen Chip mehr hat, passen
+    // die fünf Berliner Chips auf ein 412 Pixel breites Handy in die Zeile,
+    // und nichts läuft über. Das schmalste Gerät hat den Überlauf sicher.
+    if (testInfo.project.name === 'phone') await page.setViewportSize({ width: 320, height: 568 })
     await ready(page)
     const legend = page.locator('.legend')
     // Zu: nur der eine Chip, nichts läuft über, kein Verlauf.
@@ -270,7 +277,7 @@ test.describe('Folgepunkte aus dem Audit', () => {
    * er ein „i" von 36 Pixeln. Auf dem Desktop bleibt er ausgeklappt, bis die
    * Karte berührt wird — so wie MapLibre es vorsieht.
    */
-  test('klappt die Quellenangabe auf dem Tablet ein, auf dem Desktop nicht', async ({ page }, testInfo) => {
+  test('klappt die Quellenangabe überall ein, auch auf dem Desktop', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'desktop', 'Die Breite wird hier selbst gesetzt.')
     await page.setViewportSize({ width: 768, height: 1024 })
     await ready(page)
@@ -282,9 +289,11 @@ test.describe('Folgepunkte aus dem Audit', () => {
     const info = await attrib.boundingBox()
     expect(info!.x).toBeGreaterThanOrEqual(chips!.x + chips!.width - 1)
 
+    // Seit dem 9. September abends auch auf dem Desktop zu: Der Betreiber
+    // will das „i" nie ausgefahren sehen; wer die Quellen will, tippt.
     await page.setViewportSize({ width: 1280, height: 860 })
     await ready(page)
-    await expect(page.locator('.maplibregl-ctrl-attrib')).toHaveClass(/maplibregl-compact-show/)
+    await expect(page.locator('.maplibregl-ctrl-attrib')).not.toHaveClass(/maplibregl-compact-show/)
   })
 
   /**
@@ -351,23 +360,19 @@ test.describe('der Meldeknopf auf dem Handy', () => {
   })
 
   /**
-   * Der Knopf teilt sich die untere Kante mit dem „i" der Quellenangabe links
-   * und dem Standort rechts. Auf 320 Pixeln bleiben 26 Pixel zwischen „i"
-   * und Pille — gemessen, nicht geschätzt. Und offen schiebt das Blatt beide
-   * Knöpfe mit hoch, statt sie zu verdecken.
+   * Oben rechts unter dem Zahnrad, seit dem 9. September abends: Der Knopf
+   * gehört zur Kopfzeile, die ihn mitmisst, und die Chips stehen darunter —
+   * auch auf 320 Pixeln, wo die erste Chip-Zeile fast die Breite füllt.
    */
-  test('steht frei zwischen Quellenangabe und Standort, auch über dem offenen Blatt', async ({ page }) => {
+  test('steht unter dem Zahnrad und schiebt die Chips unter sich', async ({ page }) => {
     await ready(page)
-    const fab = page.locator('.report-fab')
-    const info = await page.locator('.maplibregl-ctrl-attrib-button').boundingBox()
-    let box = await fab.boundingBox()
-    expect(box!.x).toBeGreaterThanOrEqual(info!.x + info!.width)
-
-    await openPanel(page)
-    await page.waitForTimeout(400)
-    box = await fab.boundingBox()
-    const toggle = await page.locator('.panel-toggle').boundingBox()
-    expect(box!.y + box!.height).toBeLessThanOrEqual(toggle!.y + 1)
+    const fab = (await page.locator('.report-fab').boundingBox())!
+    const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
+    const overlay = (await page.locator('.overlay').boundingBox())!
+    const size = page.viewportSize()!
+    expect(fab.y).toBeGreaterThanOrEqual(gear.y + gear.height)
+    expect(fab.x + fab.width).toBeLessThanOrEqual(size.width)
+    expect(overlay.y).toBeGreaterThanOrEqual(fab.y + fab.height)
   })
 })
 

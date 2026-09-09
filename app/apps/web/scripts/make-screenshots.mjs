@@ -80,6 +80,18 @@ try {
     // Die Herkunftszeile stammt aus meta.json und erscheint erst, wenn die
     // Daten geparst sind — dasselbe Signal, auf das die End-to-End-Tests warten.
     await page.waitForSelector('.provenance', { state: 'attached', timeout: 45_000 })
+  // Und auf die Karte selbst: Die Zonen kommen erst, wenn MapLibre bereit
+  // ist, und das kann hinter dem Blatt zurückliegen — am 9. September zeigte
+  // ein Übersichtsbild deshalb eine Karte ohne eine einzige Zone. Der Marker
+  // dafür ist die zugeklappte Quellenangabe, die derselbe Aufruf setzt.
+  await page.waitForFunction(
+    () => {
+      const attrib = document.querySelector('.maplibregl-ctrl-attrib')
+      return attrib !== null && !attrib.classList.contains('maplibregl-compact-show')
+    },
+    null,
+    { timeout: 45_000 },
+  )
     // Der Standort-Vordialog liegt über der Karte und gehört nicht ins Bild.
     const later = page.locator('.prompt').getByRole('button', { name: 'Später' })
     if ((await later.count()) > 0) await later.click()

@@ -254,12 +254,11 @@ test.describe('Ebenen und Sonderziele', () => {
     await expect(charging).toHaveClass(/chip--on/)
     // The count badge on the collapsed toggle reflects active layers.
     //
-    // **Zwei**, nicht eine: Die Kontrolldichte ist seit dem 7. September von
-    // Anfang an eingeschaltet. Sie ist die einzige Ebene, die etwas zeigt, das
-    // es nirgends sonst gibt — und der Streifen ist auf dem Handy zugeklappt,
-    // wer sie erst suchen muss, findet sie nicht.
+    // Eine, seit dem 9. September: Die Kontrolldichte zählt nicht mehr mit,
+    // weil sie keinen Schalter mehr hat — sie liegt, sobald sie ein Muster
+    // hat, und ist keine Ebene, die jemand wählt.
     await page.locator('.chip--toggle').click()
-    await expect(page.locator('.chip__count')).toHaveText('2')
+    await expect(page.locator('.chip__count')).toHaveText('1')
 
     await page.locator('.chip--toggle').click()
     await charging.click()
@@ -270,8 +269,9 @@ test.describe('Ebenen und Sonderziele', () => {
     await ready(page)
     await page.locator('.chip--toggle').click()
     const chips = page.locator('#legend-layers .chip')
+    // Ohne Kontrolldichte, seit dem 9. September: Sie liegt immer, sobald sie
+    // ein Muster hat, und ist nichts, was jemand abschaltet.
     await expect(chips).toHaveText([
-      'Kontrolldichte',
       'Umweltzone',
       'Ladepunkte',
       'Carsharing',
@@ -428,15 +428,16 @@ test.describe('der Meldeknopf auf der Karte', () => {
     ).toHaveCount(1)
   })
 
-  test('liegt neben dem Standort-Knopf und nicht auf ihm', async ({ page }) => {
+  // Seit dem 9. September abends oben rechts unter den Einstellungen, rot —
+  // und die Chip-Zeile rückt darunter, weil die Kopfzeile ihn mitmisst.
+  test('steht oben rechts unter den Einstellungen, die Chips darunter', async ({ page }) => {
     await ready(page)
-    const fab = await page.locator('.report-fab').boundingBox()
-    const locate = await page.locator('.locate').boundingBox()
-    const size = page.viewportSize()!
-    expect(fab!.x + fab!.width).toBeLessThanOrEqual(locate!.x)
-    expect(Math.abs(fab!.y - locate!.y)).toBeLessThan(2)
-    expect(fab!.x).toBeGreaterThan(0)
-    expect(fab!.y + fab!.height).toBeLessThanOrEqual(size.height)
+    const fab = (await page.locator('.report-fab').boundingBox())!
+    const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
+    const overlay = (await page.locator('.overlay').boundingBox())!
+    expect(fab.y).toBeGreaterThanOrEqual(gear.y + gear.height)
+    expect(Math.abs(fab.x + fab.width - (gear.x + gear.width))).toBeLessThan(2)
+    expect(overlay.y).toBeGreaterThanOrEqual(fab.y + fab.height)
   })
 })
 
@@ -698,28 +699,27 @@ test.describe('Kontrolldichte', () => {
     await expect(page.locator(heatPanel)).toContainText('Noch keine Auswertung')
     await expect(page.locator(heatPanel)).toContainText(/Noch \d+ Meldungen bis sich ein Muster/)
     await expect(page.locator(`${heatPanel} .demo-note`)).toHaveCount(0)
-    await expect(page.locator(`${heatPanel} header button`)).toBeDisabled()
+    await expect(page.locator(`${heatPanel} header button`)).toHaveCount(0)
   })
 
-  test('ist von Anfang an eingeschaltet und lässt sich abschalten', async ({ page }) => {
+  /**
+   * Kein Schalter mehr, seit dem 9. September: Die Ebene liegt, sobald sie
+   * ein Muster hat (Betreiber: „muss man nicht ausschalten können"). Weder im
+   * Blatt noch in der Chip-Zeile gibt es dafür einen Knopf.
+   */
+  test('liegt von Anfang an auf der Karte und hat keinen Schalter', async ({ page }) => {
     await mitStrichen(page)
     await ready(page)
     await openPanel(page)
-    const visible = async (): Promise<string> =>
-      page.evaluate(() => {
-        const map = (window as unknown as { __map?: { getLayoutProperty: (id: string, key: string) => string } }).__map
-        return map?.getLayoutProperty('heat-density', 'visibility') ?? 'missing'
-      })
-
-    // Der Knopf steht auf „Ausblenden", weil die Ebene bereits liegt.
-    await expect(page.locator(`${heatPanel} button`)).toHaveText('Ausblenden')
-    await page.locator(`${heatPanel} button`).click()
-    await expect(page.locator(`${heatPanel} button`)).toHaveText('Auf der Karte')
-    await page.locator(`${heatPanel} button`).click()
-    await expect(page.locator(`${heatPanel} button`)).toHaveText('Ausblenden')
-    // The evaluate above needs the map on window; where it is not exposed the
-    // button state is still the contract the user sees.
-    expect(['visible', 'none', 'missing']).toContain(await visible())
+    await expect(page.locator(heatPanel)).toContainText('Meldungen ·')
+    await expect(page.locator(`${heatPanel} header button`)).toHaveCount(0)
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    await expect(page.getByRole('button', { name: 'Kontrolldichte' })).toHaveCount(0)
+    const visible = await page.evaluate(() => {
+      const map = (window as unknown as { __map?: { getLayoutProperty: (id: string, key: string) => string } }).__map
+      return map?.getLayoutProperty('heat-density', 'visibility') ?? 'missing'
+    })
+    expect(['visible', 'missing']).toContain(visible)
   })
 
   test('nennt die Zahlen, die die Farbe nicht tragen kann', async ({ page }) => {
@@ -755,12 +755,6 @@ test.describe('Kontrolldichte', () => {
     // One line, always present — a coloured bar disappeared at an hour with no
     // reports, which is exactly when the marker matters.
     await expect(panel.locator('.chart__now')).toHaveCount(1)
-  })
-
-  test('bietet den Ebenen-Chip neben den anderen an', async ({ page }) => {
-    await ready(page)
-    await page.getByRole('button', { name: /Ebenen/ }).click()
-    await expect(page.getByRole('button', { name: 'Kontrolldichte' })).toBeVisible()
   })
 })
 
@@ -917,11 +911,10 @@ test.describe('die weiteren Städte', () => {
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
     await dismissPrompt(page)
 
-    await page.locator('.chip--toggle').click()
-    const chips = page.locator('#legend-layers .chip')
-    // Die Kontrolldichte bleibt: Sie hängt an Meldungen, nicht an städtischen
-    // Daten, und die kann es in jeder Stadt geben.
-    await expect(chips).toHaveText(['Kontrolldichte'])
+    // Hamburg hat weder Umweltzone noch POI-Ebenen, und die Kontrolldichte
+    // hat keinen Schalter mehr — also gibt es hier gar keinen Ebenen-Knopf,
+    // statt eines, der eine leere Liste aufklappt.
+    await expect(page.locator('.chip--toggle')).toHaveCount(0)
   })
 
   test('nennt die Hamburger Lizenz als Bedingung, nicht als Fußnote', async ({ page }) => {

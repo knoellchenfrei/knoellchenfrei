@@ -80,7 +80,9 @@ export const EVENTS = {
   /** Die Parkuhr wurde gestartet. */
   'park.start': { hour: 'zeit', values: [''] },
   /** Eine Ebene wurde eingeschaltet. */
-  'layer.on': { hour: 'zeit', values: ['heat', 'umweltzone', 'charging', 'carsharing', 'park_and_ride', 'accessible'] },
+  // `heat` stand hier bis zum 9. September; die Kontrolldichte hat seitdem
+  // keinen Schalter mehr und wird nicht gezählt.
+  'layer.on': { hour: 'zeit', values: ['umweltzone', 'charging', 'carsharing', 'park_and_ride', 'accessible'] },
   /** Wechsel in eine andere Stadt. Die Zielstadt ist ein Ort, also ohne Stunde. */
   'city.switch': { hour: 'ort', values: 'city' },
   /** Der Vorschlag „du bist in München" — angenommen oder abgelehnt. */

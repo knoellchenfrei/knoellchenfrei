@@ -188,21 +188,17 @@ try {
   const offen = Number(/(\d+) gerade offen/.exec(live)?.[1] ?? 0)
   erwarte(offen >= 3, `mindestens drei Geräte gerade offen (${offen})`)
 
-  // Kontrolldichte: Grafiken vorhanden, Schalter und Chip synchron.
+  // Kontrolldichte: Grafiken vorhanden, sobald ein Muster da ist. Einen
+  // Schalter gibt es seit dem 9. September nicht mehr.
   const heat = B.page.locator('section[aria-label="Kontrolldichte"]')
-  log('Kontrolldichte:', await heat.locator('.panel__title').innerText())
-  const knopf = heat.locator('header button')
-  if (await knopf.isEnabled()) {
+  const titel = await heat.locator('.panel__title').innerText()
+  log('Kontrolldichte:', titel)
+  if (titel.includes('Meldungen')) {
     erwarte((await heat.locator('.chart--days .chart__bar').count()) === 28, '28 Tagesbalken')
-    await knopf.click()
-    await B.page.waitForTimeout(500)
-    const gesetzt = await knopf.getAttribute('aria-pressed')
-    await B.page.getByRole('button', { name: /Ebenen/ }).click()
-    const chip = await B.page.locator('.legend .chip', { hasText: 'Kontrolldichte' }).getAttribute('aria-pressed')
-    erwarte(gesetzt === chip, `Kartenschalter (${gesetzt}) und Chip (${chip}) stimmen überein`)
   } else {
     log('  --   noch kein Muster (unter der Schwelle), Grafiken nicht prüfbar')
   }
+  erwarte((await heat.locator('header button').count()) === 0, 'kein Schalter an der Kontrolldichte')
 
   for (const u of [A, B, C]) await u.context.close()
 

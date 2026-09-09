@@ -197,11 +197,11 @@ test.describe('Kurzbefehle vom App-Symbol', () => {
     await page.goto('/?start=kontrollen')
     await ready(page)
     if (!(await page.locator('.sidebar__body').isVisible())) await page.locator('.panel-toggle').click()
-    // Der Knopf heißt „Ausblenden", solange die Ebene liegt — das ist der
-    // einzige sichtbare Beleg dafür, dass die Verknüpfung mehr getan hat als
-    // die Seite zu öffnen.
+    // Seit dem 9. September gibt es keinen Schalter mehr, den die Verknüpfung
+    // umlegen könnte: Sie öffnet das Blatt, und die Auswertung steht darin.
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
-    await expect(panel.getByRole('button', { name: 'Ausblenden' })).toBeVisible({ timeout: 15_000 })
+    await expect(panel).toBeVisible({ timeout: 15_000 })
+    await expect(panel).toContainText('Meldungen ·')
   })
 
   test('ein unbekannter Wert tut schlicht nichts', async ({ page }) => {

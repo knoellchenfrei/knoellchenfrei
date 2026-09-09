@@ -14,7 +14,6 @@ import {
   quietDayNote,
   markFor,
   withinCitySession,
-  MIN_MARKS_FOR_PATTERN,
   type City,
   type EventLayerValue,
   type HeatMark,
@@ -225,7 +224,6 @@ export function App() {
    * der Schalter steht dann auf „an" über einer Fläche, die leer bleibt, und
    * die Tafel daneben sagt, warum.
    */
-  const [showHeat, setShowHeat] = useState(true)
   /**
    * Welche Ebenen die geladene Stadt überhaupt hat.
    *
@@ -244,6 +242,9 @@ export function App() {
     poi: ReadonlySet<PoiKind>
     umweltzone: boolean
   } | null>(null)
+  /** Ob es Ebenen zu wählen gibt — sonst gibt es weder Chip-Zeile noch Ebenen-Knopf. */
+  const legendAvailable =
+    ebenenMitDaten?.umweltzone === true || (ebenenMitDaten?.poi.size ?? 0) > 0
   const [stats, setStats] = useState<Stats>({ online: null, today: null })
   const [reporting, setReporting] = useState(false)
   /** Vom Kartenknopf geöffnet: Das Blatt stellt den Standort vor die angetippte Stelle. */
@@ -405,7 +406,12 @@ export function App() {
       observer.disconnect()
       element.removeEventListener('scroll', apply)
     }
-  }, [])
+    // Nicht `[]`: Die Chip-Zeile wird seit dem 9. September nur gerendert,
+    // wenn es Ebenen zu wählen gibt — und das weiss die App erst nach dem
+    // Laden. Ein Effekt ohne Abhängigkeit lief einmal vor dem Laden ins Leere,
+    // und der Verlauf am rechten Rand blieb für immer aus. Gefunden hat es
+    // der E2E-Test, der ihn auf 320 Pixeln verlangt.
+  }, [legendAvailable])
 
   // Ein Verlaufseintrag, solange ein Blatt offen ist — damit „Zurück" das
   // Blatt schließt und nicht die App. Warum ein Eintrag für alle drei und
@@ -625,11 +631,33 @@ export function App() {
           // Streifen über dem untersten Chip (Mobile-Audit, „Verbleibende
           // Probleme"). Unter 960 Pixeln Breite ist neben der Leiste nie
           // Platz für alle drei; das „i" bleibt einen Tipp entfernt.
-          if (window.innerWidth < 960 || window.innerHeight <= 520) {
-            map
-              .getContainer()
-              .querySelector('.maplibregl-ctrl-attrib')
-              ?.classList.remove('maplibregl-compact-show')
+          // Seit dem 9. September überall, auch auf dem Desktop: Der Betreiber
+          // will das „i" immer zugeklappt; wer die Quellen lesen will, tippt.
+          //
+          // Und nicht nur einmal: MapLibre klappt die Pille **wieder auf**,
+          // sobald sich der Quellentext ändert — und das tut er, wenn die
+          // Vektorkacheln ihre Quelle melden, also kurz nach dem Aufbau. Ein
+          // einmaliges Entfernen der Klasse hielt deshalb nur mit den
+          // Rasterkacheln; mit dem eigenen Archiv war das „i" beim Betreiber
+          // „initial ausgefahren". Ein MutationObserver hält es zu, ausser der
+          // Tipp kam vom Menschen: Dessen Klick auf das „i" darf öffnen.
+          const attrib = map.getContainer().querySelector('.maplibregl-ctrl-attrib')
+          if (attrib !== null) {
+            // Nach der ersten Berührung durch den Menschen greift nichts mehr
+            // ein: Ab da gehört die Pille ihm. Capture-Phase, damit der
+            // Merker steht, bevor MapLibre auf denselben Tipp reagiert.
+            let vomMenschen = false
+            for (const ereignis of ['pointerdown', 'keydown', 'click']) {
+              attrib.addEventListener(ereignis, () => { vomMenschen = true }, { capture: true })
+            }
+            new MutationObserver(() => {
+              // Nur entfernen, wenn sie da ist — sonst löst das Setzen des
+              // Attributs die nächste Beobachtung aus, ohne Ende.
+              if (!vomMenschen && attrib.classList.contains('maplibregl-compact-show')) {
+                attrib.classList.remove('maplibregl-compact-show')
+              }
+            }).observe(attrib, { attributes: true, attributeFilter: ['class'] })
+            attrib.classList.remove('maplibregl-compact-show')
           }
 
           // Drawn first so it sits beneath the zones.
@@ -1048,9 +1076,9 @@ export function App() {
     map.setLayoutProperty(
       'heat-density',
       'visibility',
-      showHeat && heat.hasPattern ? 'visible' : 'none',
+      heat.hasPattern ? 'visible' : 'none',
     )
-  }, [ready, showHeat, heat.hasPattern])
+  }, [ready, heat.hasPattern])
 
   useEffect(() => {
     const map = mapRef.current
@@ -1292,7 +1320,8 @@ export function App() {
 
     if (start === 'melden') setReporting(true)
     else if (start === 'standort') locate()
-    else if (start === 'kontrollen') setShowHeat(true)
+    // `kontrollen`: nichts zu schalten — die Kontrolldichte liegt immer, sobald
+    // sie ein Muster hat; die Verknüpfung öffnet nur das Blatt.
     if (start === 'melden' || start === 'kontrollen') track('app.open', start)
   }, [locate])
 
@@ -1650,7 +1679,7 @@ export function App() {
     if (!panelOpen) setSheetFull(false)
   }, [panelOpen])
 
-  const activeLayerCount = visiblePoi.size + (showLowEmission ? 1 : 0) + (showHeat ? 1 : 0)
+  const activeLayerCount = visiblePoi.size + (showLowEmission ? 1 : 0)
   // Selecting another zone, or starting a session, replaces what the panel is
   // about. Keeping the old scroll position showed the sightings list while the
   // user was looking for the zone they just picked — or hid the timer they had
@@ -1750,6 +1779,29 @@ export function App() {
             <span aria-hidden="true">⚙</span>
           </button>
         </div>
+        {/*
+          Der Meldeknopf: oben rechts unter den Einstellungen, rot, seit dem
+          9. September abends auf Wunsch des Betreibers. Er stand einen Tag
+          lang unten neben dem Standort-Knopf, wo er sich die Kante mit dem
+          Griff und der Quellenangabe teilte. In der Kopfzeile wächst deren
+          gemessene Höhe mit, und die Chip-Zeile rückt von selbst darunter.
+          Ohne angetippten Punkt bietet das Blatt Standort, Kartenmitte und
+          die nächsten Zonen zur Auswahl.
+        */}
+        <div className="topbar__row topbar__row--actions">
+          <button
+            type="button"
+            className="report-fab"
+            onClick={() => {
+              setPanelOpen(false)
+              setReportViaFab(true)
+              positionForReport()
+              setReporting(true)
+            }}
+          >
+            Kontrolle melden
+          </button>
+        </div>
         <UpdateBar />
       </header>
 
@@ -1766,6 +1818,11 @@ export function App() {
         charging={zones.length > 0 ? { now: chargingNow, total: zones.length } : null}
       />
 
+      {/*
+        Nur, wenn es etwas zu wählen gibt: Ohne Umweltzone und ohne POI-Ebenen
+        (Hamburg) stünde hier ein Knopf, der eine leere Liste aufklappt.
+      */}
+      {legendAvailable && (
       <section
         ref={legendRef}
         className={`legend${legendMore ? ' legend--more' : ''}`}
@@ -1789,23 +1846,11 @@ export function App() {
         <div id="legend-layers" className="legend__layers">
         {legendOpen && (
         <>
-        <button
-          type="button"
-          className={`chip${showHeat ? ' chip--on' : ''}`}
-          onClick={() => {
-            schalteEbene('heat', showHeat)
-            setShowHeat((value) => !value)
-          }}
-          aria-pressed={showHeat}
-          title={
-            heat.hasPattern
-              ? `${heat.totalMarks} Meldungen aus ${heat.daysCovered} Tagen`
-              : `Noch zu wenige Meldungen (${heat.totalMarks} von ${MIN_MARKS_FOR_PATTERN})`
-          }
-        >
-          <span className="chip__dot chip__dot--heat" aria-hidden="true" />
-          Kontrolldichte
-        </button>
+        {/*
+          Kein Chip für die Kontrolldichte, seit dem 9. September: Sie liegt,
+          sobald sie ein Muster hat, und ist nichts, was jemand abschaltet
+          (Betreiber). Die Ebenen hier sind die, die man wählt.
+        */}
         {ebenenMitDaten?.umweltzone === true && (
         <button
           type="button"
@@ -1838,6 +1883,7 @@ export function App() {
         )}
         </div>
       </section>
+      )}
       </div>
 
       {/*
@@ -2073,36 +2119,25 @@ export function App() {
             onPark={park}
             parked={session !== null}
           />
-        ) : (
+        ) : anchor !== null ? (
+          // Nur noch der Fall „angetippt, aber ausserhalb". Der Abschnitt „Wo
+          // stehst du?" mit der Farberklärung ist am 9. September auf Wunsch
+          // des Betreibers entfallen: Ohne Tipp steht im Blatt jetzt gleich
+          // das, was jemand tun kann — melden, Sichtungen, Kontrolldichte.
           <section className="panel">
-            <h2 className="panel__title">
-              {anchor === null ? 'Wo stehst du?' : 'Außerhalb der Parkzonen'}
-            </h2>
+            <h2 className="panel__title">Außerhalb der Parkzonen</h2>
             <p className="hours">
-              {anchor === null
-                ? // Der Farbname steht hier und muss mit der Karte mitgehen.
-                  // Beim Wechsel von Orange auf Messing am 8. September ist er
-                  // zunächst stehengeblieben — die App hätte eine Farbe erklärt,
-                  // die es nicht mehr gibt. Aufgefallen erst auf dem neu
-                  // aufgenommenen Bildschirmfoto, nicht im Code.
-                  //
-                  // „Goldbraun" und nicht „Messing": Messing ist ein Wort für
-                  // die Werkstatt. Über der dunklen Karte liegt die Füllung bei
-                  // 26 % Deckkraft und ergibt zusammengesetzt `#704912` — das
-                  // nennt man goldbraun. Türkis stimmt weiterhin: Die freie
-                  // Füllung ist unverändert `#22d3ee`, nur sichtbarer.
-                  'Tippe auf die Karte, wo du stehst. Goldbraun bedeutet: diese Zone kassiert gerade, Türkis heißt gebührenfrei.'
-                : 'Für diesen Ort führt die Quelle keine Parkzone. Das heißt nicht sicher, dass Parken frei ist: Es gibt Straßen mit Gebühr, die in keiner Zone liegen. Was gilt, steht am Automaten oder am Schild.'}
+              Für diesen Ort führt die Quelle keine Parkzone. Das heißt nicht sicher, dass Parken frei
+              ist: Es gibt Straßen mit Gebühr, die in keiner Zone liegen. Was gilt, steht am Automaten
+              oder am Schild.
             </p>
             {/* Parking outside a zone is the common case in most of Berlin, so
                 the button belongs here too, not only in the zone panel. */}
-            {anchor !== null && (
-              <button type="button" className="button button--primary button--block" onClick={park}>
-                {session === null ? 'Hier geparkt' : 'Parkplatz hierher verschieben'}
-              </button>
-            )}
+            <button type="button" className="button button--primary button--block" onClick={park}>
+              {session === null ? 'Hier geparkt' : 'Parkplatz hierher verschieben'}
+            </button>
           </section>
-        )}
+        ) : null}
 
         <SightingPanel
           sightings={sightings}
@@ -2128,11 +2163,6 @@ export function App() {
           activity={activity}
           weekday={berlinNow.weekday}
           hour={Math.floor(berlinNow.minuteOfDay / 60)}
-          visible={showHeat}
-          onToggle={() => {
-            schalteEbene('heat', showHeat)
-            setShowHeat((value) => !value)
-          }}
           shared={shared}
         />
 
@@ -2204,28 +2234,6 @@ export function App() {
         ihn per CSS verdecken kann — dann gibt es keine Karte, auf die er
         zeigen könnte.
       */}
-      {/*
-        Der Meldeknopf auf der Karte, links neben dem Standort-Knopf. Bis zum
-        9. September gab es ihn nur im Blatt, klein im Kopf des
-        Sichtungs-Abschnitts und erst nach einem Tipp auf die Karte — drei
-        Schritte, von denen keiner sichtbar war. FreiFahren, das Vorbild,
-        hat genau einen Knopf auf der Karte, und der ist die ganze App. Das
-        Blatt braucht er nicht: Ohne angetippten Punkt bietet es Standort,
-        Kartenmitte und die nächsten Zonen zur Auswahl.
-      */}
-      <button
-        type="button"
-        className="report-fab"
-        onClick={() => {
-          setPanelOpen(false)
-          setReportViaFab(true)
-          positionForReport()
-          setReporting(true)
-        }}
-        inert={modal || undefined}
-      >
-        Kontrolle melden
-      </button>
       <button
         type="button"
         className="locate"

@@ -407,6 +407,15 @@ der seltene Fall ist. Gemessen auf 320, 390 und 1280 Pixeln: Die Pille liegt
 zwischen dem „i" der Quellenangabe und dem Standort, ohne eines zu berühren,
 und wandert mit dem Blatt hoch.
 
+**Nachtrag vom selben Abend: oben rechts, rot.** Der Betreiber wollte ihn
+unter den Einstellungen, gross und in einer rötlichen Farbe. Abgewogen: Unten
+rechts ist der Daumen näher, aber die Kante war voll — Griff, Standort,
+Quellenangabe und die Pille teilten sie sich, und auf dem iPhone kam die
+Safe-Area dazu. Oben rechts unter dem Zahnrad ist Platz, und die Kopfzeile
+misst den Knopf mit, sodass die Chip-Zeile von selbst darunter rückt. Rot ist
+die Farbe der Sterne, nicht das Blau der Hauptknöpfe. Also: `Kontrolle
+melden` als rote Pille in der Kopfzeile, rechtsbündig.
+
 ## Das Raster der Kontrolldichte trägt seinen Namen im Zellschlüssel
 
 **Entschieden am 9. September**, als das eine Berliner 250-m-Raster zu einem
@@ -615,6 +624,15 @@ dem Handy zugeklappt, und wer eine Ebene erst suchen muss, findet sie nicht.
 wenige Meldungen da sind — dann steht der Schalter auf „an" über einer Fläche,
 die leer bleibt, und die Tafel daneben sagt, warum. Aus fünf Meldungen eine
 Karte zu färben sähe nach Wissen aus und wäre Rauschen.
+
+**Nachtrag vom 9. September abends: gar kein Schalter mehr.** Der Betreiber:
+„Die Kontrolle muss man nicht im Layer ausschalten können." Die Ebene liegt,
+sobald sie ein Muster hat, und sonst nicht — weder in der Chip-Zeile noch im
+Blatt gibt es dafür einen Knopf, und `layer.on` zählt `heat` nicht mehr. Der
+Ebenen-Knopf erscheint nur noch, wenn es etwas zu wählen gibt; in Hamburg,
+ohne Umweltzone und POI-Ebenen, gar nicht. Ebenso entfallen ist der Abschnitt
+„Wo stehst du?" mit der Farberklärung: Ohne Tipp auf die Karte beginnt das
+Blatt jetzt mit dem, was jemand tun kann.
 
 ## R2-CORS ohne `localhost`
 

@@ -21,8 +21,6 @@ interface Props {
   weekday: number
   /** Berlin hour of the render clock, for the "now" marker. */
   hour: number
-  visible: boolean
-  onToggle: () => void
   /** True when marks reach a shared store rather than only this device. */
   shared: boolean
 }
@@ -53,8 +51,6 @@ export function HeatPanel({
   top,
   weekday,
   hour,
-  visible,
-  onToggle,
   shared,
 }: Props) {
   const missing = MIN_MARKS_FOR_PATTERN - heat.totalMarks
@@ -76,15 +72,7 @@ export function HeatPanel({
               : 'Noch keine Auswertung'}
           </p>
         </div>
-        <button
-          type="button"
-          className="button button--ghost"
-          onClick={onToggle}
-          disabled={!heat.hasPattern}
-          aria-pressed={visible && heat.hasPattern}
-        >
-          {visible && heat.hasPattern ? 'Ausblenden' : 'Auf der Karte'}
-        </button>
+        {/* Kein Schalter mehr: Die Ebene liegt, sobald sie ein Muster hat (9. September). */}
       </header>
 
       {heat.hasPattern ? (
