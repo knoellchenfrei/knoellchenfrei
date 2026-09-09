@@ -124,6 +124,13 @@ Dasselbe gilt für zwei weitere Zahlen, die still schieflaufen können: das
 Tagesbudget der Ereignisse (steht es exakt auf 5.000, hat jemand es gefüllt)
 und der Deckel der Besuche.
 
+> **Eingebaut am 9. September**, als Schritt `alarme prüfen` im Aufräumlauf
+> (`apps/api/src/worker.ts`), vier Tests. Geprüft wird die Gegenprobe des
+> **gestrigen** Tages — heute laufen die Öffnungen den Geräten um Minuten
+> hinterher, ein Alarm um 00:07 wäre jeden Morgen falsch — und die beiden
+> Deckel des heutigen. Jeder Befund geht einmal hinaus, der KV merkt sich Tag
+> und Art drei Tage lang. Braucht `TELEGRAM_ADMIN_CHAT`, siehe `hosting.md`.
+
 ## 12. Die Statistikseite zeigt, was sie **nicht** weiss
 
 *Aus der Nacht zum 8. September, und der Anlass war ein Fehler.*

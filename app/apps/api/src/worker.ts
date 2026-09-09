@@ -844,6 +844,72 @@ async function rollupStats(env: Env): Promise<void> {
   await env.CACHE.put(STATS_KEY, JSON.stringify(stand))
 }
 
+/**
+ * Drei Zahlen, die still schieflaufen können — und der Alarm dazu.
+ *
+ * Die Gegenprobe auf der Statistikseite ist die einzige Zahl, die etwas über
+ * die Statistik selbst sagt: Liegen die Öffnungen eines Tages unter der
+ * Gerätezahl, kommen Zählungen nicht an. Nur sieht die Seite niemand — sie
+ * liegt hinter dem Riegel, und wer die App benutzt, hat keinen Grund, sie
+ * aufzurufen (`docs/ideen.md`, Punkt 11). Dasselbe gilt für die zwei Deckel:
+ * Steht das Tagesbudget der Ereignisse exakt auf seiner Grenze, hat jemand
+ * es gefüllt, und ab da wird still verworfen; steht der Deckel der Besuche,
+ * zählt der Tag keine neuen Geräte mehr.
+ *
+ * Geprüft wird der **gestrige** Tag der Gegenprobe, nicht der heutige: Heute
+ * laufen Öffnungen den Geräten um Minuten hinterher, weil die Bündel erst
+ * beim Ausblenden oder im Takt hinausgehen — ein Alarm um 00:07 wäre jeden
+ * Morgen falsch. Jeder Befund geht **einmal** hinaus, nicht stündlich: Der
+ * KV merkt sich Tag und Art für drei Tage. Ohne Admin-Kanal passiert nichts,
+ * und ein Telegram, das nicht antwortet, kippt den Lauf nicht — das erledigt
+ * `telegramAdmin` selbst.
+ */
+async function alarme(env: Env): Promise<void> {
+  if (env.TELEGRAM_ADMIN_CHAT === undefined || env.TELEGRAM_TOKEN === undefined) return
+  const now = Date.now()
+  const heute = berlinDay(now)
+  const gestern = berlinDay(now - 86_400_000)
+  const befunde: { schluessel: string; text: string }[] = []
+
+  const roh = await env.CACHE.get(STATS_KEY)
+  if (roh !== null) {
+    const stand = JSON.parse(roh) as { probe?: { day: string; geraete: number; oeffnungen: number }[] }
+    const tag = (stand.probe ?? []).find((zeile) => zeile.day === gestern)
+    if (tag !== undefined && tag.oeffnungen < tag.geraete) {
+      befunde.push({
+        schluessel: `alarm:${gestern}:gegenprobe`,
+        text: `Gegenprobe kippt: am ${gestern} nur ${tag.oeffnungen} Öffnungen bei ${tag.geraete} Geräten — da kommen Zählungen nicht an.`,
+      })
+    }
+  }
+
+  const budget = await env.DB.prepare('SELECT n FROM event_budget WHERE day = ?')
+    .bind(heute)
+    .first<{ n: number }>()
+  if ((budget?.n ?? 0) >= EVENTS_PER_DAY) {
+    befunde.push({
+      schluessel: `alarm:${heute}:ereignisse`,
+      text: `Tagesbudget der Ereignisse voll: ${budget?.n ?? 0} von ${EVENTS_PER_DAY} am ${heute} — alles Weitere wird still verworfen.`,
+    })
+  }
+
+  const besuche = await env.DB.prepare('SELECT COUNT(*) AS n FROM visits WHERE day = ?')
+    .bind(heute)
+    .first<{ n: number }>()
+  if ((besuche?.n ?? 0) >= VISITS_PER_DAY) {
+    befunde.push({
+      schluessel: `alarm:${heute}:besuche`,
+      text: `Deckel der Besuche erreicht: ${besuche?.n ?? 0} von ${VISITS_PER_DAY} am ${heute} — neue Geräte werden heute nicht mehr gezählt.`,
+    })
+  }
+
+  for (const befund of befunde) {
+    if ((await env.CACHE.get(befund.schluessel)) !== null) continue
+    await telegramAdmin(env, befund.text)
+    await env.CACHE.put(befund.schluessel, '1', { expirationTtl: 3 * 86_400 })
+  }
+}
+
 /** Deckelt, was eine Person in einer Stunde abladen kann. */
 const FEEDBACK_LIMIT_PER_HOUR = 4
 /** Rückmeldungen sind kein Betriebsdatum — nach drei Monaten sind sie erledigt. */
@@ -1426,6 +1492,9 @@ export default {
       // Zuletzt, und mit Absicht nach allen Löschungen: Der Stand soll die
       // Zahlen zeigen, die danach noch da sind.
       ['auswertung rechnen', () => rollupStats(env)],
+      // Und danach, aus dem eben gerechneten Stand: Was den Betreiber sofort
+      // erreichen soll, weil es sonst niemand sieht.
+      ['alarme prüfen', () => alarme(env)],
     ]
 
     const gescheitert: string[] = []

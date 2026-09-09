@@ -1072,3 +1072,139 @@ describe('Rückmeldungen in den Admin-Kanal', () => {
     }
   })
 })
+
+/**
+ * Die Alarme im Aufräumlauf — `docs/ideen.md`, Punkt 11, eingebaut am
+ * 9. September. Drei Zahlen, die still schieflaufen können: die Gegenprobe
+ * der Statistik, das Tagesbudget der Ereignisse, der Deckel der Besuche.
+ * Jeder Befund geht einmal hinaus, nicht stündlich, und ohne Admin-Kanal
+ * gar nicht.
+ */
+describe('die Alarme im Aufräumlauf', () => {
+  const gestern = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Berlin',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(Date.now() - 86_400_000))
+
+  /** KV mit Inhalt, D1 mit Antworten auf `first()` je Tabelle. */
+  function umgebungMit(optionen: {
+    probe?: { day: string; geraete: number; oeffnungen: number }[]
+    budget?: number
+    besuche?: number
+    merker?: string[]
+  }) {
+    const kv = new Map<string, string>()
+    for (const m of optionen.merker ?? []) kv.set(m, '1')
+    // Die Gegenprobe kommt nicht aus einem vorbereiteten KV, sondern aus dem
+    // Stand, den `rollupStats` im selben Lauf rechnet — der überschreibt den
+    // KV. Also liefert D1 die Rohzeilen: Öffnungen je Tag (Ergebnis 0) und
+    // Besuchszeilen je Tag (Ergebnis 6).
+    const probe = optionen.probe ?? []
+    const batch = [
+      { results: probe.map((z) => ({ day: z.day, n: z.oeffnungen })) },
+      { results: [] },
+      { results: [] },
+      { results: [] },
+      { results: [] },
+      { results: [] },
+      { results: probe.map((z) => ({ day: z.day, n: z.geraete })) },
+    ]
+    const statement = (sql: string) => {
+      const self = {
+        bind: () => self,
+        run: async () => ({ success: true }),
+        first: async () => {
+          if (/FROM event_budget/.test(sql)) return optionen.budget === undefined ? null : { n: optionen.budget }
+          if (/FROM visits/.test(sql)) return { n: optionen.besuche ?? 0 }
+          return null
+        },
+        all: async () => ({ results: [] }),
+      }
+      return self
+    }
+    const db = { prepare: statement, batch: async () => batch }
+    const env = umgebung({
+      DB: db as unknown as D1Database,
+      CACHE: {
+        get: async (k: string) => kv.get(k) ?? null,
+        put: async (k: string, v: string) => {
+          kv.set(k, v)
+        },
+      } as unknown as KVNamespace,
+      TELEGRAM_TOKEN: 'tok',
+      TELEGRAM_ADMIN_CHAT: '42',
+    })
+    return { env, kv }
+  }
+
+  const gesendet = (fetchMock: ReturnType<typeof vi.fn>): string[] =>
+    fetchMock.mock.calls
+      .filter(([url]) => String(url).includes('sendMessage'))
+      .map(([, init]) => (JSON.parse(String((init as RequestInit).body)) as { text: string }).text)
+
+  it('meldet eine gekippte Gegenprobe von gestern genau einmal', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const { env, kv } = umgebungMit({ probe: [{ day: gestern, geraete: 8, oeffnungen: 2 }] })
+      await worker.scheduled(cron, env)
+      expect(gesendet(fetchMock)).toEqual([
+        `Gegenprobe kippt: am ${gestern} nur 2 Öffnungen bei 8 Geräten — da kommen Zählungen nicht an.`,
+      ])
+      expect(kv.has(`alarm:${gestern}:gegenprobe`)).toBe(true)
+      // Der nächste Lauf eine Stunde später schweigt.
+      await worker.scheduled(cron, env)
+      expect(gesendet(fetchMock)).toHaveLength(1)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('schweigt, wenn die Gegenprobe plausibel ist oder nur der heutige Tag schief liegt', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date())
+      const { env } = umgebungMit({
+        probe: [
+          { day: gestern, geraete: 8, oeffnungen: 9 },
+          { day: heute, geraete: 5, oeffnungen: 1 },
+        ],
+      })
+      await worker.scheduled(cron, env)
+      expect(gesendet(fetchMock)).toEqual([])
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('meldet ein volles Tagesbudget und einen vollen Besuchsdeckel', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const { env } = umgebungMit({ budget: 5_000, besuche: 20_000 })
+      await worker.scheduled(cron, env)
+      const texte = gesendet(fetchMock)
+      expect(texte).toHaveLength(2)
+      expect(texte[0]).toMatch(/Tagesbudget der Ereignisse voll: 5000 von 5000/)
+      expect(texte[1]).toMatch(/Deckel der Besuche erreicht: 20000 von 20000/)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('schickt ohne Admin-Kanal nichts und liest dann auch nichts', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const { env } = umgebungMit({ probe: [{ day: gestern, geraete: 8, oeffnungen: 0 }], budget: 5_000 })
+      delete env.TELEGRAM_ADMIN_CHAT
+      await worker.scheduled(cron, env)
+      expect(fetchMock).not.toHaveBeenCalled()
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+})

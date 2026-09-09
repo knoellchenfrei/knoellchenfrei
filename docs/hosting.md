@@ -590,6 +590,9 @@ $W secret put TELEGRAM_ADMIN_CHAT           # die Zahl, nicht der @-Name
 
 Ab dem nächsten Deploy schickt der Worker jede Rückmeldung nach dem Schreiben
 in die Datenbank als Nachricht dorthin — Kategorie und Text, ohne den Hash.
+Dazu die Alarme des stündlichen Aufräumlaufs, je einmal pro Tag und Befund:
+eine gekippte Gegenprobe der Statistik (gestern weniger Öffnungen als Geräte),
+ein volles Tagesbudget der Ereignisse, ein voller Besuchsdeckel.
 Ein Fehlschlag beim Senden steht im Log und kippt die Antwort nicht; die
 Rückmeldung liegt dann weiterhin in D1. Der Kanal ist ein Empfänger im Sinne
 von `datenschutz.md`, Abschnitt 3.
