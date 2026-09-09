@@ -1321,6 +1321,16 @@ export function App() {
       if (current === undefined) return
       void backend
         .vote(current, key === 'confirmations' ? 'confirm' : 'dispute')
+        .then((counted) => {
+          // Nicht gezählt heisst: derselbe Client hatte schon abgestimmt. Der
+          // optimistische Zähler geht ohne Meldung zurück — es ist kein
+          // Fehler, und eine Meldung „du hast schon abgestimmt" wäre mehr
+          // Text als Erkenntnis.
+          if (counted) return
+          setSightings((list) =>
+            list.map((item) => (item.id === id ? { ...item, [key]: item[key] - 1 } : item))
+          )
+        })
         .catch((cause: unknown) => {
           setSightings((list) =>
             list.map((item) => (item.id === id ? { ...item, [key]: item[key] - 1 } : item))
