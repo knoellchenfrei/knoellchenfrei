@@ -57,6 +57,25 @@ describe('vote', () => {
   })
 })
 
+describe('vote meldet, ob gezählt wurde', () => {
+  const sichtung = { id: 'a', lon: 13.4, lat: 52.5, reportedAt: 0, confirmations: 0, disputes: 0 }
+
+  it('true bei `counted: true`', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(antwort(200, { ok: true, counted: true })))
+    await expect(workerBackend('https://api.example').vote(sichtung, 'confirm')).resolves.toBe(true)
+  })
+
+  it('false bei `counted: false` — die zweite Stimme desselben Clients', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(antwort(200, { ok: true, counted: false })))
+    await expect(workerBackend('https://api.example').vote(sichtung, 'dispute')).resolves.toBe(false)
+  })
+
+  it('true, wenn die Antwort das Feld nicht kennt', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 200 })))
+    await expect(workerBackend('https://api.example').vote(sichtung, 'confirm')).resolves.toBe(true)
+  })
+})
+
 describe('fehlerText', () => {
   it('kennt die Antworten des Workers und lässt den Rest nackt', () => {
     expect(fehlerText(404, 'Not Found')).toMatch(/verfallen \(404\)/)

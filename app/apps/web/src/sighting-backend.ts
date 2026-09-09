@@ -49,7 +49,15 @@ export interface SightingBackend {
    * vergeben hatte — und bekam „404 Not Found" statt „eigene Meldung".
    */
   report: (lon: number, lat: number) => Promise<string | null>
-  vote: (sighting: Sighting, kind: VoteKind) => Promise<void>
+  /**
+   * `true`, wenn die Stimme gezählt wurde; `false`, wenn der Speicher sie
+   * kannte und verwarf. Der Worker antwortet auf eine zweite Stimme desselben
+   * Clients mit `200 { counted: false }` — kein Fehler, aber auch kein Zähler.
+   * Beim Durchklicken am 9. September zeigte die App danach 45 Sekunden lang
+   * eine Bestätigung mehr, als der Server hatte, bis die nächste Abfrage die
+   * Liste ersetzte.
+   */
+  vote: (sighting: Sighting, kind: VoteKind) => Promise<boolean>
 }
 
 /**
@@ -225,6 +233,7 @@ function artifactBackend(db: Db): SightingBackend {
       // confidence score that is acceptable: a lost vote shifts a rating, it
       // does not corrupt anything.
       await db.doc(`sightings/${sighting.id}`).set({ ...sighting, [key]: sighting[key] + 1 })
+      return true
     },
   }
 }
@@ -390,7 +399,12 @@ export function workerBackend(base: string): SightingBackend {
       // Kopf antwortete der Worker mit **415**, und weil hier niemand den
       // Status ansah, verschwand die Stimme lautlos: Die Anzeige zählte hoch,
       // die Datenbank nicht. Gefunden im Audit (M-046).
-      await send(`${base}/sightings/${encodeURIComponent(sighting.id)}/${kind}`, '{}')
+      const response = await send(`${base}/sightings/${encodeURIComponent(sighting.id)}/${kind}`, '{}')
+      // Nur ein ausdrückliches `counted: false` heisst „nicht gezählt". Ein
+      // Rumpf ohne das Feld (ältere Worker, leere Antwort) gilt als gezählt —
+      // die Stimme hat der Server angenommen, sonst hätte `send` geworfen.
+      const body = (await response.json().catch(() => null)) as { counted?: unknown } | null
+      return body?.counted !== false
     },
   }
 }
