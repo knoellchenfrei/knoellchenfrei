@@ -7,6 +7,7 @@ import { registerServiceWorker, startInstallWatch } from './pwa.js'
 import { CITY } from './city.js'
 import { setTrackCity, track } from './track.js'
 import { installVectorBasemap, TILES_BASE } from './map-style.js'
+import { watchKeyboard } from './viewport.js'
 // MapLibre's stylesheet must come first: it sets `.maplibregl-map { position:
 // relative }`, which has the same specificity as our `.map` rule and would
 // otherwise win on order and collapse the map container to zero height.
@@ -48,6 +49,8 @@ maplibregl.setWorkerUrl(
 // Vor dem Rendern: Chrome verwirft sein Installationsangebot, wenn beim
 // Eintreffen niemand zuhört, und das ist eine Frage von Millisekunden.
 startInstallWatch()
+// Bildschirmtastatur als CSS-Variablen, siehe viewport.ts.
+watchKeyboard()
 
 // Die Statistik braucht die geladene Stadt, bekommt sie aber hereingereicht
 // statt sie zu importieren — sonst entstünde ein Kreis mit `city.ts`, das
