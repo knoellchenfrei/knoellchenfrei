@@ -1,4 +1,4 @@
-import { duration, euro, feeLabel, maxStayLabel, until } from '../format.js'
+import { costLabel, duration, feeLabel, maxStayLabel, statusLabel, until } from '../format.js'
 import type { ZoneStatus } from '../useZoneStatus.js'
 import type { ZoneProperties } from '../types.js'
 import { zoneTitel } from '../zone-label.js'
@@ -36,7 +36,7 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
         <span
           className={`badge badge--${uncertain ? 'unsure' : chargeable ? 'paid' : 'free'}`}
         >
-          {uncertain ? 'unsicher' : chargeable ? 'gebührenpflichtig' : 'keine Gebühr'}
+          {statusLabel(status)}
         </span>
       </header>
 
@@ -66,11 +66,7 @@ export function ZonePanel({ properties, status, now, onPark, parked }: Props) {
       {chargeable && hourly.priced && (
         <p className="cost">
           Eine Stunde ab jetzt:{' '}
-          <strong>
-            {hourly.exact
-              ? euro(hourly.maxCents)
-              : `${euro(hourly.minCents)}–${euro(hourly.maxCents)}`}
-          </strong>
+          <strong>{costLabel(hourly)}</strong>
           {!hourly.exact && (
             <span className="cost__hint">
               {' '}

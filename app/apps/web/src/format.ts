@@ -1,4 +1,4 @@
-import type { Fee } from '@knoellchenfrei/core'
+import type { CostEstimate, Fee } from '@knoellchenfrei/core'
 
 const EURO = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' })
 const CLOCK = new Intl.DateTimeFormat('de-DE', {
@@ -104,4 +104,30 @@ export function maxStayLabel(code: string): string {
  */
 export function tidyPoiDetail(detail: string): string {
   return detail.replace(/^1 Plätze\b/, '1 Platz').replace(/\s{2,}/g, ' ').trim()
+}
+
+/**
+ * Das eine Wort über den Zustand einer Zone: „unsicher", „gebührenpflichtig"
+ * oder „keine Gebühr" — die Marke im Panel und die Peek-Zeile im
+ * eingeklappten Griff sagen dasselbe, weil sie hierher greifen. Vorher stand
+ * die Dreifachweiche nur im Panel; eine zweite Abschrift wäre die Stelle, an
+ * der die Wortwahl eines Tages auseinanderläuft.
+ *
+ * „unsicher" gewinnt gegen beides: Eine Regel, die die App nicht rechnen kann,
+ * macht auch aus „gebührenpflichtig" eine Vermutung.
+ */
+export function statusLabel(status: { chargeable: boolean; uncertain: boolean }): string {
+  return status.uncertain ? 'unsicher' : status.chargeable ? 'gebührenpflichtig' : 'keine Gebühr'
+}
+
+/**
+ * Der Betrag für die nächste Stunde, wie das Panel ihn nennt: eine Zahl bei
+ * festem Satz, eine Spanne, wenn die Quelle eine nennt. Nur für `priced`
+ * gedacht — bei Parkscheibe oder fehlendem Tarif sind beide Werte 0, und die
+ * Aufrufer sagen dann etwas anderes statt „0,00 €" (siehe `feeLabel`).
+ */
+export function costLabel(estimate: Pick<CostEstimate, 'minCents' | 'maxCents' | 'exact'>): string {
+  return estimate.exact
+    ? euro(estimate.maxCents)
+    : `${euro(estimate.minCents)}–${euro(estimate.maxCents)}`
 }

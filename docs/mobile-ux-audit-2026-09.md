@@ -190,8 +190,9 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
   laufen.
 - Auf dem Tablet (768 px) teilen sich Chips, FAB und Quellenangabe die
   untere Kante; mit sieben offenen Chips wird es eng.
-- Das Blatt zeigt beim Aufklappen keinen Vorschauzustand („Peek" mit einer
-  Zeile Inhalt); der eingeklappte Griff trägt nur die Beschriftung.
+- Das Blatt zeigte beim Aufklappen keinen Vorschauzustand („Peek" mit einer
+  Zeile Inhalt); der eingeklappte Griff trug nur die Beschriftung. Seit dem
+  9. September steht die Antwort selbst im Griff, siehe Punkt 3 unten.
 - Die Bewertungsknöpfe „gesehen / weg" sind auf dem Desktop 26 Pixel hoch —
   bei Maus vertretbar, bei einem Touch-Laptop nicht.
 
@@ -220,7 +221,19 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
 1. Auf einem echten iPhone die Tastatur im Feedback-Blatt prüfen und, falls
    Safari die Variablen verspätet setzt, den Fuss zusätzlich per
    `scrollIntoView` nachziehen.
-2. Der Chip-Zeile einen Kantenverlauf geben, sobald sie überläuft
-   (`scrollWidth > clientWidth`), damit „da ist mehr" sichtbar ist.
-3. Einen Peek-Zustand für das Blatt: eine Zeile mit Zone, Status und Preis im
-   eingeklappten Griff, damit die Antwort ohne Aufklappen lesbar ist.
+2. **Erledigt am 9. September.** Der Chip-Zeile einen Kantenverlauf geben,
+   sobald sie überläuft (`scrollWidth > clientWidth`), damit „da ist mehr"
+   sichtbar ist. Gemessen wird in `App.tsx` (ResizeObserver auf Zeile und
+   Chip-Streifen, dazu `scroll`), die Klasse `legend--more` schaltet einen
+   `::after`-Verlauf mit `position: sticky`. Beim Bau fiel auf, dass
+   `.legend__layers { display: contents }` global **hinter** der Handy-Regel
+   stand und sie überschrieb — der Chip-Streifen hatte auf dem Handy nie eine
+   eigene Box, und die im Merge eingeführte Berührungsregel dafür war tot.
+   Die Regel steht jetzt vor dem Media-Block.
+3. **Erledigt am 9. September.** Einen Peek-Zustand für das Blatt: eine Zeile
+   mit Zone, Status und Preis im eingeklappten Griff, damit die Antwort ohne
+   Aufklappen lesbar ist. Die Wörter kommen aus `zone-label.ts` und den neuen
+   `statusLabel`/`costLabel` in `format.ts`, die auch das Panel benutzt;
+   laufende Parksitzung und abgelaufene Erinnerung behalten Vorrang. Auf
+   320 Pixeln passt „Zone 1 · gebührenpflichtig · 4,00 €/Std." gerade; was
+   länger ist, endet mit Auslassungspunkten statt in einer zweiten Zeile.

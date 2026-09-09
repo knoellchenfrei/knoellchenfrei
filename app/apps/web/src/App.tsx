@@ -25,7 +25,7 @@ import {
 import { CITY, switchCity } from './city.js'
 import { rememberSuggestionDismissed, suggestionAt } from './city-suggestion.js'
 import { baseStyle } from './map-style.js'
-import { tidyPoiDetail } from './format.js'
+import { costLabel, statusLabel, tidyPoiDetail } from './format.js'
 import { isEmbedded, loadData } from './data-source.js'
 import { openFeedback } from './feedback.js'
 import { forgetStaleLayer, layerOf, syncLayer } from './layer-history.js'
@@ -151,6 +151,7 @@ export function App() {
   const sidebarRef = useRef<HTMLElement>(null)
   /** Der scrollende Teil des Blatts; der Griff darüber steht fest. */
   const sidebarBodyRef = useRef<HTMLDivElement>(null)
+  const legendRef = useRef<HTMLElement>(null)
   /** Set when a POI popup opened, so the zone handler ignores the same tap. */
   const suppressZoneClick = useRef(0)
   /** Set by a search pick: focus moves into the zone panel once it renders. */
@@ -254,6 +255,14 @@ export function App() {
   /** Zeitstempel des letzten Fingers am Griff; das `click` gleich danach ist derselbe Tipp. */
   const lastGripTouch = useRef(0)
   const [legendOpen, setLegendOpen] = useState(false)
+  /**
+   * Ob rechts von der Chip-Zeile noch Chips liegen. Auf dem Handy scrollt die
+   * Zeile seitlich, und ob der letzte Chip angeschnitten ist, hängt von der
+   * Chip-Zahl und der Schirmbreite ab — bei sieben Chips auf 320 Pixel ja,
+   * bei drei nicht. Ein Verlauf am rechten Rand zeigt es; reines CSS reicht
+   * dafür nicht, weil `scrollWidth > clientWidth` kein Selektor ist.
+   */
+  const [legendMore, setLegendMore] = useState(false)
   // Read by a polite live region: the map and the panel change visually, and a
   // screen reader would otherwise hear nothing when a zone is picked or a
   // session starts.
@@ -306,6 +315,33 @@ export function App() {
     const observer = new ResizeObserver(apply)
     observer.observe(element)
     return () => observer.disconnect()
+  }, [])
+
+  // Der Kantenverlauf der Chip-Zeile: gemessen, nicht geraten. Die Breite
+  // ändert sich mit dem Schirm (ResizeObserver auf der Zeile) und mit jedem
+  // ein- oder ausgeblendeten Chip (ResizeObserver auf dem Chip-Streifen, der
+  // die Zeile selbst nicht breiter macht — die scrollt). Ganz nach rechts
+  // gescrollt gibt es nichts mehr anzudeuten, also fällt der Verlauf weg.
+  useEffect(() => {
+    const element = legendRef.current
+    if (element === null) return
+    const layers = element.querySelector('.legend__layers')
+    if (layers === null) return
+    const apply = (): void => {
+      const overflow = element.scrollWidth - element.clientWidth
+      // Ein Pixel Toleranz: Subpixel-Breiten runden `scrollLeft` auf beiden
+      // Seiten, und der Verlauf flackerte sonst am Ende der Zeile.
+      setLegendMore(overflow > 1 && element.scrollLeft < overflow - 1)
+    }
+    apply()
+    const observer = new ResizeObserver(apply)
+    observer.observe(element)
+    observer.observe(layers)
+    element.addEventListener('scroll', apply, { passive: true })
+    return () => {
+      observer.disconnect()
+      element.removeEventListener('scroll', apply)
+    }
   }, [])
 
   // Ein Verlaufseintrag, solange ein Blatt offen ist — damit „Zurück" das
@@ -1537,7 +1573,11 @@ export function App() {
         charging={zones.length > 0 ? { now: chargingNow, total: zones.length } : null}
       />
 
-      <section className="legend" aria-label="Kartenebenen">
+      <section
+        ref={legendRef}
+        className={`legend${legendMore ? ' legend--more' : ''}`}
+        aria-label="Kartenebenen"
+      >
         <button
           type="button"
           className={`chip chip--toggle${legendOpen ? ' chip--on' : ''}`}
@@ -1769,9 +1809,21 @@ export function App() {
                   : `Geparkt${session.zone === null ? '' : ` in Zone ${session.zone}`}${
                       session.remindAt === null ? '' : ' · Erinnerung läuft'
                     }`
-                : selected === null
+                : selected === null || status === null
                   ? 'Details einblenden'
-                  : `Zone ${selected.zone} · einblenden`}
+                  : // Die Antwort selbst, nicht der Weg dorthin: Zone, Status
+                    // und Betrag stehen im Griff, damit sie ohne Aufklappen
+                    // lesbar sind. Dieselben Wörter wie im Panel, aus
+                    // `zone-label.ts` und `format.ts`; der Betrag nur, wenn
+                    // die Quelle einen nennt — „0,00 €" wäre bei Parkscheibe
+                    // die falsche Auskunft.
+                    [
+                      zoneKurz(selected),
+                      statusLabel(status),
+                      ...(status.chargeable && status.hourly.priced
+                        ? [`${costLabel(status.hourly)}/Std.`]
+                        : []),
+                    ].join(' · ')}
           </span>
         </button>
 

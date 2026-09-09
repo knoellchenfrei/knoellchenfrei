@@ -203,3 +203,90 @@ test.describe('Einstellungen als Dialog', () => {
     expect(await page.locator('.sidebar').getAttribute('inert')).toBeNull()
   })
 })
+
+test.describe('Folgepunkte aus dem Audit', () => {
+  /**
+   * Punkt 2 der Empfehlung: Auf dem Handy scrollt die Chip-Zeile seitlich,
+   * und ob rechts noch Chips liegen, sah man nur, wenn der letzte zufällig
+   * angeschnitten war. Der Verlauf hängt an einer Messung, nicht an einer
+   * Vermutung: `scrollWidth > clientWidth`, und nicht ganz rechts.
+   *
+   * Zwei Dinge, die der Test nebenbei festhält: Der Verlauf belegt keinen
+   * Platz in der Zeile (sonst verschöbe er die Messung, die ihn einblendet),
+   * und auf dem Desktop, wo die Zeile wickelt, gibt es ihn nie.
+   */
+  test('zeigt am rechten Rand der Chip-Zeile, dass dort mehr liegt', async ({ page }, testInfo) => {
+    await ready(page)
+    const legend = page.locator('.legend')
+    // Zu: nur der eine Chip, nichts läuft über, kein Verlauf.
+    await expect(legend).not.toHaveClass(/legend--more/)
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    // Offen: mehr als der eine Umschalter.
+    await expect.poll(() => page.locator('.legend .chip').count()).toBeGreaterThan(1)
+
+    const measure = () =>
+      legend.evaluate((el) => ({
+        overflow: el.scrollWidth - el.clientWidth,
+        scrollLeft: el.scrollLeft,
+        fade: getComputedStyle(el, '::after').opacity,
+      }))
+
+    if (testInfo.project.name !== 'phone') {
+      // Wickelnd, nicht scrollend: nichts anzudeuten.
+      expect((await measure()).overflow).toBeLessThanOrEqual(1)
+      await expect(legend).not.toHaveClass(/legend--more/)
+      return
+    }
+
+    expect((await measure()).overflow).toBeGreaterThan(1)
+    await expect(legend).toHaveClass(/legend--more/)
+    await expect.poll(async () => (await measure()).fade).toBe('1')
+
+    // Ganz nach rechts: Der Verlauf verschwindet, und die Zeile ist danach
+    // nicht breiter geworden — der Verlauf selbst hat keinen Platz belegt.
+    const before = (await measure()).overflow
+    await legend.evaluate((el) => el.scrollTo({ left: el.scrollWidth, behavior: 'instant' }))
+    await expect(legend).not.toHaveClass(/legend--more/)
+    await expect.poll(async () => (await measure()).fade).toBe('0')
+    expect((await measure()).overflow).toBe(before)
+
+    // Und zurück an den Anfang: wieder da.
+    await legend.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }))
+    await expect(legend).toHaveClass(/legend--more/)
+  })
+
+  /**
+   * Punkt 3 der Empfehlung: Der eingeklappte Griff sagte „Zone 29 ·
+   * einblenden" — den Weg zur Antwort statt der Antwort. Jetzt steht sie
+   * selbst dort, mit denselben Wörtern wie im Panel: Zonenname aus
+   * `zone-label.ts`, Statuswort und Betrag aus `format.ts`. Der Test liest
+   * beides aus dem Panel und verlangt den Griff als dessen Abschrift, statt
+   * die Wörter ein drittes Mal hinzuschreiben.
+   */
+  test('trägt im eingeklappten Griff Zone, Status und Betrag', async ({ page }) => {
+    // Dienstag 10:30 Berliner Zeit: die Stunde, in der jede Zone kassiert —
+    // damit sicher ein Betrag zu sehen ist, nicht nur meistens.
+    await page.clock.setFixedTime(new Date('2026-09-08T10:30:00+02:00'))
+    await ready(page)
+    await openPanel(page)
+    await page.locator('.search__input').fill('Mitte')
+    await page.locator('.search__results button').first().click()
+    const title = page.locator('#zone-panel-title')
+    await expect(title).toBeVisible()
+
+    const zone = (await title.textContent())!.replace(/^Parkzone /, 'Zone ')
+    const status = (await page.locator('.panel__head .badge').textContent())!.trim()
+    const cost = (await page.locator('.cost strong').first().textContent())!.trim()
+    expect(status).toBe('gebührenpflichtig')
+    expect(cost).toMatch(/€$/)
+
+    await page.locator('.panel-toggle').click()
+    await expect(page.locator('.sidebar__body')).toBeHidden()
+    const label = page.locator('.panel-toggle__label')
+    await expect(label).toHaveText(`${zone} · ${status} · ${cost}/Std.`)
+    // Eine Zeile, auch auf 320 Pixeln: Was nicht passt, wird abgeschnitten,
+    // statt den Griff höher zu machen.
+    const box = await label.boundingBox()
+    expect(box!.height).toBeLessThan(28)
+  })
+})
