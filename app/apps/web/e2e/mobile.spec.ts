@@ -370,3 +370,41 @@ test.describe('der Meldeknopf auf dem Handy', () => {
     expect(box!.y + box!.height).toBeLessThanOrEqual(toggle!.y + 1)
   })
 })
+
+test.describe('die Safe-Area des iPhones', () => {
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'phone', 'Einrückungen gibt es nur auf dem Handy.')
+  })
+
+  /**
+   * Der Betreiber, 9. September, mit Bildschirmfoto: Chips im Suchfeld,
+   * Meldeknopf auf dem Griff, Karte unter der Pille. Ursache: Die Safe-Area
+   * kommt in der abgelegten App als Padding und erst nach dem ersten Layout
+   * — und ein ResizeObserver meldet in der Vorgabe nur die Content-Box. Die
+   * gemessenen Variablen blieben bei 64 und 48 Pixeln stehen. Chromium kann
+   * die Einrückung über CDP nachstellen; hier kommt sie absichtlich **nach**
+   * dem Laden.
+   */
+  test('folgt einer Einrückung, die erst nach dem Laden kommt', async ({ page, context }) => {
+    await ready(page)
+    const cdp = await context.newCDPSession(page)
+    await cdp.send('Emulation.setSafeAreaInsetsOverride', {
+      insets: { top: 59, left: 0, bottom: 34, right: 0 },
+    })
+    await page.waitForTimeout(400)
+
+    const box = async (s: string) => (await page.locator(s).first().boundingBox())!
+    const topbar = await box('.topbar')
+    const overlay = await box('.overlay')
+    // Die Kopfzeile ist gewachsen, die Chips stehen darunter, nicht darin.
+    expect(topbar.height).toBeGreaterThan(100)
+    expect(overlay.y).toBeGreaterThanOrEqual(topbar.y + topbar.height)
+
+    const toggle = await box('.panel-toggle')
+    const fab = await box('.report-fab')
+    const size = page.viewportSize()!
+    // Der Griff reicht blau bis zur Kante, und der Meldeknopf steht über ihm.
+    expect(Math.round(toggle.y + toggle.height)).toBe(size.height)
+    expect(fab.y + fab.height).toBeLessThanOrEqual(toggle.y)
+  })
+})

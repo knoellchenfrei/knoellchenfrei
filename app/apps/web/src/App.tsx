@@ -324,6 +324,14 @@ export function App() {
   // search field and button wrap. A hardcoded offset left them overlapping the
   // locate button by 43px on every phone size, which swallowed taps meant for
   // the chips. Measuring keeps it right through any later layout change.
+  //
+  // `box: 'border-box'`, und das ist kein Detail: Ein ResizeObserver meldet
+  // in der Vorgabe nur die **Content-Box**. Die Safe-Area des iPhones kommt
+  // als Padding (`env(safe-area-inset-top)`) — und in der abgelegten App
+  // erst nach dem ersten Layout. Die Kopfzeile wuchs damit von 64 auf
+  // 113 Pixel, ohne dass der Beobachter feuerte; die Chip-Zeile blieb bei
+  // 72 und lag im Suchfeld. Vom Betreiber am 9. September fotografiert,
+  // per CDP (`Emulation.setSafeAreaInsetsOverride`) nachgestellt.
   useEffect(() => {
     const element = topbarRef.current
     if (element === null) return
@@ -335,7 +343,7 @@ export function App() {
     }
     apply()
     const observer = new ResizeObserver(apply)
-    observer.observe(element)
+    observer.observe(element, { box: 'border-box' })
     return () => observer.disconnect()
   }, [])
 
@@ -353,7 +361,10 @@ export function App() {
     }
     apply()
     const observer = new ResizeObserver(apply)
-    observer.observe(element)
+    // Border-Box aus demselben Grund wie bei der Kopfzeile: Das Blatt trägt
+    // die untere Safe-Area als Padding, und ohne sie sass der Meldeknopf
+    // auf dem Griff.
+    observer.observe(element, { box: 'border-box' })
     return () => observer.disconnect()
   }, [])
 

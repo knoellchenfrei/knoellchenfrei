@@ -583,10 +583,18 @@ body {
     backdrop-filter: none;
     /* Without this the collapsed sheet kept a 64px transparent strip that still
        intercepted taps meant for the map. */
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: 0;
     overflow: visible;
   }
-  .sidebar--collapsed .panel-toggle { background: var(--accent); color: #fff; border-color: transparent; }
+  /* Die untere Safe-Area gehört zum Griff, nicht zum Blatt: Als Padding des
+     durchsichtigen Blatts liess sie unter der blauen Pille 34 Pixel Karte
+     durchscheinen — auf dem iPhone eine Pille, die über dem Rand schwebt
+     (Bildschirmfoto des Betreibers, 9. September). Blau bis zur Kante, wie
+     jede Leiste über dem Home-Indikator. */
+  .sidebar--collapsed .panel-toggle {
+    background: var(--accent); color: #fff; border-color: transparent;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
   .sidebar--collapsed .panel-toggle__grip { background: rgba(255, 255, 255, 0.5); }
 }
 

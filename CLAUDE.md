@@ -35,7 +35,7 @@ pnpm test                                           # 1113 Unit-Tests (core, api
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 194 End-to-End-Tests
+cd apps/web && npx playwright test                  # 196 End-to-End-Tests
 ```
 
 Und fünf Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -104,7 +104,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1113 E2E_COUNT=194 npx tsx src/build-badges.ts
+TEST_COUNT=1113 E2E_COUNT=196 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -831,6 +831,18 @@ wiederholt.
   trägt die Meldung nachträglich als eigene ein — der Speicher kann geleert
   worden sein, der Server weiß es noch. Was bleibt: Zwei Browser hinter
   derselben Adresse sind für den Worker **ein** Client.
+- **Ein `ResizeObserver` sieht in der Vorgabe nur die Content-Box — Padding
+  ist ihm unsichtbar.** Kopfzeile und Blatt werden gemessen und als
+  `--topbar-height` und `--sheet-height` weitergegeben. Die Safe-Area des
+  iPhones kommt als Padding (`env(safe-area-inset-*)`) und in der abgelegten
+  App erst **nach** dem ersten Layout: Die Kopfzeile wuchs von 64 auf
+  113 Pixel, das Blatt von 48 auf 82 — und kein Beobachter feuerte. Die
+  Chip-Zeile lag im Suchfeld, der Meldeknopf auf dem Griff, unter der Pille
+  schien Karte durch. Vom Betreiber am 9. September fotografiert, per CDP
+  (`Emulation.setSafeAreaInsetsOverride` nach dem Laden) nachgestellt, seither
+  `observe(element, { box: 'border-box' })` und ein E2E-Test, der die
+  Einrückung absichtlich spät setzt. Die Lehre darüber hinaus: Sieben
+  Viewports ohne Einrückung sind keine Messung für ein Gerät mit einer.
 
 ## Stil
 
@@ -859,7 +871,7 @@ wiederholt.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **72 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **73 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

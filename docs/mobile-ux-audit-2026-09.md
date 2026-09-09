@@ -186,6 +186,17 @@ vor dem Scrollen (E2E-Test `behält den Griff beim Scrollen im Bild`).
 - Die `visualViewport`-Lösung für das iPhone ist ohne Gerät nur gegen ihre
   Rechnung getestet (Unit-Test), nicht gegen Safari. Die Android-Lösung über
   die Viewport-Angabe ist deterministisch.
+- **Die sieben Viewports hatten keine Safe-Area — und genau dort lag der
+  Fehler, den das Gerät zeigte.** Am 9. September abends fotografierte der
+  Betreiber auf dem iPhone die Chip-Zeile im Suchfeld, den Meldeknopf auf dem
+  Griff und Karte unter der blauen Pille. Ursache: Die Einrückung kommt in
+  der abgelegten App als Padding und erst nach dem ersten Layout, und die
+  beiden `ResizeObserver` für `--topbar-height` und `--sheet-height`
+  beobachteten in der Vorgabe nur die Content-Box. Per CDP
+  (`Emulation.setSafeAreaInsetsOverride` nach dem Laden) nachgestellt:
+  Kopfzeile 64 → 113 Pixel, Blatt 48 → 82, Variablen unverändert. Seitdem
+  `box: 'border-box'`, der Griff färbt die Safe-Area selbst blau, und ein
+  Test in `mobile.spec.ts` setzt die Einrückung absichtlich spät.
 - Das Melde-Blatt bleibt ohne `inert` und ohne Schleier, weil die Karte
   dahinter auf dem Desktop den Anker setzen darf. Tab kann dort in die Karte
   laufen.
