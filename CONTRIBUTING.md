@@ -7,7 +7,7 @@ nvm use            # liest .nvmrc — Node 22, dieselbe Zahl wie in der CI
 corepack enable    # holt pnpm in der festgelegten Version
 cd app
 pnpm install
-pnpm test          # 787 Unit-Tests
+pnpm test          # 800 Unit-Tests
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
 ```
