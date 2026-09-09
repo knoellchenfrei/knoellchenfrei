@@ -46,12 +46,20 @@ node scripts/doku-pruefen.mjs   # Abschnitte lückenlos, Verweise tragen, nichts
 ./scripts/geheimnisse-pruefen.sh  # keine Secrets im gebauten Bündel
 ```
 
-Und eine fünfte, die **von Hand** nach einem Deploy läuft und absichtlich nicht
-in der CI (sie braucht die echte Adresse, ein Fork hätte keine):
+Und **zwei weitere von Hand**, absichtlich nicht in der CI — beide brauchen
+etwas, das ein Workflow nicht hat:
 
 ```bash
-./scripts/ausgeliefert-pruefen.sh   # beide Adressen: Riegel, Kopfzeilen, keine offene Weiterleitung
+./scripts/ausgeliefert-pruefen.sh    # beide Adressen: Riegel, Kopfzeilen, keine offene Weiterleitung
+./scripts/einstellungen-pruefen.sh   # die Sicherheitsschalter bei GitHub
 ```
+
+Die erste braucht die echte Adresse, die ein Fork nicht hätte. Die zweite
+braucht ein Token mit Verwaltungsrecht: Das `GITHUB_TOKEN` eines Workflows darf
+`security_and_analysis` gar nicht lesen und bekäme für jedes Feld `null` — dort
+wäre die Prüfung immer „nicht prüfbar" und damit Dekoration. Sie unterscheidet
+das ausdrücklich vom Erfolg: ohne `gh`, ohne Anmeldung oder ohne Recht endet
+sie mit Rückgabewert **2**, nicht 0. Ihr Anlass steht in `SECURITY.md`.
 
 Sie schliesst die Lücke, die dieses Projekt zweimal getroffen hat: Die
 E2E-Suite misst gegen `vite preview`, und der kennt weder die Pages-Funktion
@@ -793,4 +801,4 @@ wiederholt.
 | [docs/nachtplan-2026-09-08.md](docs/nachtplan-2026-09-08.md) | Der Plan der Nacht zum 8. September und was jeder Abschnitt ergeben hat |
 | [docs/staedte-koeln.md](docs/staedte-koeln.md), [docs/staedte-karlsruhe.md](docs/staedte-karlsruhe.md) | Zwei vorbereitete Städte — Messung, Entscheidungen, was einzutragen bleibt |
 | [docs/mobile-ux-audit-2026-09.md](docs/mobile-ux-audit-2026-09.md) | Der Mobile-Audit: sieben Viewports vermessen, was geändert wurde und was bewusst nicht |
-| [SECURITY.md](SECURITY.md) | Bedrohungsmodell und Maßnahmen |
+| [SECURITY.md](SECURITY.md) | Bedrohungsmodell, Maßnahmen — und welche vier Netze nachgemessen statt erinnert werden |

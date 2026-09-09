@@ -2,10 +2,19 @@
   --bg: #0f1216;
   --panel: #171c22;
   --panel-edge: #262d36;
+  /* Heller als die Panel-Kante: Der Griff des Blatts ist das einzige, was
+     auf dem Handy sagt „hier lässt sich ziehen", und auf der Kante war er
+     kaum zu sehen. Eigener Token statt eines festen Werts in der Regel,
+     damit die Farben an einer Stelle stehen. */
+  --grip: #3f4854;
   --text: #e8edf3;
   --muted: #94a3b8;
   /* #2563eb statt #3b82f6: weißer Text erreicht darauf 5,2:1, auf dem alten Blau nur 3,7:1. */
   --accent: #2563eb;
+  /* Eine Stufe dunkler, für den Zeigerzustand des Standort-Knopfes. Stand
+     am 9. September als fester Wert in der Regel selbst — ein Akzent, der
+     sich ändert, hätte seinen Hover zurückgelassen. */
+  --accent-hover: #1d4ed8;
   /* Die beiden Tarifzustaende, dieselben Werte wie auf der Karte. Sie sind
      seit dem 8. September Messing und Eis statt Orange und Tuerkis; die
      Begruendung mit allen gemessenen Zahlen steht in
@@ -258,7 +267,7 @@ body {
   cursor: pointer;
   transition: bottom 220ms ease;
 }
-.locate:hover:not(:disabled) { background: #1d4ed8; }
+.locate:hover:not(:disabled) { background: var(--accent-hover); }
 .locate:disabled { opacity: 0.6; cursor: progress; }
 /* Ganz hoch gezogen gibt es keine Karte mehr, auf der der Knopf etwas zeigen
    könnte. */
@@ -491,7 +500,7 @@ body {
     display: block;
     width: 36px; height: 4px;
     border-radius: 999px;
-    background: #3f4854;
+    background: var(--grip);
   }
   .sidebar { gap: 0; }
   .sidebar--collapsed {
