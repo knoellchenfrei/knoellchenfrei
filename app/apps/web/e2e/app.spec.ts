@@ -887,6 +887,26 @@ test.describe('die weiteren Städte', () => {
     await expect(sheet).toContainText('Datenlizenz Deutschland Namensnennung 2.0')
     await expect(sheet).toContainText('verlangt')
     await expect(sheet).toContainText('Stadt Frankfurt am Main, www.frankfurt.de')
+    // Datenlizenz Deutschland kennt keinen Gewährleistungs-Hinweis — der
+    // Satz gehört nur zu Creative Commons und darf hier nicht stehen.
+    await expect(sheet).not.toContainText('ohne Gewährleistung')
+  })
+
+  // Karlsruhe ist die einzige Stadt unter Creative Commons. CC BY 4.0
+  // § 3 a) 1) A) iv) verlangt einen Hinweis auf den Gewährleistungsausschluss,
+  // den die Datenlizenz Deutschland nicht kennt (`docs/staedte-karlsruhe.md`,
+  // 5.3). Der Satz hängt an `licenceFamily`, nicht am Lizenznamen.
+  test('nennt in Karlsruhe den Gewährleistungsausschluss von CC BY', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('button', { name: 'Karlsruhe' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    sheet = await openSettings(page)
+    await expect(sheet).toContainText('CC BY 4.0')
+    await expect(sheet).toContainText('verlangt')
+    await expect(sheet).toContainText('ohne Gewährleistung')
   })
 
   // Und dasselbe für die vierte Stadt. Muenchen ist der interessanteste der

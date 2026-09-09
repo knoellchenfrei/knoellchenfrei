@@ -425,6 +425,25 @@ describe('die Lizenzangaben jeder Stadt', () => {
       expect(city.attribution.attributionRequired, city.name).toBe(!istZero)
     }
   })
+
+  // Die Familie entscheidet über einen weiteren Satz: CC BY 4.0 § 3 a) 1) A) iv)
+  // verlangt den Hinweis auf den Gewährleistungsausschluss, die Datenlizenz
+  // Deutschland nicht. Sie muss zum Lizenztext passen — sonst zeigt die
+  // Oberfläche eine Auflage, die es nicht gibt, oder verschweigt eine.
+  it('setzt licenceFamily passend zu Lizenztext und Namensnennung', () => {
+    for (const city of CITIES) {
+      const { licence, licenceUrl, licenceFamily, attributionRequired } = city.attribution
+      const erwartet = /creativecommons\.org\/licenses\/by\//.test(licenceUrl)
+        ? 'cc-by'
+        : /dl-de\/zero/.test(licenceUrl)
+          ? 'dl-de-zero'
+          : /dl-de\/by/.test(licenceUrl)
+            ? 'dl-de-by'
+            : 'unbekannt'
+      expect(licenceFamily, `${city.name}: ${licence}`).toBe(erwartet)
+      expect(attributionRequired, city.name).toBe(licenceFamily !== 'dl-de-zero')
+    }
+  })
 })
 
 describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {

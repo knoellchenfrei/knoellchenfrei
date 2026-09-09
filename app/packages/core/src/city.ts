@@ -58,7 +58,20 @@ export interface Attribution {
    * Lizenzbedingung, und eine Oberfläche, die sie weglässt, verletzt sie.
    */
   attributionRequired: boolean
+  /**
+   * Welche Lizenz*familie* — nicht welche Lizenz.
+   *
+   * Der Unterschied ist ein Satz mehr in der Oberfläche: CC BY 4.0
+   * § 3 a) 1) A) iv) verlangt einen Hinweis auf den Gewährleistungsausschluss,
+   * die Datenlizenz Deutschland nicht. Auf den Text von `licence` zu prüfen
+   * wäre der bequeme Weg und die falsche Abstraktion — er ist ein
+   * Anzeigename und kann sich ändern, ohne dass sich die Auflage ändert
+   * (`docs/staedte-karlsruhe.md`, 5.3).
+   */
+  licenceFamily: LicenceFamily
 }
+
+export type LicenceFamily = 'dl-de-zero' | 'dl-de-by' | 'cc-by'
 
 export interface City {
   /** Kleingeschrieben, ohne Umlaute — taugt als Dateiname und als URL-Teil. */
@@ -174,6 +187,7 @@ export const BERLIN: City = {
     licence: 'Datenlizenz Deutschland Zero 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
     attributionRequired: false,
+    licenceFamily: 'dl-de-zero',
   },
   towedVehicles: {
     authority: 'Auskunfts- und Fahndungsstelle der Polizei Berlin',
@@ -213,6 +227,7 @@ export const HAMBURG: City = {
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
+    licenceFamily: 'dl-de-by',
   },
   towedVehicles: {
     authority: 'Zentrale Verwahrstelle der Polizei Hamburg, Ausschläger Allee',
@@ -261,6 +276,7 @@ export const FRANKFURT: City = {
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
+    licenceFamily: 'dl-de-by',
   },
   towedVehicles: {
     authority: 'Stadt Frankfurt am Main, Abschleppungen',
@@ -310,6 +326,7 @@ export const MUENCHEN: City = {
     licence: 'Datenlizenz Deutschland Namensnennung 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
     attributionRequired: true,
+    licenceFamily: 'dl-de-by',
   },
   /**
    * Mariä Himmelfahrt, und zwar belegt statt angenommen.
@@ -370,6 +387,7 @@ export const KOELN: City = {
     licence: 'Datenlizenz Deutschland Zero 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
     attributionRequired: false,
+    licenceFamily: 'dl-de-zero',
   },
   // `towedVehicles` fehlt mit Absicht: Für die Kölner Verwahrstelle ließ sich
   // am 8. September keine amtliche Seite mit Namen und Nummer belegen. Fehlt
@@ -419,6 +437,7 @@ export const DUESSELDORF: City = {
     licence: 'Datenlizenz Deutschland Zero 2.0',
     licenceUrl: 'https://www.govdata.de/dl-de/zero-2-0',
     attributionRequired: false,
+    licenceFamily: 'dl-de-zero',
   },
   // Belegt auf der Seite des Ordnungsamts, wörtlich und mit beiden Nummern.
   // Zuständig ist das Ordnungsamt, nicht das Amt für Verkehrsmanagement; eine
@@ -488,6 +507,7 @@ export const KARLSRUHE: City = {
     licence: 'Creative Commons Namensnennung 4.0 International (CC BY 4.0)',
     licenceUrl: 'https://creativecommons.org/licenses/by/4.0/',
     attributionRequired: true,
+    licenceFamily: 'cc-by',
   },
   // Bewusst ohne `towedVehicles`: Aus dieser Sitzung liess sich keine
   // Karlsruher Verwahrstelle aus einer amtlichen Seite belegen. Fehlt das

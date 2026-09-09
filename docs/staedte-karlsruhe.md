@@ -633,7 +633,7 @@ zeigt, deckt vier der fünf Punkte aus CC BY 4.0 § 3 a) 1) ab:
 | A) i) | Nennung des Urhebers | ✅ `source` |
 | A) ii) | Urheberrechtsvermerk, falls mitgeliefert | — keiner mitgeliefert |
 | A) iii) | **Hinweis auf diese Lizenz** | ✅ `licence` + `licenceUrl` |
-| A) iv) | **Hinweis auf den Gewährleistungsausschluss** | ❌ **fehlt** |
+| A) iv) | **Hinweis auf den Gewährleistungsausschluss** | ✅ seit dem 9. September, über `licenceFamily` |
 | A) v) | Verweis auf das Material (URI) | ✅ `datasetUrl` |
 | B) | **Hinweis auf Veränderungen** | ✅ der Satz „Die Daten sind verändert" |
 
@@ -675,8 +675,12 @@ Und in `SettingsSheet.tsx`, hinter dem vorhandenen `attributionRequired`-Block:
 )}
 ```
 
-Das ist **nicht** dringend genug, um den Anschluss aufzuhalten, und es rührt an
-einen Typ, den vier Städte benutzen. Es gehört in einen eigenen Schritt.
+Das war **nicht** dringend genug, um den Anschluss aufzuhalten, und es rührt an
+einen Typ, den sieben Städte benutzen. Es ist am 9. September in einem eigenen
+Schritt genau so umgesetzt worden: `LicenceFamily` in `core/city.ts`, ein Test
+in `core/test/city.test.ts`, der die Familie gegen die Lizenzadresse und
+`attributionRequired` hält, der Satz in `SettingsSheet.tsx`, und ein E2E-Test,
+der ihn in Karlsruhe verlangt und in Frankfurt ausschließt.
 
 ### 5.4 Kleineres
 

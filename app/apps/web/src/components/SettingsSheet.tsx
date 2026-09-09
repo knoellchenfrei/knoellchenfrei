@@ -438,6 +438,19 @@ export function SettingsSheet({
           </p>
         )}
         {/*
+          Nur Creative Commons: § 3 a) 1) A) iv) verlangt neben Urheber und
+          Lizenz einen Hinweis auf den Gewährleistungsausschluss. Die
+          Datenlizenz Deutschland kennt diese Auflage nicht — der Satz hängt
+          deshalb an der Lizenzfamilie, nicht am Anzeigenamen der Lizenz.
+        */}
+        {CITY.attribution.licenceFamily === 'cc-by' && (
+          <p className="sheet__hint">
+            Creative Commons verlangt zusätzlich den Hinweis, dass die Daten{' '}
+            <strong>ohne Gewährleistung</strong> bereitgestellt werden — soweit rechtlich
+            zulässig, „wie besehen".
+          </p>
+        )}
+        {/*
           § 2 der Datenlizenz Deutschland verlangt bei Veränderungen einen
           Hinweis darauf — und verändert sind die Daten in jedem Fall: Wir
           bilden Teilmengen, vereinfachen Geometrien und übersetzen Freitext in
