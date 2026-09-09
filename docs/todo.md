@@ -359,37 +359,51 @@ Was am neuen Repository noch offen ist — **du**:
       Adresse der teurere Weg; `SECURITY.md` sagt das jetzt ausdrücklich, statt
       die Lücke offenzulassen.
 
-- [ ] **Zwei Sicherheitsschalter bei GitHub sind aus** — nachgemessen am
-      9. September mit `./scripts/einstellungen-pruefen.sh`:
-      `secret_scanning_non_provider_patterns` und
-      `secret_scanning_validity_checks`, beide `disabled`. Die anderen vier
+- [ ] **Ein Sicherheitsschalter bei GitHub ist aus** —
+      `secret_scanning_non_provider_patterns`, nachgemessen mit
+      `./scripts/einstellungen-pruefen.sh`. Die anderen vier stehen richtig
       (Secret Scanning, Push Protection, Dependabot-Sicherheitsupdates,
-      Private Vulnerability Reporting) stehen richtig.
+      Private Vulnerability Reporting).
 
-      Der erste ist kein theoretischer Punkt: Er ist der Schalter, der
-      generische Geheimnisse findet — Passwörter, Verbindungszeichenfolgen,
-      private Schlüssel. Das MySQL-Passwort von 2012, das bis zum
-      9. September wörtlich in `oeffentlich-machen.md` stand, hätte er
-      gemeldet; das Anbietermuster-Scanning konnte es gar nicht sehen.
+      Er ist kein theoretischer Punkt: Er findet generische Geheimnisse —
+      Passwörter, Verbindungszeichenfolgen, private Schlüssel. Das
+      MySQL-Passwort von 2012, das bis zum 9. September wörtlich in
+      `oeffentlich-machen.md` stand, hätte er gemeldet; das
+      Anbietermuster-Scanning konnte es gar nicht sehen.
 
-      Beide sind für öffentliche Repositories kostenlos. Es ist eine
-      Einstellung am Konto, also deine:
+      **Der Weg dorthin hat sich geändert, und meine erste Anleitung war
+      falsch** — vom Betreiber bemerkt. Die Adresse
+      `.../settings/security_analysis` gibt es nicht mehr. Aktuell:
 
-      ```
-      https://github.com/knoellchenfrei/knoellchenfrei/settings/security_analysis
-      ```
+      > *Settings* → Seitenleiste „Security and quality" → **Advanced
+      > Security** → Abschnitt „Secret Protection" → *Enable* neben
+      > **Generic patterns**.
 
-      Oder von der Kommandozeile:
+      Der Schalter heisst in der Oberfläche also nicht mehr „Non-provider
+      patterns", sondern „Generic patterns"; in der API heisst das Feld
+      unverändert `secret_scanning_non_provider_patterns`. Über die
+      Kommandozeile:
 
       ```bash
       gh api -X PATCH repos/knoellchenfrei/knoellchenfrei \
-        -F 'security_and_analysis[secret_scanning_non_provider_patterns][status]=enabled' \
-        -F 'security_and_analysis[secret_scanning_validity_checks][status]=enabled'
+        -F 'security_and_analysis[secret_scanning_non_provider_patterns][status]=enabled'
       ```
 
       Rechne beim ersten Lauf mit Fehlalarmen: Dieses Repository zitiert viel
       Konfiguration, und generische Muster sind unschärfer als
-      Anbietermuster. Danach meldet `einstellungen-pruefen.sh` grün.
+      Anbietermuster.
+
+      **Was ich nicht behaupten kann:** ob der Schalter für ein öffentliches
+      Repository kostenlos ist. Die Doku sagt dazu nichts Eindeutiges, und
+      die Seitenleiste heisst inzwischen „Advanced Security". Falls er Geld
+      kostet, gehört er hier gestrichen statt eingeschaltet — dieselbe Lage
+      wie bei der WAF-Regel, die aufgehört hat, kostenlos zu sein.
+
+      **`secret_scanning_validity_checks` ist aus der Prüfung heraus.** Das
+      Feld steht nicht mehr in der Liste, die „Update a repository" laut Doku
+      annimmt; gelesen wird es weiter. Ob es sich überhaupt noch setzen
+      lässt, ist offen, und eine Prüfung, die Unmögliches verlangt, ist
+      Lärm. Sie zeigt den Stand jetzt als Hinweis.
 
 - [x] **Branch-Schutz für `main`: bewusst aus** — Entscheidung des Betreibers
       vom 7. September (Audit-Punkt M-002).

@@ -119,8 +119,10 @@ Ihr Anlass war ein Fund: In `docs/oeffentlich-machen.md` stand ein
 MySQL-Passwort von 2012 wörtlich — in einem seit dem 6. September öffentlichen
 Repository. Secret Scanning hat nichts gemeldet, und das war richtig: Ein zwölf
 Jahre altes Passwort passt auf kein Anbietermuster. Der Schalter, der es
-gefunden hätte, heisst `secret_scanning_non_provider_patterns`, und er stand
-aus. Gefunden hat es ein Mensch beim Lesen.
+gefunden hätte, heisst in der API `secret_scanning_non_provider_patterns` und
+in der Oberfläche inzwischen „Generic patterns" — *Settings* → „Security and
+quality" → *Advanced Security* → „Secret Protection". Er stand aus. Gefunden
+hat es ein Mensch beim Lesen.
 
 Zwei Dinge an dieser Prüfung sind Absicht. Sie läuft **nicht** in der CI: Das
 `GITHUB_TOKEN` eines Workflows darf die Einstellungen gar nicht lesen und bekäme

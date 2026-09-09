@@ -202,6 +202,67 @@ for (const datei of dateien) {
   }
 }
 
+// --- 4. Testzahlen stimmen untereinander ------------------------------------
+//
+// Die Zahl der Unit-Tests steht an fünf Stellen: `README.md` zweimal (die
+// Befehlszeile und die Tabellenzeile mit der Aufteilung), `CLAUDE.md` zweimal
+// (Befehlszeile und `TEST_COUNT=`) und je einmal in `CONTRIBUTING.md` und
+// `docs/entscheidungen.md`. Am 9. September blieben nach einem Merge zwei
+// davon auf einem alten Stand stehen: Zwei Sitzungen hatten dieselbe Zahl
+// erhöht, aber verschiedene Dateien angefasst.
+//
+// Diese Prüfung sagt **nicht**, welche Zahl richtig ist — dafür müsste sie die
+// Suite laufen lassen. Sie sagt nur, dass alle dieselbe nennen. Das reicht:
+// Eine Zahl, die auseinanderläuft, ist immer falsch; eine, die einheitlich
+// falsch ist, fällt beim nächsten Lauf von `pnpm test` auf.
+const ZAHLQUELLEN = [
+  ['README.md', /pnpm test\s+# (\d+) Unit-Tests/],
+  ['README.md', /\| Unit-Tests \| (\d+) —/],
+  ['CLAUDE.md', /pnpm test\s+# (\d+) Unit-Tests/],
+  ['CLAUDE.md', /TEST_COUNT=(\d+) /],
+  ['CONTRIBUTING.md', /pnpm test\s+# (\d+) Unit-Tests/],
+  ['docs/entscheidungen.md', /hat (\d+) Unit-Tests/],
+]
+const gezaehlt = new Map()
+for (const [datei, muster] of ZAHLQUELLEN) {
+  const pfad = resolve(WURZEL, datei)
+  const treffer = muster.exec(readFileSync(pfad, 'utf8'))
+  if (treffer === null) {
+    fehler.push(`${datei}: Die Testzahl steht nicht mehr da, wo sie gesucht wird (${muster}).`)
+    continue
+  }
+  const wert = treffer[1]
+  if (!gezaehlt.has(wert)) gezaehlt.set(wert, [])
+  gezaehlt.get(wert).push(datei)
+}
+if (gezaehlt.size > 1) {
+  const auflistung = [...gezaehlt.entries()]
+    .map(([wert, wo]) => `${wert} (${wo.join(', ')})`)
+    .join(' gegen ')
+  fehler.push(`Die Zahl der Unit-Tests läuft auseinander: ${auflistung}.`)
+}
+
+// Dasselbe für die End-to-End-Tests, die an drei Stellen stehen.
+const E2E_QUELLEN = [
+  ['README.md', /# (\d+) End-to-End-Tests/],
+  ['CLAUDE.md', /# (\d+) End-to-End-Tests/],
+  ['CLAUDE.md', /E2E_COUNT=(\d+) /],
+]
+const e2e = new Map()
+for (const [datei, muster] of E2E_QUELLEN) {
+  const treffer = muster.exec(readFileSync(resolve(WURZEL, datei), 'utf8'))
+  if (treffer === null) {
+    fehler.push(`${datei}: Die E2E-Zahl steht nicht mehr da, wo sie gesucht wird (${muster}).`)
+    continue
+  }
+  if (!e2e.has(treffer[1])) e2e.set(treffer[1], [])
+  e2e.get(treffer[1]).push(datei)
+}
+if (e2e.size > 1) {
+  const auflistung = [...e2e.entries()].map(([wert, wo]) => `${wert} (${wo.join(', ')})`).join(' gegen ')
+  fehler.push(`Die Zahl der End-to-End-Tests läuft auseinander: ${auflistung}.`)
+}
+
 if (fehler.length > 0) {
   console.error('Doku-Prüfung fehlgeschlagen:\n')
   for (const zeile of fehler) console.error(`  ${zeile}`)
@@ -210,5 +271,5 @@ if (fehler.length > 0) {
 }
 console.log(
   `  ✓ Doku geprüft: ${dateien.length} Dateien, Nummerierung lückenlos, ` +
-    'Verweise tragen, nichts liegt unverlinkt herum'
+    'Verweise tragen, nichts liegt unverlinkt herum, Testzahlen einheitlich'
 )

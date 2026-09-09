@@ -78,7 +78,17 @@ pruefe 'secret_scanning_push_protection'        enabled "$(lies secret_scanning_
 pruefe 'dependabot_security_updates'            enabled "$(lies dependabot_security_updates)"
 # Der Schalter, der den Vorfall vom 9. September gefunden hätte.
 pruefe 'secret_scanning_non_provider_patterns'  enabled "$(lies secret_scanning_non_provider_patterns)"
-pruefe 'secret_scanning_validity_checks'        enabled "$(lies secret_scanning_validity_checks)"
+
+# `secret_scanning_validity_checks` steht **nicht** in der Liste der Felder, die
+# „Update a repository" laut Doku annimmt (nachgesehen am 9. September; neu
+# dazugekommen ist dort `secret_scanning_ai_detection`). Die Leseabfrage nennt
+# es weiter. Ob es sich noch setzen lässt, ist damit offen — und eine Prüfung,
+# die etwas verlangt, das man vielleicht gar nicht mehr einstellen kann, wäre
+# dieselbe Sorte Ärgernis wie eine WAF-Regel, die aufgehört hat, kostenlos zu
+# sein. Deshalb steht es als Hinweis da und zählt nicht als Abweichung.
+gueltigkeit="$(lies secret_scanning_validity_checks)"
+printf '  –    %-42s %s (nur zur Kenntnis, siehe Kommentar)\n' \
+  'secret_scanning_validity_checks' "${gueltigkeit:-unbekannt}"
 
 pvr="$(gh api "repos/$REPO/private-vulnerability-reporting" --jq '.enabled' 2>/dev/null || echo '?')"
 pruefe 'private_vulnerability_reporting'        true "$pvr"
@@ -89,8 +99,11 @@ if [ "$fehler" -eq 0 ]; then
   exit 0
 fi
 
-printf '  ✗ %s Abweichung(en). Einzuschalten unter\n' "$fehler"
-printf '    https://github.com/%s/settings/security_analysis\n' "$REPO"
-printf '    oder: gh api -X PATCH repos/%s \\\n' "$REPO"
+printf '  ✗ %s Abweichung(en).\n\n' "$fehler"
+printf '    In den Einstellungen: Settings → Seitenleiste „Security and quality"\n'
+printf '    → Advanced Security → Abschnitt „Secret Protection". Der Schalter für\n'
+printf '    `non_provider_patterns` heisst dort inzwischen **Generic patterns**;\n'
+printf '    die alte Adresse .../settings/security_analysis gibt es nicht mehr.\n\n'
+printf '    Oder: gh api -X PATCH repos/%s \\\n' "$REPO"
 printf "      -F 'security_and_analysis[<feld>][status]=enabled'\n"
 exit 1
