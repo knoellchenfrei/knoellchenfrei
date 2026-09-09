@@ -559,3 +559,41 @@ Werkzeugergebnisse kommen im Verlauf ebenfalls als `type: "user"` an und wären
 sonst mitgezählt worden: **1.395 statt 51**. Wer diesen Unterschied nicht
 macht, misst nicht, wie viel Führung eine Sitzung gebraucht hat, sondern wie
 viele Werkzeuge sie benutzt hat.
+
+### Nachtrag: dieselbe Sitzung, Stand 9. September, 02:20 Uhr
+
+Es ist **keine vierte Sitzung** — der Verlauf ist derselbe (`87ebaf9d…`), er
+ist nur weitergelaufen. Was sich gegenüber dem Stand von 04:30 geändert hat,
+mit demselben Skript gemessen:
+
+| | 8. September, 04:30 | 9. September, 02:20 |
+| --- | ---: | ---: |
+| Laufzeit | 26 h 8 min | **47 h 16 min** |
+| Zeilen im Verlauf | 6.673 | **11.459** |
+| Assistenten-Nachrichten | 2.817 | **3.645** |
+| Echte Nachrichten des Nutzers | 52 | **77** |
+| Werkzeugaufrufe | — | **2.281** (19 verschiedene, davon 2.129 `Bash`) |
+| Commits | 119 | **125** |
+| Geänderte Zeilen | +42.736 / −3.741 | **+37.036 / −2.312** |
+| Unit-Tests | 694 | **750** |
+| End-to-End-Tests | 154 | 154 |
+| Coverage (`core`, Zeilen) | 99,9 % | 99,9 % |
+
+Drei Zahlen brauchen eine Erklärung, sonst führen sie in die Irre:
+
+**Die geänderten Zeilen sind gesunken.** Das ist kein Messfehler und keine
+Rücknahme: Die frühere Zahl war gegen einen anderen Anfangspunkt gerechnet.
+Diese hier ist `git diff --shortstat` vom Vorgänger des ersten Commits dieser
+Sitzung bis `HEAD`, also der Nettostand — dazwischen liegen Dateien, die
+angelegt und wieder entfernt wurden.
+
+**Die Coverage steht bei denselben 99,9 %, misst aber etwas anderes.** Vitest 4
+rechnet die V8-Rohdaten AST-genau statt zeilenweise: `core` fiel von 1.828 auf
+812 Zeilen und stieg von 117 auf 164 Funktionen. Die Begründung steht in
+`CLAUDE.md`; hier zählt nur, dass ein Vergleich über den 9. September hinweg
+zwei verschiedene Messverfahren vergleicht.
+
+**Die Token-Zahlen aus dem Verlauf** stehen bei 1,86 Mrd. Summe, davon
+1,85 Mrd. Cache-Lesen. Sie überzeichnen weiterhin — der Faktor 1,6 aus der
+ersten Sitzung gilt hier genauso, weil dieselbe Mehrfachzählung beim Streamen
+dahintersteckt. Als Grössenordnung taugen sie, als Abrechnung nicht.

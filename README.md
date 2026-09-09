@@ -70,7 +70,7 @@ Formalie:
 | | Quelle | Lizenz | Bestand |
 | --- | --- | --- | --- |
 | **Berlin** | [GDI Berlin](https://gdi.berlin.de), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 103 Zonen, 45.917 Abschnitte, **210.527 bewirtschaftete Stellplätze**, 1.499 Orte, 97 Ortsteile |
-| **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Flächen für **63** Gebiete — die Quelle schneidet sie je Stadtteil, und 44 Flächen tragen gar keinen Namen; 104 Stadtteile |
+| **Hamburg** | [LGV Hamburg](https://geodienste.hamburg.de), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Namensnennung ist **Lizenzbedingung** | 145 aktive Flächen für **63** Gebiete — die Quelle schneidet sie je Stadtteil, und 44 Flächen führen keine Zonennummer, weil sie kein Bewohnerparkrecht kennen; 104 Stadtteile |
 | **Frankfurt am Main** | [Stadt Frankfurt](https://geowebdienste.frankfurt.de/Parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Stadt Frankfurt am Main, www.frankfurt.de` | 27 von 42 Bewohnerparkbereichen, 921 Parkscheinautomaten als Sachdatenquelle, 458 Behindertenparkplätze, 46 Stadtteile |
 | **München** | [Landeshauptstadt München](https://geoportal.muenchen.de/geoserver/mor_wfs/ows), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Datenquelle: dl-de/by-2-0: Landeshauptstadt München – opendata.muenchen.de`, je Ebene aus dem ISO-Metadatensatz belegt | 82 Parkraummanagementgebiete, 13.714 Straßenseiten als Sachdatenquelle, **95.903 Stellplätze**, 1.660 Orte, Umweltzone, 25 Stadtbezirke |
 
@@ -244,7 +244,7 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 741 Unit-Tests
+pnpm test                              # 778 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -283,7 +283,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 741 — 570 in `core`, 78 für Worker und Zählwerk, 82 für die Web-App, 11 für den Artifact-Bau; davon 58 Regressionstests für konkrete gefundene Fehler |
+| Unit-Tests | 778 — 570 in `core`, 78 für Worker und Zählwerk, 119 für die Web-App, 11 für den Artifact-Bau. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 68 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 170 über Desktop und Handy, gegen den Produktions-Build; 164 bestehen, sechs überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, fünf auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

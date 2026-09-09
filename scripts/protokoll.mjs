@@ -24,10 +24,24 @@
  *    davon, wie viel Führung eine Sitzung gebraucht hat.
  */
 
-import { createReadStream } from 'node:fs'
+import { createReadStream, existsSync } from 'node:fs'
 import { createInterface } from 'node:readline'
 
 const pfad = process.argv[2]
+
+// Ohne Argument eine Nutzungsmeldung statt eines Stacktrace. Der erste Lauf
+// am 9. September warf `ERR_INVALID_ARG_TYPE` aus `createReadStream` — eine
+// Meldung über einen Argumenttyp, die aussieht, als sei das Skript kaputt.
+if (pfad === undefined || pfad === '--hilfe' || pfad === '-h') {
+  console.error('Aufruf: node scripts/protokoll.mjs <sitzung>.jsonl')
+  console.error('Die Verläufe liegen unter ~/.claude/projects/<projekt>/.')
+  process.exit(pfad === undefined ? 2 : 0)
+}
+
+if (!existsSync(pfad)) {
+  console.error(`Kein Verlauf unter ${pfad}`)
+  process.exit(2)
+}
 const werkzeuge = new Map()
 const modelle = new Map()
 let zeilen = 0, assistent = 0, nutzer = 0, echteNutzer = 0
@@ -74,7 +88,11 @@ console.log('Modelle:', [...modelle].map(([k,v]) => `${k}=${n(v)}`).join(', '))
 console.log('Erste:', erste, ' Letzte:', letzte)
 if (erste && letzte) {
   const ms = Date.parse(letzte) - Date.parse(erste)
-  console.log('Laufzeit:', Math.floor(ms/3600000)+' h '+Math.round(ms%3600000/60000)+' min')
+  // Erst auf Minuten runden, dann in Stunden zerlegen. Andersherum kam
+  // „46 h 60 min" heraus: Die Stunden waren abgerundet, die Minuten
+  // aufgerundet, und die aufgerundete Minute fehlte der Stunde.
+  const minuten = Math.round(ms / 60000)
+  console.log('Laufzeit:', Math.floor(minuten / 60) + ' h ' + (minuten % 60) + ' min')
 }
 console.log('\nTokens (Verlauf):')
 console.log('  Eingabe        ', n(ein))

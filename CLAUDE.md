@@ -29,7 +29,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 741 Unit-Tests (core, api, web)
+pnpm test                                           # 778 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -50,7 +50,7 @@ Und eine fünfte, die **von Hand** nach einem Deploy läuft und absichtlich nich
 in der CI (sie braucht die echte Adresse, ein Fork hätte keine):
 
 ```bash
-./scripts/ausgeliefert-pruefen.sh   # der Riegel, die Kopfzeilen, keine offene Weiterleitung
+./scripts/ausgeliefert-pruefen.sh   # beide Adressen: Riegel, Kopfzeilen, keine offene Weiterleitung
 ```
 
 Sie schliesst die Lücke, die dieses Projekt zweimal getroffen hat: Die
@@ -62,8 +62,9 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (570), `apps/api` (78, Worker und Zählwerk),
-`apps/web` (82, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
-Formatierung, Speicher) und `packages/ingest` (11, die zwei Wächter des
+`apps/web` (119, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren, Demodaten,
+Stadtwahl) und `packages/ingest` (11, die zwei Wächter des
 Artifact-Baus). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -77,7 +78,7 @@ node scripts/make-icons.mjs                         # Symbole aus einer SVG-Quel
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=741 E2E_COUNT=170 npx tsx src/build-badges.ts
+TEST_COUNT=778 E2E_COUNT=170 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 scripts/build-tiles.sh --hochladen                  # PMTiles je Stadt, nach R2
 ```
@@ -362,6 +363,22 @@ wiederholt.
   nicht mehr am Compiler scheitern. Diese Sperre war ein Zufall und ist jetzt
   ein Test — `packages/core/test/kein-node-in-core.test.ts`, mit Gegenprobe
   nachgemessen.
+- **Ein Test, den kein Compiler ansieht, behauptet mehr, als er prüft.**
+  `tsc` sah bis zum 9. September nur `packages/core/test/`. In `apps/web`,
+  `apps/api` und `packages/ingest` stand `test` nicht im `include` — **180 der
+  750 Tests** waren damit nie typgeprüft. Gefunden hat es die Umstellung
+  prompt: In `zaehlwerk.test.ts` las eine Zusicherung `feature.id` auf einem
+  Objektliteral, das gar kein `id` hat. Der Test lief grün, weil Vitest die
+  Typen nicht braucht.
+
+  Der Worker geht dabei einen eigenen Weg, und der Grund ist gemessen: Sein
+  `src` steht auf `@cloudflare/workers-types` **allein**, denn damit ist
+  `import … from 'node:fs'` ein Typfehler — mit `@types/node` daneben ist es
+  keiner mehr. Seine Tests brauchen aber `node:sqlite`, um den Worker gegen
+  echtes SQLite zu rechnen. Deshalb zwei Läufe: `tsc --noEmit` für `src`,
+  `tsc -p tsconfig.test.json` für `test`. Was dabei **nicht** hilft: `Buffer`
+  und `process` kennt `workers-types` selbst, die bleiben so oder so erlaubt.
+
 - **Eine Abdeckungszahl gehört zu dem Werkzeug, das sie gemessen hat.** Mit
   Vitest 4 fielen `core`s Zeilen von 1828 auf 812 und die Statements von 1828
   auf 953 — dieselbe Testmenge, dasselbe `src/`. Kein Verlust: Vitest 3 rechnete
@@ -394,8 +411,9 @@ wiederholt.
   kassiert.
 - **Ein Zonenschlüssel ist keine Kennung einer Fläche.** Die Karte färbte über
   `setFeatureState({ source, id })` mit `promoteId: 'zone'`. In Hamburg tragen
-  **44 von 145 Flächen** den Schlüssel `-` — die Quelle vergibt dort keinen
-  Namen —, dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten
+  **44 von 145 Flächen** den Schlüssel `-` — es sind die Flächen ohne
+  Bewohnerparkrecht, für die die Quelle im Feld `bwp_code` keine Nummer führt —,
+  dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten
   (A103: 9–20 und 9–23 Uhr) und eine mit verschiedenen Beträgen (E315: 3,50 €
   und 3,00 €). Alle Flächen mit gleichem Schlüssel teilten sich **einen**
   Zustandsplatz: Die Schleife schrieb 44-mal hinein, der letzte gewann, und
@@ -739,7 +757,11 @@ wiederholt.
   nicht zuverlässig trennen, und lieber ein Name zu viel umbenannt als ein
   Kommentar zu wenig. Der Ausweg ist ein Name ohne `ae/oe/ue` (`basis` statt
   `gueltig`), nicht eine Ausnahme im Skript.
-- **Für jeden gefundenen Fehler ein Test.** 30 der Unit-Tests sind genau das.
+- **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
+  einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
+  keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
+  darüber: **68 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
 - **`packages/core` bleibt frei von Frameworks und ohne Laufzeit-Abhängigkeiten.**

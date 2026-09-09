@@ -468,7 +468,13 @@ IP-Adresse statt eines anonymen Merkmals.
 ./scripts/ausgeliefert-pruefen.sh
 ```
 
-Prüft die **ausgelieferte** Adresse: dass der Riegel vor Startseite,
+Prüft ohne Argument **beide** ausgelieferten Adressen — `knoellchenfrei.de`
+und `knoellchenfrei.pages.dev` —, mit Argument die angegebene. Dass beide
+geprüft werden, ist seit dem 9. September so: Die eigene Domain hängt an einer
+Zuordnung, die ein Deploy nicht mitbringt, und vorher stand als Vorgabe
+ausgerechnet die Adresse, die niemand eintippt.
+
+Geprüft wird: dass der Riegel vor Startseite,
 Statistikseite, Zonendaten, Manifest und Service Worker steht (je `401`), dass
 die Anmeldeseite ihre eigenen Sicherheits-Kopfzeilen trägt, und dass ein
 Einladungslink mit falschem Passwort keine Weiterleitung erzeugt.
@@ -479,6 +485,29 @@ dieses Projekts waren genau deshalb unsichtbar — der `308` auf `/index.html`,
 der `cache.addAll` scheitern liess, und die fehlende MapLibre-Worker-Datei, die
 `index.html` mit `200 OK` zurückbekam. Beide meldeten Erfolg; das Skript sieht
 deshalb auf Status **und** Content-Type.
+
+### Läuft der stündliche Aufräumlauf wirklich?
+
+Die Löschfristen aus [datenschutz.md](datenschutz.md) hängen an einem
+`scheduled()`-Handler mit `crons = ["7 * * * *"]`. Ob der **läuft**, sagt keine
+Konfiguration — das sagt nur sein Ergebnis. Der Rollup, den derselbe Lauf
+schreibt, trägt den Zeitpunkt:
+
+```bash
+curl -s "$VITE_API_BASE/stats" | python3 -c 'import sys,json; print(json.load(sys.stdin)["erzeugtAm"])'
+```
+
+Am 9. September um 01:29 Berliner Zeit kam `2026-09-08T23:07:06.825Z` zurück —
+22 Minuten alt, auf der Minute des Takts. Der Lauf arbeitet also, und mit ihm
+die Löschungen.
+
+Zwei Dinge, die dabei aufgefallen sind und beim nächsten Mal Zeit sparen:
+Die Worker-Adresse steht als **GitHub-Secret** `VITE_API_BASE` und ist deshalb
+im Deploy-Log maskiert — obwohl es ein öffentlicher Wert ist (Audit-Punkt
+A4-021). Und der lokale API-Token darf D1 lesen, aber **nicht KV**: Ein
+`wrangler kv key get` auf denselben Schlüssel antwortet mit `401`. Der Weg über
+den öffentlichen Endpunkt ist also nicht nur kürzer, er ist der einzige, der
+ohne weitere Rechte funktioniert.
 
 **Seit dem 8. September läuft dasselbe Skript auch im Deploy**, gegen die
 Vorschauadresse genau dieses Deploys. Das war die grösste offene Stelle des

@@ -672,7 +672,7 @@ async function recordEvents(
     // Reserviert wird **zuletzt**, und das ist die Korrektur eines Fehlers.
     //
     // Vorher stand diese Anweisung an erster Stelle. Ein `batch` läuft der
-    // Reihe nach in einer Transaktion — die Zaehlanweisungen lasen also
+    // Reihe nach in einer Transaktion — die Zählanweisungen lasen also
     // bereits den *erhöhten* Stand. Ein Bündel, das den Deckel überschritt,
     // schrieb damit **gar nichts**, auch nicht den Teil, der noch gepasst
     // hätte, und die Antwort meldete trotzdem `written: n`. Gemessen gegen

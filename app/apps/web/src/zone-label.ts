@@ -1,9 +1,10 @@
 import type { ZoneProperties } from './types.js'
 
 /**
- * Wie eine Fläche heißt, wenn die Quelle ihr keinen Namen gegeben hat.
+ * Wie eine Fläche heißt, für die die Quelle keine Zonennummer führt.
  *
- * Hamburg liefert für **44 seiner 145 Flächen** den Zonenschlüssel `-`. Bis
+ * Hamburg liefert für **44 seiner 145 Flächen** den Zonenschlüssel `-` — es
+ * sind die Flächen ohne Bewohnerparkrecht, die gar keine Nummer haben. Bis
  * zum 8. September stand daraufhin an neun Stellen der Oberfläche wörtlich
  * „Zone -": im Panel, in der Ansage für Screenreader, in der Suche, im
  * Meldedialog und im Satz „Parkplatz gemerkt in Zone -". Das liest sich wie

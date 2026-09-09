@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { ZoneFeature } from '../src/zones.js'
+
 /**
  * Der Zähler in der App — die Hälfte, die vorher keinen Test hatte.
  *
@@ -232,7 +234,7 @@ describe('der Katalog', () => {
  *
  * Die Karte färbt über `setFeatureState({ source, id })`, und `id` kam aus
  * `promoteId: 'zone'`, also aus dem Zonenschlüssel. In Hamburg tragen **44 von
- * 145 Flächen** den Schlüssel `-`, weil die Quelle dort keinen Namen vergibt;
+ * 145 Flächen** den Schlüssel `-`, weil die Quelle für sie keine Nummer führt;
  * dazu kommen vier Zonen in mehreren Stücken mit verschiedenen Zeiten.
  *
  * Alle Flächen mit demselben Schlüssel teilten sich damit **einen**
@@ -242,7 +244,11 @@ describe('der Katalog', () => {
  * Sichtbar war es nur als Farbe; das Panel las immer die richtige Fläche.
  */
 describe('die Kennung einer Kartenfläche', () => {
-  const fläche = (zone: string, lon: number) => ({
+  // Der Rückgabetyp steht ausdrücklich da: Ohne ihn ist es ein Objektliteral
+  // ohne `id`, und `f.id` unten wäre ein Typfehler — genau der, den `tsc` bis
+  // zum 9. September gar nicht zu sehen bekam, weil `test/` nicht im
+  // `include` der `tsconfig.json` stand.
+  const fläche = (zone: string, lon: number): ZoneFeature => ({
     properties: { zone } as never,
     geometry: {
       type: 'Polygon' as const,
@@ -287,7 +293,7 @@ describe('die Kennung einer Kartenfläche', () => {
 })
 
 /**
- * Wie eine Fläche heißt, der die Quelle keinen Namen gegeben hat.
+ * Wie eine Fläche heißt, für die die Quelle keine Zonennummer führt.
  *
  * Hamburg liefert für 44 seiner 145 Flächen den Schlüssel `-`. An neun Stellen
  * der Oberfläche stand daraufhin wörtlich „Zone -" — im Panel, in der Ansage

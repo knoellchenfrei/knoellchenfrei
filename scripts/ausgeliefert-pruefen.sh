@@ -17,12 +17,26 @@
 # der etwas anderes ist. Dieses Skript sieht deshalb auf **Status und
 # Content-Type**, nie nur auf den Status.
 #
-#   ./scripts/ausgeliefert-pruefen.sh                       # Standardadresse
+#   ./scripts/ausgeliefert-pruefen.sh                       # beide Adressen
 #   ./scripts/ausgeliefert-pruefen.sh https://andere.example
 set -uo pipefail
 
-BASIS="${1:-https://knoellchenfrei.pages.dev}"
-BASIS="${BASIS%/}"
+# Ohne Argument werden **beide** Adressen geprüft.
+#
+# `pages.dev` ist die, die der Deploy benennt; `knoellchenfrei.de` ist die, die
+# jemand eintippt. Sie können auseinanderlaufen — eine eigene Domain hängt an
+# einer Zuordnung, die ein Deploy nicht mitbringt, und ein Riegel, der nur auf
+# der einen steht, ist keiner. Bis zum 9. September stand hier nur `pages.dev`
+# als Vorgabe: Die eine Adresse, die niemand benutzt.
+if [ "$#" -eq 0 ]; then
+  gesamt=0
+  for adresse in https://knoellchenfrei.de https://knoellchenfrei.pages.dev; do
+    "$0" "$adresse" || gesamt=1
+  done
+  exit "$gesamt"
+fi
+
+BASIS="${1%/}"
 
 # Wie lange eine frische Auslieferung anlaufen darf.
 #

@@ -538,8 +538,8 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
       neben der Karte, unsichtbar, während die Liste „am häufigsten
       kontrolliert" dreimal „Außerhalb der Zonen" nannte. Sie stehen jetzt als
       Abstand zu `CITY.center`.
-- [ ] **44 Hamburger Flächen heißen `-`.** Die Quelle vergibt für sie keinen
-      Zonennamen; von 145 Flächen tragen 44 diesen Schlüssel, und die
+- [ ] **44 Hamburger Flächen tragen den Schlüssel `-`.** Die Quelle führt für
+      sie keine Zonennummer; von 145 Flächen tragen 44 diesen Schlüssel, und die
       Kartenfärbung ist deshalb seit dem 8. September nicht mehr daran
       gebunden (siehe `LoadedZone.id`). An drei Stellen wirkt er trotzdem noch:
 
@@ -554,9 +554,46 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
          Stadt; die Zeile ist damit die häufigste und sagt am wenigsten.
       3. **Die Zonensuche** findet unter `-` genau die erste.
 
-      Der saubere Weg ist ein stabiler Ersatzschlüssel im Datenbau — etwa aus
-      Stadtteil und laufender Nummer. Er ändert die erzeugte Zonenliste und
-      die bereits gezählten Ausprägungen, also nicht nebenbei.
+      **Vorlage zur Entscheidung, am 9. September nachgemessen — der Einbau
+      wartet auf dich, weil er die erzeugte Zonenliste ändert.**
+
+      Zuerst eine Korrektur an meiner eigenen Beschreibung: Der Strich steht
+      nicht im Namen, sondern in `bwp_code`. `bwp_name` ist bei **keiner
+      einzigen** der 146 Flächen leer — die 44 heissen dort „Tagesticket,
+      keine Bewohnerparkvorrechte" oder „Nur Kurzzeitparken, keine
+      Bewohnerparkvorrechte". Es sind also keine namenlosen Gebiete, sondern
+      Flächen, die gar keine Bewohnerparkzone sind und deshalb keine
+      Zonennummer haben. `build-data-hamburg.ts` nimmt `bwp_code` als `zone`.
+
+      Der Ersatzschlüssel muss deshalb nicht erfunden werden — die Quelle
+      vergibt selbst einen: `DE.HH.UP_BEWOHNERPARKGEBIETE_32004`, dazu
+      `objectid`. Gegen „Stadtteil und laufende Nummer" spricht, dass eine
+      laufende Nummer sich verschiebt, sobald die Quelle eine Fläche einfügt;
+      danach zeigt eine bereits gezählte Ausprägung auf ein anderes Gebiet.
+
+      Gemessen, zwei Momentaufnahmen im Abstand von zwei Tagen (7. und
+      9. September, beide 146 Flächen):
+
+      | | |
+      | --- | --- |
+      | Quell-IDs identisch | ja, alle 146 |
+      | `bwp_code` an derselben ID geändert | 0 |
+      | Geometrie an derselben ID geändert | 0 |
+
+      Zwei Tage sind kein Beweis für Dauerhaftigkeit, aber es ist die eigene
+      Kennung des Anbieters und damit das Beste, was zu haben ist.
+
+      Und die Zahl, die die Dringlichkeit setzt: In der Produktion stehen
+      **null** bereits gezählte `zone.open`-Ausprägungen mit dem Wert `-`
+      (`SELECT COUNT(*) … WHERE name='zone.open' AND value='-'` → 0). Solange
+      das so ist, kostet der Wechsel keine Migration. Sobald die Beta zählt,
+      kostet er eine.
+
+      Was er anfasst: `build-data-hamburg.ts` (Schlüssel), die erzeugte
+      `zones.geojson`, `ZONE_KEYS` in `core` (der Worker prüft dagegen), die
+      Suche und die Statistikseite. Die Anzeige selbst ist schon fertig — sie
+      geht seit dem 8. September über `zone-label.ts` und nennt den Schlüssel
+      gar nicht mehr.
 
 - [x] ~~**`packages/ingest` hat keinen einzigen Test.**~~ **Am 8. September
       abends erledigt**, als eigener Schritt — in der Nacht war er ausdrücklich
@@ -1002,6 +1039,39 @@ Was noch offen ist:
       grünem E2E-Lauf.
 
 ## 9. Kleinkram — **ich**
+
+- [ ] **Ein Abzug, der nicht aufgefrischt wurde, sieht aus wie einer, der
+      aktuell ist.** Der Deploy holt die Daten je Stadt neu und fällt bei einem
+      Fehlschlag auf den eingecheckten Abzug zurück — richtig so, ein
+      Dienstausfall darf keinen Deploy blockieren. Gemeldet wird das in
+      `$GITHUB_STEP_SUMMARY`, also nur für den, der den Lauf öffnet; der Job
+      bleibt grün.
+
+      **Der Rückfall ist nicht theoretisch.** Am 9. September um 01:30 war
+      Frankfurts WFS vollständig unten: `503` auf `GetFeature` **und** auf
+      `GetCapabilities`, dreimal nacheinander, mit HTML-Körper. Berlin,
+      Hamburg und München antworteten im selben Lauf und lieferten Daten, die
+      Zeichen für Zeichen dem Bestand entsprechen — 103, 146 und 82 Flächen,
+      gleiche Geometrien, gleiche Merkmale.
+
+      Und genau daran hängt der Punkt: **Der Git-Zeitstempel misst „zuletzt
+      geändert", nicht „zuletzt geprüft".** Weil eine unveränderte Quelle
+      keinen Diff erzeugt, steht in der Historie für alle vier Städte der
+      6./7. September — unabhängig davon, ob seitdem täglich erfolgreich
+      abgerufen wurde oder seit Wochen gar nicht. Ein Abzug, den seit drei
+      Monaten niemand aufgefrischt hat, ist von einer Quelle, die sich drei
+      Monate nicht geändert hat, nicht zu unterscheiden. Auch `meta.json`
+      hilft nicht: Es trägt Zonen-, Bezirks- und Automatenzahlen, aber **kein
+      Datum**.
+
+      Vorschlag, nicht eingebaut, weil er das erzeugte Datenformat ändert:
+      ein Feld `geprueftAm` in `meta.json` — der Zeitpunkt des letzten
+      **erfolgreichen Abrufs**, nicht der des Baus. Es wandert dann mit dem
+      Deploy nach draußen: Nach einem gelungenen Abruf ist es frisch, nach
+      einem Rückfall bleibt das alte Datum stehen und fällt auf. Dazu eine
+      Warnung im Deploy, sobald es älter ist als eine Woche. Ändert vier
+      Datenbauten und eine Datei, die die App liest — deshalb erst nach
+      Absprache.
 
 - [x] **Bilder neu aufgenommen** — am 7. September, mit Hintergrundkarte
       (Audit-Punkt M-076). Vorher zeigten `public/screenshots/` und
