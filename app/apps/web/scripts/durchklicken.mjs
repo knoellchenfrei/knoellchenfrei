@@ -18,8 +18,8 @@
  *
  *   cd app/apps/web && PLAYWRIGHT_CHROMIUM=… node scripts/durchklicken.mjs
  *
- * `.dev.vars` ist nicht in `.gitignore` — danach löschen. Das Skript endet mit
- * Rückgabewert 1, sobald ein Aufruf an den Worker mit 4xx/5xx antwortet oder
+ * `.dev.vars` steht in `.gitignore` und bleibt auf dem Rechner. Das Skript
+ * endet mit Rückgabewert 1, sobald ein Aufruf an den Worker mit 4xx/5xx antwortet oder
  * eine Seite einen Fehler in die Konsole schreibt; Kachelfehler zählen nicht,
  * die Rasterkacheln von OpenStreetMap sind hier oft gesperrt.
  *

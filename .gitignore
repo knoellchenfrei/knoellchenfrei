@@ -12,6 +12,10 @@
 # Lokaler Zustand von wrangler: Zwischenspeicher, Kennungen, D1-Kopien für
 # `--local`. Gehört auf den Rechner, nicht ins Repository.
 .wrangler/
+# Die Geheimnisse für `wrangler dev` (CLIENT_SALT, ALLOWED_ORIGINS, notfalls
+# ein Bot-Token). Bis zum 9. September stand die Datei nach jedem Durchklick
+# als `??` im Baum — ein `git add -A` hätte sie mitgenommen.
+.dev.vars
 
 # Fällt an, wenn jemand `npm install` im Wurzelverzeichnis ausführt (etwa um
 # pnpm zu installieren). Das Projekt selbst hat hier keine Abhängigkeiten.
