@@ -93,3 +93,22 @@ describe('der Stil ohne Kacheln macht keine fremde Anfrage', () => {
     expect(JSON.stringify(stil.sources)).toContain('tile.openstreetmap.org')
   })
 })
+
+describe('die Quellenangabe hängt nicht am Archiv', () => {
+  /**
+   * Das lokale Archiv vom 9. September hatte keine Metadaten, und MapLibre
+   * nimmt die Attribution einer `pmtiles://`-Quelle aus genau diesen — das
+   * „i" verschwand stillschweigend (`maplibregl-attrib-empty`). Als
+   * `customAttribution` steht sie unabhängig davon.
+   */
+  it('nennt mit Archiv OpenStreetMap und Protomaps, ohne nur OpenStreetMap', async () => {
+    vi.stubEnv('VITE_TILES_URL', 'https://kacheln.example/v20260904/')
+    const mit = await import('../src/map-style.js')
+    expect(mit.attributionFor(true)).toBe('© OpenStreetMap-Mitwirkende, © Protomaps')
+    expect(mit.attributionFor(false)).toBe('© OpenStreetMap-Mitwirkende')
+    vi.resetModules()
+    vi.stubEnv('VITE_TILES_URL', '')
+    const ohne = await import('../src/map-style.js')
+    expect(ohne.attributionFor(true)).toBe('© OpenStreetMap-Mitwirkende')
+  })
+})

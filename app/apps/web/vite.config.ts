@@ -208,7 +208,10 @@ function securityHeaders(singleBundle: boolean): Plugin {
       // Herkunft, die niemand mehr braucht, ist eine zu viel.
       const osm = 'https://tile.openstreetmap.org'
 
-      const verbinden = ["'self'", api, kacheln].filter((wert) => wert !== '')
+      // Photon (komoot) für die Straßensuche, seit dem 9. September nachts —
+      // `street-search.ts` sagt, was hingeht: der getippte Text und der Stadtrahmen.
+      const photon = 'https://photon.komoot.io'
+      const verbinden = ["'self'", api, kacheln, photon].filter((wert) => wert !== '')
       const bilder = ["'self'", 'data:', 'blob:', osm, kacheln].filter(
         (wert) => wert !== '',
       )

@@ -19,6 +19,20 @@ async function ready(page: Page): Promise<void> {
   if ((await later.count()) > 0) await later.click()
 }
 
+/** Das Meldungen-Blatt hinter der Karte unten links (seit dem 9. September nachts). */
+async function openReports(page: Page): Promise<void> {
+  // Mit offenem Blatt ist die Karte auf dem Handy weg (`docs/design.md`,
+  // Abschnitt 8); also erst zu, dann öffnen.
+  const body = page.locator('.sidebar__body')
+  if (await body.isVisible()) {
+    await page.locator('.panel-toggle').click()
+    await expect(body).toBeHidden()
+    await page.waitForTimeout(300)
+  }
+  await page.locator('.reports-card').click()
+  await expect(page.getByRole('dialog', { name: 'Meldungen' })).toBeVisible()
+}
+
 async function openPanel(page: Page): Promise<void> {
   const body = page.locator('.sidebar__body')
   if (!(await body.isVisible())) await page.locator('.panel-toggle').click()
@@ -56,8 +70,8 @@ test.describe('Zurück schließt das Blatt, nicht die App', () => {
 
   test('räumt auch das Melde-Blatt über Zurück ab', async ({ page }) => {
     await ready(page)
-    await openPanel(page)
-    await page.locator('button', { hasText: 'Hier gesehen' }).click()
+    await openReports(page)
+    await page.locator('.sheet--reports button', { hasText: 'Kontrolle melden' }).click()
     const dialog = page.getByRole('dialog', { name: 'Sichtung melden' })
     await expect(dialog).toBeVisible()
     await page.goBack()
@@ -77,6 +91,9 @@ test.describe('das Blatt auf dem Handy', () => {
   test('behält den Griff beim Scrollen im Bild', async ({ page }) => {
     await ready(page)
     await openPanel(page)
+    // Das Blatt fährt seit dem 9. September nachts in 220 ms auf; gemessen
+    // wird, wenn es steht.
+    await page.waitForTimeout(400)
     const grip = page.locator('.panel-toggle')
     const before = await grip.boundingBox()
     await page.locator('.sidebar__body').evaluate((el) => {
@@ -221,7 +238,7 @@ test.describe('Folgepunkte aus dem Audit', () => {
     const size = page.viewportSize()!
     // Zu: kein Menü, keine Box, die Karte darunter ist frei.
     await expect(page.locator('.legend__layers')).toBeHidden()
-    const toggle = (await page.locator('.chip--toggle').boundingBox())!
+    const toggle = (await page.locator('.legend__toggle').boundingBox())!
     await page.getByRole('button', { name: /Ebenen/ }).click()
     const menu = page.locator('.legend__layers')
     await expect(menu).toBeVisible()
@@ -238,9 +255,9 @@ test.describe('Folgepunkte aus dem Audit', () => {
       expect(await row.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
       if (testInfo.project.name === 'phone') expect(r.height).toBeGreaterThanOrEqual(40)
     }
-    // Nach unten unter der Kopfzeile, nach oben über der Zeile unten links.
-    if (testInfo.project.name === 'phone') expect(box.y).toBeGreaterThanOrEqual(toggle.y + toggle.height)
-    else expect(box.y + box.height).toBeLessThanOrEqual(toggle.y)
+    // Unter dem Knopf, auf jedem Gerät — die Spalte hängt seit dem
+    // 9. September nachts überall unter der Kopfzeile.
+    expect(box.y).toBeGreaterThanOrEqual(toggle.y + toggle.height)
 
     // Auch über dem offenen Blatt: Die volle Suite fand am 9. September,
     // dass „P+R" hinter dem Griff lag und nicht zu treffen war.
@@ -258,8 +275,9 @@ test.describe('Folgepunkte aus dem Audit', () => {
       await expect(menu).toBeVisible()
     }
     // Ein Tipp auf die Karte schliesst es, ein zweiter auf „Ebenen" auch.
-    // x = 300: rechts vom Menü, auf dem Handy wie auf dem Desktop links vom Blatt.
-    await page.locator('.map canvas').click({ position: { x: 300, y: size.height / 2 } })
+    // (160, 375): unter dem Menü (bis 354), über der Meldungen-Karte (ab
+    // 397), links der Kreise — auf 320 × 568 gemessen, auf dem Desktop frei.
+    await page.locator('.map canvas').click({ position: { x: 160, y: 375 } })
     await expect(menu).toBeHidden()
     await page.getByRole('button', { name: /Ebenen/ }).click()
     await expect(menu).toBeVisible()
@@ -288,11 +306,12 @@ test.describe('Folgepunkte aus dem Audit', () => {
     await ready(page)
     const attrib = page.locator('.maplibregl-ctrl-attrib')
     await expect(attrib).not.toHaveClass(/maplibregl-compact-show/)
-    // Und der Streifen steht nicht mehr über der Chip-Zeile.
+    // Und der Streifen steht nicht im Ebenen-Menü: das eine oben rechts
+    // unter dem Zahnrad, das andere unten links.
     await page.getByRole('button', { name: /Ebenen/ }).click()
-    const chips = await page.locator('.legend').boundingBox()
-    const info = await attrib.boundingBox()
-    expect(info!.x).toBeGreaterThanOrEqual(chips!.x + chips!.width - 1)
+    const menu = (await page.locator('.legend__layers').boundingBox())!
+    const info = (await attrib.boundingBox())!
+    expect(info.y).toBeGreaterThanOrEqual(menu.y + menu.height)
 
     // Seit dem 9. September abends auch auf dem Desktop zu: Der Betreiber
     // will das „i" nie ausgefahren sehen; wer die Quellen will, tippt.
@@ -321,7 +340,8 @@ test.describe('Folgepunkte aus dem Audit', () => {
       expect(k.x + k.width).toBeLessThanOrEqual(p.x + p.width + 0.5)
       expect(k.y).toBeGreaterThanOrEqual(p.y)
       expect(k.y + k.height).toBeLessThanOrEqual(p.y + p.height + 0.5)
-      expect(k.width).toBeGreaterThanOrEqual(36)
+      // 24 Pixel, seit dem 9. September nachts: klein wie bei FreiFahren.
+      expect(k.width).toBeGreaterThanOrEqual(24)
     }
     await expect(pille).not.toHaveClass(/maplibregl-compact-show/)
     await drin()
@@ -365,29 +385,34 @@ test.describe('der Meldeknopf auf dem Handy', () => {
   })
 
   /**
-   * Eine Zeile für das, was man tun kann: links „Ebenen", rechts der rote
-   * Meldeknopf, bündig mit dem Zahnrad. Auf 320 Pixeln teilen sie sich die
-   * Breite; das Ebenen-Menü klappt darunter auf.
+   * Seit dem 9. September nachts (`docs/design.md`): Zahnrad rechts neben der
+   * Suche, der Ebenen-Knopf darunter am rechten Rand, die Kennzahlen-Leiste
+   * daneben bis zum Rand — und der Meldeknopf ist der rote Kreis unten
+   * rechts über dem Standort. Auf 320 Pixeln bleibt alles im Schirm.
    */
-  test('teilt sich die Zeile mit den Ebenen und bleibt im Schirm', async ({ page }) => {
+  test('Zahnrad, Ebenen-Knopf und Leiste stehen auf 320 Pixeln im Raster', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 })
     await ready(page)
-    const fab = (await page.locator('.report-fab').boundingBox())!
-    const ebenen = (await page.locator('.chip--toggle').boundingBox())!
     const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
+    const ebenen = (await page.locator('.legend__toggle').boundingBox())!
+    const live = (await page.locator('.live').boundingBox())!
+    const fab = (await page.locator('.fab').boundingBox())!
+    // Ebenen rechts unter dem Zahnrad, bündig; die Leiste links daneben.
+    expect(Math.abs(ebenen.x + ebenen.width - (gear.x + gear.width))).toBeLessThan(2)
+    expect(ebenen.y).toBeGreaterThanOrEqual(gear.y + gear.height)
+    expect(Math.abs(live.y - ebenen.y)).toBeLessThan(2)
+    expect(live.x + live.width).toBeLessThanOrEqual(ebenen.x)
+    expect(ebenen.width).toBeGreaterThanOrEqual(44)
+    // Der Ebenen-Knopf trägt kein Wort, nur das Symbol.
+    expect((await page.locator('.legend__toggle').innerText()).trim()).toBe('')
     expect(fab.x + fab.width).toBeLessThanOrEqual(320)
-    expect(Math.abs(fab.x + fab.width - (gear.x + gear.width))).toBeLessThan(2)
-    expect(Math.abs(fab.y - ebenen.y)).toBeLessThan(2)
-    expect(ebenen.x + ebenen.width).toBeLessThanOrEqual(fab.x)
 
-    // Offen bleibt der Knopf, wo er ist: Das Menü liegt unter der Zeile auf
-    // der Karte und verbreitert sie nicht. (Vorher nahm die Chip-Zeile die
-    // ganze Breite, und der Knopf rückte darunter.)
+    // Offen liegt das Menü unter dem Knopf, rechtsbündig, und im Schirm.
     await page.getByRole('button', { name: /Ebenen/ }).click()
     const menu = (await page.locator('.legend__layers').boundingBox())!
-    const fabOffen = (await page.locator('.report-fab').boundingBox())!
-    expect(fabOffen.y).toBe(fab.y)
-    expect(menu.y).toBeGreaterThanOrEqual(fabOffen.y + fabOffen.height)
+    expect(menu.y).toBeGreaterThanOrEqual(ebenen.y + ebenen.height)
+    expect(Math.abs(menu.x + menu.width - (ebenen.x + ebenen.width))).toBeLessThan(2)
+    expect(menu.x).toBeGreaterThanOrEqual(0)
   })
 })
 
@@ -421,7 +446,7 @@ test.describe('die Safe-Area des iPhones', () => {
     expect(overlay.y).toBeGreaterThanOrEqual(topbar.y + topbar.height)
 
     const toggle = await box('.panel-toggle')
-    const fab = await box('.report-fab')
+    const fab = await box('.fab')
     const size = page.viewportSize()!
     // Der Griff reicht blau bis zur Kante, und der Meldeknopf steht über ihm.
     expect(Math.round(toggle.y + toggle.height)).toBe(size.height)
@@ -498,7 +523,8 @@ test.describe('das Querformat auf dem Handy', () => {
       insets: { top: 0, left: 59, bottom: 21, right: 59 },
     })
     await page.waitForTimeout(400)
-    await page.locator('.map canvas').click({ position: { x: 380, y: 300 } })
+    // Rechts von Leiste und Meldungen-Karte, links vom Blatt.
+    await page.locator('.map canvas').click({ position: { x: 440, y: 250 } })
     await expect(page.locator('.panel__title').first()).toBeVisible()
     await page.getByRole('button', { name: /Ebenen/ }).click()
     await expect(page.locator('.legend--open')).toBeVisible()
@@ -513,20 +539,20 @@ test.describe('das Querformat auf dem Handy', () => {
 
     const sidebar = await box('.sidebar')
     const overlay = await box('.overlay')
-    const fab = await box('.report-fab')
+    const fab = await box('.fab')
     const locate = await box('.locate')
     const attrib = await box('.maplibregl-ctrl-attrib')
     const size = page.viewportSize()!
     // Leiste links, Blatt rechts, dazwischen bleibt Karte.
-    expect(overlay.x + overlay.width).toBeLessThan(sidebar.x - 100)
+    expect(overlay.x + overlay.width).toBeLessThan(sidebar.x - 40)
     expect(sidebar.x + sidebar.width).toBeLessThanOrEqual(size.width - 59)
-    // Die offenen Chips und der Meldeknopf bleiben in der Leiste.
-    expect(fab.x + fab.width).toBeLessThanOrEqual(overlay.x + overlay.width + 1)
-    // Vier Dinge, die vorher paarweise aufeinanderlagen. Der Meldeknopf
-    // steht in der Leiste, deshalb wird er gegen die anderen drei geprüft.
-    const named = { overlay, locate, attrib, sidebar }
+    // Der Meldeknopf steht über dem Standort, beide links vom Blatt.
+    expect(fab.y + fab.height).toBeLessThanOrEqual(locate.y + 1)
+    expect(fab.x + fab.width).toBeLessThanOrEqual(sidebar.x)
+    // Sechs Dinge, von denen vorher je zwei aufeinanderlagen.
+    const card = await box('.reports-card')
+    const named = { overlay, locate, attrib, sidebar, fab, card }
     const keys = Object.keys(named) as (keyof typeof named)[]
     for (const a of keys) for (const b of keys) if (a < b) expect(overlap(named[a], named[b]), `${a} über ${b}`).toBe(false)
-    for (const k of ['locate', 'attrib', 'sidebar'] as const) expect(overlap(fab, named[k]), `fab über ${k}`).toBe(false)
   })
 })

@@ -31,11 +31,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1120 Unit-Tests (core, api, web)
+pnpm test                                           # 1141 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 204 End-to-End-Tests
+cd apps/web && npx playwright test                  # 212 End-to-End-Tests
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -87,10 +87,10 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (778), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (240, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+**alle vier** Tests: `core` (784), `apps/api` (86, Worker und Zählwerk),
+`apps/web` (255, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
-Stadtwahl, drei Komponenten mit jsdom) und `packages/ingest` (16, die zwei
+Stadtwahl, Straßensuche, vier Komponentendateien mit jsdom) und `packages/ingest` (16, die zwei
 Wächter des Artifact-Baus und der Datenstand). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -105,7 +105,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1120 E2E_COUNT=204 npx tsx src/build-badges.ts
+TEST_COUNT=1141 E2E_COUNT=212 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -871,6 +871,24 @@ wiederholt.
   gehört sie ihm. Und die Bildskripte warten auf genau dieses Signal, statt
   auf eine feste Zeit — das Übersichtsbild hatte vorher eine Karte ohne
   eine einzige Zone, aufgenommen 1,2 Sekunden nach der Herkunftszeile.
+- **Ein Menü über der Karte steht über allem — auch über dem Blatt.** Das
+  Ebenen-Menü öffnete am 9. September nachts unter dem Ebenen-Knopf, im
+  Stapel der Karten-Overlays (z-index 3). Das offene Blatt hat dieselbe Höhe
+  und kommt später im Baum: Auf dem Handy lag „P+R" hinter dem Griff und war
+  nicht zu treffen. Gefunden hat es die volle E2E-Suite, nicht das Auge.
+  Solange das Menü offen ist, hebt `.overlay:has(.legend--open)` die Spalte
+  auf 6; zu bleibt sie unter Kopfzeile und Toast. Die Stapelreihenfolge steht
+  seitdem als Tabelle in `docs/design.md`, Abschnitt 6.
+- **`max-height: none` ist nicht animierbar — das Blatt sprang.** Zugeklappt
+  stand das Blatt auf `max-height: none`, offen auf 58 %; der Übergang von
+  220 ms lief ins Leere, und der Körper war mit `hidden` im selben Tick weg.
+  Das Blatt hatte augenblicklich Griffhöhe, Standort-Knopf und Karte fuhren
+  ihm hinterher: „springt komisch hin und her" (Betreiber, 9. September
+  nachts). Jetzt misst ein ResizeObserver den Griff (`--grip-height`), das
+  Blatt fährt zwischen zwei Zahlen, und der Körper bleibt 240 ms im Baum
+  (`bodyShown`). Nachgemessen auf dem Pixel 7: 352 → 330 → 201 → 122 → 97 →
+  64 → 48 statt 352 → 48. Und ein Tipp auf „Ausblenden" ist eine Stufe
+  runter (voll → halb → zu), nicht zwei.
 
 ## Balance: Tokens und Rechenminuten
 
@@ -919,7 +937,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **75 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **77 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
@@ -951,5 +969,6 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 | [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |
 | [docs/nachtplan-2026-09-08.md](docs/nachtplan-2026-09-08.md) | Der Plan der Nacht zum 8. September und was jeder Abschnitt ergeben hat |
 | [docs/staedte-koeln.md](docs/staedte-koeln.md), [docs/staedte-karlsruhe.md](docs/staedte-karlsruhe.md) | Zwei vorbereitete Städte — Messung, Entscheidungen, was einzutragen bleibt |
+| [docs/design.md](docs/design.md) | Das Design-System: Formsprache, Farben, Symbole, Bausteine, Layouts — gilt für jede neue Oberfläche |
 | [docs/mobile-ux-audit-2026-09.md](docs/mobile-ux-audit-2026-09.md) | Der Mobile-Audit: sieben Viewports vermessen, was geändert wurde und was bewusst nicht |
 | [SECURITY.md](SECURITY.md) | Bedrohungsmodell, Maßnahmen — und welche vier Netze nachgemessen statt erinnert werden |

@@ -84,7 +84,23 @@ async function blattAuf(page) {
   await body.waitFor()
 }
 
+/** Das Meldungen-Blatt hinter der Karte unten links (seit dem 9. September nachts). */
+async function meldungenAuf(page) {
+  const dialog = page.getByRole('dialog', { name: 'Meldungen' })
+  if (!(await dialog.count())) {
+    const body = page.locator('.sidebar__body')
+    if (await body.isVisible()) {
+      await page.locator('.panel-toggle').click()
+      await page.waitForTimeout(400)
+    }
+    await page.locator('.reports-card').click()
+  }
+  await dialog.waitFor()
+  return dialog
+}
+
 async function sichtungen(page) {
+  await meldungenAuf(page)
   const zeilen = page.locator('.sightings__item')
   const n = await zeilen.count()
   const rows = []
@@ -104,13 +120,13 @@ async function melden(nutzerin, x, y) {
   const size = nutzerin.page.viewportSize()
   await nutzerin.page.mouse.click(size.width * x, size.height * y)
   await nutzerin.page.waitForTimeout(500)
-  await blattAuf(nutzerin.page)
-  await nutzerin.page.locator('button', { hasText: 'Hier gesehen' }).click()
+  await meldungenAuf(nutzerin.page)
+  await nutzerin.page.locator('.sheet--reports button', { hasText: 'Kontrolle melden' }).click()
   const dialog = nutzerin.page.getByRole('dialog', { name: 'Sichtung melden' })
   await dialog.waitFor()
   await dialog.locator('.sheet__submit').click()
   await nutzerin.page.waitForTimeout(1500)
-  await blattAuf(nutzerin.page)
+  await meldungenAuf(nutzerin.page)
 }
 
 function erwarte(bedingung, text) {
@@ -190,6 +206,8 @@ try {
 
   // Kontrolldichte: Grafiken vorhanden, sobald ein Muster da ist. Einen
   // Schalter gibt es seit dem 9. September nicht mehr.
+  const blatt = await meldungenAuf(B.page)
+  await blatt.getByRole('tab', { name: 'Tageszeiten' }).click()
   const heat = B.page.locator('section[aria-label="Kontrolldichte"]')
   const titel = await heat.locator('.panel__title').innerText()
   log('Kontrolldichte:', titel)

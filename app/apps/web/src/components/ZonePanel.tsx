@@ -1,4 +1,7 @@
+import { berlinWallClock, type ZoneStats } from '@knoellchenfrei/core'
+
 import { costLabel, duration, feeLabel, maxStayLabel, statusLabel, until } from '../format.js'
+import { IconMeldungen } from '../icons.js'
 import type { ZoneStatus } from '../useZoneStatus.js'
 import type { ZoneProperties } from '../types.js'
 import { zoneTitel } from '../zone-label.js'
@@ -20,9 +23,21 @@ interface Props {
   now: number
   onPark: () => void
   parked: boolean
+  /** Die Kontrollen dieser Zone aus der Strichliste; null, wenn die Fläche nicht bekannt ist. */
+  stats: ZoneStats | null
+  /** True when marks reach a shared store rather than only this device. */
+  shared: boolean
 }
 
-export function ZonePanel({ properties, status, nearbyMetres, now, onPark, parked }: Props) {
+const WOCHENTAG = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+
+/** „heute um 14 Uhr", „gestern", „vor 3 Tagen" — aus Tag und Stunde des jüngsten Strichs. */
+function zuletzt(last: NonNullable<ZoneStats['last']>): string {
+  const wann = last.ageDays === 0 ? 'heute' : last.ageDays === 1 ? 'gestern' : `vor ${last.ageDays} Tagen`
+  return last.hour === null ? wann : `${wann} um ${last.hour} Uhr`
+}
+
+export function ZonePanel({ properties, status, nearbyMetres, now, onPark, parked, stats, shared }: Props) {
   const { chargeable, changesAt, hourly, uncertain } = status
 
   return (
@@ -176,6 +191,61 @@ export function ZonePanel({ properties, status, nearbyMetres, now, onPark, parke
         caveats. Below them it landed past the bottom of a phone sheet, so
         "Hier geparkt" was only reachable by scrolling.
       */}
+      {/*
+        Kontrollen hier: das Stationsblatt von FreiFahren, auf die Zone
+        übertragen (Betreiber, 9. September nachts, „inkl. Statistiken").
+        Heute, sieben Tage, 28 Tage, der jüngste Strich, und sieben Balken —
+        aus den 250-m-Feldern, deren Mitte in der Zone liegt (`zone-stats.ts`).
+      */}
+      {stats !== null && (
+        <div className="zone-stats" aria-label="Kontrollen in dieser Zone">
+          <h3 className="report__label">
+            <IconMeldungen size={14} aria-hidden="true" /> Kontrollen hier
+          </h3>
+          {stats.days28 === 0 ? (
+            <p className="hours">
+              In den letzten 28 Tagen wurde hier keine Kontrolle gemeldet
+              {shared ? '' : ' — von diesem Gerät'}.
+            </p>
+          ) : (
+            <>
+              <dl className="report__figures">
+                <div>
+                  <dt>Heute</dt>
+                  <dd>{stats.today}</dd>
+                </div>
+                <div>
+                  <dt>7 Tage</dt>
+                  <dd>{stats.days7}</dd>
+                </div>
+                <div>
+                  <dt>28 Tage</dt>
+                  <dd>{stats.days28}</dd>
+                </div>
+              </dl>
+              <div className="zone-stats__week" role="img" aria-label="Meldungen je Tag der letzten sieben Tage">
+                {stats.byDay.map((count, index) => {
+                  const peak = Math.max(...stats.byDay, 1)
+                  const tag = new Date(now - (6 - index) * 86_400_000)
+                  return (
+                    <span key={index} className="zone-stats__day" title={`${count} ${count === 1 ? 'Meldung' : 'Meldungen'}`}>
+                      <span
+                        className={`zone-stats__bar${index === 6 ? ' zone-stats__bar--today' : ''}`}
+                        style={{ height: `${Math.max(3, Math.round((count / peak) * 100))}%` }}
+                      />
+                      <span className="zone-stats__label">{WOCHENTAG[berlinWallClock(tag).weekday]}</span>
+                    </span>
+                  )
+                })}
+              </div>
+              {stats.last !== null && (
+                <p className="zone-stats__last">Zuletzt gemeldet {zuletzt(stats.last)}.</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
       <button type="button" className="button button--primary button--block" onClick={onPark}>
         {parked ? 'Parkplatz hierher verschieben' : 'Hier geparkt'}
       </button>

@@ -1,22 +1,29 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
+import { CITY } from '../city.js'
+import { IconOrt, IconSuche } from '../icons.js'
+import { MIN_QUERY, searchStreets, type StreetHit } from '../street-search.js'
 import type { LoadedZone } from '../zones.js'
 import { hatNummer, zoneKurz } from '../zone-label.js'
 
 interface Props {
   zones: readonly LoadedZone[]
   onPick: (zone: LoadedZone) => void
+  onPickStreet: (hit: StreetHit) => void
 }
 
+/** Wie lange die Tastatur ruhen muss, bevor eine Straßenanfrage geht. */
+const DEBOUNCE_MS = 300
+
 /**
- * Search over the shipped zone list — zone number or district.
- *
- * Deliberately not a geocoder: an address lookup would mean a third-party
- * request on every keystroke and would stop working offline, while the zone and
- * district names are already on the device.
+ * Suche über Zonen und Bezirke (vom Gerät) und Straßen (Photon, ab drei
+ * Zeichen). Die Zonen kommen zuerst und sofort; die Straßen folgen, wenn
+ * eine Antwort kommt — und fehlen still, wenn keine kommt. Der Grund für die
+ * Zweiteilung steht in `street-search.ts`.
  */
-export function SearchBox({ zones, onPick }: Props) {
+export function SearchBox({ zones, onPick, onPickStreet }: Props) {
   const [query, setQuery] = useState('')
+  const [streets, setStreets] = useState<StreetHit[]>([])
 
   const matches = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -29,18 +36,47 @@ export function SearchBox({ zones, onPick }: Props) {
           (hatNummer(zone.properties) && zone.properties.zone.toLowerCase().startsWith(needle)) ||
           zone.properties.district.toLowerCase().includes(needle)
       )
-      .slice(0, 8)
+      .slice(0, 6)
   }, [zones, query])
+
+  useEffect(() => {
+    const needle = query.trim()
+    if (needle.length < MIN_QUERY) {
+      setStreets([])
+      return
+    }
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => {
+      searchStreets(needle, CITY.reportBounds, controller.signal)
+        .then((hits) => {
+          if (!controller.signal.aborted) setStreets(hits)
+        })
+        .catch(() => {
+          /* offline oder Photon nicht erreichbar: die Zonen bleiben */
+        })
+    }, DEBOUNCE_MS)
+    return () => {
+      controller.abort()
+      window.clearTimeout(timer)
+    }
+  }, [query])
+
+  const total = matches.length + streets.length
+  const reset = (): void => {
+    setQuery('')
+    setStreets([])
+  }
 
   return (
     <div className="search">
+      <IconSuche className="search__icon" size={20} aria-hidden="true" />
       <input
         type="search"
         className="search__input"
-        placeholder="Zone oder Bezirk"
+        placeholder="Zone, Bezirk, Straße"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        aria-label="Nach Zone oder Bezirk suchen"
+        aria-label="Nach Zone, Bezirk oder Straße suchen"
         aria-describedby="search-hint"
       />
       <span id="search-hint" className="visually-hidden">
@@ -49,10 +85,10 @@ export function SearchBox({ zones, onPick }: Props) {
       {/* Announces how many results appeared; the list itself is silent. */}
       {query.trim().length > 0 && (
         <span className="visually-hidden" role="status">
-          {matches.length === 0 ? 'Keine Treffer' : `${matches.length} Treffer`}
+          {total === 0 ? 'Keine Treffer' : `${total} Treffer`}
         </span>
       )}
-      {matches.length > 0 && (
+      {total > 0 && (
         <ul className="search__results">
           {/* Schlüssel ist die Flächenkennung, nicht `properties.zone` — siehe
               ReportSheet: In Hamburg tragen 44 von 145 Flächen den Schlüssel
@@ -64,11 +100,32 @@ export function SearchBox({ zones, onPick }: Props) {
                 type="button"
                 onClick={() => {
                   onPick(zone)
-                  setQuery('')
+                  reset()
                 }}
               >
                 <strong>{zoneKurz(zone.properties)}</strong>
                 <span>{zone.properties.district}</span>
+              </button>
+            </li>
+          ))}
+          {streets.length > 0 && matches.length > 0 && (
+            <li className="search__group" aria-hidden="true">
+              Straßen
+            </li>
+          )}
+          {streets.map((hit) => (
+            <li key={`${hit.name}|${hit.detail ?? ''}`}>
+              <button
+                type="button"
+                onClick={() => {
+                  onPickStreet(hit)
+                  reset()
+                }}
+              >
+                <strong>
+                  <IconOrt size={14} aria-hidden="true" /> {hit.name}
+                </strong>
+                <span>{hit.detail ?? 'Straße'}</span>
               </button>
             </li>
           ))}

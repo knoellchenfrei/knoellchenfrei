@@ -15,6 +15,7 @@ import {
   quietDayNote,
   markFor,
   withinCitySession,
+  zoneStats,
   type City,
   type EventLayerValue,
   type HeatMark,
@@ -24,7 +25,7 @@ import {
 
 import { CITY, switchCity } from './city.js'
 import { rememberSuggestionDismissed, suggestionAt } from './city-suggestion.js'
-import { baseStyle } from './map-style.js'
+import { attributionFor, baseStyle } from './map-style.js'
 import { costLabel, statusLabel, tidyPoiDetail } from './format.js'
 import { isEmbedded, loadData } from './data-source.js'
 import { openFeedback } from './feedback.js'
@@ -33,6 +34,22 @@ import { openLiveStats, type LiveStats as Stats } from './presence.js'
 import { WorkerFehler, openSightingBackend, type SightingBackend } from './sighting-backend.js'
 import { ParkingTimer } from './components/ParkingTimer.js'
 import { SearchBox } from './components/SearchBox.js'
+import { Notice, type NoticeState } from './components/Notice.js'
+import { ReportsCard } from './components/ReportsCard.js'
+import { ReportsSheet } from './components/ReportsSheet.js'
+import {
+  IconAktualisiert,
+  IconAuf,
+  IconEbenen,
+  IconEinstellungen,
+  IconGitHub,
+  IconMeldungen,
+  IconPlus,
+  IconStandort,
+  IconWarnung,
+  IconZu,
+} from './icons.js'
+import type { StreetHit } from './street-search.js'
 import { UpdateBar } from './components/UpdateBar.js'
 import { CitySuggestion } from './components/CitySuggestion.js'
 import { HeatPanel } from './components/HeatPanel.js'
@@ -174,6 +191,7 @@ export function App() {
   const sidebarRef = useRef<HTMLElement>(null)
   /** Der scrollende Teil des Blatts; der Griff darüber steht fest. */
   const sidebarBodyRef = useRef<HTMLDivElement>(null)
+  const gripRef = useRef<HTMLButtonElement>(null)
   /** Set when a POI popup opened, so the zone handler ignores the same tap. */
   const suppressZoneClick = useRef(0)
   /** Set by a search pick: focus moves into the zone panel once it renders. */
@@ -254,6 +272,26 @@ export function App() {
   // Antwort selbst liegt beim Browser, hier steht nur, dass gefragt wurde.
   const [askLocation, setAskLocation] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [reportsOpen, setReportsOpen] = useState(false)
+  /**
+   * Der verblassende Hinweis unter der Leiste (`docs/design.md`, Abschnitt 7):
+   * beim Start die 28-Tage-Zahl, nach jedem Abruf „Meldungen aktualisiert".
+   * `leaving` schaltet die CSS-Ausblendung, der Zeitgeber räumt danach auf.
+   */
+  const [notice, setNotice] = useState<NoticeState | null>(null)
+  const [noticeLeaving, setNoticeLeaving] = useState(false)
+  const noticeTimers = useRef<number[]>([])
+  const zeigeHinweis = useCallback((next: NoticeState, ms: number) => {
+    for (const id of noticeTimers.current) window.clearTimeout(id)
+    noticeTimers.current = []
+    setNotice(next)
+    setNoticeLeaving(false)
+    noticeTimers.current.push(
+      window.setTimeout(() => setNoticeLeaving(true), ms),
+      window.setTimeout(() => setNotice(null), ms + 400),
+    )
+  }, [])
+  useEffect(() => () => noticeTimers.current.forEach((id) => window.clearTimeout(id)), [])
   // Die Stadt, in der der letzte Standortabruf gelandet ist, falls es eine
   // andere als die geladene war. Kein eigener Berechtigungsdialog hängt daran:
   // Der Wert entsteht in `locate()` aus einer Position, die die App ohnehin
@@ -282,6 +320,22 @@ export function App() {
    * dem Desktop hat die Stufe keine Wirkung, das Blatt steht dort seitlich.
    */
   const [sheetFull, setSheetFull] = useState(false)
+  /**
+   * Der Körper bleibt beim Zuklappen 220 ms im Baum, damit das Blatt auf die
+   * Griffhöhe **fährt** statt zu springen: Mit `hidden` im selben Tick war
+   * der Inhalt sofort weg, das Blatt hatte augenblicklich Griffhöhe, und
+   * Standort-Knopf und Karte fuhren dem hinterher — „springt komisch hin und
+   * her" (Betreiber, 9. September nachts).
+   */
+  const [bodyShown, setBodyShown] = useState(panelOpen)
+  useEffect(() => {
+    if (panelOpen) {
+      setBodyShown(true)
+      return
+    }
+    const id = window.setTimeout(() => setBodyShown(false), 240)
+    return () => window.clearTimeout(id)
+  }, [panelOpen])
   /** Wo die Wischgeste am Griff begann; null, solange keine läuft. */
   const sheetDrag = useRef<{ y: number; moved: boolean } | null>(null)
   /** Zeitstempel des letzten Fingers am Griff; das `click` gleich danach ist derselbe Tipp. */
@@ -353,6 +407,24 @@ export function App() {
     return () => observer.disconnect()
   }, [])
 
+  // Die Griffhöhe als Variable: Zugeklappt ist sie die `max-height` des
+  // Blatts, damit Auf- und Zuklappen zwischen zwei Zahlen animieren — `none`
+  // ist nicht animierbar, und genau daher kam der Sprung.
+  useEffect(() => {
+    const element = gripRef.current
+    if (element === null) return
+    const apply = (): void => {
+      document.documentElement.style.setProperty(
+        '--grip-height',
+        `${Math.ceil(element.getBoundingClientRect().height)}px`
+      )
+    }
+    apply()
+    const observer = new ResizeObserver(apply)
+    observer.observe(element, { box: 'border-box' })
+    return () => observer.disconnect()
+  }, [])
+
   // Dasselbe für das Blatt unten: Der Standort-Knopf schwebt darüber und
   // muss mitwandern, wenn es auf- oder zuklappt. Zugeklappt ist es nur der
   // Griff, halb offen gut die Hälfte des Schirms.
@@ -381,9 +453,11 @@ export function App() {
     ? 'einstellungen'
     : feedbackOpen
       ? 'feedback'
-      : reporting
-        ? 'melden'
-        : null
+      : reportsOpen
+        ? 'meldungen'
+        : reporting
+          ? 'melden'
+          : null
   const previousLayer = useRef<string | null>(null)
   useEffect(() => {
     syncLayer(window.history, previousLayer.current, activeLayer)
@@ -431,11 +505,32 @@ export function App() {
       // zum 9. September hielt ein `if (rows.length === 0) return` hier die
       // Demodaten fest; ohne Demodaten hielte es nur noch Reste aus dem
       // lokalen Speicher eines früheren Betriebs ohne Server.
+      // Der erste Abruf ist kein „aktualisiert" — da war vorher nichts. Ab
+      // dem zweiten sagt die App, dass sie es getan hat (wie FreiFahren).
+      let abrufe = 0
       unsubscribe = backend.subscribe((rows) => {
         setSightings(rows)
+        abrufe += 1
+        if (abrufe > 1) {
+          zeigeHinweis({ text: 'Meldungen aktualisiert', icon: <IconAktualisiert size={16} /> }, 3_000)
+        }
       })
+      let ersteStriche = true
       unsubscribeMarks = backend.subscribeMarks?.((rows) => {
         setMarks(rows)
+        // Einmal beim Start: die Zahl der 28 Tage, ein Tipp führt zur
+        // Statistik. Geht nach sechs Sekunden von selbst.
+        if (ersteStriche && rows.length > 0) {
+          zeigeHinweis(
+            {
+              text: `${rows.length.toLocaleString('de-DE')} Meldungen in 28 Tagen in ${CITY.name}`,
+              icon: <IconMeldungen size={16} />,
+              href: '/statistik/',
+            },
+            6_000,
+          )
+        }
+        ersteStriche = false
       })
     })
     return () => {
@@ -462,7 +557,7 @@ export function App() {
       // nicht — und die Konfiguration soll niemand von aussen verbiegen können.
       center: [CITY.center[0], CITY.center[1]],
       zoom: CITY.zoom,
-      attributionControl: { compact: true },
+      attributionControl: { compact: true, customAttribution: attributionFor(!isEmbedded()) },
       // The page is German; MapLibre's defaults ("Map", "Zoom in") were the
       // only English a screen reader user heard.
       locale: {
@@ -1285,7 +1380,9 @@ export function App() {
     if (start === 'melden') setReporting(true)
     else if (start === 'standort') locate()
     // `kontrollen`: nichts zu schalten — die Kontrolldichte liegt immer, sobald
-    // sie ein Muster hat; die Verknüpfung öffnet nur das Blatt.
+    // sie ein Muster hat; die Verknüpfung öffnet das Meldungen-Blatt, in dem
+    // die Auswertung seit dem 9. September nachts steht.
+    else if (start === 'kontrollen') setReportsOpen(true)
     if (start === 'melden' || start === 'kontrollen') track('app.open', start)
   }, [locate])
 
@@ -1538,6 +1635,39 @@ export function App() {
   }, [])
 
   /**
+   * Ein Straßentreffer: die Karte fliegt hin, der Anker sitzt dort, und das
+   * Blatt zeigt die Zone an der Stelle — oder „Außerhalb der Parkzonen".
+   * Dieselbe Auflösung wie beim Standort (`resolveZone`), damit Karlsruhes
+   * Reihen auch von hier aus gefunden werden.
+   */
+  const focusStreet = useCallback((hit: StreetHit) => {
+    anchorFromGps.current = false
+    setAnchor([...hit.position])
+    const found = resolveZone(zonesRef.current, hit.position)
+    setSelected(found?.zone?.properties ?? null)
+    setNearbyMetres(found?.metres ?? null)
+    if (found !== null) {
+      track('zone.open', found.zone.properties.zone)
+      track('zone.answer', zoneAnswer(found.zone.properties, Date.now()))
+      track('zone.source', 'suche')
+      setAnnouncement(describeZone(found.zone.properties, Date.now()))
+    } else {
+      setAnnouncement(`${hit.name}: außerhalb der Parkzonen.`)
+    }
+    setPanelOpen(true)
+    setError(null)
+    focusPanelRef.current = true
+    const narrow = window.innerWidth <= 720
+    const sheet = sidebarRef.current?.getBoundingClientRect().height ?? 0
+    mapRef.current?.flyTo({
+      center: [...hit.position],
+      zoom: 16,
+      offset: narrow ? [0, -Math.round(sheet / 2)] : [-160, 0],
+      duration: 700,
+    })
+  }, [])
+
+  /**
    * Gezählt wird nur das **Einschalten**, nicht jedes Umlegen.
    *
    * Die Frage, die der Katalog beantworten soll, lautet „welche Ebenen
@@ -1615,9 +1745,11 @@ export function App() {
       // Browser unmittelbar nach einem Tipp nachschickt, am Zeitstempel
       // erkennen und verwerfen. Ein zweiter Tipp Sekunden später ist neu.
       lastGripTouch.current = event.timeStamp
+      // Ein Tipp ist eine Stufe runter: voll → halb → zu; zu → halb. Vorher
+      // schloss der Tipp aus „voll" das Blatt ganz — zwei Stufen auf einmal.
       if (!drag.moved) {
-        setSheetFull(false)
-        setPanelOpen((value) => !value)
+        if (panelOpen && sheetFull) setSheetFull(false)
+        else setPanelOpen((value) => !value)
         return
       }
       if (dy > 0) {
@@ -1631,11 +1763,14 @@ export function App() {
     },
     [panelOpen, sheetFull]
   )
-  const onGripClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    if (event.timeStamp - lastGripTouch.current < 150) return
-    setSheetFull(false)
-    setPanelOpen((value) => !value)
-  }, [])
+  const onGripClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (event.timeStamp - lastGripTouch.current < 150) return
+      if (panelOpen && sheetFull) setSheetFull(false)
+      else setPanelOpen((value) => !value)
+    },
+    [panelOpen, sheetFull]
+  )
 
   // Zugeklappt ist auch nicht mehr ganz hoch — sonst spränge das Blatt beim
   // nächsten Öffnen gleich auf die volle Höhe.
@@ -1677,6 +1812,14 @@ export function App() {
   // Meldungen heute: die Strichliste zählt je Meldung eine Zeile mit dem
   // Berliner Kalendertag — auf dem Server wie lokal. Die Sichtungsliste
   // selbst kennt nur die letzten 90 Minuten.
+  // Die Kontrollen der gewählten Zone, aus der Strichliste (`core/zone-stats.ts`).
+  const selectedStats = useMemo(() => {
+    if (selected === null) return null
+    const zone = zones.find((entry) => entry.properties === selected)
+    if (zone === undefined) return null
+    return zoneStats(marks, zone.polygons, { now: heatDay * 3_600_000, grid: CITY.heatGrid })
+  }, [selected, zones, marks, heatDay])
+
   const reportsToday = useMemo(() => {
     const heute = berlinDateKey(berlinNow)
     return marks.filter((mark) => mark.day === heute).length
@@ -1687,7 +1830,7 @@ export function App() {
   // `aria-modal` allein sagt das nur Screenreadern, nicht der Tastatur. Das
   // Melde-Blatt bleibt ausgenommen — auf dem Desktop darf die Karte hinter
   // ihm den Anker setzen.
-  const modal = settingsOpen || feedbackOpen
+  const modal = settingsOpen || feedbackOpen || reportsOpen
 
   return (
     <div className="app">
@@ -1735,7 +1878,7 @@ export function App() {
           Suche und Einstellungen.
         */}
         <div className="topbar__row">
-          <SearchBox zones={zones} onPick={focusZone} />
+          <SearchBox zones={zones} onPick={focusZone} onPickStreet={focusStreet} />
           {/* Die Beta-Marke gehört zum Kopf der App, nicht auf die Kante der
               Live-Karte, wo sie bis zum 9. September abends klebte. */}
           <BetaBadge />
@@ -1746,7 +1889,7 @@ export function App() {
             aria-label="Einstellungen"
             title="Einstellungen"
           >
-            <span aria-hidden="true">⚙</span>
+            <IconEinstellungen size={22} aria-hidden="true" />
           </button>
         </div>
         <UpdateBar />
@@ -1758,21 +1901,18 @@ export function App() {
         also sits under the topbar.
       */}
       <div className="overlay" inert={modal || undefined}>
+      {/*
+        Zeile 2 (`docs/design.md`, Abschnitt 8): links die Kennzahlen-Leiste bis
+        zum Ebenen-Knopf, der rechts unter dem Zahnrad steht — ein Quadrat mit
+        Symbol, ohne Wort (Betreiber, 9. September nachts). Der Meldeknopf ist
+        seitdem der rote Kreis unten rechts.
+      */}
+      <div className="overlay__row">
       <LiveStats
         stats={stats}
         reportsToday={reportsToday}
         shared={shared}
       />
-
-      {/*
-        Eine Zeile für das, was man tun kann: links die Ebenen, rechts der
-        Meldeknopf — rot, bündig mit dem Zahnrad darüber. Er stand am
-        9. September erst unten neben dem Standort, dann allein in einer
-        eigenen Zeile der Kopfzeile; beides liess die linke Seite leer und die
-        Ausrichtungen springen. Der Betreiber fragte, ob das „der UI-Experte
-        so durchgewunken" habe. Hatte er nicht.
-      */}
-      <div className="overlay__row">
       {/*
         Nur, wenn es etwas zu wählen gibt: Ohne Umweltzone und ohne POI-Ebenen
         (Hamburg) stünde hier ein Knopf, der eine leere Liste aufklappt.
@@ -1784,13 +1924,14 @@ export function App() {
       >
         <button
           type="button"
-          className={`chip chip--toggle${legendOpen ? ' chip--on' : ''}`}
+          className={`square-button legend__toggle${legendOpen ? ' square-button--on' : ''}`}
           onClick={() => setLegendOpen((value) => !value)}
           aria-expanded={legendOpen}
           aria-controls="legend-layers"
+          aria-label="Ebenen"
+          title="Ebenen"
         >
-          {/* The glyph is decoration; read aloud it was "trigram for heaven". */}
-          <span aria-hidden="true">{legendOpen ? '×' : '☰'}</span> Ebenen
+          <IconEbenen size={22} aria-hidden="true" />
           {!legendOpen && activeLayerCount > 0 && (
             <span className="chip__count" aria-label={`${activeLayerCount} aktiv`}>
               {activeLayerCount}
@@ -1836,20 +1977,9 @@ export function App() {
         </>
         )}
         </div>
+      <Notice notice={notice} leaving={noticeLeaving} />
       </section>
       )}
-      <button
-        type="button"
-        className="report-fab"
-        onClick={() => {
-          setPanelOpen(false)
-          setReportViaFab(true)
-          positionForReport()
-          setReporting(true)
-        }}
-      >
-        Kontrolle melden
-      </button>
       </div>
       </div>
 
@@ -1895,7 +2025,7 @@ export function App() {
         dahinter — angetippt werden konnte er nicht, weggehen ging auch nicht.
         Er kommt, sobald der Dialog zu ist.
       */}
-      {askLocation && !reporting && !settingsOpen && !feedbackOpen && (
+      {askLocation && !reporting && !settingsOpen && !feedbackOpen && !reportsOpen && (
         <LocationPrompt
           onAllow={() => {
             rememberLocationAsked()
@@ -1919,7 +2049,7 @@ export function App() {
         Melde-Sheet als Panel in der Mitte, und ein anklickbarer Hinweis neben
         einem `aria-modal`-Dialog gehört nicht dorthin.
       */}
-      {citySuggestion !== null && !reporting && !settingsOpen && !feedbackOpen && (
+      {citySuggestion !== null && !reporting && !settingsOpen && !feedbackOpen && !reportsOpen && (
         <CitySuggestion
           city={citySuggestion}
           current={CITY}
@@ -1986,12 +2116,13 @@ export function App() {
       <aside
         id="sidebar"
         ref={sidebarRef}
-        className={`sidebar${panelOpen ? '' : ' sidebar--collapsed'}${
+        className={`sidebar${panelOpen ? '' : bodyShown ? ' sidebar--closing' : ' sidebar--collapsed'}${
           panelOpen && sheetFull ? ' sidebar--full' : ''
         }`}
         inert={modal || undefined}
       >
         <button
+          ref={gripRef}
           type="button"
           className={`panel-toggle${
             session?.remindAt != null && now >= session.remindAt ? ' panel-toggle--alert' : ''
@@ -2005,6 +2136,9 @@ export function App() {
           aria-controls="sidebar-body"
         >
           <span className="panel-toggle__grip" aria-hidden="true" />
+          <span className="panel-toggle__icon" aria-hidden="true">
+            {panelOpen ? <IconZu size={18} /> : <IconAuf size={18} />}
+          </span>
           <span className="panel-toggle__label">
             {panelOpen
               ? 'Ausblenden'
@@ -2014,7 +2148,11 @@ export function App() {
                   // notifications denied, this line was the only place it could
                   // possibly show.
                   session.remindAt !== null && now >= session.remindAt
-                  ? '⚠ Parkzeit abgelaufen'
+                  ? (
+                    <>
+                      <IconWarnung size={16} aria-hidden="true" /> Parkzeit abgelaufen
+                    </>
+                  )
                   : `Geparkt${session.zone === null ? '' : ` in Zone ${session.zone}`}${
                       session.remindAt === null ? '' : ' · Erinnerung läuft'
                     }`
@@ -2036,7 +2174,7 @@ export function App() {
           </span>
         </button>
 
-        <div id="sidebar-body" ref={sidebarBodyRef} className="sidebar__body" hidden={!panelOpen}>
+        <div id="sidebar-body" ref={sidebarBodyRef} className="sidebar__body" hidden={!bodyShown}>
         {session !== null && (
           <ParkingTimer
             session={session}
@@ -2085,6 +2223,8 @@ export function App() {
             now={now}
             onPark={park}
             parked={session !== null}
+            stats={selectedStats}
+            shared={shared}
           />
         ) : anchor !== null ? (
           // Nur noch der Fall „angetippt, aber ausserhalb". Der Abschnitt „Wo
@@ -2106,37 +2246,9 @@ export function App() {
           </section>
         ) : null}
 
-        <SightingPanel
-          sightings={sightings}
-          now={now}
-          onReport={() => {
-            // Auf dem Handy deckt das Panel die untere Kartenhälfte ab. Wer
-            // im Sheet auf "Karte" ausweichen will, braucht sie frei.
-            setPanelOpen(false)
-            setReportViaFab(false)
-            setReporting(true)
-          }}
-          onConfirm={(id) => vote(id, 'confirmations')}
-          onDispute={(id) => vote(id, 'disputes')}
-          own={(id) => id in own.reports}
-          voted={(id) => own.votes[id]?.kind ?? null}
-          canReport={position !== null || anchor !== null}
-          shared={shared}
-        />
-
-        <HeatPanel
-          top={heatTop}
-          heat={heat}
-          activity={activity}
-          weekday={berlinNow.weekday}
-          hour={Math.floor(berlinNow.minuteOfDay / 60)}
-          shared={shared}
-        />
-
         {/*
-          Hinter den Sichtungen und der Kontrolldichte, seit dem 9. September:
-          „Auto weg?" ist der seltene Fall und stand zugeklappt vor dem
-          Abschnitt, um den es im Alltag geht.
+          Sichtungen und Kontrolldichte stehen seit dem 9. September nachts im
+          Meldungen-Blatt (Karte unten links), nicht mehr hier unter der Zone.
         */}
         <TowInfo />
 
@@ -2210,8 +2322,101 @@ export function App() {
         title="Wo bin ich?"
         inert={modal || undefined}
       >
-        <span aria-hidden="true">{locating ? '…' : '◎'}</span>
+        <IconStandort size={22} className={locating ? 'spin' : undefined} aria-hidden="true" />
       </button>
+
+      {/*
+        Der rote Kreis über dem Standort-Knopf: Kontrolle melden. Der einzige
+        andere Kreis auf der Karte, und der grössere (`docs/design.md`,
+        Abschnitt 2). Ein Plus, weil der Knopf etwas hinzufügt — so wie bei
+        FreiFahren; die Farbe sagt, was.
+      */}
+      <button
+        type="button"
+        className="fab"
+        onClick={() => {
+          setPanelOpen(false)
+          setReportViaFab(true)
+          positionForReport()
+          setReporting(true)
+        }}
+        aria-label="Kontrolle melden"
+        title="Kontrolle melden"
+        inert={modal || undefined}
+      >
+        <IconPlus size={30} strokeWidth={2.25} aria-hidden="true" />
+      </button>
+
+      <div className="corner" inert={modal || undefined}>
+        <ReportsCard
+          sightings={sightings}
+          now={now}
+          zoneName={(sighting) => {
+            const zone = zoneAt(zones, [sighting.lon, sighting.lat])
+            return zone === null ? null : zoneKurz(zone.properties)
+          }}
+          onOpen={() => setReportsOpen(true)}
+        />
+        {/* Neben MapLibres „i": der Weg zum Code, wie bei FreiFahren. */}
+        <a
+          className="credit"
+          href="https://github.com/knoellchenfrei/knoellchenfrei"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Quelltext auf GitHub"
+          title="Quelltext auf GitHub"
+        >
+          <IconGitHub size={16} />
+        </a>
+      </div>
+
+      {reportsOpen && (
+        <ReportsSheet
+          onClose={() => setReportsOpen(false)}
+          aktuell={
+            <SightingPanel
+              sightings={sightings}
+              now={now}
+              onReport={() => {
+                // Auf dem Handy deckt das Panel die untere Kartenhälfte ab. Wer
+                // im Sheet auf "Karte" ausweichen will, braucht sie frei.
+                setPanelOpen(false)
+                setReportsOpen(false)
+                setReportViaFab(false)
+                setReporting(true)
+              }}
+              onConfirm={(id) => vote(id, 'confirmations')}
+              onDispute={(id) => vote(id, 'disputes')}
+              own={(id) => id in own.reports}
+              voted={(id) => own.votes[id]?.kind ?? null}
+              canReport={position !== null || anchor !== null}
+              shared={shared}
+            />
+          }
+          zonen={
+            <HeatPanel
+              part="zonen"
+              top={heatTop}
+              heat={heat}
+              activity={activity}
+              weekday={berlinNow.weekday}
+              hour={Math.floor(berlinNow.minuteOfDay / 60)}
+              shared={shared}
+            />
+          }
+          zeiten={
+            <HeatPanel
+              part="zeiten"
+              top={heatTop}
+              heat={heat}
+              activity={activity}
+              weekday={berlinNow.weekday}
+              hour={Math.floor(berlinNow.minuteOfDay / 60)}
+              shared={shared}
+            />
+          }
+        />
+      )}
     </div>
   )
 }

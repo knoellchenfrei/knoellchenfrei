@@ -22,21 +22,21 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort oder Tippen auf die Karte. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Zone finden** | Standort, Tippen auf die Karte oder Suche nach Zone, Bezirk und — seit dem 9. September nachts, über Photon — Straße. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
 | **Umfeld** | 385 Ladepunkte, 83 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
-| **Ordnungsamt** | Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. |
-| **Live-Zahlen** | Wie viele die App gerade offen haben, wie viele heute, wie viele Meldungen aktiv sind. Nur was zählbar ist — sonst gar nichts. |
-| **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
+| **Ordnungsamt** | Roter Meldeknopf auf der Karte, Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. Die aktuellen Meldungen stehen unten links auf der Karte; dahinter ein Blatt mit drei Reitern (Aktuell, Zonen, Tageszeiten). Jede Zone nennt ihre Kontrollen: heute, 7 Tage, 28 Tage, zuletzt. |
+| **Kennzahlen** | Meldungen heute, Geräte gerade offen, Geräte heute — als Leiste unter der Suche, ein Tipp führt zur Statistik. Nur was zählbar ist — sonst gar nichts. Beim Start die 28-Tage-Zahl, nach jedem Abruf „Meldungen aktualisiert" — beides verblasst von selbst. |
+| **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report im Meldungen-Blatt: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
 | **Einstellungen** | Ein Sheet mit stehendem Hinweis, sieben häufigen Fragen zu genau den Stellen, an denen die Anzeige überrascht, Mitmachen-Wegen und den rechtlichen Links. |
 | **Ruhetag erklärt** | Wenn auffällig wenige Zonen kassieren, sagt die App warum — Wochentage und Stunden aus den Daten abgeleitet, nicht fest verdrahtet. Wegklickbar. |
 | **Standort** | Erklärt sich, bevor der Browser fragt — „Später" löst den nativen Dialog gar nicht erst aus, die Berechtigung bleibt also abrufbar. |
 | **Feedback** | Idee, Fehler oder Sonstiges als Freitext. Kein Kontaktfeld, keine Antwort — dafür auch keine gespeicherte Adresse. Nur der Betreiber liest, deshalb nur mit eigenem Server. |
 | **Offline** | Service Worker, Daten eingefroren. Funktioniert in der Tiefgarage. |
 | **Als App ablegen** | Manifest mit eigenem und zuschnittsicherem Symbol, Bildern für die Installations-Karte und drei Verknüpfungen im Symbol-Menü (Melden, Standort, Kontrollen). Der Hinweis kommt erst ab dem zweiten Besuch und nie wieder, wenn er weggeklickt wurde; auf iOS steht der Weg übers Teilen-Menü. |
-| **Geschlossene Beta** | Bis der Trägerverein eingetragen ist: `noindex` und eine sperrende `robots.txt`, eine Beta-Pille in der Kopfzeile und ein Absatz in den Einstellungen. Hängt an einem Schalter, nicht an einem Gedächtnis — `PUBLIC_LAUNCH=1 pnpm build` hebt beides auf. |
+| **Geschlossene Beta** | Bis der Trägerverein eingetragen ist: `noindex` und eine sperrende `robots.txt`, eine Beta-Marke in der Kopfzeile und ein Absatz in den Einstellungen. Hängt an einem Schalter, nicht an einem Gedächtnis — `PUBLIC_LAUNCH=1 pnpm build` hebt beides auf. |
 | **Telegram** | Ein Bot am selben Worker: Standort schicken, Meldung steht auf der Karte. Kein zweiter Dienst, dieselbe Datenbank, dieselbe Meldegrenze. Die Nutzerkennung wird gehasht wie eine IP-Adresse, die Chat-Kennung gar nicht gespeichert. |
 | **Nutzung zählen** | Ein Zählwerk, kein Protokoll: Name, Ausprägung und Stadt, zusammengezählt statt als Folge. **Ort oder Zeit, nie beides** — ein Ereignis mit Ortsbezug bekommt keine Uhrzeit. Keine Kennung, keine Sitzung, keine IP, auch nicht gehasht; abschaltbar in den Einstellungen, und wer `globalPrivacyControl` meldet, wird von vornherein nicht gezählt. Die Auswertung liegt unter `/statistik` als eigene Seite — kein React, keine Karte, und eine Zone wird erst ab fünf Aufrufen beim Namen genannt. |
 | **Updates** | Eine neue Version übernimmt nicht selbst — sie meldet sich in der Kopfzeile und wartet. Ein Wechsel mitten im Melden würde Eingaben verlieren. |
@@ -247,11 +247,11 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 1120 Unit-Tests
+pnpm test                              # 1141 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 204 End-to-End-Tests
+cd apps/web && npx playwright test     # 212 End-to-End-Tests
 ```
 
 **Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
@@ -286,8 +286,8 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 1120 — 778 in `core`, 86 für Worker und Zählwerk, 240 für die Web-App, 16 für Artifact-Bau und Datenstand. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 75 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
-| End-to-End | 204 über Desktop und Handy, gegen den Produktions-Build; 192 bestehen, zwölf überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, elf auf dem Gerät, für das sie nicht gedacht sind |
+| Unit-Tests | 1141 — 784 in `core`, 86 für Worker und Zählwerk, 255 für die Web-App, 16 für Artifact-Bau und Datenstand. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 75 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| End-to-End | 212 über Desktop und Handy, gegen den Produktions-Build; 200 bestehen, zwölf überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, elf auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |

@@ -1,6 +1,7 @@
 import { activeSightings, type Sighting } from '@knoellchenfrei/core'
 
 import { duration } from '../format.js'
+import { IconGesehen, IconStern, IconWeg } from '../icons.js'
 import type { VoteKind } from '../storage.js'
 
 interface Props {
@@ -17,8 +18,6 @@ interface Props {
   /** True when reports reach a shared store rather than only this device. */
   shared: boolean
 }
-
-const STARS = ['', '★', '★★', '★★★']
 
 export function SightingPanel({
   sightings,
@@ -52,7 +51,7 @@ export function SightingPanel({
         Stelle bietet das Blatt Standort, Kartenmitte und die nächsten Zonen an.
       */}
       <button type="button" className="button button--primary button--block" onClick={onReport}>
-        Hier gesehen
+        Kontrolle melden
       </button>
 
       <p className="hours">
@@ -85,7 +84,15 @@ export function SightingPanel({
                 role="img"
                 aria-label={`Vertrauen ${confidence.stars} von 3`}
               >
-                {STARS[confidence.stars] || '·'}
+                {[0, 1, 2].map((i) => (
+                  <IconStern
+                    key={i}
+                    size={12}
+                    fill={i < confidence.stars ? 'currentColor' : 'none'}
+                    strokeWidth={i < confidence.stars ? 0 : 1.75}
+                    aria-hidden="true"
+                  />
+                ))}
               </span>
               <span className="sightings__meta">
                 vor {duration(confidence.ageMs)} ·{' '}
@@ -114,7 +121,7 @@ export function SightingPanel({
                   onClick={() => onConfirm(sighting.id)}
                   aria-label={`Sichtung von vor ${duration(confidence.ageMs)} bestätigen`}
                 >
-                  gesehen
+                  <IconGesehen size={14} aria-hidden="true" /> gesehen
                 </button>
                 <button
                   type="button"
@@ -122,7 +129,7 @@ export function SightingPanel({
                   onClick={() => onDispute(sighting.id)}
                   aria-label={`Sichtung von vor ${duration(confidence.ageMs)} als weg melden`}
                 >
-                  weg
+                  <IconWeg size={14} aria-hidden="true" /> weg
                 </button>
               </span>
               )}

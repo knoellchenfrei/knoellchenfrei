@@ -56,6 +56,22 @@ async function openPanel(page: Page): Promise<void> {
   await expect(body).toBeVisible()
 }
 
+/** Das Meldungen-Blatt hinter der Karte unten links (seit dem 9. September nachts). */
+async function openReports(page: Page): Promise<import('@playwright/test').Locator> {
+  // Mit offenem Blatt ist die Karte auf dem Handy weg (`docs/design.md`,
+  // Abschnitt 8); also erst zu, dann öffnen.
+  const body = page.locator('.sidebar__body')
+  if (await body.isVisible()) {
+    await page.locator('.panel-toggle').click()
+    await expect(body).toBeHidden()
+    await page.waitForTimeout(300)
+  }
+  await page.locator('.reports-card').click()
+  const dialog = page.getByRole('dialog', { name: 'Meldungen' })
+  await expect(dialog).toBeVisible()
+  return dialog
+}
+
 test.describe('was ausserhalb der Zonen steht', () => {
   /**
    * Regression: Die App behauptete „hier ist Parken gebührenfrei", sobald
@@ -248,7 +264,7 @@ test.describe('Parkvorgang', () => {
 test.describe('Ebenen und Sonderziele', () => {
   test('schaltet eine Ebene ein und wieder aus', async ({ page }) => {
     await ready(page)
-    await page.locator('.chip--toggle').click()
+    await page.locator('.legend__toggle').click()
     const charging = page.locator('.chip', { hasText: 'Ladepunkte' })
     await charging.click()
     await expect(charging).toHaveClass(/chip--on/)
@@ -257,17 +273,17 @@ test.describe('Ebenen und Sonderziele', () => {
     // Eine, seit dem 9. September: Die Kontrolldichte zählt nicht mehr mit,
     // weil sie keinen Schalter mehr hat — sie liegt, sobald sie ein Muster
     // hat, und ist keine Ebene, die jemand wählt.
-    await page.locator('.chip--toggle').click()
+    await page.locator('.legend__toggle').click()
     await expect(page.locator('.chip__count')).toHaveText('1')
 
-    await page.locator('.chip--toggle').click()
+    await page.locator('.legend__toggle').click()
     await charging.click()
     await expect(charging).not.toHaveClass(/chip--on/)
   })
 
   test('zeigt in Berlin jede Ebene, für die es Daten gibt', async ({ page }) => {
     await ready(page)
-    await page.locator('.chip--toggle').click()
+    await page.locator('.legend__toggle').click()
     const chips = page.locator('#legend-layers .chip')
     // Ohne Kontrolldichte, seit dem 9. September: Sie liegt immer, sobald sie
     // ein Muster hat, und ist nichts, was jemand abschaltet.
@@ -282,7 +298,7 @@ test.describe('Ebenen und Sonderziele', () => {
 
   test('zeigt die Umweltzone als eigene Ebene', async ({ page }) => {
     await ready(page)
-    await page.locator('.chip--toggle').click()
+    await page.locator('.legend__toggle').click()
     const lez = page.locator('.chip', { hasText: 'Umweltzone' })
     await lez.scrollIntoViewIfNeeded()
     await lez.click()
@@ -299,16 +315,18 @@ test.describe('gemeldete Sichtungen', () => {
     await openPanel(page)
 
     const sightings = page.locator('section[aria-label="Ordnungsamt-Sichtungen"]')
+    await openReports(page)
     // Leer, und ehrlich leer: keine erzeugten Zeilen mehr.
     await expect(sightings.locator('.sightings__item')).toHaveCount(0)
 
     // The button opens the report sheet; the tapped point is offered first.
-    await page.locator('button', { hasText: 'Hier gesehen' }).click()
+    await sightings.locator('button', { hasText: 'Kontrolle melden' }).click()
     await expect(page.locator('.sheet')).toBeVisible()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.sheet')).toHaveCount(0)
     await page.waitForTimeout(600)
 
+    await openReports(page)
     await expect(sightings.locator('.sightings__item')).toHaveCount(1)
     await expect(sightings.locator('.demo-note')).not.toContainText('erzeugt')
   })
@@ -322,7 +340,7 @@ test.describe('gemeldete Sichtungen', () => {
    */
   test('erfindet ohne Meldungen keine — die Liste ist leer und sagt es', async ({ page }) => {
     await ready(page)
-    await openPanel(page)
+    await openReports(page)
     const sightings = page.locator('section[aria-label="Ordnungsamt-Sichtungen"]')
     await expect(sightings).toContainText('0 aktiv')
     await expect(sightings).toContainText('Keine aktuellen Sichtungen')
@@ -341,11 +359,12 @@ test.describe('gemeldete Sichtungen', () => {
     const box = await page.locator('.map').boundingBox()
     await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
     await page.waitForTimeout(1000)
-    await openPanel(page)
-    await page.locator('button', { hasText: 'Hier gesehen' }).click()
+    await openReports(page)
+    await page.locator('.sheet--reports button', { hasText: 'Kontrolle melden' }).click()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.sheet')).toHaveCount(0)
 
+    await openReports(page)
     const own = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
     await expect(own).toContainText('deine Meldung')
     await expect(own.locator('button')).toHaveCount(0)
@@ -358,14 +377,14 @@ test.describe('gemeldete Sichtungen', () => {
    */
   test('weiss nach dem Neuladen noch, welche Meldung die eigene ist', async ({ page }) => {
     await ready(page)
-    await page.locator('.report-fab').click()
+    await page.locator('.fab').click()
     await page.locator('.sheet__option').first().click()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.sheet')).toHaveCount(0)
 
     await page.reload()
     await ready(page)
-    await openPanel(page)
+    await openReports(page)
     const own = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
     await expect(own).toContainText('deine Meldung')
     await expect(own.locator('button')).toHaveCount(0)
@@ -389,7 +408,7 @@ test.describe('gemeldete Sichtungen', () => {
       )
     })
     await ready(page)
-    await openPanel(page)
+    await openReports(page)
     const row = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
     await row.getByRole('button', { name: /bestätigen$/ }).click()
     await expect(row).toContainText('du: gesehen')
@@ -397,7 +416,7 @@ test.describe('gemeldete Sichtungen', () => {
 
     await page.reload()
     await ready(page)
-    await openPanel(page)
+    await openReports(page)
     const again = page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item').first()
     await expect(again).toContainText('du: gesehen')
     await expect(again.locator('button')).toHaveCount(0)
@@ -422,27 +441,25 @@ test.describe('der Meldeknopf auf der Karte', () => {
     await page.locator('.sheet__option').first().click()
     await page.locator('.sheet__submit').click()
     await expect(sheet).toHaveCount(0)
-    await openPanel(page)
+    await openReports(page)
     await expect(
       page.locator('section[aria-label="Ordnungsamt-Sichtungen"] .sightings__item'),
     ).toHaveCount(1)
   })
 
-  // Seit dem 9. September abends rechts in der Zeile der Ebenen, unter den
-  // Live-Zahlen, rechtsbündig mit dem Zahnrad — auf dem Handy. Auf dem
-  // Desktop liegt die Zeile unten links, dort zählt nur die Zeile selbst.
-  test('steht rechts neben den Ebenen, unter den Live-Zahlen', async ({ page }, testInfo) => {
+  // Seit dem 9. September nachts der rote Kreis über dem Standort-Knopf, unten
+  // rechts — der einzige andere Kreis auf der Karte, und der grössere
+  // (`docs/design.md`, Abschnitt 2).
+  test('ist der rote Kreis über dem Standort-Knopf', async ({ page }) => {
     await ready(page)
-    const fab = (await page.locator('.report-fab').boundingBox())!
-    const live = (await page.locator('.live').boundingBox())!
-    const ebenen = (await page.locator('.chip--toggle').boundingBox())!
-    expect(fab.y).toBeGreaterThanOrEqual(live.y + live.height)
-    expect(Math.abs(fab.y - ebenen.y)).toBeLessThan(2)
-    expect(ebenen.x + ebenen.width).toBeLessThanOrEqual(fab.x)
-    if (testInfo.project.name === 'phone') {
-      const gear = (await page.getByRole('button', { name: 'Einstellungen' }).boundingBox())!
-      expect(Math.abs(fab.x + fab.width - (gear.x + gear.width))).toBeLessThan(2)
-    }
+    const fab = (await page.locator('.fab').boundingBox())!
+    const locate = (await page.locator('.locate').boundingBox())!
+    expect(fab.width).toBeGreaterThan(locate.width)
+    expect(fab.y + fab.height).toBeLessThanOrEqual(locate.y + 1)
+    // Mittig übereinander, nicht versetzt.
+    expect(Math.abs(fab.x + fab.width / 2 - (locate.x + locate.width / 2))).toBeLessThan(2)
+    await expect(page.locator('.fab')).toHaveCSS('border-radius', '50%')
+    await expect(page.locator('.fab')).toHaveCSS('background-color', 'rgb(220, 38, 38)')
   })
 })
 
@@ -451,10 +468,10 @@ test.describe('Melden scheitert nie still', () => {
 
   test('bietet einen Ort zum Melden auch ohne jede Geste auf der Karte', async ({ page }) => {
     await ready(page)
-    await openPanel(page)
+    await openReports(page)
     // Pressed cold, with nothing tapped on the map — the case that was broken
     // twice: first a disabled button, then one that silently did nothing.
-    await page.locator(`${sightings} button`, { hasText: 'Hier gesehen' }).click()
+    await page.locator(`${sightings} button`, { hasText: 'Kontrolle melden' }).click()
 
     const sheet = page.locator('.sheet')
     await expect(sheet).toBeVisible()
@@ -476,7 +493,7 @@ test.describe('Melden scheitert nie still', () => {
     await openPanel(page)
     await expect(page.locator('.sidebar')).not.toHaveClass(/sidebar--collapsed/)
 
-    await page.locator('button', { hasText: 'Hier gesehen' }).click()
+    await page.locator('.fab').click()
     await expect(page.locator('.sheet')).toBeVisible()
     // Das Panel deckt sonst die untere Kartenhälfte ab — genau die, auf der der
     // Punkt gesetzt werden soll.
@@ -510,12 +527,14 @@ test.describe('Melden scheitert nie still', () => {
     await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.18)
     await page.waitForTimeout(500)
 
-    await page.locator(`${sightings} button`, { hasText: 'Hier gesehen' }).click()
+    await openReports(page)
+    await page.locator(`${sightings} button`, { hasText: 'Kontrolle melden' }).click()
     await page.locator('.sheet__option').first().click()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.toast')).toContainText(
       'konnte nicht gespeichert werden',
     )
+    await openReports(page)
     await expect(page.locator(`${sightings} .sightings__item`)).toHaveCount(0)
   })
 })
@@ -638,7 +657,7 @@ test.describe('Rückmeldungen', () => {
     await ready(page)
     await openPanel(page)
     await expect(page.locator('.provenance__link')).toHaveCount(0)
-    await page.locator('button', { hasText: 'Hier gesehen' }).click()
+    await page.locator('.fab').click()
     await expect(page.locator('.sheet')).toBeVisible()
     await expect(page.locator('.sheet__aside')).toHaveCount(0)
   })
@@ -657,11 +676,15 @@ test.describe('Zahlen im Betrieb', () => {
     await expect(live).not.toContainText('gerade offen')
   })
 
-  test('verschluckt keine Tipper auf die Karte', async ({ page }) => {
+  test('führt zur Statistik — die ganze Leiste ist der Link', async ({ page }) => {
     await ready(page)
-    // The legend once covered the map across its full width without
-    // pointer-events: none; the strip must not repeat it.
-    await expect(page.locator('.live')).toHaveCSS('pointer-events', 'none')
+    // Seit dem 9. September nachts ein Link, kein Ablesewert (Betreiber:
+    // „klickbar, und man kommt zur Statistik").
+    const live = page.locator('a.live')
+    await expect(live).toHaveAttribute('href', '/statistik/')
+    await expect(live).toHaveAttribute('target', '_blank')
+    // Symbole je Zelle, keine Unicode-Zeichen.
+    expect(await live.locator('svg').count()).toBeGreaterThanOrEqual(2)
   })
 })
 
@@ -700,7 +723,8 @@ test.describe('Kontrolldichte', () => {
    */
   test('erfindet ohne Meldungen kein Muster', async ({ page }) => {
     await ready(page)
-    await openPanel(page)
+    const dialog = await openReports(page)
+    await dialog.getByRole('tab', { name: 'Zonen' }).click()
     await expect(page.locator(heatPanel)).toContainText('Noch keine Auswertung')
     await expect(page.locator(heatPanel)).toContainText(/Noch \d+ Meldungen bis sich ein Muster/)
     await expect(page.locator(`${heatPanel} .demo-note`)).toHaveCount(0)
@@ -715,11 +739,13 @@ test.describe('Kontrolldichte', () => {
   test('liegt von Anfang an auf der Karte und hat keinen Schalter', async ({ page }) => {
     await mitStrichen(page)
     await ready(page)
-    await openPanel(page)
-    await expect(page.locator(heatPanel)).toContainText('Meldungen ·')
-    await expect(page.locator(`${heatPanel} header button`)).toHaveCount(0)
     await page.getByRole('button', { name: /Ebenen/ }).click()
     await expect(page.getByRole('button', { name: 'Kontrolldichte' })).toHaveCount(0)
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    const dialog = await openReports(page)
+    await dialog.getByRole('tab', { name: 'Zonen' }).click()
+    await expect(page.locator(heatPanel)).toContainText('Meldungen ·')
+    await expect(page.locator(`${heatPanel} header button`)).toHaveCount(0)
     const visible = await page.evaluate(() => {
       const map = (window as unknown as { __map?: { getLayoutProperty: (id: string, key: string) => string } }).__map
       return map?.getLayoutProperty('heat-density', 'visibility') ?? 'missing'
@@ -730,9 +756,11 @@ test.describe('Kontrolldichte', () => {
   test('nennt die Zahlen, die die Farbe nicht tragen kann', async ({ page }) => {
     await mitStrichen(page)
     await ready(page)
-    await openPanel(page)
+    const dialog = await openReports(page)
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
+    await dialog.getByRole('tab', { name: 'Tageszeiten' }).click()
     await expect(panel).toContainText('Letzte 24 Stunden')
+    await dialog.getByRole('tab', { name: 'Zonen' }).click()
     await expect(panel).toContainText('Häufige Stellen')
     // Named by zone: a ranked list of unnamed cells says nothing about where.
     await expect(panel.locator('.heat-top strong').first()).toContainText(/Zone|Außerhalb/)
@@ -741,7 +769,8 @@ test.describe('Kontrolldichte', () => {
   test('zeichnet das Tagesdiagramm immer — es braucht keine Uhrzeit', async ({ page }) => {
     await mitStrichen(page)
     await ready(page)
-    await openPanel(page)
+    const dialog = await openReports(page)
+    await dialog.getByRole('tab', { name: 'Tageszeiten' }).click()
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
     await expect(panel).toContainText('Letzte 28 Tage')
     // One bar per day in the window. This is the chart that still works on
@@ -754,12 +783,98 @@ test.describe('Kontrolldichte', () => {
   test('zeichnet ein Stundenprofil mit einer Marke für die laufende Stunde', async ({ page }) => {
     await mitStrichen(page)
     await ready(page)
-    await openPanel(page)
+    const dialog = await openReports(page)
+    await dialog.getByRole('tab', { name: 'Tageszeiten' }).click()
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
     await expect(panel.locator('.chart:not(.chart--days) .chart__bar')).toHaveCount(24)
     // One line, always present — a coloured bar disappeared at an hour with no
     // reports, which is exactly when the marker matters.
     await expect(panel.locator('.chart__now')).toHaveCount(1)
+  })
+})
+
+test.describe('Kontrollen in der Zone', () => {
+  /**
+   * Das Stationsblatt von FreiFahren, auf die Zone übertragen (Betreiber,
+   * 9. September nachts, „inkl. Statistiken"): heute, sieben Tage, 28 Tage,
+   * der jüngste Strich, sieben Balken — aus den 250-m-Feldern, deren Mitte in
+   * der Zone liegt. Die Striche von `mitStrichen` liegen in der Zelle 109_97,
+   * deren Mitte (13,4037 / 52,519) in Parkzone 3, Mitte, liegt — nachgerechnet
+   * gegen `zones.geojson`, nicht geraten.
+   */
+  test('nennt die Kontrollen der gewählten Zone aus der Strichliste', async ({ page }) => {
+    await mitStrichen(page)
+    await ready(page)
+    await page.locator('.search__input').fill('3')
+    await page.locator('.search__results button', { hasText: /^Zone 3\s*Mitte$/ }).click()
+    await openPanel(page)
+    const stats = page.locator('.zone-stats')
+    await expect(stats).toBeVisible()
+    await expect(stats).toContainText('Kontrollen hier')
+    await expect(stats).toContainText('28 Tage')
+    await expect(stats.locator('.zone-stats__day')).toHaveCount(7)
+    await expect(stats).toContainText(/Zuletzt gemeldet (heute|gestern|vor \d+ Tagen)/)
+    // Symbol statt Zeichen, wie überall (`docs/design.md`, Abschnitt 5).
+    expect(await stats.locator('svg').count()).toBeGreaterThanOrEqual(1)
+  })
+
+  test('sagt ohne Striche, dass hier nichts gemeldet wurde', async ({ page }) => {
+    await ready(page)
+    await page.locator('.search__input').fill('3')
+    await page.locator('.search__results button', { hasText: /^Zone 3\s*Mitte$/ }).click()
+    await openPanel(page)
+    await expect(page.locator('.zone-stats')).toContainText('keine Kontrolle gemeldet')
+  })
+})
+
+test.describe('Straßensuche', () => {
+  /**
+   * Seit dem 9. September nachts: „Suche erweitern um Straßennamen". Photon
+   * wird hier nachgestellt — die Suite läuft ohne Netz, und die Antwort soll
+   * die sein, deren Lesart der Unit-Test festhält. Ein Treffer fliegt zur
+   * Stelle und zeigt die Zone dort.
+   */
+  test('findet eine Straße über Photon und zeigt die Zone an der Stelle', async ({ page }) => {
+    const anfragen: string[] = []
+    await page.route('https://photon.komoot.io/**', async (route) => {
+      anfragen.push(route.request().url())
+      await route.fulfill({
+        json: {
+          features: [
+            {
+              geometry: { coordinates: [13.4037, 52.519] },
+              properties: { name: 'Teststraße', osm_key: 'highway', district: 'Mitte' },
+            },
+          ],
+        },
+      })
+    })
+    await ready(page)
+    // Unter drei Zeichen geht nichts hinaus.
+    await page.locator('.search__input').fill('Te')
+    await page.waitForTimeout(500)
+    expect(anfragen).toHaveLength(0)
+
+    await page.locator('.search__input').fill('Tests')
+    const treffer = page.locator('.search__results button', { hasText: 'Teststraße' })
+    await expect(treffer).toBeVisible({ timeout: 5_000 })
+    expect(anfragen).toHaveLength(1)
+    expect(anfragen[0]).toContain('osm_tag=highway')
+    expect(anfragen[0]).toContain('bbox=')
+    await treffer.click()
+    await openPanel(page)
+    await expect(page.locator('#zone-panel-title')).toContainText('Parkzone 3')
+    await expect(page.locator('.search__results')).toHaveCount(0)
+  })
+
+  test('bleibt ohne Photon bei Zonen und Bezirken, ohne Fehler', async ({ page }) => {
+    await page.route('https://photon.komoot.io/**', (route) => route.abort())
+    await ready(page)
+    await page.locator('.search__input').fill('Mitte')
+    await expect(page.locator('.search__results button').first()).toBeVisible()
+    await page.waitForTimeout(800)
+    await expect(page.locator('.crash')).toHaveCount(0)
+    await expect(page.locator('.search__results')).not.toContainText('Straßen')
   })
 })
 
@@ -809,7 +924,7 @@ test.describe('Widerstandsfähigkeit', () => {
     })
     await ready(page)
     await openPanel(page)
-    await page.locator('.chip--toggle').click()
+    await page.locator('.legend__toggle').click()
     await page.locator('.chip', { hasText: 'P+R' }).click()
     await page.locator('.search__input').fill('Mitte')
     await page.waitForTimeout(800)
@@ -919,7 +1034,7 @@ test.describe('die weiteren Städte', () => {
     // Hamburg hat weder Umweltzone noch POI-Ebenen, und die Kontrolldichte
     // hat keinen Schalter mehr — also gibt es hier gar keinen Ebenen-Knopf,
     // statt eines, der eine leere Liste aufklappt.
-    await expect(page.locator('.chip--toggle')).toHaveCount(0)
+    await expect(page.locator('.legend__toggle')).toHaveCount(0)
   })
 
   test('nennt die Hamburger Lizenz als Bedingung, nicht als Fußnote', async ({ page }) => {

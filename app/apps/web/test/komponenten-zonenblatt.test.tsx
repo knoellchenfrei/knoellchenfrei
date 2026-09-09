@@ -46,6 +46,8 @@ function zeichne(properties: ZoneProperties, nearbyMetres: number | null = null)
       now={jetzt}
       onPark={() => undefined}
       parked={false}
+      stats={null}
+      shared={false}
     />,
   )
 }

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { HISTORY_DAYS } from '@knoellchenfrei/core'
 
 import { CITY, selectableCities, switchCity } from '../city.js'
+import { IconWarnung } from '../icons.js'
 import { setStatistikAus, statistikAus } from '../track.js'
 import { InstallRow, useInstallState } from './InstallHint.js'
 
@@ -270,7 +271,7 @@ export function SettingsSheet({
       <div className="sheet__body">
         <p className="callout">
           <span className="callout__mark" aria-hidden="true">
-            ⚠
+            <IconWarnung size={18} />
           </span>
           <span>
             <strong>Verbindlich ist die Beschilderung vor Ort.</strong> Gebühren und Zeiten können

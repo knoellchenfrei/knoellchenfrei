@@ -196,9 +196,12 @@ test.describe('Kurzbefehle vom App-Symbol', () => {
     })
     await page.goto('/?start=kontrollen')
     await ready(page)
-    if (!(await page.locator('.sidebar__body').isVisible())) await page.locator('.panel-toggle').click()
     // Seit dem 9. September gibt es keinen Schalter mehr, den die Verknüpfung
-    // umlegen könnte: Sie öffnet das Blatt, und die Auswertung steht darin.
+    // umlegen könnte: Sie öffnet das Meldungen-Blatt, und die Auswertung
+    // steht darin, im Reiter „Zonen".
+    const dialog = page.getByRole('dialog', { name: 'Meldungen' })
+    await expect(dialog).toBeVisible({ timeout: 15_000 })
+    await dialog.getByRole('tab', { name: 'Zonen' }).click()
     const panel = page.locator('section[aria-label="Kontrolldichte"]')
     await expect(panel).toBeVisible({ timeout: 15_000 })
     await expect(panel).toContainText('Meldungen ·')

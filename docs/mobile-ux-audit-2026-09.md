@@ -10,6 +10,13 @@ Leitfrage: *Fühlt sich das auf einem Smartphone wie eine 2026 gebaute App an,
 oder wie eine verkleinerte Webseite?* Vorher: eher das Zweite, mit guten
 Grundlagen. Nachher: das Erste, mit Rest.
 
+> **Stand 9. September, nachts:** Die Oberfläche hat seitdem ein
+> Design-System ([design.md](design.md)) — eckige Steuerelemente, zwei Kreise
+> für die Handlungen auf der Karte, Lucide-Symbole, ein Meldungen-Blatt mit
+> Reitern statt zweier Abschnitte unter der Zone. Die Messungen unten
+> beschreiben den Stand vom Vormittag; was davon nicht mehr gilt, steht in
+> [entscheidungen.md](entscheidungen.md), „Ein Erscheinungsbild".
+
 ## Gesamtbewertung
 
 | Bereich | vorher | nachher | warum |

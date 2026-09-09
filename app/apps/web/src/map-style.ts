@@ -123,6 +123,23 @@ function vectorStyle(url: string, base: string): StyleSpecification {
   }
 }
 
+/**
+ * Die Quellenangabe, die immer steht — auch wenn das Archiv keine mitbringt.
+ *
+ * Die Vektorquelle kommt als `pmtiles://`-TileJSON, und MapLibre nimmt die
+ * Attribution aus den Metadaten des Archivs; `attribution` in der Quelle
+ * zählt dann nicht. Ein Archiv ohne Metadaten (das lokale vom 9. September)
+ * liess das „i" **stillschweigend verschwinden** — `maplibregl-attrib-empty`,
+ * `display: none`, und die Lizenz verlangt die Nennung. Als
+ * `customAttribution` am Steuerelement hängt sie nicht am Archiv; nennt das
+ * Archiv dasselbe, zeigt MapLibre es einmal.
+ */
+export function attributionFor(withTiles: boolean): string {
+  return withTiles && TILES_BASE !== undefined
+    ? '© OpenStreetMap-Mitwirkende, © Protomaps'
+    : '© OpenStreetMap-Mitwirkende'
+}
+
 export function baseStyle(withTiles: boolean): StyleSpecification {
   if (!withTiles) {
     // Keine fremden Anfragen erlaubt: Die später ergänzten Bezirksgrenzen

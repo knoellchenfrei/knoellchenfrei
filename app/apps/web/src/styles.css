@@ -11,6 +11,15 @@
   --muted: #94a3b8;
   /* #2563eb statt #3b82f6: weißer Text erreicht darauf 5,2:1, auf dem alten Blau nur 3,7:1. */
   --accent: #2563eb;
+  /* Rot ist Kontrolle (`docs/design.md`, 3): `--danger` für Sterne, Punkte
+     und Ränder auf Dunkel, `--danger-strong` für gefüllte Flächen mit weissem
+     Text — #ef4444 erreicht mit Weiss nur 3,8:1, #dc2626 4,6:1. */
+  --danger-strong: #dc2626;
+  /* Die Radien-Skala (`docs/design.md`, Abschnitt 2): Fläche, Steuerelement,
+     Kleinteil. Kreise gibt es nur für die zwei Handlungen auf der Karte. */
+  --r-flaeche: 16px;
+  --r-control: 12px;
+  --r-klein: 8px;
   /* Eine Stufe dunkler, für den Zeigerzustand des Standort-Knopfes. Stand
      am 9. September als fester Wert in der Regel selbst — ein Akzent, der
      sich ändert, hätte seinen Hover zurückgelassen. */
@@ -63,27 +72,43 @@ body {
 /* Ab Tablet-Breite eine Spalte links, damit Suchfeld und Standort-Knopf nicht
    unter der Seitenleiste rechts landen. */
 @media (min-width: 721px) {
-  .topbar { right: auto; width: min(400px, calc(100% - 32px)); }
+  /* Nie unter der Seitenleiste: Auf 768 Pixeln lagen 400 + 380 übereinander,
+     und der Ebenen-Knopf steckte unter dem Blatt (E2E, 9. September nachts). */
+  .topbar { right: auto; width: min(400px, calc(100% - 48px - min(380px, calc(100% - 32px)))); }
 }
 
 /* Both map overlays live in one positioned column, so they cannot collide.
    Everything inside is inert; only the controls opt back in. */
 .overlay {
   position: absolute;
-  left: 16px; bottom: max(16px, env(safe-area-inset-bottom));
-  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
-  max-width: min(420px, calc(100% - 32px));
+  /* Unter der Kopfzeile, in deren Spalte — auf jedem Gerät. Bis zum
+     9. September nachts lag die Spalte auf dem Desktop unten links, wo jetzt
+     die Meldungen-Karte steht (`docs/design.md`, Abschnitt 8). */
+  top: calc(var(--topbar-height, 60px) + 8px); left: 16px;
+  width: min(400px, calc(100% - 32px));
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px;
   z-index: 3;
   pointer-events: none;
 }
-.legend {
-  position: relative;
-  display: flex; align-items: flex-start;
-  /* The container spans the width even when it holds one chip; without this it
-     was a dead strip that swallowed map taps and blocked dragging the car. */
-  pointer-events: none;
+/* Nach der Grundregel, weil dieselbe Spezifität sonst verliert: dieselbe
+   Breite wie die Kopfzeile, nie unter der Seitenleiste. */
+@media (min-width: 721px) {
+  .overlay { width: min(400px, calc(100% - 48px - min(380px, calc(100% - 32px)))); }
 }
+.legend { position: relative; flex: none; display: flex; pointer-events: none; }
 .legend > * { pointer-events: auto; }
+/* Der Quadratknopf: ein Symbol, 44 Pixel, `docs/design.md`, Abschnitt 7. */
+.square-button {
+  position: relative; flex: none;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--panel-edge); border-radius: var(--r-control);
+  cursor: pointer; pointer-events: auto;
+}
+.square-button:hover { border-color: var(--muted); }
+.square-button--on { border-color: var(--accent); color: #fff; }
+.legend__toggle .chip__count { position: absolute; top: -5px; right: -5px; margin: 0; }
 /*
  * Die Ebenen als Menü unter dem Knopf, seit dem 9. September abends. Vorher
  * standen sie als Chips in der Zeile: auf dem Desktop gewickelt, auf dem
@@ -104,16 +129,13 @@ body {
    Kopfzeile und Toast bleibt. */
 .overlay:has(.legend--open) { z-index: 6; }
 .legend__layers {
-  position: absolute; left: 0; z-index: 1;
-  /* Auf dem Desktop liegt die Zeile unten links, das Menü öffnet nach oben;
-     auf dem Handy liegt sie unter der Kopfzeile, dort nach unten (siehe den
-     Handy-Block). */
-  bottom: calc(100% + 6px);
+  /* Rechtsbündig unter dem Knopf, der rechts steht; nach unten, auf die Karte. */
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 1;
   display: flex; flex-direction: column; gap: 2px;
   min-width: 232px; max-width: min(320px, calc(100vw - 24px));
   padding: 6px;
   border: 1px solid var(--panel-edge);
-  border-radius: 14px;
+  border-radius: var(--r-flaeche);
   background: rgba(15, 18, 22, 0.96);
   box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(12px);
@@ -122,7 +144,7 @@ body {
   width: 100%;
   padding: 9px 12px;
   gap: 10px;
-  border: 0; border-radius: 9px;
+  border: 0; border-radius: var(--r-klein);
   background: transparent;
   font-size: 13px;
   text-align: left;
@@ -143,7 +165,7 @@ body {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 10px;
   border: 1px solid var(--panel-edge);
-  border-radius: 999px;
+  border-radius: var(--r-klein);
   background: rgba(23, 28, 34, 0.9);
   color: var(--muted);
   font: inherit; font-size: 12px;
@@ -187,7 +209,7 @@ body {
 .badge {
   flex: none;
   padding: 4px 9px;
-  border-radius: 999px;
+  border-radius: var(--r-klein);
   font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.04em;
 }
@@ -242,7 +264,7 @@ body {
 .button--primary { margin-top: 0; width: auto; background: var(--accent); border-color: transparent; color: #fff; }
 .button--primary:hover:not(:disabled) { background: #1d4ed8; }
 .button--ghost { margin-top: 0; width: auto; font-size: 13px; padding: 5px 10px; }
-.button--chip { margin: 0; width: auto; padding: 3px 9px; font-size: 12px; border-radius: 999px; }
+.button--chip { margin: 0; width: auto; padding: 3px 9px; font-size: 12px; border-radius: var(--r-klein); display: inline-flex; align-items: center; gap: 4px; }
 
 .timer--expired { border-color: rgba(239, 68, 68, 0.5); }
 .reminder { margin-top: 12px; }
@@ -254,7 +276,7 @@ body {
 .sightings__meta { flex: 1; color: var(--muted); }
 .sightings__actions { display: flex; gap: 4px; }
 .sightings__own { color: var(--muted); font-size: 12px; font-style: italic; }
-.stars { color: var(--danger); letter-spacing: -1px; min-width: 32px; }
+.stars { color: var(--danger); display: inline-flex; gap: 1px; min-width: 40px; }
 .stars--0, .stars--1 { opacity: 0.8; }
 
 .provenance { color: var(--muted); font-size: 11.5px; padding: 0 4px 8px; }
@@ -272,7 +294,7 @@ body {
  * toggle; "Zoom out" was 80% covered. Top-left, below the measured topbar, is
  * the one corner nothing else claims on a wide screen.
  */
-.maplibregl-ctrl-top-left { top: var(--topbar-height, 60px); }
+.maplibregl-ctrl-top-left { top: calc(var(--topbar-height, 60px) + 60px); }
 
 /*
  * Attribution must stay visible: OpenStreetMap's licence requires it, and it sat
@@ -286,21 +308,22 @@ body {
 .maplibregl-ctrl-top-right { margin-top: calc(var(--topbar-height, 60px) + 8px); }
 
 .maplibregl-ctrl-bottom-right { z-index: 5; }
-@media (min-width: 721px) {
-  /* Links neben der Seitenleiste statt hinter ihr. */
-  .maplibregl-ctrl-bottom-right { right: calc(16px + min(380px, calc(100% - 32px))); }
-}
+/* Unten links auf jedem Gerät, neben dem GitHub-Zeichen (`docs/design.md`, 7). */
+.maplibregl-ctrl-bottom-right { top: auto; bottom: calc(var(--sheet-height, 60px) + 4px); right: auto; left: max(2px, env(safe-area-inset-left)); transition: bottom 220ms ease; }
+@media (min-width: 721px) { .maplibregl-ctrl-bottom-right { bottom: 16px; left: 14px; } }
+/* Klein, wie bei FreiFahren: 24 Pixel, eckig. Die Lizenz verlangt Erreichbarkeit,
+   nicht Grösse; aufgeklappt bleibt der Text lesbar. */
+.maplibregl-ctrl-attrib.maplibregl-compact { min-height: 24px; padding: 0 24px 0 0; border-radius: var(--r-klein); background: rgba(23, 28, 34, 0.9); border: 1px solid var(--panel-edge); color: var(--muted); }
+.maplibregl-ctrl-attrib.maplibregl-compact-show { padding: 2px 28px 2px 8px; }
+.maplibregl-ctrl-attrib a { color: var(--text); }
+.maplibregl-ctrl-attrib-button { width: 24px; height: 24px; top: 0; right: 0; left: auto; border-radius: var(--r-klein); background-size: 16px 16px; background-position: center; background-repeat: no-repeat; filter: invert(0.9); }
+.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button { background-color: transparent; }
 @media (max-width: 720px) {
   /* Unten links, über dem Blatt: Oben rechts sass das „i" seit dem
      9. September in der Zeile der Ablesewerte, und unten rechts steht jetzt
      der Standort-Knopf. Die Ecke unten links ist die einzige, die niemand
      sonst beansprucht. */
-  .maplibregl-ctrl-bottom-right {
-    top: auto; bottom: calc(var(--sheet-height, 60px) + 2px);
-    right: auto; left: max(0px, env(safe-area-inset-left));
-    transition: bottom 220ms ease;
-  }
-  .maplibregl-ctrl-attrib { font-size: 10px; opacity: 0.85; }
+  .maplibregl-ctrl-attrib { font-size: 10px; opacity: 0.9; }
   .app:has(.sidebar--full) .maplibregl-ctrl-bottom-right { display: none; }
 }
 .marker--car::after {
@@ -314,7 +337,9 @@ body {
    über der Oberkante. */
 .locate {
   position: absolute;
-  right: max(12px, env(safe-area-inset-right));
+  /* Vier Pixel weiter innen als der Meldeknopf: Der ist 56, dieser 48, und
+     die Mitten stehen übereinander, nicht die Kanten. */
+  right: calc(max(12px, env(safe-area-inset-right)) + 4px);
   bottom: calc(var(--sheet-height, 60px) + 12px);
   z-index: 4;
   width: 48px; height: 48px;
@@ -328,27 +353,74 @@ body {
 }
 .locate:hover:not(:disabled) { background: var(--accent-hover); }
 .locate:disabled { opacity: 0.6; cursor: progress; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Der rote Kreis über dem Standort-Knopf: Kontrolle melden. Grösser als der
+   Standort, weil er die Handlung ist, die die App will (`docs/design.md`). */
+.fab {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: calc(var(--sheet-height, 60px) + 12px + 48px + 12px);
+  z-index: 4;
+  width: 56px; height: 56px;
+  display: grid; place-items: center;
+  color: #fff; background: var(--danger-strong);
+  border: 0; border-radius: 50%;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: bottom 220ms ease;
+}
+.fab:hover { background: #b91c1c; }
 /* Ganz hoch gezogen gibt es keine Karte mehr, auf der der Knopf etwas zeigen
    könnte. */
-.sidebar--full ~ .locate { display: none; }
+.sidebar--full ~ .locate, .sidebar--full ~ .fab, .sidebar--full ~ .corner { display: none; }
 
-/* Die Zeile unter den Live-Zahlen: links die Ebenen, rechts der Meldeknopf.
-   Die Zeile selbst lässt Tipps zur Karte durch; nur die Knöpfe fangen sie. */
-.overlay__row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; width: 100%; pointer-events: none; }
-.overlay__row .legend { flex: 1 1 0; width: auto; min-width: 0; }
-/* Der Meldeknopf: rot wie die Sterne, nicht blau wie die Hauptknöpfe;
-   rechtsbündig mit dem Zahnrad darüber, so hoch wie die Chips daneben. */
-.report-fab {
-  flex: none; margin-left: auto;
-  height: 40px; padding: 0 16px;
-  font: inherit; font-size: 14px; font-weight: 700; line-height: 1; white-space: nowrap;
-  color: #fff; background: #dc2626;
-  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px;
-  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.8);
-  cursor: pointer;
-  pointer-events: auto;
+/* Unten links: die Meldungen-Karte und daneben der Weg zum Code, rechts
+   von MapLibres „i" (das steht in derselben Zeile, 24 Pixel). */
+.corner {
+  position: absolute;
+  left: max(12px, env(safe-area-inset-left));
+  /* Plus die 10 Pixel Rand, die MapLibre seiner Steuerleiste gibt: Das
+     GitHub-Zeichen steht in einer Zeile mit dem „i". */
+  bottom: calc(var(--sheet-height, 60px) + 14px);
+  z-index: 3;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  pointer-events: none;
+  transition: bottom 220ms ease;
 }
-.report-fab:hover { background: #b91c1c; }
+.corner > * { pointer-events: auto; }
+.credit {
+  width: 24px; height: 24px; margin-left: 30px;
+  display: grid; place-items: center;
+  color: var(--text); background: rgba(23, 28, 34, 0.9);
+  border: 1px solid var(--panel-edge); border-radius: var(--r-klein);
+}
+.credit:hover { border-color: var(--muted); }
+.reports-card {
+  width: min(240px, calc(100vw - 100px));
+  padding: 9px 12px 10px;
+  text-align: left;
+  color: var(--text); background: rgba(23, 28, 34, 0.96);
+  border: 1px solid var(--panel-edge); border-radius: var(--r-flaeche);
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  font: inherit; cursor: pointer;
+}
+.reports-card:hover { border-color: var(--muted); }
+.reports-card__head { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.reports-card__head svg { color: var(--danger); }
+.reports-card__count { margin-left: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.reports-card__list { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; }
+.reports-card__list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 0; }
+.reports-card__zone { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reports-card__meta { flex: none; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); white-space: nowrap; }
+.reports-card__stars { display: inline-flex; gap: 1px; color: var(--danger); }
+.reports-card__empty { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+
+/* Zeile 2: die Kennzahlen-Leiste bis zum Ebenen-Knopf, der rechts unter dem
+   Zahnrad steht. Die Zeile lässt Tipps zur Karte durch; nur die Flächen fangen sie. */
+.overlay__row { display: flex; align-items: stretch; gap: 8px; width: 100%; pointer-events: none; }
+.overlay__row .live { flex: 1 1 auto; min-width: 0; }
 
 @media (min-width: 721px) {
   /* Unten rechts auf der Karte, links neben der Seitenleiste und über der
@@ -357,26 +429,24 @@ body {
      „i" der Quellenangabe (36 Pixel plus 10 Rand), und bei 44 lag der Knopf
      zwei Pixel darauf — auf dem Tablet-Bildschirmfoto als ein Rand, der in
      den anderen läuft. */
-  .locate { right: calc(32px + min(380px, calc(100% - 32px))); bottom: 60px; }
-  /* Die Chips links enden, bevor der Standort-Knopf beginnt, und stehen
-     über der Quellenangabe statt in ihr — auf einem Tablet teilen sich
-     alle drei die untere Kante. */
-  .overlay {
-    bottom: 44px;
-    max-width: min(420px, calc(100% - 32px - min(380px, calc(100% - 32px)) - 72px));
-  }
+  .locate { right: calc(36px + min(380px, calc(100% - 32px))); bottom: 16px; }
+  .fab { right: calc(32px + min(380px, calc(100% - 32px))); bottom: calc(16px + 48px + 12px); }
+  .corner { left: 16px; bottom: 26px; }
 }
 
 .search { position: relative; flex: none; width: 100%; }
+.search__icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
 .search__input {
-  width: 100%;
-  padding: 7px 11px;
+  width: 100%; min-height: 40px;
+  padding: 7px 11px 7px 40px;
   border: 1px solid var(--panel-edge);
-  border-radius: 9px;
+  border-radius: var(--r-control);
   background: rgba(23, 28, 34, 0.92);
   color: var(--text);
-  font: inherit; font-size: 13px;
+  font: inherit; font-size: 14px;
 }
+.search__group { padding: 6px 12px 2px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.search__results strong svg { vertical-align: -2px; color: var(--muted); }
 /* 16 Pixel auf dem Handy: Unter 16 zoomt iOS beim Fokus in das Feld hinein,
    und der Zoom blieb — „wenn ich das Suchfeld nutze, wird reingezoomt"
    (Betreiber, 9. September). Das Meldeblatt hatte die Regel schon. */
@@ -448,11 +518,10 @@ body {
 /* ------------------------------------------------------- panel collapsing */
 
 
-.chip--toggle { font-weight: 600; }
 .chip__count {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 16px; height: 16px; padding: 0 4px; margin-left: 2px;
-  border-radius: 999px;
+  border-radius: var(--r-klein);
   background: var(--accent); color: #fff;
   font-size: 10px; font-weight: 700;
 }
@@ -487,7 +556,7 @@ body {
        Textfetzen über Zonen, wie ein Rendering-Fehler. */
     background: rgba(15, 18, 22, 0.94);
     border-top: 1px solid var(--panel-edge);
-    border-radius: 18px 18px 0 0;
+    border-radius: var(--r-flaeche) var(--r-flaeche) 0 0;
     box-shadow: 0 -12px 32px -16px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(12px);
     transition: max-height 220ms ease, transform 220ms ease;
@@ -504,10 +573,8 @@ body {
     top: calc(var(--topbar-height, 120px) + 8px);
     left: max(12px, env(safe-area-inset-left));
     right: max(12px, env(safe-area-inset-right));
-    max-width: none;
+    width: auto; max-width: none;
   }
-  /* Unter der Kopfzeile öffnet das Ebenen-Menü nach unten, auf die Karte. */
-  .legend__layers { bottom: auto; top: calc(100% + 6px); }
   .legend__layers .chip { padding: 11px 12px; font-size: 14px; }
   /* Die Peek-Zeile im Griff: Zone, Status und Betrag in einer Zeile. Was
      nicht in die Breite passt, endet mit Auslassungspunkten statt in einer
@@ -542,18 +609,21 @@ body {
 .sidebar__body[hidden] { display: none; }
 
 .panel-toggle {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid var(--panel-edge);
-  border-radius: 999px;
-  background: rgba(23, 28, 34, 0.96);
-  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: var(--r-control);
+  /* Immer blau, auf und zu: „Details einblenden ist blau, Details ausblenden
+     ist schwarz — beides blau" (Betreiber, 9. September nachts). */
+  background: var(--accent);
+  color: #fff;
   font: inherit; font-size: 12px; font-weight: 600;
   cursor: pointer;
   backdrop-filter: blur(10px);
 }
-.panel-toggle:hover { color: var(--text); }
+.panel-toggle:hover { background: var(--accent-hover, #1d4ed8); }
+.panel-toggle__icon { display: inline-flex; }
 .panel-toggle__grip { display: none; }
 
 .sidebar--collapsed { overflow: visible; }
@@ -561,12 +631,11 @@ body {
 @media (max-width: 720px) {
   .panel-toggle {
     flex: none;
-    flex-direction: column; gap: 4px;
+    flex-wrap: wrap; gap: 4px 6px;
     padding: 10px 12px;
     min-height: 48px;
     border: 0;
-    border-radius: 16px 16px 0 0;
-    background: transparent;
+    border-radius: var(--r-flaeche) var(--r-flaeche) 0 0;
     font-size: 13px;
     /* Der Griff nimmt die Wischgeste an (siehe App.tsx). Ohne diese Zeile
        gäbe der Browser die Berührung nach ein paar Pixeln als Scrollen an
@@ -574,14 +643,17 @@ body {
     touch-action: none;
   }
   .panel-toggle__grip {
-    display: block;
-    width: 36px; height: 4px;
+    display: block; flex-basis: 100%;
+    width: 36px; height: 4px; margin: 0 auto;
     border-radius: 999px;
-    background: var(--grip);
+    background: rgba(255, 255, 255, 0.5);
   }
   .sidebar { gap: 0; }
+  /* Zugeklappt und beim Zufahren: `max-height` auf Griffhöhe — eine Zahl,
+     zu der sich animieren lässt. `none` sprang. */
+  .sidebar--closing { max-height: var(--grip-height, 64px); }
   .sidebar--collapsed {
-    max-height: none;
+    max-height: var(--grip-height, 64px);
     top: auto;
     background: none;
     border-top: 0;
@@ -598,10 +670,12 @@ body {
      (Bildschirmfoto des Betreibers, 9. September). Blau bis zur Kante, wie
      jede Leiste über dem Home-Indikator. */
   .sidebar--collapsed .panel-toggle {
-    background: var(--accent); color: #fff; border-color: transparent;
     padding-bottom: calc(10px + env(safe-area-inset-bottom));
   }
-  .sidebar--collapsed .panel-toggle__grip { background: rgba(255, 255, 255, 0.5); }
+  /* Mit offenem Blatt verschwindet die Meldungen-Karte: Auf 320 × 568 stand
+     sie sonst über dem Blatt bis an die Kennzahlen-Leiste heran, und die
+     Karte war nur noch ein Streifen. Wer die Meldungen will, klappt zu. */
+  .sidebar:not(.sidebar--collapsed) ~ .corner { display: none; }
 }
 
 /* ------------------------------------------------------------ touch input */
@@ -618,29 +692,11 @@ body {
  */
 @media (any-pointer: coarse) {
   .button, .chip, .search__input, .panel-toggle { min-height: 44px; }
+  .square-button { width: 44px; height: 44px; }
   .button--chip { min-height: 44px; padding: 12px 16px; }
   .chip { padding: 11px 14px; font-size: 13px; }
   .search__results button { min-height: 44px; }
   .maplibregl-ctrl-top-left, .maplibregl-ctrl-top-right { display: none; }
-  /* MapLibres „i" ist 24 Pixel; die Lizenz verlangt, dass es erreichbar ist,
-     nicht, dass es winzig ist.
-
-     Und die Pille muss mitwachsen: MapLibre rechnet sie mit 24 Pixeln
-     (`padding-right: 24px`, Knopf `top: 0; right: 0; left: 0`). Mit einem
-     36-Pixel-Knopf darin ragte er zugeklappt 12 Pixel links aus der Pille
-     und damit aus dem Schirm, aufgeklappt 8 Pixel rechts aus der Pille —
-     auf dem iPhone des Betreibers am 9. September als „kaputte Pille"
-     gemeldet. Deshalb hier Innenabstand, Radius und Knopflage neu, passend
-     zu 36 Pixeln; `left: auto`, weil MapLibre beide Seiten setzt. */
-  .maplibregl-ctrl-attrib-button {
-    width: 36px; height: 36px; border-radius: 18px;
-    top: 2px; right: 2px; left: auto;
-    /* `no-repeat`: Bei 36 Pixeln Kachel und 24 Pixeln Bild wiederholte sich
-       das „i" an den Rändern als vier schwarze Punkte. */
-    background-size: 24px 24px; background-position: center; background-repeat: no-repeat;
-  }
-  .maplibregl-ctrl-attrib.maplibregl-compact { min-height: 36px; padding: 2px 40px 2px 0; border-radius: 20px; }
-  .maplibregl-ctrl-attrib.maplibregl-compact-show { padding: 2px 44px 2px 12px; border-radius: 20px; }
   /* Der blaue Ring ist MapLibres `:focus`; Safari lässt ihn nach einem Tipp
      stehen. Für die Tastatur bleibt er, für den Finger nicht. */
   .maplibregl-ctrl-attrib-button:focus:not(:focus-visible) { box-shadow: none; }
@@ -673,7 +729,7 @@ body {
    * Blatt setzt, wird hier zurückgesetzt, sonst landete das Panel oben links
    * unter dem Titel mit left:0 und top:auto.
    */
-  .app { --quer-leiste: min(300px, 38vw); --quer-blatt: min(320px, 40vw); }
+  .app { --quer-leiste: min(340px, 42vw); --quer-blatt: min(320px, 40vw); }
 
   .topbar {
     left: max(12px, env(safe-area-inset-left)); right: auto;
@@ -687,8 +743,6 @@ body {
     left: max(12px, env(safe-area-inset-left));
     width: var(--quer-leiste); max-width: none;
   }
-  .live { max-width: 100%; }
-  .legend__layers { bottom: auto; top: calc(100% + 6px); }
 
   .sidebar {
     top: max(8px, env(safe-area-inset-top)); bottom: max(8px, env(safe-area-inset-bottom));
@@ -700,24 +754,24 @@ body {
   }
   .sidebar.sidebar--collapsed { top: max(8px, env(safe-area-inset-top)); bottom: auto; }
   .sidebar__body { padding: 0; }
-  .panel-toggle {
-    flex-direction: row; min-height: 0; padding: 8px 12px; border-radius: 999px;
-    border: 1px solid var(--panel-edge); background: rgba(23, 28, 34, 0.96);
-  }
+  .panel-toggle { flex-wrap: nowrap; min-height: 0; padding: 8px 12px; border-radius: var(--r-control); }
   .sidebar--collapsed .panel-toggle { padding-bottom: 8px; }
   .panel-toggle__grip { display: none; }
 
-  /* Unten auf der Karte, direkt links vom Blatt. */
+  /* Unten auf der Karte, direkt links vom Blatt: Standort, darüber melden. */
   .locate {
-    right: calc(max(8px, env(safe-area-inset-right)) + var(--quer-blatt) + 8px);
+    right: calc(max(8px, env(safe-area-inset-right)) + var(--quer-blatt) + 12px);
     bottom: max(8px, env(safe-area-inset-bottom));
   }
+  .fab {
+    right: calc(max(8px, env(safe-area-inset-right)) + var(--quer-blatt) + 8px);
+    bottom: calc(max(8px, env(safe-area-inset-bottom)) + 48px + 8px);
+  }
+  .corner { left: max(12px, env(safe-area-inset-left)); bottom: calc(max(4px, env(safe-area-inset-bottom)) + 10px); }
+  .reports-card { width: var(--quer-leiste); }
   /* Unten links unter der Leiste; die Leiste hängt oben und reicht nie bis
      hierher, auch nicht mit offenen Ebenen. */
-  .maplibregl-ctrl-bottom-right {
-    top: auto; bottom: env(safe-area-inset-bottom, 0px);
-    right: auto; left: max(0px, env(safe-area-inset-left));
-  }
+  .maplibregl-ctrl-bottom-right { bottom: max(4px, env(safe-area-inset-bottom)); left: max(2px, env(safe-area-inset-left)); }
   .app:has(.sidebar--full) .maplibregl-ctrl-bottom-right { display: block; }
   .toast {
     left: calc(max(12px, env(safe-area-inset-left)) + var(--quer-leiste) + 12px);
@@ -766,7 +820,8 @@ body {
 /* left + margin-left:auto: stays right-aligned but can never cover the zoom buttons. */
 @media (min-width: 721px) { .toast { left: 60px; right: 420px; max-width: 380px; margin-left: auto; } }
 
-.panel-toggle--alert { background: #b4232a; color: #fff; border-color: transparent; }
+.panel-toggle--alert { background: #b4232a; }
+.panel-toggle--alert:hover { background: #9f1f26; }
 .panel-toggle--alert .panel-toggle__grip { background: rgba(255, 255, 255, 0.6); }
 .button--block { display: block; width: 100%; margin-top: 14px; text-align: center; }
 
@@ -819,34 +874,38 @@ body {
    Zeiger-Ereignisse, damit die Karte darunter Tipps bekommt. */
 .live {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: stretch;
-  padding: 8px 4px 7px;
+  padding: 4px 4px;
   border: 1px solid var(--panel-edge);
-  border-radius: 14px;
-  background: rgba(15, 18, 22, 0.86);
+  border-radius: var(--r-control);
+  background: rgba(15, 18, 22, 0.9);
   backdrop-filter: blur(8px);
   box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.8);
-  max-width: min(72vw, 420px);
-  pointer-events: none;
+  color: inherit; text-decoration: none;
+  pointer-events: auto; cursor: pointer;
 }
+.live:hover { border-color: var(--muted); }
 .live__item {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 0 12px;
+  flex: 1 1 0; min-width: 0;
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 7px;
+  align-items: center;
+  padding: 2px 8px;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--muted);
   white-space: nowrap;
 }
+.live__icon { grid-row: 1 / span 2; color: var(--muted); }
+.live__icon--live { position: relative; display: inline-grid; }
+.live__icon--live .live__pulse { position: absolute; right: -2px; top: -2px; }
 .live__item:first-child { border-left: 0; }
 .live__item strong {
   color: var(--text);
-  font-size: 17px; line-height: 1.15; font-weight: 700;
+  font-size: 16px; line-height: 1.1; font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 .live__of { font-size: 12px; font-weight: 500; color: var(--muted); }
-.live__label { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; letter-spacing: 0.02em; }
+.live__label { display: block; font-size: 10.5px; letter-spacing: 0.02em; overflow: hidden; text-overflow: ellipsis; }
 .live__item--muted strong { color: var(--muted); }
 .live__item--muted .live__label { font-style: italic; }
 /* Ebenfalls ein eigener Wert: Der Punkt zeigt „gerade jemand da", nicht
@@ -864,9 +923,51 @@ body {
 }
 @media (prefers-reduced-motion: reduce) { .live__pulse { animation: none; } }
 
-@media (max-width: 620px) {
-  .live__item { font-size: 11px; padding: 3px 8px; }
+@media (max-width: 380px) {
+  .live__item { padding: 2px 5px; column-gap: 5px; }
+  .live__item strong { font-size: 14px; }
 }
+
+/* ---- Hinweis-Pille (`docs/design.md`, Abschnitt 7) ---- */
+.notice { display: flex; justify-content: center; width: 100%; pointer-events: none; }
+.notice__pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--panel-edge); border-radius: 999px;
+  background: rgba(23, 28, 34, 0.96);
+  color: var(--text); font-size: 12.5px; text-decoration: none;
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.8);
+  pointer-events: auto;
+  animation: notice-in 160ms ease;
+  transition: opacity 400ms ease;
+}
+.notice__pill--link:hover { border-color: var(--muted); }
+.notice__icon { display: inline-flex; color: var(--muted); }
+.notice--weg .notice__pill { opacity: 0; }
+@keyframes notice-in { from { opacity: 0; transform: translateY(-4px); } }
+
+/* ---- Reiter im Meldungen-Blatt ---- */
+.tabs { display: flex; gap: 4px; padding: 8px 14px 0; border-bottom: 1px solid var(--panel-edge); }
+.tabs__tab {
+  flex: 1 1 0; padding: 9px 8px;
+  border: 0; border-radius: var(--r-klein) var(--r-klein) 0 0;
+  background: transparent; color: var(--muted);
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.tabs__tab:hover { color: var(--text); }
+.tabs__tab--on { color: var(--text); background: var(--panel); box-shadow: inset 0 -2px 0 var(--accent); }
+.sheet__back--right { margin-left: auto; }
+.sheet--reports .sheet__body .panel { border: 0; background: transparent; padding: 0; }
+
+/* ---- Kontrollen in dieser Zone ---- */
+.zone-stats { margin-top: 14px; }
+.zone-stats .report__label { display: flex; align-items: center; gap: 5px; }
+.zone-stats__week { display: flex; gap: 4px; height: 52px; align-items: flex-end; margin-top: 10px; }
+.zone-stats__day { flex: 1 1 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 3px; }
+.zone-stats__bar { width: 100%; background: var(--muted); opacity: 0.6; border-radius: 2px 2px 0 0; }
+.zone-stats__bar--today { background: var(--danger); opacity: 1; }
+.zone-stats__label { font-size: 10px; color: var(--muted); }
+.zone-stats__last { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
 
 /* ---- report ---- */
 .report__figures {
@@ -1088,7 +1189,7 @@ body {
   display: grid; place-items: center;
   font-size: 18px; line-height: 1;
   color: var(--text); background: var(--panel);
-  border: 1px solid var(--panel-edge); border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--panel-edge); border-radius: var(--r-control); cursor: pointer;
 }
 .topbar__icon:hover { border-color: var(--muted); }
 
@@ -1286,7 +1387,7 @@ body {
   flex: none; padding: 5px 10px;
   font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
   color: #fde68a; background: rgba(120, 53, 15, 0.85);
-  border: 1px solid rgba(253, 230, 138, 0.35); border-radius: 999px;
+  border: 1px solid rgba(253, 230, 138, 0.35); border-radius: var(--r-klein);
   backdrop-filter: blur(6px);
 }
 .callout--beta { border-color: rgba(253, 230, 138, 0.35); }

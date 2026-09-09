@@ -717,7 +717,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 1120 Unit-Tests und 99,9 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 1141 Unit-Tests und 99,9 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 
@@ -891,3 +891,78 @@ auf die ganze Breite zog und den Meldeknopf darunter schob. Die beiden
 E2E-Tests dazu sind ersetzt: Das Menü liegt ganz im Schirm, keine Zeile
 scrollt in sich, auf dem Handy ist jede Zeile 44 Pixel hoch, und die Karte
 schliesst es.
+
+## Ein Erscheinungsbild — und was in einer Nacht daraus wurde
+
+*9. September 2026, nachts. Das Konzept steht in [design.md](design.md);
+hier stehen die Entscheidungen zu den zwanzig Punkten des Betreibers und
+das, was anders gemacht wurde als gewünscht.*
+
+**Ausgangspunkt.** Der Betreiber, mit zwei Bildschirmfotos von FreiFahren:
+„Du entwickelst ein wiederkehrendes CI, das sich bei den Nutzern einprägen
+soll." Dazu eine Liste: Straßensuche, Ebenen als Symbol rechts unter den
+Einstellungen, Griff in beiden Zuständen blau, das Springen des Blatts,
+Sichtungen raus aus dem Detail-Blatt und wie bei FreiFahren als eigene
+Fläche auf der Karte, Meldungen mit Reitern, das „i" viel kleiner, Melden
+als runder Knopf mit Plus über dem Standort, eckig statt rund, Radien des
+Blatts, Kennzahlen über die ganze Breite und klickbar, „Reports updated" und
+die Gesamtzahl als verblassende Pillen, Zonenblatt mit Statistik, Beta
+eckig, ein Symbol für den Standort, keine Emoji, ein GitHub-Zeichen, und
+regelmäßiges Nachladen ohne Neuladen.
+
+**Was daraus wurde, in einem Satz je Punkt:**
+
+- *Straßensuche.* Über Photon (komoot), erst ab drei Zeichen, entprellt, auf
+  den Stadtrahmen begrenzt, nur Straßen; ein Treffer fliegt hin und zeigt die
+  Zone dort. Die Suche war bis dahin absichtlich kein Geocoder — jede Taste
+  eine fremde Anfrage, offline nichts. Beides steht jetzt in
+  `datenschutz.md`, und die Zonen vom Gerät bleiben die erste Liste, auch
+  ohne Netz. Nominatim wäre die naheliegende Wahl gewesen; seine Bedingungen
+  verbieten Tipp-für-Tipp-Suche ausdrücklich, Photon ist dafür gebaut.
+- *Ebenen.* Ein Quadratknopf mit Symbol, rechts unter dem Zahnrad; das Menü
+  hängt daran und öffnet nach unten. Die Kennzahlen-Leiste füllt die Zeile
+  bis zu ihm.
+- *Griff.* Immer blau, mit Chevron auf und zu.
+- *Springen.* Ursache gemessen, nicht geraten: `max-height: none` ist nicht
+  animierbar, und der Körper verschwand im selben Tick. Jetzt Griffhöhe als
+  Variable, Körper bleibt 240 ms — die Zahlenreihe steht in `CLAUDE.md`.
+  Und ein Tipp ist eine Stufe, kein Sprung von voll nach zu.
+- *Sichtungen und Kontrolldichte.* Raus aus dem Detail-Blatt, hinein in ein
+  Meldungen-Blatt mit drei Reitern: Aktuell (Liste mit gesehen/weg), Zonen
+  (häufige Stellen), Tageszeiten (Tagesgang, Stundenprofil). Davor die
+  Meldungen-Karte unten links mit den drei jüngsten Zeilen — die bleibt auch
+  ohne Meldungen stehen und sagt es; eine Fläche, die nur manchmal da ist,
+  lernt niemand.
+- *„i".* 24 Pixel, eckig, dunkel wie der Rest, unten links; daneben das
+  GitHub-Zeichen (Pfad von Simple Icons, CC0). Der Mobile-Audit hatte es auf
+  36 gebracht, weil 24 zu klein zum Treffen sei — es ist ein Hinweis, kein
+  Bedienweg, und die Lizenz verlangt Erreichbarkeit, nicht Größe.
+- *Melden.* Roter Kreis, 56 Pixel, Plus, über dem blauen Standort-Kreis mit
+  Fadenkreuz. Ja, ein Symbol ist sinnvoll — und es ist das Plus, weil der
+  Knopf etwas hinzufügt; ein Blaulicht sähe nach Anzeige aus. Rot statt
+  FreiFahrens Blau, weil bei uns Blau der Ort ist und Rot die Kontrolle.
+- *Eckig.* Alles außer den zwei Kreisen: Beta, Griff, Menüzeilen, Marken,
+  Stimmknöpfe, Eingaben. Radien als drei Token (16, 12, 8), damit „passt
+  zum Rest" eine Zahl ist und keine Meinung. Die eine Pille, die bleibt, ist
+  der verblassende Hinweis — er ist kein Steuerelement.
+- *Kennzahlen.* Eine Leiste mit Symbol je Zelle (Megafon, Funk, Personen),
+  über die Breite bis zum Ebenen-Knopf, als Link zur Statistikseite.
+- *Hinweise.* Beim Start „N Meldungen in 28 Tagen in Berlin" (sechs
+  Sekunden, Tipp führt zur Statistik), nach jedem erfolgreichen Abruf
+  „Meldungen aktualisiert" mit Drehpfeil (drei Sekunden). Eine Gesamtzahl
+  aller Meldungen seit Anbeginn gibt es nicht — die Strichlisten leben 28
+  Tage, mit Absicht —, also ist es die Zahl, die es gibt.
+- *Zonenblatt.* „Kontrollen hier": heute, 7 Tage, 28 Tage, zuletzt, sieben
+  Balken — aus den 250-m-Feldern, deren Mitte in der Zone liegt
+  (`core/zone-stats.ts`, mit Tests). Feiner speichert der Server nicht, mit
+  Absicht.
+- *Symbole.* Lucide (ISC) über eine Datei, `src/icons.tsx`, je Bedeutung ein
+  Symbol; ⚙ ☰ × ◎ ⚠ ★ sind weg.
+- *Nachladen.* Gab es seit dem 6. September (alle 45 Sekunden); neu ist,
+  dass die App es sagt.
+
+**Was bewusst anders ist als bei FreiFahren** steht in `design.md`,
+Abschnitt 11. **Was noch fehlt:** die Bilder in README und Installations-Karte
+sind nach dieser Nacht neu aufgenommen; der Handlauf `durchklicken.mjs`
+gegen einen lokalen Worker ist nachgezogen, aber in dieser Sitzung nicht
+gelaufen — der nächste Lauf gehört vor den nächsten Push.

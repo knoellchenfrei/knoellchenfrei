@@ -23,6 +23,12 @@ interface Props {
   hour: number
   /** True when marks reach a shared store rather than only this device. */
   shared: boolean
+  /**
+   * Welche Hälfte: „zonen" die häufigen Stellen, „zeiten" Tagesverlauf und
+   * Stundenprofil. Seit dem 9. September nachts zwei Reiter im Meldungen-Blatt
+   * statt eines Abschnitts unter der Zone.
+   */
+  part: 'zonen' | 'zeiten'
 }
 
 const WEEKDAY_NAMES = [
@@ -52,6 +58,7 @@ export function HeatPanel({
   weekday,
   hour,
   shared,
+  part,
 }: Props) {
   const missing = MIN_MARKS_FOR_PATTERN - heat.totalMarks
   const dayName = WEEKDAY_NAMES[weekday] ?? 'Tag'
@@ -77,6 +84,8 @@ export function HeatPanel({
 
       {heat.hasPattern ? (
         <>
+          {part === 'zeiten' && (
+          <>
           <dl className="report__figures">
             <div>
               <dt>Letzte 24 Stunden</dt>
@@ -168,7 +177,11 @@ export function HeatPanel({
               Ältere Strichlisten haben keine — die Uhrzeit wird erst seit kurzem mitgezählt.
             </p>
           )}
+          </>
+          )}
 
+          {part === 'zonen' && (
+          <>
           <div className="report__block">
             <h3 className="report__label">Häufige Stellen</h3>
             <ul className="heat-top">
@@ -198,6 +211,8 @@ export function HeatPanel({
             Anteile beziehen sich auf die gezeigten Stellen, die Färbung auf der Karte relativ zur
             meistgemeldeten. Jüngere Meldungen zählen mehr.
           </p>
+          </>
+          )}
         </>
       ) : (
         <p className="hours">
