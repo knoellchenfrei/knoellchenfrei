@@ -1017,3 +1017,67 @@ Drei Dinge daraus:
   Formular geht hinaus, das Bündel nicht. `ausgeliefert-pruefen.sh` prüft
   seitdem den Inhalt der Startseite (Passwortfeld ja, `/assets/` nein) und
   den Content-Type des Bildes, nicht mehr nur den Status.
+
+## Langzeitmuster ohne Datum
+
+*10. September 2026, auf Wunsch des Betreibers: „mehr Daten aufbewahren, um
+verlässlichere Daten und Vorhersagen zu liefern."*
+
+**Entschieden:** Nicht die Sichtungen länger halten, sondern beim Löschen
+jeder Sichtung einen Zähler je (Stadt, Einheit, Quartal, Wochentag, Stunde)
+erhöhen — `kontrollen_langzeit`, Migration 0004, zwölf Quartale. Daraus
+rechnet der Worker täglich ein hierarchisch geglättetes Modell
+(`core/pattern.ts`) und die App zeigt es im Zonenblatt als „Typisch hier".
+
+**Warum nicht einfach länger aufbewahren:** Vorgerechnet: Die Zelle
+Zone × Wochentag × Stunde hat in Berlin (103 Zonen, 168 Wochenstunden) bei
+20 Meldungen am Tag nach 28 Tagen 0,06 und nach einem Jahr 0,8 Meldungen.
+Aufbewahrung allein macht nichts verlässlicher; Verlässlichkeit kommt aus
+der Hierarchie (Stadtprofil → Einheitsfaktor → Tagesabschnitt → Zelle als
+Beta-Binomial mit fünf benannten Pseudo-Beobachtungen). Und Rohdaten länger
+wären ein Bewegungsprotokoll der Meldenden: Koordinate, fünf Minuten,
+Client-Hash — das Versprechen aus Schema und Datenschutztext steht dagegen.
+
+**Warum Fenster statt Meldungen:** „An k von n Dienstagen wurde um 10 Uhr
+gemeldet." Drei Leute, die denselben Beamten sehen, sind ein Ereignis; ein
+Vielmelder belegt eine Wochenstunde je Woche höchstens einmal.
+
+**Warum die Zone im Worker gerechnet wird, nicht vom Client gemeldet:** Drei
+Wege geprüft — (a) die App schickt die Einheit mit: zwei Wahrheiten
+(Position sagt Zelle A, Feld sagt Zone B), Telegram hat das Feld nicht,
+jede Einheit behauptbar; (b) der Worker lädt `zones.geojson` von Pages: der
+Riegel antwortet 401, ein zweiter Stand neben dem Bündel; (c) **erzeugte
+Geometrie im Worker-Bündel**, 219 KB roh, 70 KB gepackt, aus derselben
+Quelle wie die Zuordnung der App (`packages/ingest/src/zone-units.ts`).
+Gewählt (c). Zonen unter 2 ha (alle 279 Karlsruher Reihen, Hamburgs kleine
+Flächen) zählen für ihren Bezirk — datenschutzseitig (eine Wochenstunde an
+einer 30-m-Reihe über Quartale ist näher an „vor dem Haus von …" als nötig)
+und statistisch (Rauschen). Karlsruhe hat keine Bezirksdatei; dort sind die
+Reihen des Bezirks selbst die Fläche, mit 300 m Fangradius.
+
+**Warum die Ernte stundenbündig ist:** Die Grenze ist die volle Stunde vor
+„jetzt minus 90 Minuten", nicht „jetzt minus 90 Minuten". Sonst würde eine
+Stunde auf zwei Läufe verteilt, und ein Fenster mit Meldungen um 09:05 und
+09:50 zählte zweimal. Preis: Eine Meldung liegt bis 187 statt vorher
+höchstens 150 Minuten in der Datenbank; sichtbar ist sie unverändert 90.
+Der Datenschutztext sagte an der Stelle schon vorher „90 Minuten" und
+meinte die Sichtbarkeit — jetzt sagt er beides.
+
+**Warum ein Bündel:** Ernte und Löschung laufen in einem `batch`, also einer
+Transaktion. Scheitert etwas, bleiben die Sichtungen stehen, und der nächste
+Lauf holt dieselbe Stunde; Idempotenz aus Atomarität statt aus einer
+Merkspalte. Wirft die Vorbereitung (unbekannte Stadt, Geometrie fehlt), wird
+trotzdem gelöscht — die Frist geht vor — und der Fehler am Ende geworfen.
+
+**Was bewusst nicht gebaut wurde:** Sichtungen oder Strichlisten länger;
+Zellen über Jahre; Minute, Kennung, Stimmen in irgendetwas Langlebigem;
+Prozentzahlen ohne Mindestmenge und ohne positiven Rückwärtstest; ein
+Modell mit mehr als den fünf Parametern; absolute Vergleiche zwischen
+Städten (sie messen Nutzerdichte).
+
+**Was offen bleibt:** die Quartalsspalte anwaltlich mitprüfen (Rückfall:
+Verfall beim Schreiben ohne jede Zeitspalte, benannt im Vorschlag); die
+Halbwertszeit (2 Quartale) und die 2-ha-Grenze sind Setzungen, keine
+Messungen — der Rückwärtstest nach zwei Quartalen entscheidet
+(`docs/todo.md`, Abschnitt 9).
+

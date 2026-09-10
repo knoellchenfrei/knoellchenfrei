@@ -141,3 +141,39 @@ function segmentDistance(p: Position, a: Position, b: Position, kx: number, ky: 
   const cy = ay + t * dy
   return Math.sqrt(cx * cx + cy * cy)
 }
+
+/**
+ * Fläche eines Multipolygons in Quadratmetern — Gauss'sche Trapezformel auf
+ * einem lokal ebenen Raster, Löcher abgezogen. Für die Frage „ist diese Zone
+ * ein Strassenstück oder ein Gebiet" (2-ha-Grenze der Langzeitmuster) reicht
+ * das auf Promille; für Katasterzwecke wäre es zu grob.
+ */
+export function areaSquareMetres(polygons: readonly PolygonRings[]): number {
+  let total = 0
+  for (const rings of polygons) {
+    rings.forEach((ring, index) => {
+      const area = Math.abs(ringArea(ring))
+      total += index === 0 ? area : -area
+    })
+  }
+  return Math.max(0, total)
+}
+
+function ringArea(ring: Ring): number {
+  if (ring.length < 3) return 0
+  const first = ring[0] as Position
+  const latRef = (first[1] * Math.PI) / 180
+  const kx = 111_320 * Math.cos(latRef)
+  const ky = 110_540
+  let sum = 0
+  for (let i = 0; i < ring.length; i += 1) {
+    const a = ring[i] as Position
+    const b = ring[(i + 1) % ring.length] as Position
+    const ax = (a[0] - first[0]) * kx
+    const ay = (a[1] - first[1]) * ky
+    const bx = (b[0] - first[0]) * kx
+    const by = (b[1] - first[1]) * ky
+    sum += ax * by - bx * ay
+  }
+  return sum / 2
+}

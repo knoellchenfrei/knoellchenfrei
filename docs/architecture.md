@@ -187,16 +187,30 @@ Minuten, zwei hielten ihn acht, drei Bestätigungen standen nach 27 Minuten bei
 0,43 als „unbestätigt". Der Betreiber sah drei eigene Stimmen und fragte, ob die
 noch eine extra Bestätigung brauchen — sie hätten nie gereicht.
 
-## Zwei Datensätze für zwei Fragen
+## Drei Datensätze für drei Fragen
 
-„Steht gerade jemand da?" und „wo wird oft kontrolliert?" sehen verwandt aus und
-brauchen gegensätzliche Aufbewahrung. Statt die Sichtungen länger zu halten,
-schreibt eine Meldung eine zweite, gröbere Zeile:
+„Steht gerade jemand da?", „wo wird oft kontrolliert?" und „wann wird hier
+typischerweise kontrolliert?" sehen verwandt aus und brauchen gegensätzliche
+Aufbewahrung. Statt die Sichtungen länger zu halten, schreibt eine Meldung
+eine zweite, gröbere Zeile — und beim Löschen eine dritte, noch gröbere:
 
 ```
-Meldung ──┬─► Sichtung   {lon, lat, Zeit, Zähler}   ~10 m · 5 min · 90 Minuten
-          └─► Strichliste {Tag, Zelle}              250 m · Tag  · 28 Tage
+Meldung ──┬─► Sichtung   {lon, lat, Zeit, Zähler}            ~10 m · 5 min · 90 Minuten
+          ├─► Strichliste {Tag, Stunde, Zelle}               250 m · Tag  · 28 Tage
+          └─► Langzeit    {Einheit, Wochentag, Stunde, Quartal}  Zone · Wochenstunde · 12 Quartale
+                          (beim Löschen der Sichtung, mit den endgültigen Stimmen)
 ```
+
+Die dritte Zeile (seit dem 10. September, `apps/api/src/harvest.ts`) zählt
+**Fenster**, nicht Meldungen: „an k von n Dienstagen wurde um 10 Uhr
+gemeldet". Drei Leute, die denselben Beamten sehen, sind ein Ereignis. Die
+Einheit ist der Zonenschlüssel, oder der Bezirk, wo eine Zone ein
+Strassenstück ist (Karlsruhe) — erzeugt aus den Zonendaten,
+`packages/ingest/src/zone-units.ts`, für App und Worker aus einer Quelle.
+Aus den Zählern rechnet `core/pattern.ts` täglich im Worker ein
+hierarchisch geglättetes Beta-Binomial-Modell (Stadt → Einheit →
+Tagesabschnitt → Wochenstunde) mit vier Stufen und einem Rückwärtstest;
+`docs/entscheidungen.md`, „Langzeitmuster ohne Datum".
 
 Die Strichliste trägt keine ID der Sichtung und keinen Client-Hash — sie lässt
 sich nicht zurückverfolgen, und zwei Striche desselben Tages sind untereinander

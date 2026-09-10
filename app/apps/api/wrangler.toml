@@ -20,9 +20,13 @@ database_id = "733e1c3b-b8f2-429f-8503-7e703e3ec6a4"
 # Fehlermeldungen erriet — und einmal danebenlag.
 migrations_dir = "migrations"
 
-# Purges expired sightings hourly so the table never becomes a movement history.
+# Stündlich: ablaufende Sichtungen ernten und löschen, damit die Tabelle nie
+# ein Bewegungsprotokoll wird. Täglich um 03:37 UTC: das Modell der
+# Langzeitmuster (`src/patterns.ts`) — nicht stündlich, weil es bei drei
+# Jahren Daten das Lesebudget von D1 sprengte. `scheduled` verzweigt über
+# `event.cron`; der Ausdruck steht als `DAILY_CRON` in worker.ts.
 [triggers]
-crons = ["7 * * * *"]
+crons = ["7 * * * *", "37 3 * * *"]
 
 [observability]
 enabled = true

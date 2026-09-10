@@ -494,9 +494,12 @@ function aufraeumAttrappe(patch: { batchWirft?: boolean; runWirftBei?: RegExp } 
   }
   const db = {
     prepare: statement,
-    batch: async () => {
+    // Wie D1: Ein Bündel scheitert, wenn eine seiner Anweisungen scheitert —
+    // seit dem 10. September läuft die Löschung der Sichtungen darin.
+    batch: async (anweisungen: { run: () => Promise<unknown> }[]) => {
       if (patch.batchWirft === true) throw new Error('D1 batch kaputt')
-      return [{ results: [] }]
+      for (const anweisung of anweisungen) await anweisung.run()
+      return anweisungen.map(() => ({ results: [] }))
     },
   }
   return { db: db as unknown as D1Database, gesehen }
@@ -562,7 +565,7 @@ describe('der Aufräumlauf', () => {
   it('hält nach einem gescheiterten Schritt nicht an, sondern macht die übrigen', async () => {
     const { db, gesehen } = aufraeumAttrappe({ runWirftBei: /DELETE FROM sightings/ })
     await expect(worker.scheduled(cron, umgebung({ DB: db }))).rejects.toThrow(
-      /sichtungen: abgelaufene löschen/
+      /sichtungen: ernten und löschen/
     )
     // Der Schritt danach ist der wichtigste Beleg: Er stand in der alten
     // Fassung hinter dem gescheiterten und lief deshalb nie.

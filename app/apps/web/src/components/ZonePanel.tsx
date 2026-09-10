@@ -1,4 +1,4 @@
-import { berlinWallClock, type ZoneStats } from '@knoellchenfrei/core'
+import { berlinWallClock, patternSentence, LEVEL_WORDS, type UnitPattern, type ZoneStats } from '@knoellchenfrei/core'
 
 import { costLabel, duration, feeLabel, maxStayLabel, statusLabel, until } from '../format.js'
 import { IconMeldungen } from '../icons.js'
@@ -27,6 +27,15 @@ interface Props {
   stats: ZoneStats | null
   /** True when marks reach a shared store rather than only this device. */
   shared: boolean
+  /**
+   * Das Langzeitmuster der Einheit dieser Zone (`patterns.ts`), null ohne
+   * Muster; `patternWeeks` die beobachteten Wochen je Wochentag aus dem
+   * Stadtstand, null ganz ohne Stand (kein Worker, offline, erster Tag).
+   */
+  pattern?: UnitPattern | null
+  patternWeeks?: readonly number[] | null
+  /** Seit wann die Stadt erntet, `YYYY-MM-DD`, für die Basiszeile. */
+  patternSince?: string | null
 }
 
 const WOCHENTAG = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
@@ -37,8 +46,34 @@ function zuletzt(last: NonNullable<ZoneStats['last']>): string {
   return last.hour === null ? wann : `${wann} um ${last.hour} Uhr`
 }
 
-export function ZonePanel({ properties, status, nearbyMetres, now, onPark, parked, stats, shared }: Props) {
+const seitText = (day: string): string => {
+  const [jahr, monat, tag] = day.split('-').map(Number)
+  if (jahr === undefined || monat === undefined || tag === undefined) return day
+  return new Date(Date.UTC(jahr, monat - 1, tag)).toLocaleDateString('de-DE', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+export function ZonePanel({
+  properties,
+  status,
+  nearbyMetres,
+  now,
+  onPark,
+  parked,
+  stats,
+  shared,
+  pattern = null,
+  patternWeeks = null,
+  patternSince = null,
+}: Props) {
   const { chargeable, changesAt, hourly, uncertain } = status
+  const jetzt = berlinWallClock(now)
+  const stunde = Math.floor(jetzt.minuteOfDay / 60)
+  const satz = patternWeeks === null ? null : patternSentence(pattern, jetzt.weekday, stunde, patternWeeks)
 
   return (
     <section className="panel" aria-label={zoneTitel(properties)}>
@@ -242,6 +277,51 @@ export function ZonePanel({ properties, status, nearbyMetres, now, onPark, parke
                 <p className="zone-stats__last">Zuletzt gemeldet {zuletzt(stats.last)}.</p>
               )}
             </>
+          )}
+        </div>
+      )}
+
+      {/*
+        Typisch hier: das Langzeitmuster der Einheit (Zone oder Bezirk), aus
+        Zeitfenstern über Quartale, täglich im Worker gerechnet. Zwei
+        Zeiträume, zwei Überschriften, beide mit ihrer Basis — der 28-Tage-
+        Block darüber ist Rohzählung, dieser hier ist geglättet und gestuft.
+        Wortwahl „gemeldet", nie „kontrolliert": Die Zahlen messen, wo Nutzer
+        melden. Ohne Stand (kein Worker, offline, vor dem ersten Tageslauf)
+        fehlt der Block ganz, statt „ruhig" zu raten.
+      */}
+      {satz !== null && shared && (
+        <div className="typisch" aria-label="Typische Zeiten in dieser Zone">
+          <h3 className="report__label">
+            <IconMeldungen size={14} aria-hidden="true" /> Typisch hier
+          </h3>
+          {pattern !== null && satz.level !== 0 && (
+            <div
+              className="typisch__strip"
+              role="img"
+              aria-label={`Stufe je Stunde am heutigen Wochentag: ${pattern.levels
+                .slice(jetzt.weekday * 24, jetzt.weekday * 24 + 24)
+                .map((level, hour) => `${hour} Uhr ${LEVEL_WORDS[level]}`)
+                .join(', ')}`}
+            >
+              {pattern.levels.slice(jetzt.weekday * 24, jetzt.weekday * 24 + 24).map((level, hour) => (
+                <span
+                  key={hour}
+                  className={`typisch__hour typisch__hour--${level}${hour === stunde ? ' typisch__hour--now' : ''}`}
+                  title={`${hour}–${hour + 1} Uhr: ${LEVEL_WORDS[level]}`}
+                />
+              ))}
+            </div>
+          )}
+          <p className="typisch__day">{satz.day}</p>
+          <p className={`typisch__now typisch__now--${satz.level}`}>{satz.now}</p>
+          {(pattern !== null || patternSince !== null) && (
+            <p className="zone-stats__last">
+              {patternSince !== null ? `Seit ${seitText(patternSince)}` : 'Langzeit'}
+              {pattern !== null ? ` · ${pattern.reports} ${pattern.reports === 1 ? 'Meldung' : 'Meldungen'}` : ''}
+              {pattern?.confirmedShare != null ? ` · ${Math.round(pattern.confirmedShare * 100)} % bestätigt` : ''}
+              . Gemeldet heißt nicht kontrolliert.
+            </p>
           )}
         </div>
       )}

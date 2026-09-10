@@ -1126,6 +1126,20 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
+- [ ] **Rückwärtstest der Langzeitmuster lesen, sobald zwei abgeschlossene
+      Quartale vorliegen** (frühestens April 2027): `guete` auf der
+      Statistikseite und in `/patterns?city=`. Ist `skillProfile` positiv,
+      darf das Zonenblatt Prozentzahlen zeigen; die fünf Parameter
+      (`DEFAULT_PATTERN_PARAMS` in `core/pattern.ts`) dann über einen Sweep
+      gegen einen `wrangler d1 export` setzen. Bis dahin nur Stufen und
+      „in k von n Dienstagen". Dazu die Frage, die das Modell entscheidet:
+      Korrelation Meldungen ↔ Zonenaufrufe je Einheit — ist sie nahe 1,
+      misst die App, wo ihre Nutzer hinschauen.
+- [ ] **Reiter „Tageszeiten" je Zone** aus dem Langzeitmuster (Umschalter
+      „ganz Berlin | Zone 12"), Phase 1 des Vorschlags, noch nicht gebaut:
+      Heute zeigt der Reiter den 28-Tage-Rohwert der Stadt, das Zonenblatt
+      das Muster der Zone.
+
 - [x] **Die Oberfläche selbst lässt sich nicht als Einheit prüfen — und das
       ist eine Entscheidung, keine Faulheit.** **Am 9. September doch
       eingebaut, nach Freigabe — Absatz am Ende.** Stand 9. September deckt

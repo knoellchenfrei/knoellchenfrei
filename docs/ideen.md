@@ -93,12 +93,15 @@ Wer einen hat, zahlt in **seiner** Zone nichts. Die App weiß, in welcher Zone
 jemand steht, und sagt trotzdem allen dasselbe. Eine Einstellung „meine Zone",
 lokal gespeichert, und die Auskunft wird für die halbe Stadt eine andere.
 
-## 9. Die Heatmap als offener Datensatz
+## 9. Die Langzeitzähler als offener Datensatz
 
-Die Kontrolldichte ist etwas, das es sonst nirgends gibt — 28 Tage
-Beobachtung, aggregiert, ohne Personenbezug. Sie zu veröffentlichen (CSV oder
-GeoJSON unter einer offenen Lizenz) passt zur Haltung des Projekts und ist der
-Gegenwert für die Behördendaten, die es benutzt.
+Die Kontrolldichte ist etwas, das es sonst nirgends gibt — aggregiert, ohne
+Personenbezug. Seit dem 10. September ist der bessere Kandidat dafür die
+Langzeittabelle (`kontrollen_langzeit`: Zone, Wochentag, Stunde, Quartal,
+Zähler), nicht die 28-Tage-Strichliste mit ihren Zellen und Daten: Sie zu
+veröffentlichen (CSV unter einer offenen Lizenz), ohne das laufende und das
+vorige Quartal, passt zur Haltung des Projekts und ist der Gegenwert für die
+Behördendaten, die es benutzt.
 
 ## 10. Datenfehler melden
 

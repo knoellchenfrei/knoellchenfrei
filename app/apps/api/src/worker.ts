@@ -39,6 +39,9 @@ import {
   type City,
 } from '@knoellchenfrei/core'
 
+import { harvestAndDelete, harvestBoundary } from './harvest.js'
+import { patternsKey, pruneLongTerm, rollupPatterns, rollupUsage } from './patterns.js'
+
 // The one place the worker does NOT re-implement a core rule. Everything else
 // here is deliberately independent, but the heat grid's cell ids are stored:
 // a second implementation that drifted by a metre would silently scatter four
@@ -1302,6 +1305,32 @@ async function telegramWebhook(request: Request, env: Env): Promise<Response> {
   return json({ ok: true }, {}, {})
 }
 
+/** Der zweite Cron-Ausdruck aus wrangler.toml: das Tagesmodell um 03:37 UTC. */
+export const DAILY_CRON = '37 3 * * *'
+
+/**
+ * Der Tageslauf: Nutzung des Vortags übernehmen, Fristen der
+ * Langzeittabellen halten, Muster rechnen. Jeder Schritt für sich, Fehler
+ * am Ende geworfen — wie beim stündlichen Lauf.
+ */
+async function dailyRun(env: Env, now: number): Promise<void> {
+  const schritte: [string, () => Promise<unknown>][] = [
+    ['nutzung: vortag übernehmen', () => rollupUsage(env.DB, now)],
+    ['langzeit: fristen halten', () => pruneLongTerm(env.DB, now)],
+    ['muster rechnen', () => rollupPatterns(env, now)],
+  ]
+  const gescheitert: string[] = []
+  for (const [name, tun] of schritte) {
+    try {
+      await tun()
+    } catch (fehler) {
+      gescheitert.push(name)
+      console.error(`Tageslauf: "${name}" gescheitert:`, fehler)
+    }
+  }
+  if (gescheitert.length > 0) throw new Error(`Tageslauf unvollständig: ${gescheitert.join(', ')}`)
+}
+
 export default {
   // `ctx` ist optional, weil die Tests den Worker ohne Laufzeit aufrufen;
   // Cloudflare übergibt ihn immer.
@@ -1353,6 +1382,22 @@ export default {
       return listMarks(env, choice.city, cors)
     }
     if (path === '/visits' && request.method === 'POST') return recordVisit(request, env, cors)
+    // Die Langzeitmuster je Stadt, täglich gerechnet (`patterns.ts`). Ohne
+    // Stand 404 — nie ein leeres Modell erfinden; die App sagt dann „noch
+    // kein Muster", nicht „ruhig".
+    if (path === '/patterns' && request.method === 'GET') {
+      const choice = requestedCity(url)
+      if ('error' in choice) return json({ error: choice.error }, { status: 400 }, cors)
+      const stand = await env.CACHE.get(patternsKey(choice.city.key))
+      if (stand === null) return json({ error: 'no patterns yet' }, { status: 404 }, cors)
+      return new Response(stand, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+          ...cors,
+        },
+      })
+    }
     // Öffentlich, und zwar mit Absicht: Der Worker liegt **nicht** hinter dem
     // Beta-Riegel — die Seite tut es, die Adressen des Workers nicht. Ein
     // Endpunkt, der nur „hinter dem Riegel" gedacht ist, wäre eine Annahme,
@@ -1416,8 +1461,12 @@ export default {
    * meldet Erfolg und tut nichts. So bleibt der Cron-Lauf rot und steht in der
    * Observability, während die übrigen neun Schritte trotzdem gelaufen sind.
    */
-  async scheduled(_event: ScheduledController, env: Env): Promise<void> {
+  async scheduled(event: ScheduledController | undefined, env: Env): Promise<void> {
     const now = Date.now()
+    // Zwei Cron-Ausdrücke in wrangler.toml: stündlich Ernte und Aufräumen,
+    // einmal am Tag das Modell. Ohne Ereignis (Tests, `--test-scheduled`
+    // ohne Parameter) läuft der stündliche Lauf.
+    if (event?.cron === DAILY_CRON) return dailyRun(env, now)
     // Das Fenster, nach dem ein Pseudonym nichts mehr nützt: das Rate-Limit
     // ist eine Stunde lang, danach ist der Hash nur noch ein Bezug.
     const pseudonymFrist = now - 3_600_000
@@ -1434,12 +1483,21 @@ export default {
             .bind(pseudonymFrist)
             .run(),
       ],
+      // Seit dem 10. September ernten und löschen in einem Bündel
+      // (`harvest.ts`): Die ablaufenden Sichtungen werden zu Zählern der
+      // Langzeitmuster, bevor sie gehen. Scheitert die Ernte, wird trotzdem
+      // gelöscht — die Frist ist ein Versprechen, das Muster Beiwerk — und
+      // der Verlust am Ende geworfen, damit der Lauf rot bleibt.
       [
-        'sichtungen: abgelaufene löschen',
-        () =>
-          env.DB.prepare('DELETE FROM sightings WHERE reported_at <= ?')
-            .bind(now - SIGHTING_MAX_AGE_MS)
-            .run(),
+        'sichtungen: ernten und löschen',
+        async () => {
+          try {
+            await harvestAndDelete(env.DB, now)
+          } catch (fehler) {
+            await env.DB.prepare('DELETE FROM sightings WHERE reported_at < ?').bind(harvestBoundary(now)).run()
+            throw fehler
+          }
+        },
       ],
       [
         'stimmen: verwaiste löschen',

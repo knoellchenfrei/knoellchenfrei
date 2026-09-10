@@ -12,6 +12,7 @@
 
 import './stil.css'
 import { nieGezaehlt } from './luecken.js'
+import { musterZeile, type MusterStand } from './muster.js'
 
 interface Zeile {
   n: number
@@ -41,6 +42,32 @@ const STADTNAMEN: Record<string, string> = {
   hamburg: 'Hamburg',
   frankfurt: 'Frankfurt am Main',
   muenchen: 'München',
+  koeln: 'Köln',
+  duesseldorf: 'Düsseldorf',
+  karlsruhe: 'Karlsruhe',
+}
+
+async function musterLaden(city: string): Promise<MusterStand | null> {
+  if (API_BASE === undefined) return null
+  try {
+    const antwort = await fetch(`${API_BASE}/patterns?city=${city}`)
+    if (!antwort.ok) return null
+    return (await antwort.json()) as MusterStand
+  } catch {
+    return null
+  }
+}
+
+async function musterBlock(): Promise<HTMLElement> {
+  const staedte = Object.keys(STADTNAMEN)
+  const staende = await Promise.all(staedte.map(musterLaden))
+  const liste = el('ul', 'nicht')
+  staedte.forEach((city, i) => liste.append(el('li', undefined, musterZeile(STADTNAMEN[city] ?? city, staende[i] ?? null))))
+  return abschnitt(
+    'Muster',
+    liste,
+    'Aus den Meldungen, die nach 90 Minuten verfallen, bleibt je Zone (in kleinen Städten je Bezirk), Wochentag, Stunde und Quartal ein Zähler — ohne Datum, ohne Koordinate, ohne Kennung. Daraus rechnet der Server täglich, wann in einer Zone typischerweise gemeldet wird. Ein Fenster ist ein Tag, an dem in einer Wochenstunde gemeldet wurde.',
+  )
 }
 
 /**
@@ -338,6 +365,12 @@ async function los(): Promise<void> {
       return
     }
     ziel.replaceChildren(zeichnen(stand))
+    const gezeichnet = ziel.firstElementChild
+    const muster = await musterBlock()
+    // Vor „Was hier nicht steht" — das bleibt der Schluss.
+    const nicht = gezeichnet?.querySelector('section.block:last-of-type')
+    if (gezeichnet !== null && nicht !== null && nicht !== undefined) gezeichnet.insertBefore(muster, nicht)
+    else gezeichnet?.append(muster)
   } catch (fehler) {
     ziel.replaceChildren(
       el('p', 'leer', `Die Zahlen sind gerade nicht abrufbar (${(fehler as Error).message}).`)

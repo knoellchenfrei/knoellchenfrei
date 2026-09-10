@@ -42,12 +42,17 @@ Die Kontrolldichte-Ebene braucht Wochen an Beobachtungen — genau das, was die
 Sichtungen bewusst **nicht** aufheben. Statt die Aufbewahrung der Meldungen zu
 verlängern, gibt es einen zweiten, gröberen Datensatz:
 
-| | Sichtungen | Strichliste (Heatmap) |
-| --- | --- | --- |
-| Ort | ~10 m | 250-m-Raster |
-| Zeit | 5-Minuten-Raster | Kalendertag **und Stunde**, keine Minute |
-| Aufbewahrung | 90 Minuten | 28 Tage |
-| Inhalt | Position, Zeit, Zähler | ausschließlich `{Tag, Zelle}` |
+| | Sichtungen | Strichliste (Heatmap) | Langzeitzähler („Typisch hier") |
+| --- | --- | --- | --- |
+| Ort | ~10 m | 250-m-Raster | Zone, in Städten mit Kleinzonen der Bezirk |
+| Zeit | 5-Minuten-Raster | Kalendertag **und Stunde**, keine Minute | Wochentag und Stunde, **kein Datum** — nur das Quartal |
+| Aufbewahrung | 90 Minuten sichtbar, gelöscht im nächsten stündlichen Lauf | 28 Tage | 12 Quartale |
+| Inhalt | Position, Zeit, Zähler | ausschließlich `{Tag, Zelle}` | Zähler: Fenster, Meldungen, bestätigt, widersprochen |
+
+Der Langzeitzähler kam am 10. September dazu (`docs/entscheidungen.md`,
+„Langzeitmuster ohne Datum"): Er entsteht beim Löschen der Sichtung aus
+deren Position und endgültigen Stimmen, trägt danach weder Koordinate noch
+Datum noch Kennung und ist in jeder Dimension gröber als die Strichliste.
 
 **Die Stunde kam nachträglich dazu, und das ist eine bewusste Verschlechterung.**
 Ursprünglich enthielt eine Strichliste nur `{Tag, Zelle}`. Für das Stundenprofil

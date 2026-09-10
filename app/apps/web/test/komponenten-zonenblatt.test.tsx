@@ -40,7 +40,7 @@ const eigenschaften = (patch: Partial<ZoneProperties> = {}): ZoneProperties => (
 function zeichne(
   properties: ZoneProperties,
   nearbyMetres: number | null = null,
-  rest: Partial<Pick<Parameters<typeof ZonePanel>[0], 'stats' | 'shared' | 'parked'>> = {},
+  rest: Partial<Pick<Parameters<typeof ZonePanel>[0], 'stats' | 'shared' | 'parked' | 'pattern' | 'patternWeeks' | 'patternSince'>> = {},
 ) {
   const { result } = renderHook(() => useZoneStatus(properties, jetzt))
   const onPark = vi.fn()
@@ -123,6 +123,44 @@ describe('ZonePanel', () => {
     cleanup()
     zeichne(eigenschaften(), null, { stats: striche({ last: { day: '2026-09-05', hour: null, ageDays: 3 } }), shared: true })
     expect(screen.getByLabelText('Kontrollen in dieser Zone').textContent).toContain('vor 3 Tagen')
+  })
+
+  // Typisch hier: das Langzeitmuster. Dienstag 10:30 — die Zelle Dienstag
+  // 10 Uhr ist „häufig", der Vormittag 9–12 ebenso, der Abend ruhig.
+  const muster = () => {
+    const levels = new Array(168).fill(2) as (0 | 1 | 2 | 3)[]
+    for (let h = 9; h < 12; h += 1) levels[2 * 24 + h] = 3
+    for (let h = 19; h < 24; h += 1) levels[2 * 24 + h] = 1
+    const k = new Array(168).fill(0) as number[]
+    k[2 * 24 + 10] = 5
+    return { levels, k, p: new Array(168).fill(10) as number[], factor: 5.25, windows: 120, reports: 140, confirmedShare: 0.41 }
+  }
+  const wochen = [16, 16, 16, 16, 16, 15, 15]
+
+  it('zeigt das Langzeitmuster mit Leiste, Sätzen und Basis', () => {
+    zeichne(eigenschaften(), null, { shared: true, pattern: muster(), patternWeeks: wochen, patternSince: '2026-09-01' })
+    const block = screen.getByLabelText('Typische Zeiten in dieser Zone')
+    expect(block.textContent).toContain('Dienstags meist 9–12 Uhr gemeldet, 19–24 Uhr selten.')
+    expect(block.textContent).toContain('Jetzt: häufig — in 5 von 16 Dienstagen um 10 Uhr gemeldet.')
+    expect(block.textContent).toContain('Seit 1. September 2026 · 140 Meldungen · 41 % bestätigt')
+    const leiste = screen.getByRole('img', { name: /Stufe je Stunde/ })
+    expect(leiste.children).toHaveLength(24)
+    expect(leiste.children[10]!.className).toContain('typisch__hour--3')
+    expect(leiste.children[10]!.className).toContain('typisch__hour--now')
+    expect(leiste.children[20]!.className).toContain('typisch__hour--1')
+  })
+
+  it('sagt ohne Muster für die Zone, dass keins vorliegt — und fehlt ganz ohne Stand oder ohne geteilten Speicher', () => {
+    zeichne(eigenschaften(), null, { shared: true, pattern: null, patternWeeks: wochen, patternSince: '2026-09-01' })
+    const block = screen.getByLabelText('Typische Zeiten in dieser Zone')
+    expect(block.textContent).toContain('In 16 Dienstagen wurde hier nichts gemeldet.')
+    expect(screen.queryByRole('img', { name: /Stufe je Stunde/ })).toBeNull()
+    cleanup()
+    zeichne(eigenschaften(), null, { shared: true, pattern: null, patternWeeks: null })
+    expect(screen.queryByLabelText('Typische Zeiten in dieser Zone')).toBeNull()
+    cleanup()
+    zeichne(eigenschaften(), null, { shared: false, pattern: muster(), patternWeeks: wochen })
+    expect(screen.queryByLabelText('Typische Zeiten in dieser Zone')).toBeNull()
   })
 
   it('der Parkknopf ruft onPark und wechselt geparkt seinen Text', () => {

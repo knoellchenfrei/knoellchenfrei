@@ -30,6 +30,7 @@ import { costLabel, statusLabel, tidyPoiDetail } from './format.js'
 import { isEmbedded, loadData } from './data-source.js'
 import { openFeedback } from './feedback.js'
 import { forgetStaleLayer, layerOf, syncLayer } from './layer-history.js'
+import { loadPatterns, patternForZone, type PatternStand } from './patterns.js'
 import { openLiveStats, type LiveStats as Stats } from './presence.js'
 import { WorkerFehler, openSightingBackend, type SightingBackend } from './sighting-backend.js'
 import { ParkingTimer } from './components/ParkingTimer.js'
@@ -365,6 +366,22 @@ export function App() {
   const [searchEpoch, setSearchEpoch] = useState(0)
   /** Ob das Suchfeld gerade Treffer zeigt — die Liste bekommt wie das Menü einen Verlaufseintrag. */
   const [searchOpen, setSearchOpen] = useState(false)
+  /** Die Langzeitmuster der Stadt vom Worker; null ohne Worker oder vor dem ersten Tageslauf. */
+  const [patterns, setPatterns] = useState<PatternStand | null>(null)
+  useEffect(() => {
+    let aktiv = true
+    const holen = (): void => {
+      void loadPatterns(CITY.key).then((stand) => {
+        if (aktiv) setPatterns(stand)
+      })
+    }
+    holen()
+    const timer = window.setInterval(holen, 6 * 3_600_000)
+    return () => {
+      aktiv = false
+      window.clearInterval(timer)
+    }
+  }, [])
   const handyRef = useRef(handy)
   handyRef.current = handy
   // Read by a polite live region: the map and the panel change visually, and a
@@ -2289,6 +2306,9 @@ export function App() {
             parked={session !== null}
             stats={selectedStats}
             shared={shared}
+            pattern={patternForZone(patterns, CITY.key, selected.zone)}
+            patternWeeks={patterns?.n ?? null}
+            patternSince={patterns?.since ?? null}
           />
         ) : anchor !== null ? (
           // Nur noch der Fall „angetippt, aber ausserhalb". Der Abschnitt „Wo

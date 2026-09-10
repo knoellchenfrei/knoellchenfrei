@@ -80,8 +80,11 @@ spätestens nach 90 Minuten. Auch das stand hier bis zum 7. September nicht
 (Audit-Punkt M-019).
 
 **Eine Meldung ist auch eine Ortsangabe über die meldende Person** und für alle
-sichtbar. Deshalb die Rundung. Meldungen werden nach **90 Minuten gelöscht**,
-nicht archiviert.
+sichtbar. Deshalb die Rundung. Meldungen sind **90 Minuten sichtbar und
+bewertbar**; gelöscht werden sie im nächsten stündlichen Lauf danach, also
+spätestens nach rund drei Stunden — nicht archiviert. Beim Löschen entsteht
+der Zähler aus Abschnitt 2.4a, und der trägt weder Position noch Zeitpunkt
+noch Kennung.
 
 Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO — die Meldung erfolgt durch eine
 bewusste Handlung.
@@ -92,6 +95,35 @@ Jede Meldung erzeugt zusätzlich eine anonyme Strichliste aus **Tag, Stunde und
 einem 250-Meter-Feld** — mehr nicht. Keine Minute, keine Kennung, kein Bezug zur
 Meldung, aus der sie entstand. Zwei Strichlisten desselben Tages lassen sich
 nicht derselben Person zuordnen. Gelöscht nach **28 Tagen**.
+
+### 2.4a Langzeitmuster („Typisch hier")
+
+Wenn eine Meldung nach Ablauf gelöscht wird, erhöht sie einen **Zähler je
+Parkzone** (in Städten mit sehr kleinen Zonen je Bezirk), **Wochentag, Stunde
+und Quartal** — mit den endgültigen Zahlen der Bestätigungen und
+Widersprüche. Eine Zeile sieht so aus:
+
+```
+Berlin · Zone 12 · 2026-Q4 · Dienstag · 10 Uhr · an 4 Tagen gemeldet · 6 Meldungen · 2 bestätigt
+```
+
+Kein Datum, keine Koordinate, keine Kennung, kein Bezug zur Meldung: Ein
+Quartal hat dreizehn gleiche Wochentage, und „an einem davon" ist keine
+Angabe über einen Tag. Jede Zeile ist damit in jeder Dimension gröber als
+eine Strichliste der Heatmap — sie liegt nur länger: **zwölf Quartale**,
+danach gelöscht. Aus diesen Zählern rechnet der Server einmal täglich, wann
+in einer Zone typischerweise gemeldet wird; die App zeigt das im Zonenblatt
+unter „Typisch hier" als Stufe und als Zahlen („in 5 von 16 Dienstagen"),
+nie als Aussage über eine einzelne Person oder einen einzelnen Tag.
+
+Rechtsgrundlage: Die Ableitung ist eine statistische Weiterverarbeitung, die
+mit dem Zweck der Meldung vereinbar ist (Art. 5 Abs. 1 lit. b, Art. 89 Abs. 1
+DSGVO — die Aggregation selbst ist die Garantie), auf Grundlage von Art. 6
+Abs. 1 lit. f (das Muster zu zeigen ist der Zweck, den die Meldende mit der
+Meldung verfolgt). Das Ergebnis sind anonyme Daten (Erwägungsgrund 26). Der
+Widerspruchsschalter der Nutzungsstatistik (2.10) betrifft die Meldungen
+nicht; die Nutzungszahlen, die als Vergleichsgrösse neben den Zählern liegen,
+entstehen aus der Nutzungsstatistik und hängen damit an demselben Schalter.
 
 ### 2.5 Rückmeldungen („Feedback senden")
 
@@ -253,8 +285,10 @@ klären.⟩
 
 | Daten | Dauer |
 | --- | --- |
-| Meldungen | 90 Minuten |
+| Meldungen | 90 Minuten sichtbar; gelöscht im nächsten stündlichen Lauf, spätestens nach rund drei Stunden |
 | Strichlisten der Heatmap | 28 Tage |
+| Zähler der Langzeitmuster (Zone oder Bezirk, Wochentag, Stunde, Quartal) | 12 Quartale |
+| Wochenverlauf je Stadt (Meldungen je Kalenderwoche, ohne Ort unter Stadt) | 3 Jahre |
 | Rückmeldungen | 90 Tage |
 | Besuchszählung | 2 Tage |
 | Hashwert einer Telegram-Kennung | mit der Meldung, also 90 Minuten |
