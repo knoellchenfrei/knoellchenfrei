@@ -917,6 +917,14 @@ wiederholt.
   über dem Blatt" klickte mitten in den 220-ms-Übergang und war mit
   z-index 3 genauso grün: Wer nach einer Animation misst, wartet sie ab
   und prüft `elementFromPoint`, nicht `click({ trial: true })`.
+- **Ein Kurzschluss auf einen Status trägt nur, solange der Status dasselbe
+  bedeutet.** `ausgeliefert-pruefen.sh` brach seine Warteschleife ab, sobald
+  `/` mit 200 antwortete — „Riegel offen, sofort melden". Seit dem
+  10. September antwortet die Anmeldeseite selbst mit 200, und die Schleife
+  brach nach dem **ersten** Durchgang ab: Deploy 194 meldete drei 404 einer
+  Vorschau, die eine Minute später grün war. Der schlimmste Fall ist seitdem
+  am Inhalt festgemacht (Bündel ohne Passwortfeld), nicht am Status. Wer die
+  Bedeutung eines Status ändert, sucht nach allen, die ihn lesen.
 
 ## Balance: Tokens und Rechenminuten
 
@@ -965,7 +973,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **80 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **81 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

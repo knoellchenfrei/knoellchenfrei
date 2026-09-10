@@ -128,11 +128,17 @@ while : ; do
   pruefe
   [ "$fehler" -eq 0 ] && break
   [ "$SECONDS" -ge "$DEADLINE" ] && break
-  # Ein `200` auf `/` ist der schlimmste Fall — die Seite liefert aus, ohne
-  # dass der Riegel davorsteht. Den sitzt man nicht aus, den meldet man sofort.
-  case "$(abruf / | cut -d' ' -f1)" in
-    200) break ;;
-  esac
+  # Der schlimmste Fall — die Seite liefert das Bündel aus, ohne dass der
+  # Riegel davorsteht — wird nicht ausgesessen, sondern sofort gemeldet.
+  # Bis zum 10. September hiess das „200 auf /": Seit die Anmeldeseite
+  # selbst mit 200 antwortet, brach die Schleife damit nach dem ERSTEN
+  # Durchgang ab, und Deploy 194 meldete drei 404 einer Vorschau, die eine
+  # Minute später grün war. Entscheidend ist der Inhalt: Bündel ohne
+  # Passwortfeld, nicht der Status.
+  startseite="$(curl -s --max-time 15 "${BASIS}/")"
+  if printf '%s' "$startseite" | grep -q '/assets/' && ! printf '%s' "$startseite" | grep -q 'name="password"'; then
+    break
+  fi
   sleep 10
 done
 

@@ -287,7 +287,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 1299 — 848 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 297 für die Web-App, 53 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 80 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| Unit-Tests | 1299 — 848 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 297 für die Web-App, 53 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 81 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 222 über Desktop und Handy, gegen den Produktions-Build, rund fünf Minuten; 210 bestehen, zwölf überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, elf auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
