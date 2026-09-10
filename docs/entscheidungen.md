@@ -966,3 +966,24 @@ Abschnitt 11. **Was noch fehlt:** die Bilder in README und Installations-Karte
 sind nach dieser Nacht neu aufgenommen; der Handlauf `durchklicken.mjs`
 gegen einen lokalen Worker ist nachgezogen, aber in dieser Sitzung nicht
 gelaufen — der nächste Lauf gehört vor den nächsten Push.
+
+### Nachtrag, 10. September morgens
+
+Vier Rückfragen des Betreibers nach der ersten Nacht mit dem neuen Bild:
+
+- *Auf welche Zone bezieht sich der Reiter Tageszeiten?* Auf keine — auf
+  alle Striche der geladenen Stadt. Das stand nirgends; jetzt heißt der
+  Abschnitt „Kontrolldichte · ganz Berlin", und ein Satz sagt, wo die Zahlen
+  einer einzelnen Zone stehen.
+- *Könnte es zu den Zonen Details geben?* Ja, und sie gab es schon — im
+  Blatt der Zone unter „Kontrollen hier". Es fehlte der Weg dorthin: Ein Tipp
+  auf eine Stelle im Reiter „Zonen" wählt die Zone jetzt auf der Karte.
+- *Auf der Aktuell-Seite sollte nicht gemeldet werden können.* Der Knopf und
+  seine zwei Sätze sind raus; gemeldet wird über den roten Kreis. Das Blatt
+  liest und bewertet.
+- *Die Wörter in der Kennzahlen-Leiste könnten weg.* Sind sie — sie brachen
+  auf dem Handy zu „Meldunge…" und „gerade off…" ab. Symbol und Zahl bleiben,
+  das Wort steht als `title` und für den Vorleser. Und was „Gerät heute"
+  heißt: verschiedene Geräte, die die App am heutigen Berliner Tag geöffnet
+  haben (ein Ping je Gerät und Tag, `visitRowId`); „gerade offen" sind die
+  mit einem Lebenszeichen in den letzten fünf Minuten (`ONLINE_WINDOW_MS`).

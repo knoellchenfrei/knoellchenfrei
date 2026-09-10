@@ -319,8 +319,11 @@ test.describe('gemeldete Sichtungen', () => {
     // Leer, und ehrlich leer: keine erzeugten Zeilen mehr.
     await expect(sightings.locator('.sightings__item')).toHaveCount(0)
 
-    // The button opens the report sheet; the tapped point is offered first.
-    await sightings.locator('button', { hasText: 'Kontrolle melden' }).click()
+    // Gemeldet wird über den roten Kreis, nicht aus dem Blatt (10. September).
+    await expect(sightings).toBeVisible()
+    await expect(sightings.locator('button', { hasText: 'Kontrolle melden' })).toHaveCount(0)
+    await page.getByRole('dialog', { name: 'Meldungen' }).getByRole('button', { name: 'Schließen' }).click()
+    await page.locator('.fab').click()
     await expect(page.locator('.sheet')).toBeVisible()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.sheet')).toHaveCount(0)
@@ -359,8 +362,7 @@ test.describe('gemeldete Sichtungen', () => {
     const box = await page.locator('.map').boundingBox()
     await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
     await page.waitForTimeout(1000)
-    await openReports(page)
-    await page.locator('.sheet--reports button', { hasText: 'Kontrolle melden' }).click()
+    await page.locator('.fab').click()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.sheet')).toHaveCount(0)
 
@@ -468,10 +470,9 @@ test.describe('Melden scheitert nie still', () => {
 
   test('bietet einen Ort zum Melden auch ohne jede Geste auf der Karte', async ({ page }) => {
     await ready(page)
-    await openReports(page)
     // Pressed cold, with nothing tapped on the map — the case that was broken
     // twice: first a disabled button, then one that silently did nothing.
-    await page.locator(`${sightings} button`, { hasText: 'Kontrolle melden' }).click()
+    await page.locator('.fab').click()
 
     const sheet = page.locator('.sheet')
     await expect(sheet).toBeVisible()
@@ -527,8 +528,7 @@ test.describe('Melden scheitert nie still', () => {
     await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.18)
     await page.waitForTimeout(500)
 
-    await openReports(page)
-    await page.locator(`${sightings} button`, { hasText: 'Kontrolle melden' }).click()
+    await page.locator('.fab').click()
     await page.locator('.sheet__option').first().click()
     await page.locator('.sheet__submit').click()
     await expect(page.locator('.toast')).toContainText(
@@ -669,7 +669,9 @@ test.describe('Zahlen im Betrieb', () => {
   }) => {
     await ready(page)
     const live = page.locator('.live')
+    // Sichtbar sind nur Symbol und Zahl; die Wörter stehen für den Vorleser.
     await expect(live).toContainText('Meldungen')
+    await expect(live.locator('.live__item').first()).toHaveAttribute('title', 'Meldungen heute')
     // Without a shared runtime "online" is unknowable, and "1 online" would be
     // true of every single viewer and therefore say nothing.
     await expect(live).toContainText('nur dieses Gerät')
@@ -751,6 +753,30 @@ test.describe('Kontrolldichte', () => {
       return map?.getLayoutProperty('heat-density', 'visibility') ?? 'missing'
     })
     expect(['visible', 'missing']).toContain(visible)
+  })
+
+  /**
+   * Der Betreiber, 10. September: „Auf welche Zone bezieht sich der Reiter
+   * Tageszeiten?" — auf keine, auf die ganze Stadt. Das steht jetzt dran. Und
+   * eine Stelle im Reiter „Zonen" führt zur Zone, deren Blatt die Zahlen
+   * dieser einen Stelle trägt.
+   */
+  test('sagt, dass die Tageszeiten die ganze Stadt meinen, und führt von einer Stelle zur Zone', async ({ page }) => {
+    await mitStrichen(page)
+    await ready(page)
+    const dialog = await openReports(page)
+    await dialog.getByRole('tab', { name: 'Tageszeiten' }).click()
+    const panel = page.locator('section[aria-label="Kontrolldichte"]')
+    await expect(panel).toContainText('ganz Berlin')
+    await expect(panel).toContainText('nicht eine Zone')
+    await dialog.getByRole('tab', { name: 'Zonen' }).click()
+    const stelle = panel.locator('.heat-top__pick').first()
+    await expect(stelle).toContainText('Zone')
+    await stelle.click()
+    await expect(dialog).toHaveCount(0)
+    await openPanel(page)
+    await expect(page.locator('#zone-panel-title')).toBeVisible()
+    await expect(page.locator('.zone-stats')).toContainText('Kontrollen hier')
   })
 
   test('nennt die Zahlen, die die Farbe nicht tragen kann', async ({ page }) => {

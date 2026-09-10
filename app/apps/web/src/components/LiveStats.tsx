@@ -27,10 +27,16 @@ export function LiveStats({ stats, reportsToday, shared }: Props) {
 
   return (
     <a className="live" aria-label="Live-Zahlen — zur Statistik" href="/statistik/" target="_blank" rel="noreferrer">
-      <span className="live__item live__item--zones">
+      {/*
+        Seit dem 10. September nur Symbol und Zahl: Die Wörter brachen auf dem
+        Handy zu „Meldunge…" und „gerade off…" ab (Betreiber, mit Foto). Was
+        die Zahl heisst, sagt `title` beim Verweilen und die verborgene
+        Beschriftung dem Vorleser.
+      */}
+      <span className="live__item live__item--zones" title="Meldungen heute">
         <IconMeldungen className="live__icon" size={18} aria-hidden="true" />
         <strong>{reportsToday}</strong>
-        <span className="live__label">{reportsToday === 1 ? 'Meldung heute' : 'Meldungen heute'}</span>
+        <span className="visually-hidden">{reportsToday === 1 ? 'Meldung heute' : 'Meldungen heute'}</span>
       </span>
       {offline ? (
         <span
@@ -39,22 +45,22 @@ export function LiveStats({ stats, reportsToday, shared }: Props) {
         >
           <IconGeraete className="live__icon" size={18} aria-hidden="true" />
           <strong>–</strong>
-          <span className="live__label">nur dieses Gerät</span>
+          <span className="visually-hidden">nur dieses Gerät</span>
         </span>
       ) : (
         <>
-          <span className="live__item">
+          <span className="live__item" title="Gerade offen: Geräte, die die App in den letzten fünf Minuten offen hatten">
             <span className="live__icon live__icon--live" aria-hidden="true">
               <IconOffen size={18} />
               <span className="live__pulse" />
             </span>
             <strong>{zahl(stats.online)}</strong>
-            <span className="live__label">gerade offen</span>
+            <span className="visually-hidden">gerade offen</span>
           </span>
-          <span className="live__item">
+          <span className="live__item" title="Geräte heute: verschiedene Geräte, die die App heute geöffnet haben">
             <IconGeraete className="live__icon" size={18} aria-hidden="true" />
             <strong>{zahl(stats.today)}</strong>
-            <span className="live__label">{stats.today === 1 ? 'Gerät heute' : 'Geräte heute'}</span>
+            <span className="visually-hidden">{stats.today === 1 ? 'Gerät heute' : 'Geräte heute'}</span>
           </span>
         </>
       )}

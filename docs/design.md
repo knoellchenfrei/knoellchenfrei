@@ -128,14 +128,22 @@ Blätter/Dialoge 20.
   der Suche, Ebenen darunter am rechten Rand. Das Ebenen-Menü öffnet nach
   unten links, an den Knopf angehängt.
 - **Kennzahlen-Leiste.** Volle Breite bis zum Ebenen-Knopf, drei Zellen mit
-  Symbol, Zahl und Wort (Meldungen heute · gerade offen · Geräte heute). Ein
-  Link zur Statistikseite — die ganze Leiste ist die Fläche.
+  Symbol und Zahl (Meldungen heute · gerade offen · Geräte heute); die Wörter
+  stehen als `title` und für den Vorleser, sichtbar brachen sie auf dem Handy
+  ab (10. September). Ein Link zur Statistikseite — die ganze Leiste ist die
+  Fläche. Was die Zahlen heißen: *Meldungen heute* sind Striche mit dem
+  heutigen Berliner Datum; *gerade offen* sind Geräte mit einem Lebenszeichen
+  in den letzten fünf Minuten; *Geräte heute* sind verschiedene Geräte, die
+  die App heute geöffnet haben — je ein Ping pro Gerät und Tag, ohne Kennung
+  über den Tag hinaus.
 - **Meldungen-Karte.** Unten links: Kopf „Meldungen · N aktiv", darunter bis
   zu drei Zeilen (Zone, vor x Min, Sterne). Tipp öffnet das Meldungen-Blatt
-  mit drei Tabs: *Aktuell* (Liste mit gesehen/weg), *Zonen* (am häufigsten
-  kontrolliert, 28 Tage), *Tageszeiten* (Tagesgang und Wochentage). Was
-  vorher im Detail-Blatt stand („Gemeldete Sichtungen", „Kontrolldichte"),
-  steht jetzt hier.
+  mit drei Tabs: *Aktuell* (Liste mit gesehen/weg — gemeldet wird nur über
+  den roten Kreis, nicht von hier), *Zonen* (am häufigsten kontrolliert,
+  28 Tage; ein Tipp auf eine Stelle führt zur Zone), *Tageszeiten* (Tagesgang
+  und Wochentage der **ganzen Stadt**, das steht dran). Was vorher im
+  Detail-Blatt stand („Gemeldete Sichtungen", „Kontrolldichte"), steht jetzt
+  hier.
 - **Kreise.** Rechts unten, übereinander: oben Rot mit Plus (melden), darunter
   Blau mit Fadenkreuz (Standort). Beide über dem Griff, beide wandern mit dem
   Blatt.

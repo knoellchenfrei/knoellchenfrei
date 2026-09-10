@@ -70,8 +70,7 @@ test.describe('Zurück schließt das Blatt, nicht die App', () => {
 
   test('räumt auch das Melde-Blatt über Zurück ab', async ({ page }) => {
     await ready(page)
-    await openReports(page)
-    await page.locator('.sheet--reports button', { hasText: 'Kontrolle melden' }).click()
+    await page.locator('.fab').click()
     const dialog = page.getByRole('dialog', { name: 'Sichtung melden' })
     await expect(dialog).toBeVisible()
     await page.goBack()

@@ -1,3 +1,5 @@
+import type { LoadedZone } from '../zones.js'
+import { CITY } from '../city.js'
 import {
   HISTORY_DAYS,
   MIN_MARKS_FOR_PATTERN,
@@ -10,6 +12,8 @@ export interface HeatTopEntry {
   marks: number
   days: number
   weight: number
+  /** Die Fläche auf der Karte, wenn die Stelle in einer Zone liegt — ein Tipp führt hin. */
+  zone: LoadedZone | null
 }
 
 interface Props {
@@ -29,6 +33,8 @@ interface Props {
    * statt eines Abschnitts unter der Zone.
    */
   part: 'zonen' | 'zeiten'
+  /** Ein Tipp auf eine Stelle wählt die Zone auf der Karte. */
+  onPick: (zone: LoadedZone) => void
 }
 
 const WEEKDAY_NAMES = [
@@ -59,6 +65,7 @@ export function HeatPanel({
   hour,
   shared,
   part,
+  onPick,
 }: Props) {
   const missing = MIN_MARKS_FOR_PATTERN - heat.totalMarks
   const dayName = WEEKDAY_NAMES[weekday] ?? 'Tag'
@@ -72,7 +79,7 @@ export function HeatPanel({
     <section className="panel" aria-label="Kontrolldichte">
       <header className="panel__head">
         <div>
-          <h2 className="panel__eyebrow">Kontrolldichte</h2>
+          <h2 className="panel__eyebrow">Kontrolldichte · ganz {CITY.name}</h2>
           <p className="panel__title">
             {heat.hasPattern
               ? `${heat.totalMarks} Meldungen · ${heat.daysCovered} Tage`
@@ -102,6 +109,11 @@ export function HeatPanel({
               </dd>
             </div>
           </dl>
+
+          <p className="hours">
+            Alle Meldungen in {CITY.name}, nicht eine Zone. Was in einer einzelnen Zone war, steht
+            in ihrem Blatt unter „Kontrollen hier".
+          </p>
 
           <div className="report__block">
             <h3 className="report__label">Letzte {HISTORY_DAYS} Tage</h3>
@@ -192,16 +204,41 @@ export function HeatPanel({
                     style={{ width: `${Math.round(entry.weight * 100)}%` }}
                     aria-hidden="true"
                   />
-                  <span className="heat-top__label">
-                    <strong>{entry.label}</strong>
-                    <span className="heat-top__value">
-                      {rest > 0 ? `${Math.round((entry.marks / rest) * 100)} %` : ''}
+                  {/* Ein Tipp führt zur Zone: Ihr Blatt trägt die Zahlen dieser
+                      einen Stelle (heute, 7 Tage, 28 Tage, zuletzt). Der Weg
+                      von hier dorthin fehlte (Betreiber, 10. September). */}
+                  {entry.zone === null ? (
+                    <span className="heat-top__body">
+                      <span className="heat-top__label">
+                        <strong>{entry.label}</strong>
+                        <span className="heat-top__value">
+                          {rest > 0 ? `${Math.round((entry.marks / rest) * 100)} %` : ''}
+                        </span>
+                      </span>
+                      <span className="heat-top__sub">
+                        {entry.marks} {entry.marks === 1 ? 'Meldung' : 'Meldungen'} an {entry.days}{' '}
+                        {entry.days === 1 ? 'Tag' : 'Tagen'}
+                      </span>
                     </span>
-                  </span>
-                  <span className="heat-top__sub">
-                    {entry.marks} {entry.marks === 1 ? 'Meldung' : 'Meldungen'} an {entry.days}{' '}
-                    {entry.days === 1 ? 'Tag' : 'Tagen'}
-                  </span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="heat-top__body heat-top__pick"
+                      onClick={() => onPick(entry.zone!)}
+                      aria-label={`${entry.label} auf der Karte zeigen`}
+                    >
+                      <span className="heat-top__label">
+                        <strong>{entry.label}</strong>
+                        <span className="heat-top__value">
+                          {rest > 0 ? `${Math.round((entry.marks / rest) * 100)} %` : ''}
+                        </span>
+                      </span>
+                      <span className="heat-top__sub">
+                        {entry.marks} {entry.marks === 1 ? 'Meldung' : 'Meldungen'} an {entry.days}{' '}
+                        {entry.days === 1 ? 'Tag' : 'Tagen'} · zur Zone
+                      </span>
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -209,7 +246,8 @@ export function HeatPanel({
 
           <p className="hours">
             Anteile beziehen sich auf die gezeigten Stellen, die Färbung auf der Karte relativ zur
-            meistgemeldeten. Jüngere Meldungen zählen mehr.
+            meistgemeldeten. Jüngere Meldungen zählen mehr. Die Zahlen einer einzelnen Zone stehen
+            in ihrem Blatt unter „Kontrollen hier".
           </p>
           </>
           )}

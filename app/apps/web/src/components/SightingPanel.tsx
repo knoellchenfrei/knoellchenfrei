@@ -7,14 +7,12 @@ import type { VoteKind } from '../storage.js'
 interface Props {
   sightings: Sighting[]
   now: number
-  onReport: () => void
   onConfirm: (id: string) => void
   onDispute: (id: string) => void
   /** Ob diese Meldung aus dieser Sitzung stammt — dann gibt es keine Stimme darauf. */
   own: (id: string) => boolean
   /** Welche Stimme dieses Gerät auf die Meldung schon abgegeben hat, wenn eine. */
   voted: (id: string) => VoteKind | null
-  canReport: boolean
   /** True when reports reach a shared store rather than only this device. */
   shared: boolean
 }
@@ -22,12 +20,10 @@ interface Props {
 export function SightingPanel({
   sightings,
   now,
-  onReport,
   onConfirm,
   onDispute,
   own,
   voted,
-  canReport,
   shared,
 }: Props) {
   const active = activeSightings(sightings, { now })
@@ -42,24 +38,10 @@ export function SightingPanel({
       </header>
 
       {/*
-        Deliberately never disabled. It was disabled until a point was set,
-        and users read that as a broken button rather than as a missing step —
-        twice. Pressing it now says what is missing instead of doing nothing.
-
-        Seit dem 9. September so gross wie „Hier geparkt" und nicht mehr klein
-        im Kopf: Der Betreiber hat ihn dort nicht gefunden. Ohne angetippte
-        Stelle bietet das Blatt Standort, Kartenmitte und die nächsten Zonen an.
+        Kein Meldeknopf mehr hier, seit dem 10. September (Betreiber: „Auf der
+        Aktuell-Seite sollte nicht gemeldet werden können"). Gemeldet wird
+        über den roten Kreis auf der Karte; dieses Blatt liest und bewertet.
       */}
-      <button type="button" className="button button--primary button--block" onClick={onReport}>
-        Kontrolle melden
-      </button>
-
-      <p className="hours">
-        {canReport
-          ? 'Gemeldet wird die zuletzt auf der Karte angetippte Stelle — oder eine Zone aus der Liste.'
-          : 'Ordnungsamt unterwegs? Melde die Stelle: aus der Nähe deines Standorts oder aus der Liste.'}
-      </p>
-
       <p className="demo-note">
         {shared ? (
           <>

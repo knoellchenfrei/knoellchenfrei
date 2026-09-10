@@ -1098,12 +1098,15 @@ export function App() {
   // because a hotspot spans several cells and would otherwise fill the list
   // with three views of the same corner.
   const heatTop = useMemo(() => {
-    const perZone = new Map<string, { label: string; marks: number; days: number; weight: number }>()
+    const perZone = new Map<
+      string,
+      { label: string; marks: number; days: number; weight: number; zone: LoadedZone | null }
+    >()
     for (const cell of heat.cells) {
       const zone = zoneAt(zones, cell.centre)
       const key = zone?.properties.zone ?? '—'
       const label = zone === null ? 'Außerhalb der Zonen' : zoneKurz(zone.properties)
-      const entry = perZone.get(key) ?? { label, marks: 0, days: 0, weight: 0 }
+      const entry = perZone.get(key) ?? { label, marks: 0, days: 0, weight: 0, zone }
       entry.marks += cell.marks
       entry.days = Math.max(entry.days, cell.days)
       entry.weight = Math.max(entry.weight, cell.weight)
@@ -2382,25 +2385,20 @@ export function App() {
             <SightingPanel
               sightings={sightings}
               now={now}
-              onReport={() => {
-                // Auf dem Handy deckt das Panel die untere Kartenhälfte ab. Wer
-                // im Sheet auf "Karte" ausweichen will, braucht sie frei.
-                setPanelOpen(false)
-                setReportsOpen(false)
-                setReportViaFab(false)
-                setReporting(true)
-              }}
               onConfirm={(id) => vote(id, 'confirmations')}
               onDispute={(id) => vote(id, 'disputes')}
               own={(id) => id in own.reports}
               voted={(id) => own.votes[id]?.kind ?? null}
-              canReport={position !== null || anchor !== null}
               shared={shared}
             />
           }
           zonen={
             <HeatPanel
               part="zonen"
+              onPick={(zone) => {
+                setReportsOpen(false)
+                focusZone(zone)
+              }}
               top={heatTop}
               heat={heat}
               activity={activity}
@@ -2412,6 +2410,10 @@ export function App() {
           zeiten={
             <HeatPanel
               part="zeiten"
+              onPick={(zone) => {
+                setReportsOpen(false)
+                focusZone(zone)
+              }}
               top={heatTop}
               heat={heat}
               activity={activity}

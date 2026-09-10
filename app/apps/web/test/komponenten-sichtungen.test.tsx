@@ -30,12 +30,10 @@ function zeichne(overrides: Partial<Parameters<typeof SightingPanel>[0]> = {}) {
     <SightingPanel
       sightings={[meldung('eigene', 2), meldung('bewertet', 5), meldung('fremd', 8)]}
       now={jetzt}
-      onReport={() => undefined}
       onConfirm={onConfirm}
       onDispute={onDispute}
       own={(id) => id === 'eigene'}
       voted={(id) => (id === 'bewertet' ? 'dispute' : null)}
-      canReport={false}
       shared={true}
       {...overrides}
     />,
