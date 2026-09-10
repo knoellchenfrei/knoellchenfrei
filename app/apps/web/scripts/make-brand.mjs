@@ -73,8 +73,9 @@ const SOCIAL = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" w
     ${glyph(1)}
   </g>
   <text x="416" y="290" font-family="Archivo, Helvetica Neue, Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="-3" fill="#e3ebee">knoellchenfrei</text>
-  <text x="418" y="360" font-family="Helvetica Neue, Arial, sans-serif" font-size="36" fill="#9aa8ae">Was Parken hier gerade kostet, und wie lange.</text>
-  <text x="418" y="416" font-family="Helvetica Neue, Arial, sans-serif" font-size="29" fill="#74aae4">Berlin · Hamburg · amtliche Daten · offener Quelltext</text>
+  <text x="418" y="352" font-family="Helvetica Neue, Arial, sans-serif" font-size="34" fill="#9aa8ae">Was Parken hier gerade kostet —</text>
+  <text x="418" y="396" font-family="Helvetica Neue, Arial, sans-serif" font-size="34" fill="#9aa8ae">und ob das Ordnungsamt unterwegs ist.</text>
+  <text x="418" y="452" font-family="Helvetica Neue, Arial, sans-serif" font-size="25" fill="#74aae4">Berlin · Hamburg · Frankfurt · München · Köln · Düsseldorf · Karlsruhe</text>
 </svg>`
 
 /**
@@ -168,6 +169,10 @@ const JOBS = [
   { file: 'telegram-muenchen-512.png', width: 512, height: 512, svg: TG_MUENCHEN },
   { file: 'org-avatar-512.png', width: 512, height: 512, svg: AVATAR },
   { file: 'social-preview-1280x640.png', width: 1280, height: 640, svg: SOCIAL },
+  // Dasselbe Bild als Vorschaukarte der ausgelieferten Adresse (`og:image`
+  // der Anmeldeseite, seit dem 10. September) — im Vorrat der App, weil der
+  // Riegel genau diesen Pfad ohne Cookie durchlässt.
+  { file: join(here, '..', 'public', 'og.png'), width: 1280, height: 640, svg: SOCIAL },
 ]
 
 // Dieselbe Weiche wie in `playwright.config.ts`: Wo ein Browser vorinstalliert
@@ -192,7 +197,7 @@ try {
     await page.setContent(
       `<style>html,body{margin:0;padding:0}svg{display:block}</style>${job.svg}`
     )
-    await page.screenshot({ path: join(out, job.file), omitBackground: false })
+    await page.screenshot({ path: job.file.startsWith('/') ? job.file : join(out, job.file), omitBackground: false })
     await page.close()
     console.log(`${job.file}  ${job.width}×${job.height}`)
   }

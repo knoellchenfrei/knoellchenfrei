@@ -303,6 +303,23 @@ test.describe('die geschlossene Beta', () => {
     expect(await file.text()).toContain('Disallow: /')
   })
 
+  /**
+   * Der Betreiber, 10. September: „Wenn ich den Link verschicke, wird oft
+   * eine Preview angezeigt — mach, dass da eine hübsche steht." Die Bots
+   * sehen die Anmeldeseite (functions/login-page.ts, dort mit Unit-Test);
+   * hier die App selbst und das Bild, das beide nennen.
+   */
+  test('trägt eine Vorschaukarte für geteilte Links, und das Bild liegt im Vorrat', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\.png$/)
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /knoellchenfrei/)
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image')
+    const bild = await page.request.get('/og.png')
+    expect(bild.status()).toBe(200)
+    expect(bild.headers()['content-type']).toContain('image/png')
+    expect((await bild.body()).length).toBeGreaterThan(10_000)
+  })
+
   test('sagt auf der Seite, dass es ein Testbetrieb ist', async ({ page }) => {
     await page.goto('/')
     await ready(page)

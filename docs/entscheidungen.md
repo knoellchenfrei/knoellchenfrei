@@ -717,7 +717,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 1141 Unit-Tests und 99,9 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 1144 Unit-Tests und 99,9 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 
@@ -987,3 +987,33 @@ Vier Rückfragen des Betreibers nach der ersten Nacht mit dem neuen Bild:
   heißt: verschiedene Geräte, die die App am heutigen Berliner Tag geöffnet
   haben (ein Ping je Gerät und Tag, `visitRowId`); „gerade offen" sind die
   mit einem Lebenszeichen in den letzten fünf Minuten (`ONLINE_WINDOW_MS`).
+
+## Die Anmeldeseite trägt die Vorschaukarte — und antwortet mit 200
+
+*10. September 2026.*
+
+Der Betreiber: „Wenn ich den Link verschicke, wird oft eine Preview
+angezeigt, in Nachrichten oder Discord. Mach, dass da eine hübsche steht."
+
+Wer den Link teilt, teilt ihn an Bots ohne Cookie. iMessage, Discord,
+Telegram und Slack holen die Adresse und sehen die **Anmeldeseite**, nie
+die App. Die hatte keine Open-Graph-Angaben und antwortete mit 401 — und
+die meisten Bots lesen eine Vorschau nur aus einer 2xx-Antwort. Der Kasten
+blieb leer.
+
+Drei Dinge daraus:
+
+- Die Anmeldeseite (und die App selbst, für später) tragen `og:title`,
+  `og:description`, `og:image`, `twitter:card`. Das Bild ist die Social
+  Preview aus `make-brand.mjs`, jetzt mit sieben Städten und dem zweiten
+  Halbsatz („und ob das Ordnungsamt unterwegs ist"), als `public/og.png`
+  ausgeliefert. Die Herkunft im Bildpfad kommt aus der Anfrage: Die
+  Pages-Adresse zeigt auf ihr eigenes Bild.
+- `_middleware.ts` lässt **genau diesen einen Pfad** ohne Cookie durch.
+  Nichts daran ist geheim; es ist die Marke. Der Unit-Test hält fest, dass
+  kein zweites Bild mitgeht (`icon-512.png`, `screenshots/`, `data/og.png`).
+- **Seiten** antworten ohne Cookie mit 200 und dem Formular, **Dateien**
+  weiter mit 401. Der Status war nie die Sicherung, der Inhalt ist es: Das
+  Formular geht hinaus, das Bündel nicht. `ausgeliefert-pruefen.sh` prüft
+  seitdem den Inhalt der Startseite (Passwortfeld ja, `/assets/` nein) und
+  den Content-Type des Bildes, nicht mehr nur den Status.

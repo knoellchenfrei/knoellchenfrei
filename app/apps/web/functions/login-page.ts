@@ -45,7 +45,41 @@ const NOTICES: Record<LoginNotice, string> = {
   expired: 'Der Zugang ist abgelaufen. Bitte das Passwort noch einmal eingeben.',
 }
 
-function shell(title: string, body: string): string {
+/**
+ * Was ein Messenger zeigt, wenn jemand den Link teilt.
+ *
+ * iMessage, Discord, Telegram und Slack holen die Adresse **ohne Cookie** und
+ * sehen deshalb genau diese Seite — nicht die App. Bis zum 10. September
+ * hatte sie keine Open-Graph-Angaben, und die Vorschau war ein leerer Kasten
+ * (Betreiber). Das Bild muss ohne Cookie erreichbar sein; `_middleware.ts`
+ * lässt genau diesen einen Pfad durch.
+ */
+export const OG_IMAGE = '/og.png'
+export const OG_TITLE = 'knoellchenfrei — kostet Parken hier gerade?'
+export const OG_DESCRIPTION =
+  'Parkzonen in Berlin, Hamburg, Frankfurt, München, Köln, Düsseldorf und Karlsruhe: ' +
+  'Gebührenpflicht, Preis, Höchstparkdauer — und ob das Ordnungsamt unterwegs ist. ' +
+  'Aus amtlichen Daten, offener Quelltext.'
+
+function openGraph(origin: string): string {
+  const image = `${origin}${OG_IMAGE}`
+  return `<meta property="og:type" content="website">
+<meta property="og:site_name" content="knoellchenfrei">
+<meta property="og:title" content="${OG_TITLE}">
+<meta property="og:description" content="${OG_DESCRIPTION}">
+<meta property="og:url" content="${origin}/">
+<meta property="og:image" content="${image}">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="knoellchenfrei — was Parken hier gerade kostet, und ob das Ordnungsamt unterwegs ist">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${OG_TITLE}">
+<meta name="twitter:description" content="${OG_DESCRIPTION}">
+<meta name="twitter:image" content="${image}">`
+}
+
+function shell(title: string, body: string, origin: string): string {
   return `<!doctype html>
 <html lang="de">
 <head>
@@ -53,6 +87,8 @@ function shell(title: string, body: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="${PALETTE.bg}">
 <meta name="robots" content="noindex, nofollow">
+<meta name="description" content="${OG_DESCRIPTION}">
+${openGraph(origin)}
 <title>${title}</title>
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
@@ -157,15 +193,16 @@ ${body}
 }
 
 /** Die Seite mit dem Formular. */
-export function loginPage(notice: LoginNotice): string {
+export function loginPage(notice: LoginNotice, origin = 'https://knoellchenfrei.de'): string {
   const message = NOTICES[notice]
   return shell(
     'knoellchenfrei — geschlossener Testbetrieb',
     `  <div class="mark" aria-hidden="true">P</div>
   <p class="eyebrow">Geschlossener Testbetrieb</p>
   <h1>knoellchenfrei</h1>
-  <p class="lede">Parkzonen in Berlin, Hamburg, Frankfurt am Main und München:
-  Gilt hier gerade Gebührenpflicht, was kostet es, wie lange darf ich stehen?
+  <p class="lede">Parkzonen in Berlin, Hamburg, Frankfurt am Main, München, Köln,
+  Düsseldorf und Karlsruhe: Gilt hier gerade Gebührenpflicht, was kostet es, wie
+  lange darf ich stehen — und ist das Ordnungsamt unterwegs?
   Öffentlich ist die App noch nicht — bis der Trägerverein steht, kommt nur
   hinein, wer das Passwort hat.</p>
 ${message === '' ? '' : `  <p class="notice" role="alert">${message}</p>\n`}  <form method="post" autocomplete="on">
@@ -176,7 +213,8 @@ ${message === '' ? '' : `  <p class="notice" role="alert">${message}</p>\n`}  <f
     <button type="submit">Weiter</button>
   </form>
   <p class="foot" id="foot">Kein Konto, kein Name, keine Aufzeichnung darüber, wer
-  eintritt. Der Zugang gilt 30 Tage auf diesem Gerät.</p>`
+  eintritt. Der Zugang gilt 30 Tage auf diesem Gerät.</p>`,
+    origin
   )
 }
 
@@ -188,7 +226,7 @@ ${message === '' ? '' : `  <p class="notice" role="alert">${message}</p>\n`}  <f
  * dieses Projekt schon zweimal gemacht hat: etwas meldet Erfolg und tut
  * nichts. Ein vergessenes Secret öffnete dann stillschweigend die Beta.
  */
-export function unconfiguredPage(): string {
+export function unconfiguredPage(origin = 'https://knoellchenfrei.de'): string {
   return shell(
     'knoellchenfrei — Riegel nicht eingerichtet',
     `  <div class="mark" aria-hidden="true">P</div>
@@ -198,6 +236,7 @@ export function unconfiguredPage(): string {
   Riegel bleibt deshalb geschlossen — er geht nicht auf, nur weil eine
   Einstellung fehlt.</p>
   <p class="foot">Zu setzen als Secret <code>BETA_PASSWORD</code> im
-  Pages-Projekt. Der Weg steht in <code>docs/hosting.md</code>.</p>`
+  Pages-Projekt. Der Weg steht in <code>docs/hosting.md</code>.</p>`,
+    origin
   )
 }

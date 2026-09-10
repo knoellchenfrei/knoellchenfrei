@@ -12,7 +12,8 @@ cd app/apps/web && node scripts/make-brand.mjs
 | Datei | Wofür | Maß |
 | --- | --- | --- |
 | `brand/org-avatar-512.png` | Bild der GitHub-Organisation | 512 × 512, randlos |
-| `brand/social-preview-1280x640.png` | „Social preview" des Repositories, taugt auch als `og:image` | 1280 × 640 |
+| `brand/social-preview-1280x640.png` | „Social preview" des Repositories | 1280 × 640 |
+| `app/apps/web/public/og.png` | Dasselbe Bild als Vorschaukarte der ausgelieferten Adresse (`og:image` der Anmeldeseite und der App). Der Riegel lässt genau diesen Pfad ohne Cookie durch — sonst zeigte iMessage oder Discord zum geteilten Link einen leeren Kasten (10. September) | 1280 × 640 |
 | `brand/telegram-dach-512.png` | Gruppe `@knoellchenfrei` | 512 × 512 |
 | `brand/telegram-bot-512.png` | Bot `@knoellchen_bot` | 512 × 512 |
 | `brand/telegram-berlin-512.png` | Gruppe `@knoellchenfrei_B` | 512 × 512 |

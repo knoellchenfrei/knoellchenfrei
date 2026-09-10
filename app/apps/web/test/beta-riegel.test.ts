@@ -60,8 +60,42 @@ describe('ohne gesetztes Passwort', () => {
 describe('ohne Cookie', () => {
   it('kommt niemand an die App', async () => {
     const response = await onRequest(kontext(GET(), 'offen-sesam'))
-    expect(response.status).toBe(401)
-    expect(await response.text()).not.toContain(DAHINTER)
+    // 200, nicht 401, seit dem 10. September: Die Bots von iMessage, Discord
+    // und Telegram lesen die Vorschaukarte nur aus einer 2xx-Antwort. Der
+    // Riegel ist der Inhalt, nicht der Status — das Formular, nie die App.
+    expect(response.status).toBe(200)
+    const body = await response.text()
+    expect(body).not.toContain(DAHINTER)
+    expect(body).toContain('name="password"')
+  })
+
+  it('trägt die Vorschaukarte, die ein Messenger zum geteilten Link zeigt', async () => {
+    const response = await onRequest(kontext(GET(), 'offen-sesam'))
+    const body = await response.text()
+    expect(body).toContain('<meta property="og:title"')
+    expect(body).toContain('<meta property="og:image" content="https://knoellchenfrei.de/og.png"')
+    expect(body).toContain('<meta name="twitter:card" content="summary_large_image"')
+    // Die Herkunft kommt aus der Anfrage, nicht aus einer Konstante: Die
+    // Pages-Adresse zeigt auf ihr eigenes Bild.
+    const pages = await onRequest(kontext(GET('https://knoellchenfrei.pages.dev/'), 'offen-sesam'))
+    expect(await pages.text()).toContain('content="https://knoellchenfrei.pages.dev/og.png"')
+  })
+
+  it('lässt genau das Vorschaubild ohne Cookie durch — und sonst kein Bild', async () => {
+    const bild = await onRequest(kontext(GET('https://knoellchenfrei.de/og.png'), 'offen-sesam'))
+    expect(bild.status).toBe(200)
+    expect(await bild.text()).toBe(DAHINTER)
+    for (const pfad of ['/icon-512.png', '/screenshots/handy.png', '/og.png.bak', '/data/og.png']) {
+      const response = await onRequest(kontext(GET(`https://knoellchenfrei.de${pfad}`), 'offen-sesam'))
+      expect(response.status, pfad).toBe(401)
+    }
+  })
+
+  it('antwortet auf Seiten mit 200 und auf Dateien mit 401', async () => {
+    for (const pfad of ['/', '/statistik/', '/statistik']) {
+      const response = await onRequest(kontext(GET(`https://knoellchenfrei.de${pfad}`), 'offen-sesam'))
+      expect(response.status, pfad).toBe(200)
+    }
   })
 
   it('bekommt auch das Bündel und die Zonendatei nichts anderes', async () => {
@@ -73,8 +107,10 @@ describe('ohne Cookie', () => {
 
   it('antwortet auf HEAD ohne Körper', async () => {
     const response = await onRequest(kontext(GET('https://knoellchenfrei.de/', { method: 'HEAD' }), 'offen-sesam'))
-    expect(response.status).toBe(401)
+    expect(response.status).toBe(200)
     expect(await response.text()).toBe('')
+    const datei = await onRequest(kontext(GET('https://knoellchenfrei.de/sw.js', { method: 'HEAD' }), 'offen-sesam'))
+    expect(datei.status).toBe(401)
   })
 
   it('sagt Suchmaschinen, dass hier nichts zu holen ist', async () => {
@@ -110,7 +146,13 @@ describe('mit gültigem Cookie', () => {
     const response = await onRequest(
       kontext(GET('https://knoellchenfrei.de/', { headers: { Cookie: `${BETA_COOKIE}=${token}` } }), 'offen-sesam')
     )
-    expect(response.status).toBe(401)
+    // Eine Seite: 200 mit dem Formular, nie die App (siehe „ohne Cookie").
+    expect(response.status).toBe(200)
+    expect(await response.text()).not.toContain(DAHINTER)
+    const datei = await onRequest(
+      kontext(GET('https://knoellchenfrei.de/sw.js', { headers: { Cookie: `${BETA_COOKIE}=${token}` } }), 'offen-sesam')
+    )
+    expect(datei.status).toBe(401)
   })
 
   it('nicht mit einem abgelaufenen — und sagt, dass es daran lag', async () => {
@@ -118,9 +160,11 @@ describe('mit gültigem Cookie', () => {
     const response = await onRequest(
       kontext(GET('https://knoellchenfrei.de/', { headers: { Cookie: `${BETA_COOKIE}=${token}` } }), 'offen-sesam')
     )
-    expect(response.status).toBe(401)
+    expect(response.status).toBe(200)
+    const body = await response.text()
+    expect(body).not.toContain(DAHINTER)
     // Sonst tippt jemand dasselbe richtige Passwort dreimal ein.
-    expect(await response.text()).toContain('abgelaufen')
+    expect(body).toContain('abgelaufen')
   })
 })
 

@@ -5,6 +5,7 @@
     <g transform="translate(-20 0) scale(1)"><path d="M172 118h104c62 0 104 40 104 100s-42 100-104 100h-40v76h-64V118zm64 60v80h36c26 0 42-15 42-40s-16-40-42-40h-36z" fill="#fff"/></g>
   </g>
   <text x="416" y="290" font-family="Archivo, Helvetica Neue, Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="-3" fill="#e3ebee">knoellchenfrei</text>
-  <text x="418" y="360" font-family="Helvetica Neue, Arial, sans-serif" font-size="36" fill="#9aa8ae">Was Parken hier gerade kostet, und wie lange.</text>
-  <text x="418" y="416" font-family="Helvetica Neue, Arial, sans-serif" font-size="29" fill="#74aae4">Berlin · Hamburg · amtliche Daten · offener Quelltext</text>
+  <text x="418" y="352" font-family="Helvetica Neue, Arial, sans-serif" font-size="34" fill="#9aa8ae">Was Parken hier gerade kostet —</text>
+  <text x="418" y="396" font-family="Helvetica Neue, Arial, sans-serif" font-size="34" fill="#9aa8ae">und ob das Ordnungsamt unterwegs ist.</text>
+  <text x="418" y="452" font-family="Helvetica Neue, Arial, sans-serif" font-size="25" fill="#74aae4">Berlin · Hamburg · Frankfurt · München · Köln · Düsseldorf · Karlsruhe</text>
 </svg>

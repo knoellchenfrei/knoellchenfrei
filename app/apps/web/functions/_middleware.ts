@@ -42,7 +42,7 @@ import {
   verifyBetaToken,
 } from '@knoellchenfrei/core'
 
-import { loginPage, unconfiguredPage, type LoginNotice } from './login-page'
+import { OG_IMAGE, loginPage, unconfiguredPage, type LoginNotice } from './login-page'
 
 interface Env {
   /** Das gemeinsame Passwort. Fehlt es, bleibt der Riegel zu. */
@@ -181,7 +181,15 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
   // bequemer und genau der Fehler, den dieses Projekt schon zweimal gemacht
   // hat: etwas meldet Erfolg und tut nichts.
   if (secret === '') {
-    return htmlResponse(unconfiguredPage(), 503)
+    return htmlResponse(unconfiguredPage(url.origin), 503)
+  }
+
+  // Das eine Bild, das ohne Cookie hinausgeht: die Vorschaukarte, die ein
+  // Messenger zum geteilten Link holt. Nichts daran ist geheim — es ist die
+  // Marke —, und ohne es wäre die Vorschau ein leerer Kasten. Kein zweiter
+  // Pfad kommt hier dazu, ohne dass `test/beta-riegel.test.ts` ihn kennt.
+  if (url.pathname === OG_IMAGE) {
+    return context.next()
   }
 
   const now = Date.now()
@@ -204,7 +212,7 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
       // core schneidet das ab und wird dort beschossen.
       return redirect(sameOriginPath(url.pathname), await issueCookie(secret, now))
     }
-    return htmlResponse(loginPage('wrong-password'), 401)
+    return htmlResponse(loginPage('wrong-password', url.origin), 401)
   }
 
   const invite = url.searchParams.get(INVITE_PARAM)
@@ -219,12 +227,21 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
         await issueCookie(secret, now)
       )
     }
-    return htmlResponse(loginPage('wrong-password'), 401)
+    return htmlResponse(loginPage('wrong-password', url.origin), 401)
   }
+
+  // Eine **Seite** (kein Bündel, keine Datei) antwortet mit 200 und dem
+  // Formular: Wer einen Link teilt, bekommt sonst keine Vorschau — die Bots
+  // von iMessage, Discord und Telegram lesen Open Graph nur aus einer
+  // 2xx-Antwort. Der Riegel hält davon unabhängig; der Status ist keine
+  // Sicherung, der Inhalt ist es. Alles mit Dateiendung bleibt 401, damit
+  // ein fehlender Riegel vor dem Bündel oder den Zonendaten weiter auffällt.
+  const seite = /\/$|\/[^./]+$/.test(url.pathname)
+  const status = seite ? 200 : 401
 
   if (request.method === 'HEAD') {
     return new Response(null, {
-      status: 401,
+      status,
       headers: new Headers({
         ...sicherheitsKopfzeilen(),
         'Cache-Control': 'no-store',
@@ -233,5 +250,5 @@ export const onRequest = async (context: MiddlewareContext): Promise<Response> =
     })
   }
 
-  return htmlResponse(loginPage(notice), 401)
+  return htmlResponse(loginPage(notice, url.origin), status)
 }

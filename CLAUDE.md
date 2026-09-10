@@ -31,11 +31,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1141 Unit-Tests (core, api, web)
+pnpm test                                           # 1144 Unit-Tests (core, api, web)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 216 End-to-End-Tests
+cd apps/web && npx playwright test                  # 218 End-to-End-Tests
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -88,7 +88,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (784), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (255, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (258, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, Straßensuche, vier Komponentendateien mit jsdom) und `packages/ingest` (16, die zwei
 Wächter des Artifact-Baus und der Datenstand). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
@@ -105,7 +105,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1141 E2E_COUNT=216 npx tsx src/build-badges.ts
+TEST_COUNT=1144 E2E_COUNT=218 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data

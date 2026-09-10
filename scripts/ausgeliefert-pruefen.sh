@@ -65,7 +65,7 @@ pruefe() {
   # Jeder dieser Pfade wäre ohne Riegel offen: das Bündel, die Zonendaten, das
   # Manifest, der Service Worker. Ein Login *in* der App hätte keinen davon
   # geschützt.
-  for pfad in / /statistik/ /data/berlin/zones.geojson /manifest.webmanifest /sw.js; do
+  for pfad in /data/berlin/zones.geojson /manifest.webmanifest /sw.js; do
     antwort="$(abruf "$pfad")"
     status="${antwort%% *}"
     if [ "$status" = "401" ]; then
@@ -74,6 +74,24 @@ pruefe() {
       weh "$pfad -> $antwort (erwartet 401)"
     fi
   done
+  # Seiten antworten seit dem 10. September mit 200 — aber mit dem Formular,
+  # nie mit der App: Die Bots von iMessage und Discord lesen die Vorschaukarte
+  # nur aus einer 2xx-Antwort. Geprüft wird deshalb der Inhalt, nicht der
+  # Status: Passwortfeld ja, Bündel nein.
+  for pfad in / /statistik/; do
+    koerper="$(curl -s --max-time 15 "${BASIS}${pfad}")"
+    if printf '%s' "$koerper" | grep -q 'name="password"' && ! printf '%s' "$koerper" | grep -q '/assets/'; then
+      ok "$pfad -> Anmeldeseite, kein Bündel"
+    else
+      weh "$pfad -> weder Formular noch Riegel"
+    fi
+  done
+  # Die Vorschaukarte geht ohne Cookie hinaus — als Bild, nicht als Seite.
+  vorschau="$(curl -s -o /dev/null -w '%{http_code} %{content_type}' --max-time 15 "${BASIS}/og.png")"
+  case "$vorschau" in
+    "200 image/png"*) ok "/og.png -> 200 image/png" ;;
+    *) weh "/og.png -> $vorschau (erwartet 200 image/png)" ;;
+  esac
 
   sammle ""
   sammle "Die Anmeldeseite trägt ihre eigenen Kopfzeilen"
