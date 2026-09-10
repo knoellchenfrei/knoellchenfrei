@@ -95,6 +95,16 @@ describe('ReportSheet', () => {
     expect(optionen[1]?.textContent).toMatch(/Mitte · 1,3 km$/)
   })
 
+  it('wählt mit Enter im Suchfeld den ersten Treffer vor', () => {
+    const { onSubmit } = zeichne({ mapCentre: [13.419, 52.52] })
+    const feld = screen.getByRole('searchbox', { name: /Zone oder Bezirk/ })
+    fireEvent.change(feld, { target: { value: '12' } })
+    fireEvent.keyDown(feld, { key: 'Enter' })
+    expect(feld.getAttribute('enterkeyhint')).toBe('search')
+    fireEvent.click(screen.getByRole('button', { name: /^Melden — Zone 12/ }))
+    expect(onSubmit).toHaveBeenCalledTimes(1)
+  })
+
   it('wählt die angetippte Stelle vor und meldet genau sie', () => {
     const { onSubmit } = zeichne({ anchor: [13.401, 52.521] })
     const knopf = screen.getByRole('button', { name: /^Melden — Zone 12/ })

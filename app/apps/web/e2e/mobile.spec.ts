@@ -76,6 +76,59 @@ test.describe('Zurück schließt das Blatt, nicht die App', () => {
     await page.goBack()
     await expect(dialog).toHaveCount(0)
   })
+
+  /**
+   * Android-Audit vom 10. September, A-001 bis A-003 und A-012: Bei offenem
+   * Ebenen-Menü, offenem Meldungen-Blatt, halb offenem Detail-Blatt und
+   * offenen Suchtreffern verliess „Zurück" die App (`about:blank`) — und
+   * beim Meldungen-Blatt ging der Eintrag, das Blatt blieb.
+   */
+  test('schließt über Zurück das Ebenen-Menü, das Meldungen-Blatt und die Suchtreffer', async ({ page }) => {
+    await ready(page)
+    await page.getByRole('button', { name: /Ebenen/ }).click()
+    await expect(page.locator('.legend--open')).toBeVisible()
+    await page.goBack()
+    await expect(page.locator('.legend--open')).toHaveCount(0)
+    expect(new URL(page.url()).pathname).toBe('/')
+
+    await openReports(page)
+    const meldungen = page.getByRole('dialog', { name: 'Meldungen' })
+    await page.goBack()
+    await expect(meldungen).toHaveCount(0)
+    await expect.poll(() => page.evaluate(() => history.state)).toBeNull()
+    expect(new URL(page.url()).pathname).toBe('/')
+
+    await page.locator('.search__input').fill('Mitte')
+    await expect(page.locator('.search__results')).toBeVisible()
+    await page.goBack()
+    await expect(page.locator('.search__results')).toHaveCount(0)
+    expect(new URL(page.url()).pathname).toBe('/')
+  })
+
+  test('schließt über Zurück das Detail-Blatt — ein Eintrag je Öffnen, nicht je Zone', async ({ page }, testInfo) => {
+    await ready(page)
+    const body = page.locator('.sidebar__body')
+    if (testInfo.project.name === 'desktop') {
+      // Die Seitenleiste steht auf dem Desktop beim Start offen — ohne
+      // Eintrag, sonst schlösse „Zurück" erst sie und dann die Seite.
+      await expect(body).toBeVisible()
+      expect(await page.evaluate(() => history.state)).toBeNull()
+      return
+    }
+    await page.locator('.panel-toggle').click()
+    await expect(body).toBeVisible()
+    expect(await page.evaluate(() => history.state)).not.toBeNull()
+    // Ein zweiter Zonentipp legt keinen zweiten Eintrag an.
+    const laenge = await page.evaluate(() => history.length)
+    await page.locator('.search__input').fill('Mitte')
+    await page.locator('.search__results button').first().click()
+    await expect(page.locator('#zone-panel-title')).toBeVisible()
+    expect(await page.evaluate(() => history.length)).toBe(laenge)
+    await page.goBack()
+    await expect(body).toBeHidden()
+    expect(new URL(page.url()).pathname).toBe('/')
+    await expect.poll(() => page.evaluate(() => history.state)).toBeNull()
+  })
 })
 
 test.describe('das Blatt auf dem Handy', () => {
@@ -350,7 +403,7 @@ test.describe('Folgepunkte aus dem Audit', () => {
     await drin()
   })
 
-  test('trägt im eingeklappten Griff Zone, Status und Betrag', async ({ page }) => {
+  test('trägt im eingeklappten Griff Zone, Status und Betrag', async ({ page }, testInfo) => {
     // Dienstag 10:30 Berliner Zeit: die Stunde, in der jede Zone kassiert —
     // damit sicher ein Betrag zu sehen ist, nicht nur meistens.
     await page.clock.setFixedTime(new Date('2026-09-08T10:30:00+02:00'))
@@ -375,6 +428,17 @@ test.describe('Folgepunkte aus dem Audit', () => {
     // statt den Griff höher zu machen.
     const box = await label.boundingBox()
     expect(box!.height).toBeLessThan(28)
+    // Der Griff selbst bleibt eine Zeile hoch, und der Ziehgriff ist ein
+    // 32-Pixel-Balken, keine Linie über die ganze Breite (Android-Audit
+    // A-013, A-014).
+    const grip = (await page.locator('.panel-toggle').boundingBox())!
+    expect(grip.height).toBeLessThan(60)
+    if (testInfo.project.name !== 'phone') return
+    const balken = await page.locator('.panel-toggle__grip').evaluate((el) => {
+      const s = getComputedStyle(el, '::before')
+      return { width: s.width, display: s.display }
+    })
+    expect(balken).toEqual({ width: '32px', display: 'block' })
   })
 })
 

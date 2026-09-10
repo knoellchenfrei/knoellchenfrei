@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react'
+import { IconZurueck } from '../icons.js'
 
 import { distanceMetres, type Position } from '@knoellchenfrei/core'
 
@@ -185,7 +186,7 @@ export function ReportSheet({
           onClick={onClose}
           aria-label="Schließen"
         >
-          <span aria-hidden="true">‹</span>
+          <IconZurueck size={22} aria-hidden="true" />
         </button>
         <h2 className="sheet__title">Sichtung melden</h2>
         {onFeedback !== null && (
@@ -213,6 +214,18 @@ export function ReportSheet({
           placeholder="Zone oder Bezirk suchen"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter') return
+            const erste = matches[0]
+            if (erste === undefined) return
+            setPicked(erste)
+            event.currentTarget.blur()
+          }}
+          enterKeyHint="search"
+          autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
           aria-label="Nach Zone oder Bezirk suchen"
         />
 

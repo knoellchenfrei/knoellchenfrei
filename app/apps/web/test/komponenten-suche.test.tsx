@@ -86,6 +86,29 @@ describe('SearchBox', () => {
     expect((feld as HTMLInputElement).value).toBe('')
   })
 
+  // Die „Suchen"-Taste der Android-Tastatur: Enter nimmt den ersten Treffer,
+  // räumt das Feld und gibt den Fokus ab, damit die Tastatur zugeht.
+  it('wählt mit Enter den ersten Treffer und lässt das Feld los', () => {
+    const { onPick, feld } = zeichne()
+    fireEvent.change(feld, { target: { value: '12' } })
+    feld.focus()
+    fireEvent.keyDown(feld, { key: 'Enter' })
+    expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ properties: expect.objectContaining({ zone: '12' }) }))
+    expect((feld as HTMLInputElement).value).toBe('')
+    expect(document.activeElement).not.toBe(feld)
+    expect(feld.getAttribute('enterkeyhint')).toBe('search')
+    expect(feld.getAttribute('autocomplete')).toBe('off')
+  })
+
+  it('tut mit Enter ohne Treffer nichts', () => {
+    const { onPick, onPickStreet, feld } = zeichne()
+    fireEvent.change(feld, { target: { value: 'xyz' } })
+    fireEvent.keyDown(feld, { key: 'Enter' })
+    expect(onPick).not.toHaveBeenCalled()
+    expect(onPickStreet).not.toHaveBeenCalled()
+    expect((feld as HTMLInputElement).value).toBe('xyz')
+  })
+
   it('findet Hamburger Flächen nicht über ihre Quell-Kennung', () => {
     const { feld } = zeichne()
     fireEvent.change(feld, { target: { value: 'de' } })

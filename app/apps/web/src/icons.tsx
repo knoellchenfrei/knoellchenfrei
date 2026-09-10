@@ -27,6 +27,7 @@ export {
   TriangleAlert as IconWarnung,
   Users as IconGeraete,
   X as IconSchliessen,
+  ChevronLeft as IconZurueck,
   MapPin as IconOrt,
 } from 'lucide-react'
 

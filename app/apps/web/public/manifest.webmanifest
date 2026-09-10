@@ -43,21 +43,21 @@
       "short_name": "Melden",
       "description": "Eintragen, dass hier gerade kontrolliert wird",
       "url": "./?start=melden",
-      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [{ "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }]
     },
     {
       "name": "Wo bin ich?",
       "short_name": "Standort",
       "description": "Zur eigenen Position springen und die Zone anzeigen",
       "url": "./?start=standort",
-      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [{ "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }]
     },
     {
       "name": "Kontrollen der letzten Wochen",
       "short_name": "Kontrollen",
       "description": "Heatmap der gemeldeten Kontrollen öffnen",
       "url": "./?start=kontrollen",
-      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [{ "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }]
     }
   ]
 }

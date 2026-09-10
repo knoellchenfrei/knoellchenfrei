@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { IconZurueck } from '../icons.js'
 
 import { MAX_FEEDBACK_LENGTH, type FeedbackKind } from '../feedback.js'
 
@@ -73,7 +74,7 @@ export function FeedbackSheet({ onSend, onClose }: Props) {
           onClick={onClose}
           aria-label="Schließen"
         >
-          <span aria-hidden="true">‹</span>
+          <IconZurueck size={22} aria-hidden="true" />
         </button>
         <h2 className="sheet__title">Feedback senden</h2>
       </header>
@@ -117,6 +118,8 @@ export function FeedbackSheet({ onSend, onClose }: Props) {
               maxLength={MAX_FEEDBACK_LENGTH}
               rows={6}
               placeholder="Je konkreter, desto eher lässt sich etwas daraus machen."
+              enterKeyHint="enter"
+              autoCapitalize="sentences"
               onChange={(event) => setText(event.target.value)}
             />
             {text.length >= COUNTER_FROM && (

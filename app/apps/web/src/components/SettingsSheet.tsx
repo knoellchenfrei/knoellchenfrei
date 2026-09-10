@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { HISTORY_DAYS } from '@knoellchenfrei/core'
 
 import { CITY, selectableCities, switchCity } from '../city.js'
-import { IconWarnung } from '../icons.js'
+import { IconWarnung, IconZurueck } from '../icons.js'
 import { setStatistikAus, statistikAus } from '../track.js'
 import { InstallRow, useInstallState } from './InstallHint.js'
 
@@ -263,7 +263,7 @@ export function SettingsSheet({
           onClick={onClose}
           aria-label="Schließen"
         >
-          <span aria-hidden="true">‹</span>
+          <IconZurueck size={22} aria-hidden="true" />
         </button>
         <h2 className="sheet__title">Einstellungen</h2>
       </header>

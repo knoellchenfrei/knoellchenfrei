@@ -142,6 +142,7 @@ ${openGraph(origin)}
   label { display: block; margin: 0 0 7px; font-size: 13px; font-weight: 500; }
   input {
     width: 100%;
+    min-height: 48px;
     padding: 11px 13px;
     background: ${PALETTE.bg};
     border: 1px solid ${PALETTE.edge};
@@ -152,6 +153,7 @@ ${openGraph(origin)}
   input:focus-visible { outline: 2px solid ${PALETTE.accent}; outline-offset: 1px; border-color: transparent; }
   button {
     width: 100%;
+    min-height: 48px;
     margin: 12px 0 0;
     padding: 11px 13px;
     background: ${PALETTE.accent};
@@ -208,7 +210,7 @@ export function loginPage(notice: LoginNotice, origin = 'https://knoellchenfrei.
 ${message === '' ? '' : `  <p class="notice" role="alert">${message}</p>\n`}  <form method="post" autocomplete="on">
     <label for="password">Passwort</label>
     <input id="password" name="password" type="password" autocomplete="current-password"
-           autocapitalize="off" autocorrect="off" spellcheck="false" required autofocus
+           autocapitalize="off" autocorrect="off" spellcheck="false" required autofocus enterkeyhint="go"
            maxlength="200" aria-describedby="foot">
     <button type="submit">Weiter</button>
   </form>

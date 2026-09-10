@@ -341,6 +341,32 @@ export function App() {
   /** Zeitstempel des letzten Fingers am Griff; das `click` gleich danach ist derselbe Tipp. */
   const lastGripTouch = useRef(0)
   const [legendOpen, setLegendOpen] = useState(false)
+  /**
+   * Ob das Detail-Blatt ein Bottom Sheet ist (Handy) oder eine Seitenleiste
+   * (Desktop). Nur als Sheet bekommt es einen Verlaufseintrag: Auf dem
+   * Desktop steht es beim Start offen, und ein Eintrag dafür wäre ein
+   * „Zurück", das erst die Leiste schliesst und dann die Seite verlässt.
+   */
+  const [handy, setHandy] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches,
+  )
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 720px)')
+    const apply = (): void => setHandy(media.matches)
+    media.addEventListener('change', apply)
+    return () => media.removeEventListener('change', apply)
+  }, [])
+  /**
+   * Zählt hoch, wenn „Zurück" oder ein Tipp auf die Karte die Suchtreffer
+   * schliessen soll; das Suchfeld wird darüber neu aufgesetzt. Android-Audit
+   * A-012: Offene Treffer waren für den Verlauf nichts, und „Zurück" verliess
+   * die App über eine Liste hinweg.
+   */
+  const [searchEpoch, setSearchEpoch] = useState(0)
+  /** Ob das Suchfeld gerade Treffer zeigt — die Liste bekommt wie das Menü einen Verlaufseintrag. */
+  const [searchOpen, setSearchOpen] = useState(false)
+  const handyRef = useRef(handy)
+  handyRef.current = handy
   // Read by a polite live region: the map and the panel change visually, and a
   // screen reader would otherwise hear nothing when a zone is picked or a
   // session starts.
@@ -446,9 +472,14 @@ export function App() {
     return () => observer.disconnect()
   }, [])
 
-  // Ein Verlaufseintrag, solange ein Blatt offen ist — damit „Zurück" das
-  // Blatt schließt und nicht die App. Warum ein Eintrag für alle drei und
-  // nicht einer je Blatt, steht in `layer-history.ts`.
+  // Ein Verlaufseintrag, solange etwas offen ist — damit „Zurück" es
+  // schließt und nicht die App. Warum ein Eintrag für alle und nicht einer je
+  // Blatt, steht in `layer-history.ts`. Seit dem 10. September (Android-Audit
+  // A-001 bis A-003) gehören auch das Ebenen-Menü und das Detail-Blatt dazu:
+  // Auf Android klappt jedes Bottom Sheet und jedes Menü bei „Zurück" zu —
+  // vorher verliess die Geste bei offenem Menü die App. Für das Blatt gilt
+  // genau EIN Eintrag je Öffnen, keiner je Zonentipp oder Stufenwechsel;
+  // „Zurück" aus „voll" schliesst ganz, wie Google Maps es tut.
   const activeLayer = settingsOpen
     ? 'einstellungen'
     : feedbackOpen
@@ -457,7 +488,13 @@ export function App() {
         ? 'meldungen'
         : reporting
           ? 'melden'
-          : null
+          : panelOpen && handy
+            ? 'details'
+            : legendOpen
+              ? 'ebenen'
+              : searchOpen
+                ? 'suche'
+                : null
   const previousLayer = useRef<string | null>(null)
   useEffect(() => {
     syncLayer(window.history, previousLayer.current, activeLayer)
@@ -469,7 +506,16 @@ export function App() {
       if (layerOf(event.state) !== null) return
       setSettingsOpen(false)
       setFeedbackOpen(false)
+      // Fehlte bis zum 10. September: Der Eintrag ging, das Meldungen-Blatt
+      // blieb, und der zweite „Zurück" verliess die App (Android-Audit A-002).
+      setReportsOpen(false)
       setReporting(false)
+      setLegendOpen(false)
+      // Nur das Sheet auf dem Handy: Die Seitenleiste des Desktops hat keinen
+      // Eintrag und darf von einem „Zurück" aus dem Menü nicht zuklappen.
+      if (handyRef.current) setPanelOpen(false)
+      setSearchOpen(false)
+      setSearchEpoch((n) => n + 1)
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -1006,6 +1052,8 @@ export function App() {
             // Ein Tipp auf die Karte schliesst das Ebenen-Menü: Es liegt
             // über der Karte, und wer die Karte anfasst, ist damit fertig.
             setLegendOpen(false)
+            setSearchOpen(false)
+            setSearchEpoch((n) => n + 1)
             anchorFromGps.current = false
             setAnchor([event.lngLat.lng, event.lngLat.lat])
             // A tap that hits no zone also ends the previous selection. The
@@ -1881,7 +1929,13 @@ export function App() {
           Suche und Einstellungen.
         */}
         <div className="topbar__row">
-          <SearchBox zones={zones} onPick={focusZone} onPickStreet={focusStreet} />
+          <SearchBox
+            key={searchEpoch}
+            zones={zones}
+            onPick={focusZone}
+            onPickStreet={focusStreet}
+            onOpenChange={setSearchOpen}
+          />
           {/* Die Beta-Marke gehört zum Kopf der App, nicht auf die Kante der
               Live-Karte, wo sie bis zum 9. September abends klebte. */}
           <BetaBadge />
@@ -2144,6 +2198,7 @@ export function App() {
           aria-controls="sidebar-body"
         >
           <span className="panel-toggle__grip" aria-hidden="true" />
+          <span className="panel-toggle__row">
           <span className="panel-toggle__icon" aria-hidden="true">
             {panelOpen ? <IconZu size={18} /> : <IconAuf size={18} />}
           </span>
@@ -2179,6 +2234,7 @@ export function App() {
                         ? [`${costLabel(status.hourly)}/Std.`]
                         : []),
                     ].join(' · ')}
+          </span>
           </span>
         </button>
 

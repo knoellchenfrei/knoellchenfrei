@@ -65,8 +65,9 @@ export function InstallRow({ state }: RowProps) {
 
   return (
     <p className="install__note">
-      Dieser Browser bietet das Ablegen nicht über die Seite an. In Firefox und Chrome steht es im
-      Menü unter „Zum Startbildschirm hinzufügen".
+      Dieser Browser bietet das Ablegen nicht über die Seite an. In Chrome heißt es im Menü
+      „App installieren", in Samsung Internet „Seite hinzufügen zu → Startbildschirm", in Firefox
+      „Zum Startbildschirm hinzufügen".
     </p>
   )
 }

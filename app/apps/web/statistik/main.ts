@@ -329,7 +329,9 @@ async function los(): Promise<void> {
     const antwort = await fetch(`${API_BASE}/stats`)
     if (!antwort.ok) throw new Error(String(antwort.status))
     const stand = (await antwort.json()) as Stand
-    if (stand.leer === true || stand.erzeugtAm === null) {
+    // Ohne `kopf` ist es kein Stand, sondern eine Antwort, die niemand so
+    // gebaut hat — vorher stand dann ein Stacktrace als Seitentext.
+    if (stand.leer === true || stand.erzeugtAm === null || typeof stand.kopf !== 'object' || stand.kopf === null) {
       ziel.replaceChildren(
         el('p', 'leer', 'Noch kein Stand berechnet — die Auswertung läuft einmal je Stunde.')
       )

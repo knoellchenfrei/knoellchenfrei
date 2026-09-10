@@ -10,6 +10,8 @@ interface Props {
   zones: readonly LoadedZone[]
   onPick: (zone: LoadedZone) => void
   onPickStreet: (hit: StreetHit) => void
+  /** Meldet, ob gerade eine Trefferliste offen ist — für den Verlaufseintrag (Android „Zurück"). */
+  onOpenChange?: (open: boolean) => void
 }
 
 /** Wie lange die Tastatur ruhen muss, bevor eine Straßenanfrage geht. */
@@ -21,7 +23,7 @@ const DEBOUNCE_MS = 300
  * eine Antwort kommt — und fehlen still, wenn keine kommt. Der Grund für die
  * Zweiteilung steht in `street-search.ts`.
  */
-export function SearchBox({ zones, onPick, onPickStreet }: Props) {
+export function SearchBox({ zones, onPick, onPickStreet, onOpenChange }: Props) {
   const [query, setQuery] = useState('')
   const [streets, setStreets] = useState<StreetHit[]>([])
 
@@ -62,6 +64,10 @@ export function SearchBox({ zones, onPick, onPickStreet }: Props) {
   }, [query])
 
   const total = matches.length + streets.length
+  const open = total > 0
+  useEffect(() => {
+    onOpenChange?.(open)
+  }, [open, onOpenChange])
   const reset = (): void => {
     setQuery('')
     setStreets([])
@@ -76,6 +82,25 @@ export function SearchBox({ zones, onPick, onPickStreet }: Props) {
         placeholder="Zone, Bezirk, Straße"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
+        // Die „Suchen"-Taste der Android-Tastatur wählt den ersten Treffer
+        // und schliesst die Tastatur; vorher tat sie nichts, und der erste
+        // Treffer lag unter der Tastatur (Android-Audit A-010). `autoComplete`
+        // aus, damit Chromes Autofill-Leiste nicht über die Treffer fällt.
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter') return
+          const zone = matches[0]
+          const street = streets[0]
+          if (zone !== undefined) onPick(zone)
+          else if (street !== undefined) onPickStreet(street)
+          else return
+          reset()
+          event.currentTarget.blur()
+        }}
+        enterKeyHint="search"
+        autoComplete="off"
+        autoCapitalize="off"
+        autoCorrect="off"
+        spellCheck={false}
         aria-label="Nach Zone, Bezirk oder Straße suchen"
         aria-describedby="search-hint"
       />
