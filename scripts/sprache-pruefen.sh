@@ -45,7 +45,11 @@ WOERTER='fuer|Fuer|dafuer|ueber|Ueber|ueberall|ueberhaupt|uebrig|koennen|koennte
 #   dist*/    erzeugt
 # Und diese Datei selbst: Sie muss die Ersatzschreibungen nennen, um nach ihnen
 # suchen zu können — genau wie `namen-pruefen.sh` den alten Projektnamen nennt.
-AUS='-path ./node_modules -prune -o -path ./.git -prune -o -path ./audit -prune -o
+# `.claude` traegt die Worktrees der Hintergrundagenten samt ihrer Kopie des
+# Baums — ohne diese Ausnahme meldete die Pruefung am 10. September jede
+# Fundstelle aus `audit/` ein zweites Mal, unter einem Pfad, den es im
+# Repository gar nicht gibt.
+AUS='-path ./node_modules -prune -o -path ./.git -prune -o -path ./.claude -prune -o -path ./audit -prune -o
      -path ./app/node_modules -prune -o -path ./app/apps/web/dist -prune -o
      -path ./app/apps/web/dist-artifact -prune -o -path ./app/packages/core/test/fixtures -prune -o
      -path ./app/packages/core/coverage -prune -o'

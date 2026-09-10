@@ -87,6 +87,14 @@ describe('ReportSheet', () => {
     ])
   })
 
+  it('nennt den Abstand unter einem Kilometer in Metern, darüber in Kilometern', () => {
+    zeichne({ mapCentre: [13.419, 52.52] })
+    const optionen = screen.getAllByRole('button').filter((b) => b.className.includes('sheet__option'))
+    // Zone 34 liegt 70 m östlich, Zone 12 rund 1,3 km westlich der Kartenmitte.
+    expect(optionen[0]?.textContent).toMatch(/Mitte · \d0 m$/)
+    expect(optionen[1]?.textContent).toMatch(/Mitte · 1,3 km$/)
+  })
+
   it('wählt die angetippte Stelle vor und meldet genau sie', () => {
     const { onSubmit } = zeichne({ anchor: [13.401, 52.521] })
     const knopf = screen.getByRole('button', { name: /^Melden — Zone 12/ })

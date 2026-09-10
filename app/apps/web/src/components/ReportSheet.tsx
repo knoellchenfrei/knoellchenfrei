@@ -135,7 +135,7 @@ export function ReportSheet({
           zone,
           metres < 1000
             ? `${zone.properties.district} · ${Math.round(metres / 10) * 10} m`
-            : `${zone.properties.district} · ${(metres / 1000).toFixed(1)} km`,
+            : `${zone.properties.district} · ${(metres / 1000).toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} km`,
         ),
       )
       .slice(0, NEARBY_COUNT)

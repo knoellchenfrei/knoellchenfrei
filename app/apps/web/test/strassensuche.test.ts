@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { MIN_QUERY, parsePhoton, photonUrl, searchStreets } from '../src/street-search.js'
+import { parsePhoton, photonUrl, searchStreets } from '../src/street-search.js'
 
 /**
  * Die Straßensuche über Photon, seit dem 9. September nachts. Was hier
@@ -23,6 +23,19 @@ describe('parsePhoton', () => {
       features: [feature('Torstraße', [13.4, 52.53], { district: 'Mitte' })],
     })
     expect(hits).toEqual([{ name: 'Torstraße', detail: 'Mitte', position: [13.4, 52.53] }])
+  })
+
+  it('trimmt den Namen und nimmt den Ort, wo der Stadtteil fehlt', () => {
+    const hits = parsePhoton({
+      features: [
+        feature(' Dorfstraße ', [13.6, 52.4], { locality: 'Müggelheim' }),
+        feature('Beides', [13.6, 52.4], { district: 'Köpenick', locality: 'Müggelheim' }),
+      ],
+    })
+    expect(hits.map((hit) => [hit.name, hit.detail])).toEqual([
+      ['Dorfstraße', 'Müggelheim'],
+      ['Beides', 'Köpenick'],
+    ])
   })
 
   it('lässt fallen, was keinen Namen oder keine brauchbare Koordinate hat', () => {
@@ -66,16 +79,31 @@ describe('photonUrl', () => {
     expect(url.searchParams.get('osm_tag')).toBe('highway')
     expect(url.searchParams.get('lang')).toBe('de')
     expect(url.searchParams.get('bbox')).toBe('13.08,52.33,13.77,52.68')
+    expect(url.searchParams.get('limit')).toBe('6')
   })
 })
 
 describe('searchStreets', () => {
+  // Der Spion bekommt eine Antwort: Ohne sie ginge eine Anfrage, die der
+  // Test nicht erwartet, LIVE an photon.komoot.io — am 10. September
+  // nachgemessen, mit fünf echten Treffern im Fehlertext. Ein Test, der bei
+  // einem kaputten Deckel ins Netz greift, misst die Verbindung, nicht den Code.
   it('schickt unter drei Zeichen nichts hinaus', async () => {
-    const fetchMock = vi.spyOn(globalThis, 'fetch')
-    expect(MIN_QUERY).toBe(3)
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(Response.json({ features: [] }))
     expect(await searchStreets('To', BOUNDS)).toEqual([])
     expect(await searchStreets('  T ', BOUNDS)).toEqual([])
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('fragt genau den getrimmten Text im Stadtrahmen und reicht das Abbruchsignal durch', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(Response.json({ features: [] }))
+    const controller = new AbortController()
+    await searchStreets(' Torstr ', BOUNDS, controller.signal)
+    const [adresse, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const url = new URL(adresse)
+    expect(url.searchParams.get('q')).toBe('Torstr')
+    expect(url.searchParams.get('bbox')).toBe('13.08,52.33,13.77,52.68')
+    expect(init.signal).toBe(controller.signal)
   })
 
   it('wirft bei einer Fehlantwort, damit der Aufrufer still bleiben kann', async () => {

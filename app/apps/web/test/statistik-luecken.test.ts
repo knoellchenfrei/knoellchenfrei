@@ -5,12 +5,14 @@ import { nieGezaehlt } from '../statistik/luecken.js'
 
 describe('nieGezaehlt', () => {
   it('nennt jedes Katalogereignis, das im Stand fehlt, in Katalogreihenfolge', () => {
-    const stand = [{ name: 'app.open' }, { name: 'zone.open' }, { name: 'unbekannt' }]
-    const luecken = nieGezaehlt(stand)
-    expect(luecken).not.toContain('app.open')
-    expect(luecken).not.toContain('zone.open')
-    expect(luecken).toContain('tow.open')
-    expect(luecken).toEqual(EVENT_NAMES.filter((n) => n !== 'app.open' && n !== 'zone.open'))
+    // Fast alles gezählt, drei Lücken quer über den Katalog — das Ergebnis
+    // steht als Literal, nicht als Filter über den Katalog: Ein Filter hätte
+    // dieselbe Logik wie die Funktion und könnte nie rot werden.
+    const gezaehlt = EVENT_NAMES.filter(
+      (name) => name !== 'zone.answer' && name !== 'city.suggest' && name !== 'tow.open',
+    )
+    const stand = [...gezaehlt.map((name) => ({ name })), { name: 'unbekannt' }]
+    expect(nieGezaehlt(stand)).toEqual(['zone.answer', 'city.suggest', 'tow.open'])
   })
 
   it('ist leer, wenn alles gezählt wurde — und voll, wenn nichts', () => {

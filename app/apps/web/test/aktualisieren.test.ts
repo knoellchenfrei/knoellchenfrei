@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const lies = (pfad: string): string =>
   readFileSync(fileURLToPath(new URL(pfad, import.meta.url)), 'utf8')
@@ -40,27 +40,72 @@ describe('die Seite und der Service Worker einigen sich auf dieselbe Nachricht',
     expect(sw).toContain('self.skipWaiting()')
   })
 
-  it('der Worker aktiviert sich NICHT von selbst beim Installieren', () => {
-    // Ein `skipWaiting()` im `install`-Ereignis zieht der laufenden Seite die
-    // nachgeladenen Bündel weg — weisse Seite mitten in der Benutzung. Der
-    // Aufruf darf nur im Nachrichten-Empfänger stehen.
-    //
-    // **Ohne `ohneKommentare` schlägt dieser Test auf Prosa an**: Direkt über
-    // dem Nachrichten-Empfänger steht der Satz „Bewusst kein `skipWaiting()`
-    // beim Installieren", und der stand beim ersten Anlauf im gesuchten
-    // Bereich. Ein Wächter, der Kommentare für Code hält, meldet Fehler, die
-    // es nicht gibt — und verdeckt damit die, die es gibt.
-    const installBlock = /addEventListener\('install'[\s\S]*?addEventListener\('message'/.exec(
-      ohneKommentare(sw),
-    )
-    expect(installBlock).not.toBeNull()
-    expect(installBlock?.[0]).not.toContain('skipWaiting')
+  // Ob der Worker beim Installieren die Finger vom `skipWaiting` lässt, prüft
+  // `service-worker.test.ts` am laufenden Skript; hier nur der Vertrag über
+  // die Zeichenkette.
+})
+
+/**
+ * Die Seite, ausgeführt: `registerServiceWorker` gegen einen gestellten
+ * `navigator.serviceWorker`. Bis zum 10. September stand hier ein Grep nach
+ * `addEventListener(\n    'controllerchange'` — vier Leerzeichen Einrückung
+ * als Zusicherung, und ein Formatierer hätte die Suite gebrochen.
+ */
+describe('die Seite lädt erst neu, wenn der neue Worker das Ruder hat', () => {
+  async function stelle(wartend: boolean) {
+    vi.resetModules()
+    const worker = { postMessage: vi.fn() }
+    const registration = {
+      waiting: wartend ? worker : null,
+      installing: null,
+      addEventListener: vi.fn(),
+    }
+    const swHandlers = new Map<string, () => void>()
+    const winHandlers = new Map<string, () => void>()
+    const reload = vi.fn()
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        register: vi.fn(() => Promise.resolve(registration)),
+        addEventListener: (name: string, handler: () => void) => swHandlers.set(name, handler),
+        controller: null,
+      },
+      userAgent: 'test',
+    })
+    vi.stubGlobal('window', {
+      addEventListener: (name: string, handler: () => void) => winHandlers.set(name, handler),
+      location: { reload },
+      matchMedia: () => ({ matches: false }),
+      navigator: {},
+    })
+    const pwa = await import('../src/pwa.js')
+    pwa.registerServiceWorker()
+    winHandlers.get('load')?.()
+    await new Promise((r) => setTimeout(r, 0))
+    return { pwa, worker, swHandlers, reload }
+  }
+
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('meldet eine wartende Version, schickt auf Wunsch die Nachricht und lädt erst nach der Übernahme', async () => {
+    const { pwa, worker, swHandlers, reload } = await stelle(true)
+    const bereit = vi.fn()
+    pwa.watchUpdate(bereit)
+    expect(bereit).toHaveBeenLastCalledWith(true)
+    pwa.applyUpdate()
+    expect(worker.postMessage).toHaveBeenCalledWith({ type: NACHRICHT })
+    expect(reload).not.toHaveBeenCalled()
+    swHandlers.get('controllerchange')?.()
+    expect(reload).toHaveBeenCalledTimes(1)
   })
 
-  it('die Seite lädt erst neu, wenn der neue Worker das Ruder hat', () => {
-    // `controllerchange` und nicht sofort: Ein Neuladen vor der Übernahme
-    // holt noch einmal die alte Version.
-    expect(pwa).toContain("addEventListener(\n    'controllerchange'")
-    expect(pwa).toContain('window.location.reload()')
+  it('tut ohne wartende Version nichts', async () => {
+    const { pwa, worker, reload } = await stelle(false)
+    const bereit = vi.fn()
+    pwa.watchUpdate(bereit)
+    expect(bereit).toHaveBeenLastCalledWith(false)
+    pwa.applyUpdate()
+    expect(worker.postMessage).not.toHaveBeenCalled()
+    expect(reload).not.toHaveBeenCalled()
   })
+
 })

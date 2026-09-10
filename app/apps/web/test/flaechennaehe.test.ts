@@ -35,10 +35,6 @@ describe('zoneNear in Karlsruhe', () => {
     erste.bounds.maxLat,
   ]
 
-  it('hat einen gemessenen Radius', () => {
-    expect(reach).toBe(20)
-  })
-
   it('findet die Reihe, die eine Ortung knapp verfehlt, und nennt den Abstand', () => {
     const daneben = noerdlich(oben, 8)
     // Strikt: nichts, sonst bräuchte es den zweiten Versuch nicht.

@@ -26,9 +26,13 @@ interface Antwort {
 }
 
 /** Ein `fetch`, das je Pfad antwortet — sonst die heile Datei. */
+let geholt: string[] = []
+
 function stelleFetch(besonders: Record<string, Antwort>): void {
+  geholt = []
   vi.stubGlobal('window', {})
   vi.stubGlobal('fetch', (url: string) => {
+    geholt.push(url)
     const eintrag = Object.entries(besonders).find(([teil]) => url.includes(teil))?.[1]
     const status = eintrag?.status ?? 200
     const typ = eintrag?.typ ?? 'application/geo+json'
@@ -55,7 +59,16 @@ describe('loadData sieht auf den Inhalt, nicht nur auf den Status', () => {
     stelleFetch({})
     const daten = await loadData('berlin')
     expect(daten.zones).toEqual({ type: 'FeatureCollection', features: [] })
-    expect(daten.meta).toBeDefined()
+    expect(daten.meta).toEqual({ type: 'FeatureCollection', features: [] })
+    // Genau diese fünf, für die geladene Stadt — ein Datenbau, der vier holt,
+    // ginge sonst durch.
+    expect(geholt.map((url) => url.replace(/^.*\/data\//, ''))).toEqual([
+      'berlin/zones.geojson',
+      'berlin/poi.geojson',
+      'berlin/districts.geojson',
+      'berlin/umweltzone.geojson',
+      'berlin/meta.json',
+    ])
   })
 
   it('nennt die Datei, wenn statt ihrer die Startseite kommt', async () => {

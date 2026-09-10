@@ -44,23 +44,11 @@ afterEach(() => {
 /** 23:55 Berliner Zeit am 7. September 2026 — fünf Minuten vor der Grenze. */
 const KURZ_VOR = Date.parse('2026-09-07T21:55:00Z')
 
+// Tageswechsel, Gleichheit am selben Tag und der Lauf ohne Speicher stehen
+// in `lebendzahlen.test.ts` mit gestellten Uhren — hier nur, was dort fehlt.
 describe('die Zeilenkennung des Besuchszählers', () => {
   it('trägt den Berliner Tag vorn', () => {
     expect(visitRowId(KURZ_VOR)).toMatch(/^2026-09-07-[\w-]{1,32}$/)
-  })
-
-  it('bleibt innerhalb desselben Tages gleich', () => {
-    const erste = visitRowId(KURZ_VOR)
-    expect(visitRowId(KURZ_VOR + 60_000)).toBe(erste)
-    expect(visitRowId(KURZ_VOR + 4 * 60_000)).toBe(erste)
-  })
-
-  it('wechselt um Mitternacht auf den neuen Tag', () => {
-    const vorher = visitRowId(KURZ_VOR)
-    // Zehn Minuten später ist es der 8. September, Berliner Zeit.
-    const nachher = visitRowId(KURZ_VOR + 10 * 60_000)
-    expect(nachher).toMatch(/^2026-09-08-/)
-    expect(nachher).not.toBe(vorher)
   })
 
   it('vergibt nach dem Wechsel eine neue Zufallskennung, nicht die alte mit neuem Datum', () => {
@@ -69,21 +57,5 @@ describe('die Zeilenkennung des Besuchszählers', () => {
     const alt = visitRowId(KURZ_VOR).split('-').slice(3).join('-')
     const neu = visitRowId(KURZ_VOR + 10 * 60_000).split('-').slice(3).join('-')
     expect(neu).not.toBe(alt)
-  })
-
-  it('zählt auch ohne Gerätespeicher weiter, statt zu werfen', () => {
-    vi.stubGlobal('window', {
-      localStorage: {
-        getItem: () => {
-          throw new Error('SecurityError')
-        },
-        setItem: () => {
-          throw new Error('SecurityError')
-        },
-        removeItem: () => undefined,
-      },
-    })
-    expect(() => visitRowId(KURZ_VOR)).not.toThrow()
-    expect(visitRowId(KURZ_VOR)).toMatch(/^2026-09-07-/)
   })
 })

@@ -83,7 +83,10 @@ describe('Notice', () => {
     const { rerender } = render(
       <Notice notice={{ text: '12 Meldungen', icon: <span />, href: '/statistik/' }} leaving={false} />,
     )
-    expect(screen.getByRole('link', { name: /12 Meldungen/ }).getAttribute('href')).toBe('/statistik/')
+    const link = screen.getByRole('link', { name: /12 Meldungen/ })
+    expect(link.getAttribute('href')).toBe('/statistik/')
+    // In einem neuen Tab, wie die Live-Leiste: Die Karte bleibt stehen.
+    expect(link.getAttribute('target')).toBe('_blank')
     rerender(<Notice notice={{ text: 'Meldungen aktualisiert', icon: <span /> }} leaving={true} />)
     expect(screen.queryByRole('link')).toBeNull()
     expect(screen.getByRole('status').className).toContain('notice--weg')

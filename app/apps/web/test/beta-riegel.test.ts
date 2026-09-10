@@ -1,5 +1,5 @@
 import { BETA_COOKIE, signBetaToken } from '@knoellchenfrei/core'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { onRequest } from '../functions/_middleware.js'
 
@@ -181,10 +181,41 @@ describe('das Formular', () => {
     expect(cookie).toContain('SameSite=Lax')
   })
 
-  it('weist ein falsches Passwort ab, ohne ein Cookie zu setzen', async () => {
+  it('weist ein falsches Passwort ab, ohne ein Cookie zu setzen — und sagt es', async () => {
     const response = await onRequest(kontext(formular('daneben'), 'offen-sesam'))
     expect(response.status).toBe(401)
     expect(response.headers.get('Set-Cookie')).toBeNull()
+    expect(await response.text()).toContain('Das Passwort stimmt nicht.')
+  })
+
+  // Die Umleitung nach der Anmeldung darf nirgends liegen bleiben: Ein
+  // Service Worker oder Browser-Cache mit dem 303 samt Cookie wäre die
+  // Anmeldung für den nächsten, der das Gerät nimmt.
+  it('lässt die Umleitung nicht zwischenspeichern', async () => {
+    const response = await onRequest(kontext(formular('offen-sesam'), 'offen-sesam'))
+    expect(response.headers.get('Cache-Control')).toBe('no-store')
+  })
+
+  // Der Deckel ist die einzige Sicherung VOR dem Vergleich: Ohne ihn liefe
+  // `constantTimeEqual` über beliebig lange Eingaben. Gemessen mit dem Secret
+  // in derselben Länge — sonst fiele der Test schon am falschen Passwort.
+  it('weist ein Passwort über 200 Zeichen ab, ohne es zu vergleichen', async () => {
+    const lang = 'x'.repeat(201)
+    const response = await onRequest(kontext(formular(lang), lang))
+    expect(response.status).toBe(401)
+    expect(response.headers.get('Set-Cookie')).toBeNull()
+  })
+
+  it('liest einen aufgeblähten Formularkörper gar nicht erst', async () => {
+    const request = new Request('https://knoellchenfrei.de/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '5000' },
+      body: new URLSearchParams({ password: 'offen-sesam' }).toString(),
+    })
+    const gelesen = vi.spyOn(request, 'formData')
+    const response = await onRequest(kontext(request, 'offen-sesam'))
+    expect(response.status).toBe(401)
+    expect(gelesen).not.toHaveBeenCalled()
   })
 })
 

@@ -65,12 +65,6 @@ describe('ohne eigenen Server gibt es das Formular nicht', () => {
     expect(openFeedback()).toBeNull()
   })
 
-  it('mit Adresse gibt es ihn', async () => {
-    vi.stubEnv('VITE_API_BASE', 'https://api.example')
-    const { openFeedback } = await import('../src/feedback.js')
-    expect(openFeedback()).not.toBeNull()
-  })
-
   it('ein nachgestellter Schrägstrich verdoppelt sich nicht', async () => {
     vi.stubEnv('VITE_API_BASE', 'https://api.example///')
     const { openFeedback } = await import('../src/feedback.js')

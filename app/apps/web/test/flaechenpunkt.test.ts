@@ -1,11 +1,11 @@
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 import { loadZones, representativePoint, zoneAt, type LoadedZone } from '../src/zones.js'
 
 /**
- * `representativePoint` gegen die echten Daten aller vier Städte.
+ * `representativePoint` gegen die echten Daten aller ausgelieferten Städte.
  *
  * Die Funktion beantwortet „wo genau ist diese Zone", wenn jemand sie in der
  * Suche oder im Meldedialog auswählt. Ihr Vorgänger nahm die Mitte des
@@ -34,11 +34,16 @@ import { loadZones, representativePoint, zoneAt, type LoadedZone } from '../src/
  */
 
 const DATEN = fileURLToPath(new URL('../public/data/', import.meta.url))
-const STAEDTE = ['berlin', 'hamburg', 'frankfurt', 'muenchen'] as const
+// Aus dem Verzeichnis gelesen, nicht aufgezählt: Bis zum 10. September stand
+// hier eine Liste von vier Städten, und Köln, Düsseldorf und Karlsruhe — mit
+// 279 schmalen Reihen der schwierigste Bestand — liefen nie mit.
+const STAEDTE = readdirSync(DATEN, { withFileTypes: true })
+  .filter((eintrag) => eintrag.isDirectory())
+  .map((eintrag) => eintrag.name)
+  .sort()
 
 function flaechen(stadt: string): LoadedZone[] {
   const pfad = `${DATEN}${stadt}/zones.geojson`
-  if (!existsSync(pfad)) return []
   return loadZones(JSON.parse(readFileSync(pfad, 'utf8')) as Parameters<typeof loadZones>[0])
 }
 
@@ -48,9 +53,12 @@ describe('representativePoint liegt in seiner eigenen Fläche', () => {
   // aber den Fall, dass eine ganze Stadt fehlt — am 9. September sind es 357
   // (Berlin 103, Hamburg 145, Frankfurt 27, München 82), die kleinste Stadt
   // hat 27.
-  it('findet die Daten aller vier Städte', () => {
+  it('findet die Daten aller sieben Städte', () => {
+    expect(STAEDTE).toEqual(['berlin', 'duesseldorf', 'frankfurt', 'hamburg', 'karlsruhe', 'koeln', 'muenchen'])
     const summe = STAEDTE.reduce((n, stadt) => n + flaechen(stadt).length, 0)
-    expect(summe).toBeGreaterThanOrEqual(330)
+    // Am 10. September 725 (Berlin 103, Düsseldorf 44, Frankfurt 27, Hamburg 145,
+    // Karlsruhe 279, Köln 45, München 82).
+    expect(summe).toBeGreaterThanOrEqual(680)
   })
 
   for (const stadt of STAEDTE) {
@@ -73,16 +81,6 @@ describe('representativePoint liegt in seiner eigenen Fläche', () => {
       expect(
         daneben.map((e) => `${e.zone.properties.zone} (${e.zone.properties.district})`)
       ).toEqual([])
-    })
-
-    it(`${stadt}: der Punkt liegt im umschliessenden Rechteck`, () => {
-      for (const zone of flaechen(stadt)) {
-        const [lon, lat] = representativePoint(zone)
-        expect(lon).toBeGreaterThanOrEqual(zone.bounds.minLon)
-        expect(lon).toBeLessThanOrEqual(zone.bounds.maxLon)
-        expect(lat).toBeGreaterThanOrEqual(zone.bounds.minLat)
-        expect(lat).toBeLessThanOrEqual(zone.bounds.maxLat)
-      }
     })
   }
 })

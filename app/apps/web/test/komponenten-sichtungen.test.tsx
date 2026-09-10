@@ -67,6 +67,21 @@ describe('SightingPanel', () => {
     expect(onDispute).toHaveBeenCalledWith('fremd')
   })
 
+  it('zeigt höchstens sechs Zeilen, die jüngsten zuerst', () => {
+    zeichne({ sightings: Array.from({ length: 7 }, (_, i) => meldung(`m${i}`, i + 1)) })
+    expect(screen.getAllByRole('listitem')).toHaveLength(6)
+    expect(screen.queryByText(/vor 7 Min/)).toBeNull()
+  })
+
+  it('zeigt die Sterne der Konfidenz, nicht eine feste Zahl', () => {
+    // Zwei frische Bestätigungen: bestätigt und volle Sterne; die unbestätigte
+    // daneben hat weniger. Die Rechnung selbst steht in core/sighting.test.ts.
+    zeichne({ sightings: [{ ...meldung('stark', 1), confirmations: 3 }, meldung('schwach', 1)] })
+    const sterne = screen.getAllByRole('img', { name: /Vertrauen \d von 3/ })
+    expect(sterne[0]?.getAttribute('aria-label')).toBe('Vertrauen 3 von 3')
+    expect(sterne[1]?.getAttribute('aria-label')).not.toBe('Vertrauen 3 von 3')
+  })
+
   it('sagt ohne Meldungen, dass keine da sind — statt etwas zu zeigen', () => {
     zeichne({ sightings: [] })
     expect(screen.getByText(/Keine aktuellen Sichtungen/)).toBeTruthy()

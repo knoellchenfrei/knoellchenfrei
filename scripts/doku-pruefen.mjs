@@ -30,7 +30,9 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 
 const WURZEL = resolve(import.meta.dirname, '..')
-const AUS = ['node_modules', '.git', 'dist', 'coverage', 'test-results', 'playwright-report']
+// `.claude` sind die Worktrees der Hintergrundagenten — eine Kopie des Baums, in
+// der jede Datei ohne Verweis ein zweites Mal gemeldet wuerde.
+const AUS = ['node_modules', '.git', '.claude', 'dist', 'coverage', 'test-results', 'playwright-report']
 
 /** Alle Markdown-Dateien des Baums, ohne Erzeugtes. */
 function markdownDateien(verzeichnis) {
