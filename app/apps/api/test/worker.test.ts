@@ -364,39 +364,9 @@ describe('die Leseendpunkte', () => {
   })
 })
 
-describe('die Stimmabgabe', () => {
-  const stimme = (id: string, art: string) =>
-    post(`/sightings/${id}/${art}`)
-
-  /**
-   * Beide Fälle enden in 404, und das ist kein Fehler im Test, sondern die
-   * Grenze der Attrappe: Eine Stimme auf eine Meldung, die es nicht gibt, ist
-   * genauso „nicht gefunden" wie ein Weg, den es nicht gibt. Was sich prüfen
-   * lässt, ist der **Weg dorthin** — die gültige Art erreicht den Handler und
-   * schlägt an der Datenbank fehl, die ungültige erreicht ihn nie.
-   */
-  it('nimmt nur die zwei vorgesehenen Arten an', async () => {
-    for (const art of ['confirm', 'dispute']) {
-      const response = await worker.fetch(stimme('abc', art), umgebung())
-      // 404, weil die Attrappe keine Meldung kennt — aber der Weg stimmt.
-      expect(response.status, art).toBe(404)
-      expect(await response.text(), art).toContain('not found')
-    }
-    for (const art of ['vielleicht', 'CONFIRM', 'confirm2', '']) {
-      const response = await worker.fetch(stimme('abc', art), umgebung())
-      expect(response.status, art).toBe(404)
-    }
-  })
-
-  // Die Kennung kommt aus einer Adresse, also von aussen. Ein Muster, das zu
-  // viel durchlässt, landet ungeprüft in einer Abfrage.
-  it('weist eine Kennung ab, die nicht ins Muster passt', async () => {
-    for (const id of ['../etc', 'a b', "a'or'1", 'a'.repeat(65), '']) {
-      const response = await worker.fetch(stimme(encodeURIComponent(id), 'confirm'), umgebung())
-      expect(response.status, JSON.stringify(id)).toBe(404)
-    }
-  })
-})
+// Die Stimmabgabe steht in `worker-sqlite.test.ts`: Die Attrappe hier
+// antwortete auf gültige wie ungültige Art mit 404, und die Tests konnten
+// beides nicht unterscheiden.
 
 describe('was aus dem Netz ankommt', () => {
   /**

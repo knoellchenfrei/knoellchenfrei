@@ -275,8 +275,13 @@ async function countRecent(
     table === 'feedback' ? RATE_WINDOW_MS : 0
   )
   const column = RATE_COLUMNS[table]
+  // `>=`, nicht `>`: `countingWindowStart` liefert bei gerundeten Stempeln den
+  // Anfang des Kastens, in dem die Zeilen liegen — 10:00 für alles zwischen
+  // 10:00 und 10:59. Mit `>` fielen genau diese Zeilen um 11:01 heraus, und
+  // M-045 war nur in `core` behoben, nicht hier. Gefunden am 10. September
+  // vom ersten Test, der den Worker gegen echtes SQLite fährt.
   const row = await env.DB.prepare(
-    `SELECT COUNT(*) AS n FROM ${table} WHERE client_hash = ? AND ${column} > ?`
+    `SELECT COUNT(*) AS n FROM ${table} WHERE client_hash = ? AND ${column} >= ?`
   )
     .bind(hash, since)
     .first<{ n: number }>()
