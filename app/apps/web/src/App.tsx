@@ -1977,10 +1977,15 @@ export function App() {
         </>
         )}
         </div>
-      <Notice notice={notice} leaving={noticeLeaving} />
       </section>
       )}
       </div>
+      {/*
+        Eine Zeile tiefer, mittig — nicht in der Zeile der Kennzahlen: Dort
+        drückte die Pille beim Start Leiste und Ebenen-Knopf auf ein Drittel
+        zusammen, „initial sieht das kaputt aus" (Betreiber, 10. September).
+      */}
+      <Notice notice={notice} leaving={noticeLeaving} />
       </div>
 
       {/*

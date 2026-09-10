@@ -793,6 +793,54 @@ test.describe('Kontrolldichte', () => {
   })
 })
 
+test.describe('die verblassenden Hinweise', () => {
+  /**
+   * Der Betreiber, 10. September, mit Bildschirmfoto: „Initial sieht das
+   * kaputt aus" — die 28-Tage-Pille stand in der Zeile der Kennzahlen und
+   * drückte Leiste und Ebenen-Knopf auf ein Drittel. Sie steht jetzt eine
+   * Zeile tiefer, mittig, und die Zeile darüber bleibt, wie sie ist. Der
+   * gemeinsame Speicher wird als Artifact-Laufzeit nachgestellt, weil nur mit
+   * einem die Zahl überhaupt kommt.
+   */
+  test('stehen unter der Kennzahlen-Zeile, mittig, und verschieben nichts', async ({ page }) => {
+    await page.addInitScript(() => {
+      const heute = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date())
+      const docs = Array.from({ length: 33 }, (_, i) => ({ id: `m${i}`, data: { day: heute, cell: '109_97', hour: 9 } }))
+      const db = {
+        doc: () => ({ set: async () => undefined, delete: async () => undefined }),
+        collection: (name: string) => ({
+          onSnapshot: (fn: (s: { docs: unknown[] }) => void) => {
+            // Die Striche kommen erst auf Zuruf: Sonst stand die Pille, bevor
+            // die Karte bereit war, und war nach sechs Sekunden schon weg.
+            if (name === 'marks') (window as unknown as { __striche: () => void }).__striche = () => fn({ docs })
+            else fn({ docs: [] })
+            return () => {}
+          },
+        }),
+      }
+      ;(window as unknown as { claude: unknown }).claude = { use: async (n: string) => (n === 'db' ? db : null) }
+    })
+    await ready(page)
+    await page.evaluate(() => (window as unknown as { __striche?: () => void }).__striche?.())
+    const pill = page.locator('.notice__pill')
+    await expect(pill).toBeVisible()
+    await expect(pill).toContainText('33 Meldungen in 28 Tagen')
+    await expect(pill).toHaveAttribute('href', '/statistik/')
+
+    const row = (await page.locator('.overlay__row').boundingBox())!
+    const live = (await page.locator('.live').boundingBox())!
+    const ebenen = (await page.locator('.legend__toggle').boundingBox())!
+    const box = (await pill.boundingBox())!
+    // Unter der Zeile, nicht darin; und die Leiste füllt die Zeile bis zum Knopf.
+    expect(box.y).toBeGreaterThanOrEqual(row.y + row.height)
+    expect(live.x + live.width).toBeGreaterThanOrEqual(ebenen.x - 12)
+    // Mittig in der Spalte.
+    expect(Math.abs(box.x + box.width / 2 - (row.x + row.width / 2))).toBeLessThan(4)
+    // Und weg von selbst: sechs Sekunden plus Ausblenden.
+    await expect(pill).toHaveCount(0, { timeout: 9_000 })
+  })
+})
+
 test.describe('Kontrollen in der Zone', () => {
   /**
    * Das Stationsblatt von FreiFahren, auf die Zone übertragen (Betreiber,
