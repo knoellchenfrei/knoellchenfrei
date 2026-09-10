@@ -78,12 +78,6 @@ async function bereit(page) {
   if (await nachher.count()) await nachher.click()
 }
 
-async function blattAuf(page) {
-  const body = page.locator('.sidebar__body')
-  if (!(await body.isVisible())) await page.locator('.panel-toggle').click()
-  await body.waitFor()
-}
-
 /** Das Meldungen-Blatt hinter der Karte unten links (seit dem 9. September nachts). */
 async function meldungenAuf(page) {
   const dialog = page.getByRole('dialog', { name: 'Meldungen' })
@@ -97,6 +91,14 @@ async function meldungenAuf(page) {
   }
   await dialog.waitFor()
   return dialog
+}
+
+async function meldungenZu(page) {
+  const dialog = page.getByRole('dialog', { name: 'Meldungen' })
+  if (await dialog.count()) {
+    await page.keyboard.press('Escape')
+    await dialog.waitFor({ state: 'detached' })
+  }
 }
 
 async function sichtungen(page) {
@@ -117,6 +119,7 @@ async function toast(page) {
 }
 
 async function melden(nutzerin, x, y) {
+  await meldungenZu(nutzerin.page)
   const size = nutzerin.page.viewportSize()
   await nutzerin.page.mouse.click(size.width * x, size.height * y)
   await nutzerin.page.waitForTimeout(500)
@@ -147,7 +150,7 @@ try {
   // B sieht sie, bestätigt, tippt noch einmal — der Server zählt nur einmal.
   const B = await nutzer('B', '10.1.0.2', false)
   await bereit(B.page)
-  await blattAuf(B.page)
+  await meldungenAuf(B.page)
   const zeileB = B.page.locator('.sightings__item').first()
   await zeileB.getByRole('button', { name: /bestätigen$/ }).click()
   await B.page.waitForTimeout(1500)
@@ -172,7 +175,6 @@ try {
   erwarte(nachStimme.confirmations === 1, `B: der Worker zählt eine Bestätigung (${nachStimme.confirmations})`)
   await B.page.reload()
   await bereit(B.page)
-  await blattAuf(B.page)
   log('B:', await sichtungen(B.page))
   erwarte(
     (await B.page.locator('.sightings__item').first().innerText()).includes('du: gesehen'),
@@ -182,7 +184,7 @@ try {
   // C sagt „weg" und meldet eine zweite Stelle.
   const C = await nutzer('C', '10.1.0.3', false)
   await bereit(C.page)
-  await blattAuf(C.page)
+  await meldungenAuf(C.page)
   await C.page.locator('.sightings__item').first().getByRole('button', { name: /weg melden$/ }).click()
   await C.page.waitForTimeout(1500)
   erwarte((await toast(C.page)) === null, 'C: „weg" ohne Fehlermeldung')
@@ -194,7 +196,6 @@ try {
   // A lädt neu: zwei Meldungen, und die Live-Zeile zählt drei Geräte.
   await A.page.reload()
   await bereit(A.page)
-  await blattAuf(A.page)
   log('A:', await sichtungen(A.page))
   const live = (await A.page.locator('.live').innerText()).replace(/\s+/g, ' ')
   log('Live-Zeile:', live)
