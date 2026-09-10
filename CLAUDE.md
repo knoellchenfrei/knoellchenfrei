@@ -31,11 +31,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1144 Unit-Tests (core, api, web)
+pnpm test                                           # 1299 Unit-Tests (core, api, web, ingest)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 218 End-to-End-Tests
+cd apps/web && npx playwright test                  # 222 End-to-End-Tests, rund 5 Minuten
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -87,11 +87,12 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (784), `apps/api` (86, Worker und Zählwerk),
-`apps/web` (258, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+**alle vier** Tests: `core` (848), `apps/api` (101, Worker gegen SQLite und Zählwerk),
+`apps/web` (297, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
-Stadtwahl, Straßensuche, vier Komponentendateien mit jsdom) und `packages/ingest` (16, die zwei
-Wächter des Artifact-Baus und der Datenstand). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
+Stadtwahl, Straßensuche, Langzeitmuster, sieben Komponentendateien mit jsdom, Service
+Worker im gestellten `self`) und `packages/ingest` (53: Wächter des Artifact-Baus, Datenstand,
+Abzeichen, UTM-Messung, Quellen, Einheiten der Langzeitmuster). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
 ab und scheitert — nicht der Code ist kaputt, der Aufruf ist falsch.
@@ -105,7 +106,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1144 E2E_COUNT=218 npx tsx src/build-badges.ts
+TEST_COUNT=1299 E2E_COUNT=222 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -128,7 +129,7 @@ Diese kosten sonst je eine halbe Stunde Fehlersuche:
 | **pnpm 8 ignoriert das Lockfile still** | `pnpm install` mit einer zu alten Version meldet nur `WARN Ignoring broken lockfile … not compatible with current pnpm` — und **löst dann frisch auf**. Damit ist jede Festschreibung weg, und der Lauf sieht erfolgreich aus. Gemeldet am 7. September mit pnpm 8.15.9; unser Lockfile ist `lockfileVersion 9.0`. Seitdem steht `engines.pnpm: ">=10"` in `app/package.json` — nachgemessen, dass pnpm das **erzwingt** und nicht nur warnt. Richtig ist `corepack enable`; dann liest pnpm `packageManager: pnpm@10.33.0` und holt sich selbst die passende Version. |
 | **`pnpm fetch`** | Ist ein **eingebautes pnpm-Kommando** und lief still statt des Projektskripts. Das Skript heißt deshalb `fetch-data`. |
 | **Artifact** | Die Sicherheitsrichtlinie des Artifact-Sandkastens blockiert **jede** Bildanfrage an fremde Adressen. Im veröffentlichten Artifact gibt es prinzipiell keine Hintergrundkarte. Auch das ist kein Fehler. |
-| **E2E und die Karte** | `ready()` in `e2e/app.spec.ts` wartet auch darauf, dass `.loading` verschwindet. Ohne das klickten drei Tests auf eine Karte, an der noch keine Klick-Handler hingen: Mit gesperrtem Kachelserver kommt `styledata` nie, und `withMapReady` in `App.tsx` greift erst nach seinem 10-Sekunden-Rückfall. Auf einem kalten Lauf gingen sie durch, auf jedem weiteren fielen sie. |
+| **E2E und die Karte** | `ready()` in `e2e/app.spec.ts` wartet auch darauf, dass `.loading` verschwindet. Ohne das klickten drei Tests auf eine Karte, an der noch keine Klick-Handler hingen: Mit gesperrtem Kachelserver kommt `styledata` nie, und `withMapReady` in `App.tsx` greift erst nach seinem 10-Sekunden-Rückfall. Auf einem kalten Lauf gingen sie durch, auf jedem weiteren fielen sie. Seit dem 10. September brechen die Specs die Kachelanfragen in `beforeEach` ab — sonst wartet jeder Lauf die zehn Sekunden, ob gesperrt oder nicht. |
 | **GitHub-Einstellungen** | Zwei getrennte Sperren, die gern verwechselt werden — und die erste gilt **nur in der Cloud-Sitzung**. Dort lehnt der Egress-Proxy jedes `PATCH /repos/…` ab: **„Repository settings writes are not permitted through this proxy"** — Beschreibung, Topics, Pages, Dependabot-Alerts gehen dort also auch mit einem berechtigten Token nicht. **Aus einer Sitzung auf dem Rechner des Betreibers geht es** — am 7. September sind Secret Scanning, Push Protection und Private Vulnerability Reporting genau so eingeschaltet worden. Vor „geht nicht" also nachsehen, wo die Sitzung läuft. Und für das **Organisationsbild** existiert in der GitHub-API gar kein Endpunkt; das kann ausschließlich die Weboberfläche. Ein Browser läuft hier zwar, aber kopflos und ohne Eingabekanal für den Nutzer — Anmelden ist keine Option. |
 | **Workflow-Dateien** | Ein Merge über die REST-API scheitert an `refusing to allow a GitHub App to create or update workflow … without \`workflows\` permission`, sobald der PR eine Datei unter `.github/workflows/` anfasst. Der Git-Push kann es. Also: Dependabot-PRs an Workflows lokal mergen (`git merge --no-ff origin/dependabot/…`) und pushen — der PR schließt sich dann von selbst als *merged*. |
 | **Weitere Sperren** | `download.geofabrik.de`, RDAP- und Whois-Dienste, `abfelbaum.dev`. `api.github.com` geht, ist aber auf die Repositories dieser Sitzung beschränkt. |
@@ -889,6 +890,33 @@ wiederholt.
   (`bodyShown`). Nachgemessen auf dem Pixel 7: 352 → 330 → 201 → 122 → 97 →
   64 → 48 statt 352 → 48. Und ein Tipp auf „Ausblenden" ist eine Stufe
   runter (voll → halb → zu), nicht zwei.
+- **Ein Zählfenster, das `core` inklusiv rechnet, muss das SQL inklusiv
+  vergleichen.** `countingWindowStart` liefert bei gerundeten Stempeln den
+  Anfang des Kastens (10:00 für alles zwischen 10:00 und 10:59); der Worker
+  verglich mit `>`, und genau diese Zeilen fielen um 11:01 heraus — vier
+  Rückmeldungen um 10:59 plus vier um 11:01 waren wieder acht. M-045 war
+  nur in `core` behoben, nicht dort, wo die Zahl gezählt wird. Gefunden am
+  10. September vom ersten Test, der den Worker gegen echtes SQLite fährt.
+- **Eine Attrappe, die auf jedes `SELECT` mit `null` antwortet, testet den
+  Router, nicht den Worker.** So stand es bis zum 10. September in
+  `worker.test.ts`: Jede Stimme endete in 404, jede Ratengrenze bei null,
+  der Primärschlüssel in `votes` lief nie — 30 von 48 Mutanten überlebten,
+  darunter die ganze Stimmen-Route und M-047, und die 86 Tests sahen aus
+  wie eine Suite. `test/d1-sqlite.ts` reicht D1 seitdem an `node:sqlite`
+  durch und spielt die Migrationen ein; was die Datenbank entscheidet,
+  steht in `worker-sqlite.test.ts`. Dasselbe in `events-sql.test.ts`: 20
+  Tests über eine **Abschrift** der Worker-SQL, die den Fehler nur gefunden
+  hätten, wenn jemand ihn auch in die Abschrift schreibt.
+- **Ein Test, der zehn Sekunden auf einen Rückfall wartet, misst den
+  Rückfall.** Jeder E2E-Lauf wartete in `ready()` 10 Sekunden auf
+  `.loading`: 16 Kachelanfragen an `tile.openstreetmap.org` bekamen hier
+  weder Antwort noch Fehler, `isStyleLoaded()` blieb falsch, `withMapReady`
+  lief in seinen Rückfall — 206-mal, die Suite dauerte 21 Minuten statt 5.
+  Die Specs brechen die Kachelanfragen seit dem 10. September ab (`route`
+  in `beforeEach`); kein Test sieht auf Kacheln. Und der Regel-Test „Menü
+  über dem Blatt" klickte mitten in den 220-ms-Übergang und war mit
+  z-index 3 genauso grün: Wer nach einer Animation misst, wartet sie ab
+  und prüft `elementFromPoint`, nicht `click({ trial: true })`.
 
 ## Balance: Tokens und Rechenminuten
 
@@ -937,7 +965,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **77 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **80 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.

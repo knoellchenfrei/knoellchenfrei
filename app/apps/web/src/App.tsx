@@ -513,13 +513,41 @@ export function App() {
                 ? 'suche'
                 : null
   const previousLayer = useRef<string | null>(null)
+  /**
+   * Ob das nächste `popstate` von der App selbst kommt: `syncLayer` geht
+   * über `history.back()` zurück, wenn etwas OHNE die Zurück-Taste zugeht —
+   * das Kreuz im Dialog, oder eine Trefferliste, die leer wird. Dieses
+   * `popstate` darf nichts weiter schliessen. Gefunden am 10. September:
+   * „Te" fand Mitte, „Tests" fand nichts mehr, die leere Liste ging über
+   * `back()` zu, und das `popstate` setzte das Suchfeld neu auf — die
+   * Strassentreffer, die gerade kamen, hatten kein Feld mehr.
+   */
+  const selfPop = useRef(false)
   useEffect(() => {
-    syncLayer(window.history, previousLayer.current, activeLayer)
+    syncLayer(
+      {
+        get state() {
+          return window.history.state as unknown
+        },
+        pushState: (state, unused) => window.history.pushState(state, unused),
+        replaceState: (state, unused) => window.history.replaceState(state, unused),
+        back: () => {
+          selfPop.current = true
+          window.history.back()
+        },
+      },
+      previousLayer.current,
+      activeLayer,
+    )
     previousLayer.current = activeLayer
   }, [activeLayer])
   useEffect(() => {
     forgetStaleLayer(window.history)
     const onPop = (event: PopStateEvent): void => {
+      if (selfPop.current) {
+        selfPop.current = false
+        return
+      }
       if (layerOf(event.state) !== null) return
       setSettingsOpen(false)
       setFeedbackOpen(false)
