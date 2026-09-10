@@ -549,3 +549,16 @@ describe('parseFrankfurtFee an der Null', () => {
     expect(parseFrankfurtFee(null)).toEqual({ kind: 'unknown' })
   })
 })
+
+describe('parseFrankfurtSchedule an der Tagesgrenze', () => {
+  it('weist eine Stunde jenseits des Tages ab und nimmt 24 als Mitternacht', () => {
+    expect(() => parseFrankfurtSchedule('Mo-Fr 9-25')).toThrow(FrankfurtParseError)
+    expect(parseFrankfurtSchedule('Mo-Fr 9-24')[0]?.toMinute).toBe(24 * 60)
+  })
+
+  it('begrenzt seine Eingabe genau bei der Grenze, nicht irgendwo darüber', () => {
+    const gerade = 'Mo-Fr 9-20'.padEnd(120, ' ')
+    expect(parseFrankfurtSchedule(gerade)).toHaveLength(1)
+    expect(() => parseFrankfurtSchedule(`${gerade} `)).toThrow(/Zeichen/)
+  })
+})

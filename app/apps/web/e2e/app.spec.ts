@@ -1,6 +1,19 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
+ * Kein Warten auf einen Kachelserver, der hier nicht antwortet: Ohne diese
+ * Zeile bekamen 16 Kachelanfragen je Lauf weder Antwort noch Fehler,
+ * `isStyleLoaded()` blieb falsch, und `withMapReady` lief in jedem Lauf in
+ * seinen 10-Sekunden-Rückfall — 206 Läufe × 10 s, die Suite dauerte 21
+ * Minuten statt 5 (Test-Audit, 10. September, an 31 Läufen nachgemessen).
+ * Abgebrochene Kacheln zählen für MapLibre als erledigt; kein Test sieht
+ * auf Kacheln, die Karte ist dieselbe wie im Sperrfall.
+ */
+test.beforeEach(async ({ context }) => {
+  await context.route('**/tile.openstreetmap.org/**', (route) => route.abort())
+})
+
+/**
  * Waits until the app is actually usable, not merely painted.
  *
  * The map fires `load` before its data arrives, and every interactive test

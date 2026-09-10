@@ -127,3 +127,13 @@ describe('parseSchedule — was durchgehen muss', () => {
     ])
   })
 })
+
+describe('parseSchedule bei Resten und Nullfenstern', () => {
+  it('weist auch einen einzelnen unverstandenen Buchstaben ab', () => {
+    expect(() => parseSchedule('Mo-Fr 9-20 Uhr x')).toThrow(/unrecognised remainder/)
+  })
+
+  it('weist eine Spanne ab, deren Enden gleich sind', () => {
+    expect(() => parseSchedule('Mo 9-9 Uhr')).toThrow(ScheduleParseError)
+  })
+})

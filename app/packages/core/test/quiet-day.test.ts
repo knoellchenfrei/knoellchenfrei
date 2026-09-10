@@ -153,3 +153,28 @@ describe('quietDayNote ohne Fenster', () => {
     expect(note?.usualEndHour).toBe(0)
   })
 })
+
+describe('quietDayNote an den Schwellen', () => {
+  const dienstagZonen = (kassierend: number, gesamt: number): ParkingZone[] =>
+    Array.from({ length: gesamt }, (_, i) => zone(`z${i}`, i < kassierend ? ALL_DAYS : MO_TO_SA))
+
+  it('sagt nichts, sobald mehr als 15 Prozent der Zonen kassieren', () => {
+    // Sonntag mittags: nur die Zonen mit Sonntagsfenster kassieren.
+    expect(quietDayNote(dienstagZonen(2, 11), { now: SUNDAY_NOON })).toBeNull()
+    expect(quietDayNote(dienstagZonen(1, 11), { now: SUNDAY_NOON })).not.toBeNull()
+  })
+
+  it('erklärt das Ende genau ab der Schlussminute', () => {
+    const zonen = dienstagZonen(0, 11)
+    // Dienstag 20:00 Berliner Zeit ist 18:00 UTC.
+    expect(quietDayNote(zonen, { now: Date.UTC(2026, 8, 8, 18, 0) })?.reason).toBe('afterHours')
+    expect(quietDayNote(zonen, { now: Date.UTC(2026, 8, 8, 17, 59) })).toBeNull()
+  })
+
+  it('nimmt den Median der Anfangsstunden, nicht den ersten Wert', () => {
+    const zonen = [zone('a', MO_TO_SA, 8 * 60), zone('b', MO_TO_SA, 9 * 60), zone('c', MO_TO_SA, 9 * 60), zone('d', MO_TO_SA, 20 * 60)]
+    expect(quietDayNote(zonen, { now: SUNDAY_NOON })?.usualStartHour).toBe(9)
+    const gerade = [zone('a', MO_TO_SA, 8 * 60), zone('b', MO_TO_SA, 10 * 60)]
+    expect(quietDayNote(gerade, { now: SUNDAY_NOON })?.usualStartHour).toBe(9)
+  })
+})

@@ -1,6 +1,19 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
+ * Kein Warten auf einen Kachelserver, der hier nicht antwortet: Ohne diese
+ * Zeile bekamen 16 Kachelanfragen je Lauf weder Antwort noch Fehler,
+ * `isStyleLoaded()` blieb falsch, und `withMapReady` lief in jedem Lauf in
+ * seinen 10-Sekunden-Rückfall — 206 Läufe × 10 s, die Suite dauerte 21
+ * Minuten statt 5 (Test-Audit, 10. September, an 31 Läufen nachgemessen).
+ * Abgebrochene Kacheln zählen für MapLibre als erledigt; kein Test sieht
+ * auf Kacheln, die Karte ist dieselbe wie im Sperrfall.
+ */
+test.beforeEach(async ({ context }) => {
+  await context.route('**/tile.openstreetmap.org/**', (route) => route.abort())
+})
+
+/**
  * Was der Mobile-Audit vom 9. September gefunden und geändert hat.
  *
  * Jeder Test hier hält einen gemessenen Befund fest — Screenshots auf sechs
@@ -315,9 +328,19 @@ test.describe('Folgepunkte aus dem Audit', () => {
     // dass „P+R" hinter dem Griff lag und nicht zu treffen war.
     if (testInfo.project.name === 'phone') {
       await openPanel(page)
+      // Das Blatt fährt 220 ms; ein Probeklick mittendrin traf den Chip auch
+      // mit dem Menü UNTER dem Blatt (Test-Audit: der Test war wirkungslos).
+      await page.waitForTimeout(400)
       const last = rows.last()
       await expect(last).toBeVisible()
       await last.click({ trial: true })
+      await expect
+        .poll(() => last.evaluate((el) => {
+          const box = el.getBoundingClientRect()
+          const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)
+          return hit !== null && (el === hit || el.contains(hit))
+        }))
+        .toBe(true)
       // Der Griff liegt jetzt unter dem Menü; erst das Menü zu, dann das Blatt.
       await page.getByRole('button', { name: /Ebenen/ }).click()
       await expect(menu).toBeHidden()

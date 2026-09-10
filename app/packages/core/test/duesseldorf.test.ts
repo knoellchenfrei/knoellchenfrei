@@ -487,3 +487,13 @@ describe('Feiertage', () => {
     expect(tage.size).toBe(11)
   })
 })
+
+describe('parseDuesseldorfSchedule an der Eingabegrenze', () => {
+  // Der Test-Audit fand `>` → `>=` in sechs von sieben Parsern unentdeckt:
+  // Alle prüften 500 Zeichen, keiner die Grenze selbst.
+  it('nimmt genau 160 Zeichen und weist 161 ab', () => {
+    const gerade = 'werktags, 9 bis 20 Uhr'.padEnd(160, ' ')
+    expect(() => parseDuesseldorfSchedule(gerade)).not.toThrow()
+    expect(() => parseDuesseldorfSchedule(`${gerade} `)).toThrow(DuesseldorfParseError)
+  })
+})

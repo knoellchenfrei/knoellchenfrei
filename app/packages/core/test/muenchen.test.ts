@@ -705,3 +705,16 @@ describe('eine Münchner Zone in der Zeit', () => {
     expect(isChargeable(zone, new Date('2026-06-04T08:00:00Z'))).toBe(false)
   })
 })
+
+describe('parseMuenchenRule bei Unfug in der Dauer', () => {
+  it('weist 0 h ab — das hiesse Parken verboten, nicht Parkscheibe', () => {
+    expect(() => parseMuenchenRule('Parkscheibe 0 h')).toThrow(MuenchenParseError)
+    expect(() => parseMuenchenRule('Mischparken 9-20 Uhr Montag bis Freitag mit Parkscheibe 0 h')).toThrow(MuenchenParseError)
+  })
+
+  it('begrenzt seine Eingabe genau bei der Grenze', () => {
+    const gerade = 'Mischparken 9-20 Uhr Montag bis Freitag'.padEnd(400, ' ')
+    expect(() => parseMuenchenRule(gerade)).not.toThrow()
+    expect(() => parseMuenchenRule(`${gerade} `)).toThrow(MuenchenParseError)
+  })
+})

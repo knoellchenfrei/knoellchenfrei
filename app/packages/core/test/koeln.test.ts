@@ -791,7 +791,7 @@ describe('Beschuss', () => {
     ' ',
     'Mo-So',
     '00:00 - 00:00',
-    ' ',
+    '\0',
     '99:99 - 99:99',
   ]
 
@@ -918,5 +918,15 @@ describe('eine Kölner Zone in der Zeit', () => {
     expect(isChargeable(nw, new Date('2027-11-01T11:00:00Z'))).toBe(false)
     // Der 8. März 2027 ist ein Montag — Feiertag nur in Berlin.
     expect(isChargeable(nw, new Date('2027-03-08T11:00:00Z'))).toBe(true)
+  })
+})
+
+describe('parseKoelnSchedule an der Eingabegrenze', () => {
+  // Der Test-Audit fand `>` → `>=` in sechs von sieben Parsern unentdeckt:
+  // Alle prüften 500 Zeichen, keiner die Grenze selbst.
+  it('nimmt genau 160 Zeichen und weist 161 ab', () => {
+    const gerade = 'Mo-Sa 09:00 - 20:00'.padEnd(160, ' ')
+    expect(() => parseKoelnSchedule(gerade)).not.toThrow()
+    expect(() => parseKoelnSchedule(`${gerade} `)).toThrow(KoelnParseError)
   })
 })

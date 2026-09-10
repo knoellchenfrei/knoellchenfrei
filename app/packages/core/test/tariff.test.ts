@@ -170,3 +170,21 @@ describe('isUncertainAt am Feiertag', () => {
     expect(isChargeable(withHoliday, adventSaturday)).toBe(false)
   })
 })
+
+// Aus dem Test-Audit vom 10. September: `Math.ceil` → `Math.floor` in der
+// Rechnung überlebte — keine angebrochene Stunde wäre je bezahlt worden.
+describe('estimateCost an den Rändern', () => {
+  it('rechnet eine halbe Stunde als halben Stundensatz und eine Minute nach oben', () => {
+    expect(estimateCost(zone1, summerMon(10), 30).maxCents).toBe(200)
+    expect(estimateCost(zone1, summerMon(10), 1).maxCents).toBe(7)
+    expect(estimateCost(zone1, summerMon(10), 0.5).maxCents).toBe(7)
+  })
+
+  it('liefert für null Minuten null Cent, ohne zu werfen', () => {
+    const result = estimateCost(zone1, summerMon(10), 0)
+    expect(result.chargedMinutes).toBe(0)
+    expect(result.maxCents).toBe(0)
+    expect(result.priced).toBe(true)
+    expect(() => estimateCost(zone1, summerMon(10), -1)).toThrow(RangeError)
+  })
+})

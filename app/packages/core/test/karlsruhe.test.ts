@@ -890,3 +890,13 @@ describe('eine Karlsruher Fläche im gemeinsamen Tarifmodell', () => {
     expect(tage.size).toBe(12)
   })
 })
+
+describe('parseKarlsruheSchedule an der Eingabegrenze', () => {
+  // Der Test-Audit fand `>` → `>=` in sechs von sieben Parsern unentdeckt:
+  // Alle prüften 500 Zeichen, keiner die Grenze selbst.
+  it('nimmt genau 160 Zeichen und weist 161 ab', () => {
+    const gerade = 'werktags 8 bis 20 Uhr'.padEnd(160, ' ')
+    expect(() => parseKarlsruheSchedule(gerade)).not.toThrow()
+    expect(() => parseKarlsruheSchedule(`${gerade} `)).toThrow(KarlsruheParseError)
+  })
+})

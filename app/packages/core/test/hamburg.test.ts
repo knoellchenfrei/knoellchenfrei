@@ -311,3 +311,13 @@ describe('Hamburger Parser an den Rändern', () => {
     expect(() => parseHamburgMaxStay('123456')).toThrow(HamburgParseError)
   })
 })
+
+describe('parseHamburgSchedule an der Eingabegrenze', () => {
+  // Der Test-Audit fand `>` → `>=` in sechs von sieben Parsern unentdeckt:
+  // Alle prüften 500 Zeichen, keiner die Grenze selbst.
+  it('nimmt genau 120 Zeichen und weist 121 ab', () => {
+    const gerade = 'werktags 9-20 Uhr'.padEnd(120, ' ')
+    expect(() => parseHamburgSchedule(gerade)).not.toThrow()
+    expect(() => parseHamburgSchedule(`${gerade} `)).toThrow(HamburgParseError)
+  })
+})

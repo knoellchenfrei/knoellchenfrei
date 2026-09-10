@@ -177,3 +177,35 @@ describe('holidaysFor', () => {
     expect(() => holidaysFor('SN' as Land, 2026)).toThrow(/SN/)
   })
 })
+
+// Die Osterformel war bis zum 10. September nur für drei Jahre belegt; ein
+// Reihenglied um eins verschoben hätte Ostern in elf von 61 Jahren verlegt.
+describe('die Osterformel über vierzig Jahre', () => {
+  const OSTERSONNTAGE: Record<number, string> = {
+    2000: '2000-04-23',
+    2005: '2005-03-27',
+    2008: '2008-03-23',
+    2011: '2011-04-24',
+    2016: '2016-03-27',
+    2019: '2019-04-21',
+    2022: '2022-04-17',
+    2024: '2024-03-31',
+    2027: '2027-03-28',
+    2029: '2029-04-01',
+    2030: '2030-04-21',
+    2034: '2034-04-09',
+    2038: '2038-04-25',
+    2040: '2040-04-01',
+  }
+  const tagDavor = (datum: string, tage: number): string =>
+    new Date(Date.parse(`${datum}T00:00:00Z`) - tage * 86_400_000).toISOString().slice(0, 10)
+
+  it.each(Object.entries(OSTERSONNTAGE))('legt Karfreitag und Ostermontag %s richtig', (jahr, ostern) => {
+    const dates = holidaysFor('BE', Number(jahr))
+    expect(dates.has(tagDavor(ostern, 2))).toBe(true)
+    expect(dates.has(tagDavor(ostern, -1))).toBe(true)
+    // Und nicht daneben: der Sonntag selbst ist kein Eintrag, der Dienstag danach auch nicht.
+    expect(dates.has(ostern)).toBe(false)
+    expect(dates.has(tagDavor(ostern, -2))).toBe(false)
+  })
+})
