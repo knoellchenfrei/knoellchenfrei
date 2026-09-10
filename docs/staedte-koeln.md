@@ -93,14 +93,12 @@ Punktes in beiden Systemen, gerechnet von der Landesvermessung.
 Der vollständige Abgleich über alle 4.508 Paare ergab als größte Abweichung
 **6,8 · 10⁻⁷ Meter**, also 0,7 Mikrometer. Zwanzig davon — die vier
 Extrempunkte der Stadtgrenze und sechzehn gleichmäßig über den Umriss verteilte
-— stehen in `packages/ingest/src/utm32.check.ts` und laufen dort gegen eine
+— stehen in `packages/ingest/test/utm32.test.ts` und laufen dort gegen eine
 Schranke von einem Millimeter:
 
 ```
-cd app/packages/ingest && npx tsx src/utm32.check.ts
-  ✓ 20 amtliche Punktpaare, größte Abweichung 6.8e-7 m (südlichster Punkt
-    der Stadtgrenze), Schranke 0.001 m
-  ✓ 3 von 3 Fehleingaben abgewiesen
+cd app && pnpm --filter @knoellchenfrei/ingest test -- utm32
+  ✓ test/utm32.test.ts (23 tests)   # 20 Punktpaare auf einen Millimeter, 3 Fehleingaben abgewiesen
 ```
 
 Die Aufgabe verlangte „drei bekannte Kölner Punkte auf wenige Meter genau".
@@ -612,7 +610,7 @@ verwerfen.
 cd app
 pnpm --filter @knoellchenfrei/core typecheck     # grün
 pnpm --filter @knoellchenfrei/core test          # grün, davon 82 Tests für Köln
-cd packages/ingest && npx tsx src/utm32.check.ts # 20 amtliche Punktpaare
+pnpm --filter @knoellchenfrei/ingest test -- utm32   # 20 amtliche Punktpaare
 cd ../../.. && ./scripts/sprache-pruefen.sh      # grün
 ```
 
@@ -628,5 +626,5 @@ Abschnitt 1 in `index.ts` steht.
 | `app/packages/core/test/fixtures/koeln-psa-2026-09-08.json` | Auszählung der CSV und ein wörtlicher Auszug ihrer schwierigsten 15 Zeilen |
 | `app/packages/core/test/fixtures/koeln-gebiete-2026-09-08.json` | die 47 Gebiets-Attribute, dazu ein Stützpunkt in UTM als Beleg |
 | `app/packages/ingest/src/utm32.ts` | UTM 32N → WGS 84, Krüger-Reihe, ohne Fremdbibliothek |
-| `app/packages/ingest/src/utm32.check.ts` | die Messung gegen 20 amtliche Punktpaare |
+| `app/packages/ingest/test/utm32.test.ts` | die Messung gegen 20 amtliche Punktpaare, seit dem 10. September Teil der Suite |
 | `app/packages/ingest/src/build-data-koeln.ts` | der Datenbau |

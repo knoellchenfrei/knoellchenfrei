@@ -1,15 +1,12 @@
+import { describe, expect, it } from 'vitest'
+
+import { utm32ToWgs84, Utm32Error } from '../src/utm32.js'
+
 /**
- * Misst `utm32.ts` gegen amtliche Punktpaare — ausführbares Skript, kein Test.
- *
- *     cd app/packages/ingest && npx tsx src/utm32.check.ts
- *
- * ## Warum hier und nicht in `packages/core/test`
- *
- * Weil der Code in `ingest` liegt und ein Test dort neben ihm stehen soll. Für
- * `core` gibt es eine Vitest-Suite, für `ingest` bisher keine — und eine
- * einzurichten, damit vierzig Zeilen Trigonometrie geprüft werden, wäre mehr
- * Werkzeug als Prüfung. Das Skript läuft von Hand und bricht mit Exit-Code 1
- * ab; sobald `ingest` einen Testlauf bekommt, zieht es dorthin um.
+ * `utm32.ts` gegen amtliche Punktpaare — bis zum 10. September ein Skript
+ * (`utm32.check.ts`), das von Hand lief und selbst ankündigte, in die Suite
+ * umzuziehen, „sobald `ingest` einen Testlauf bekommt". Den gibt es seit dem
+ * 8. September.
  *
  * ## Woher die Zahlen kommen
  *
@@ -31,17 +28,12 @@
  * am 8. September 2026 und ergab als größte Abweichung 6,8 · 10⁻⁷ Meter.
  *
  * Unten stehen zwanzig davon: die vier Extrempunkte der Stadtgrenze und
- * sechzehn gleichmäßig über den Umriss verteilte. Nicht alle 4.508, weil eine
- * eingebettete Tabelle mit 4.508 Zeilen niemand liest — und zwanzig Punkte
- * über 43 km Ost-West und 28 km Nord-Süd fangen jeden Fehler, den es hier
- * geben kann: falsches Ellipsoid, falscher Mittelmeridian, falscher
- * Maßstabsfaktor, vertauschte Achsen, ein fehlendes Reihenglied.
+ * sechzehn gleichmäßig über den Umriss verteilte. Zwanzig Punkte über 43 km
+ * Ost-West und 28 km Nord-Süd fangen jeden Fehler, den es hier geben kann:
+ * falsches Ellipsoid, falscher Mittelmeridian, falscher Maßstabsfaktor,
+ * vertauschte Achsen, ein fehlendes Reihenglied.
  */
-
-import { utm32ToWgs84, Utm32Error } from './utm32.js'
-
 interface Reference {
-  /** Wo auf der Stadtgrenze — für die Meldung, wenn es schiefgeht. */
   where: string
   easting: number
   northing: number
@@ -49,13 +41,6 @@ interface Reference {
   lat: number
 }
 
-/**
- * Zwanzig amtliche Punktpaare, aus `dvg:nw_dvg1_gem` (Gemeinde Köln).
- *
- * Die vier Extrempunkte stehen zuerst, weil sie die Reihe am weitesten vom
- * Mittelmeridian und vom Bezugsbreitengrad wegziehen — dort ist eine zu kurz
- * abgebrochene Entwicklung am ehesten zu sehen.
- */
 const REFERENCES: readonly Reference[] = [
   { where: 'nördlichster Punkt der Stadtgrenze', easting: 349316.753, northing: 5661474.627, lon: 6.848547491030035, lat: 51.08496082777669 },
   { where: 'südlichster Punkt der Stadtgrenze', easting: 363559.538, northing: 5632757.531, lon: 7.062540372211196, lat: 50.830433719768436 },
@@ -79,14 +64,6 @@ const REFERENCES: readonly Reference[] = [
   { where: 'Stadtgrenze 16/16', easting: 345246.771, northing: 5659594.766, lon: 6.791286732437174, lat: 51.066985513784935 },
 ]
 
-/**
- * Die Schranke: ein Millimeter.
- *
- * Die Aufgabe verlangte „auf wenige Meter genau". Ein Millimeter ist tausendmal
- * strenger und trotzdem nicht knapp — gemessen wurden 0,0000007 Meter. Eine
- * lockere Schranke bestünde auch dann noch, wenn jemand ein Reihenglied
- * herausnimmt; diese nicht.
- */
 const TOLERANCE_METRES = 0.001
 
 /** Meter je Grad, grob und für eine Fehlerschranke völlig ausreichend. */
@@ -98,61 +75,22 @@ function metresApart(lon: number, lat: number, otherLon: number, otherLat: numbe
   return Math.hypot(dLat, dLon)
 }
 
-let failed = 0
-let worst = 0
-let worstWhere = ''
 
-for (const reference of REFERENCES) {
-  const [lon, lat] = utm32ToWgs84(reference.easting, reference.northing)
-  const distance = metresApart(lon, lat, reference.lon, reference.lat)
-  if (distance > worst) {
-    worst = distance
-    worstWhere = reference.where
-  }
-  if (distance > TOLERANCE_METRES) {
-    failed += 1
-    console.error(
-      `  ✗ ${reference.where}: ${distance.toFixed(4)} m daneben` +
-        ` — gerechnet ${lon.toFixed(9)}/${lat.toFixed(9)},` +
-        ` amtlich ${reference.lon.toFixed(9)}/${reference.lat.toFixed(9)}`
-    )
-  }
-}
+describe('utm32ToWgs84', () => {
+  it.each(REFERENCES)('trifft $where auf einen Millimeter', ({ easting, northing, lon, lat }) => {
+    const [gerechnetLon, gerechnetLat] = utm32ToWgs84(easting, northing)
+    expect(metresApart(gerechnetLon, gerechnetLat, lon, lat)).toBeLessThan(TOLERANCE_METRES)
+  })
 
-/**
- * Die zweite Prüfung: Grad hinein müssen abbrechen.
- *
- * Der wahrscheinlichste Betriebsfehler ist nicht eine falsche Formel, sondern
- * eine zweimal umgerechnete Liste — und der Kölner Dienst lädt geradezu dazu
- * ein, weil er seine UTM-Zahlen als `EPSG:4326` beschriftet. Ohne diese
- * Schranke käme dabei ein Punkt heraus, der aussieht wie eine Koordinate.
- */
-let guardsHeld = 0
-for (const [easting, northing] of [
-  [6.9583, 50.9413],
-  [0, 0],
-  [Number.NaN, 5645891],
-] as const) {
-  try {
-    utm32ToWgs84(easting, northing)
-    failed += 1
-    console.error(`  ✗ ${easting}/${northing} hätte abbrechen müssen`)
-  } catch (error) {
-    if (error instanceof Utm32Error) guardsHeld += 1
-    else {
-      failed += 1
-      console.error(`  ✗ ${easting}/${northing} warf ${String(error)} statt Utm32Error`)
-    }
-  }
-}
-
-if (failed > 0) {
-  console.error(`\n${failed} Prüfungen fehlgeschlagen.`)
-  process.exit(1)
-}
-
-console.log(
-  `  ✓ ${REFERENCES.length} amtliche Punktpaare, größte Abweichung ` +
-    `${worst.toExponential(1)} m (${worstWhere}), Schranke ${TOLERANCE_METRES} m`
-)
-console.log(`  ✓ ${guardsHeld} von 3 Fehleingaben abgewiesen`)
+  // Der wahrscheinlichste Betriebsfehler ist nicht eine falsche Formel,
+  // sondern eine zweimal umgerechnete Liste — der Kölner Dienst beschriftet
+  // seine UTM-Zahlen als EPSG:4326. Grad hinein müssen abbrechen, und zwar
+  // mit der eigenen Fehlerklasse.
+  it.each([
+    [6.9583, 50.9413],
+    [0, 0],
+    [Number.NaN, 5645891],
+  ])('weist %s/%s als Eingabe ab', (easting, northing) => {
+    expect(() => utm32ToWgs84(easting, northing)).toThrow(Utm32Error)
+  })
+})

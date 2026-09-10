@@ -32,7 +32,7 @@
  * genau eines, und die Reihenentwicklung dafür passt in vierzig Zeilen. Der
  * Ausschlag gibt aber nicht die Größe, sondern die Prüfbarkeit: Eine
  * Bibliothek müsste man glauben, diese Zeilen lassen sich gegen amtliche
- * Punktpaare messen — und genau das tut `utm32.check.ts` an 4.508 Stützpunkten
+ * Punktpaare messen — und genau das tut `test/utm32.test.ts` an 4.508 Stützpunkten
  * der Kölner Stadtgrenze aus dem WFS des Landes Nordrhein-Westfalen.
  * Größte Abweichung dort: **0,7 Mikrometer**.
  *
