@@ -232,6 +232,41 @@ kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
 
+## Verwendet — Rostock
+
+Abgerufen am 16. September 2026 von der **Hanse- und Universitätsstadt
+Rostock** über `geo.sv.rostock.de`, WFS 2.0.0 — ein Dienst je Datensatz, alle
+über den CKAN-Katalog `opendata-hro.de` gefunden:
+
+| Ebene | Dienst / Typname | Umfang |
+| --- | --- | --- |
+| Bewohnerparkgebiete | `geodienste/bewohnerparkgebiete/wfs`, `hro.bewohnerparkgebiete.bewohnerparkgebiete` | 10 Polygone — die einzigen Flächen; ohne Zeiten und Betrag |
+| Parkscheinautomaten | `geodienste/parkscheinautomaten/wfs`, `hro.parkscheinautomaten.parkscheinautomaten` | 111 Punkte — Zone, Tarif, Zeiten, Betrag als Zahl, Höchstparkdauer mit Einheitenfeld |
+| Ortsteile | `geodienste/ortsteile/wfs`, `hro.ortsteile.ortsteile` | 31 Polygone, als Kartenkontext und Rahmen |
+
+**Lizenz: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/deed.de)**,
+wörtlich in `ows:AccessConstraints` aller drei Dienste und im Katalog als
+`license_id: cc-zero` — die vierte Lizenzfamilie des Projekts, ohne
+Nennungspflicht. Der Quellenvermerk steht trotzdem.
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Die Tarifzonen A–D und W haben keine Geometrie.** Zone, Zeiten und
+  Betrag hängen am Automaten; die Flächen sind die Bewohnerparkgebiete. 52
+  der 111 Automaten stehen in einem, **59 nicht** — für die gibt es keine
+  Fläche und deshalb keine Auskunft.
+- **`08:00-19:00` ohne Wochentag** bei 83 Automaten heißt täglich: § 4 Abs. 2
+  und 3 der Parkgebührenordnung (2022) nennt für W, A, B und C „täglich",
+  nur für D „werktags Montag - Freitag" — und genau D schreibt der Feed mit
+  `Mo-Fr`.
+- **Die Achsen kommen als `[lat, lon]`** mit `srsName`, als `[lon, lat]` ohne
+  — beides in Grad. Und ein leeres Feld **fehlt** im WFS, statt `null` zu
+  tragen.
+
+Nicht abgerufen: die fertigen Downloads (`download/opendata/<name>/<name>.json`,
+ohne `bezeichnung`) und ein möglicher Datensatz der Behindertenparkplätze.
+Vollständiger Bericht in [staedte-rostock.md](staedte-rostock.md).
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

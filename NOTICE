@@ -22,6 +22,7 @@ in `packages/core/src/city.ts` trägt den Unterschied bis in die Oberfläche.
 | Köln | Stadt Köln, Amt für Verkehrsmanagement — offenedaten-koeln.de | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig |
 | Düsseldorf | Landeshauptstadt Düsseldorf, Amt für Verkehrsmanagement — opendata.duesseldorf.de | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig; die Tarife der Parkscheinautomaten werden nicht ausgeliefert, solange ihre Lizenz nicht belegt ist |
 | Karlsruhe | Stadt Karlsruhe (Digitale Mobilität), transparenz.karlsruhe.de | [Creative Commons Namensnennung 4.0 International](https://creativecommons.org/licenses/by/4.0/) — Nennung des Urhebers, Hinweis auf die Lizenz und auf Veränderungen |
+| Rostock | Hanse- und Universitätsstadt Rostock — geo.sv.rostock.de, OpenData HRO | [Creative Commons Zero 1.0 Universell (CC0 1.0)](https://creativecommons.org/publicdomain/zero/1.0/deed.de) — gemeinfrei, Nennung freiwillig |
 
 **Die Daten sind verändert.** Aus den amtlichen Diensten werden Teilmengen
 gebildet, Geometrien vereinfacht (Douglas-Peucker, siehe
