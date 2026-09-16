@@ -59,6 +59,8 @@ describe('toParkingZone trägt die Stadt in die Zone', () => {
   it('das Bundesland kommt aus der Stadt, nicht aus einer Vorgabe', async () => {
     expect((await zone('hamburg')).land).toBe('HH')
     expect((await zone('karlsruhe')).land).toBe('BW')
+    // Und der Staat auch: Salzburg trägt ein österreichisches Kürzel.
+    expect((await zone('salzburg')).land).toBe('AT-S')
   })
 
   it('eine Minutenangabe am Gebiet schlägt den Schlüssel der Abschnitte', async () => {
