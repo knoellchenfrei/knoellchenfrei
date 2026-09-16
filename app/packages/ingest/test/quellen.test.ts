@@ -11,7 +11,7 @@ import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
  */
 describe('wfsUrl', () => {
   it('fragt jede WFS-Quelle jeder Stadt ausdrücklich in Grad', () => {
-    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe'].flatMap((stadt) =>
+    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'salzburg'].flatMap((stadt) =>
       citySources(stadt),
     )
     expect(quellen.length).toBeGreaterThan(7)

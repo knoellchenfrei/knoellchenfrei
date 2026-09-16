@@ -487,6 +487,70 @@ const KARLSRUHE_SOURCES: readonly Source[] = [
   },
 ]
 
+/**
+ * Salzburg — Stadtgemeinde Salzburg, CC BY 3.0 AT. Die erste Stadt außerhalb
+ * Deutschlands.
+ *
+ * Zahlen und Typnamen sind am 16. September 2026 mit `resultType=hits` gegen
+ * den Dienst selbst geprüft. Ein Dienst, 81 Typnamen, alle im Arbeitsbereich
+ * `ogdsbg` — und darunter auch die Stadtteile, anders als in Frankfurt,
+ * München und Düsseldorf, wo sie in einem zweiten Dienst liegen.
+ *
+ * **`srsName` ist Pflicht.** `DefaultCRS` ist bei jeder Ebene EPSG:31255 (MGI
+ * / Gauß-Krüger M31); ohne den Parameter kommen Meter mit negativem Ostwert
+ * (`[-20891.7, 295427.09]`). Mit `srsName=urn:ogc:def:crs:EPSG::4326` liefert
+ * GeoJSON `[lon, lat]` — das GML derselben Anfrage dagegen `[lat, lon]`.
+ * Deshalb steht die Reihenfolge hier, und `build-data-salzburg.ts` prüft die
+ * Grade nach.
+ *
+ * **Der Host war am Vormittag des 16. September aus dieser Umgebung gesperrt**
+ * (`connect_rejected` am Egress-Proxy, nur über WebFetch erreichbar) und am
+ * Nachmittag offen — curl und Nodes `fetch` mit `NODE_USE_ENV_PROXY=1`
+ * antworteten beide mit 200. Scheitert der Abruf im Deploy wieder, bleibt
+ * der eingecheckte Abzug stehen; das ist dort so vorgesehen.
+ *
+ * Bewusst NICHT abgerufen: `ogdsbg:bewohnerparkzone` (13 Flächen — die
+ * Bewohnerzone ist eine Berechtigung, keine Gebührenfrage, und ihr Buchstabe
+ * steht schon in `GRUPPE` der Kurzparkzonen), `ogdsbg:anwohnerzone` (57
+ * Punkte, Schilder), `ogdsbg:parkscheinautomat` (180 Punkte ohne Tarif — die
+ * App kennt keine POI-Art dafür) und `ogdsbg:parkplatz` (32 Parkplätze und
+ * Garagen). Details in `docs/staedte-salzburg.md`.
+ */
+const SALZBURG_WFS = 'https://data.stadt-salzburg.at/geodaten/wfs'
+
+const SALZBURG_DEFAULTS = {
+  // GeoServer wie in Berlin, Frankfurt, München und Karlsruhe.
+  outputFormat: 'application/json',
+  axisOrder: 'lon,lat',
+} as const
+
+const SALZBURG_SOURCES: readonly Source[] = [
+  {
+    key: 'zones',
+    service: SALZBURG_WFS,
+    typeName: 'ogdsbg:kurzparkzone',
+    expectedFeatures: 41,
+    ...SALZBURG_DEFAULTS,
+  },
+  // 145 Flächen, davon 132 in Salzburg und 13 in den Nachbargemeinden — die
+  // Ebene ist im Rahmen der Stadt geschnitten, nicht an ihrer Grenze.
+  // `salzburgDistrictName` in `@knoellchenfrei/core` sortiert die fremden aus.
+  {
+    key: 'districts',
+    service: SALZBURG_WFS,
+    typeName: 'ogdsbg:stadtteil',
+    expectedFeatures: 145,
+    ...SALZBURG_DEFAULTS,
+  },
+  {
+    key: 'accessible',
+    service: SALZBURG_WFS,
+    typeName: 'ogdsbg:behindertenstellplatz',
+    expectedFeatures: 185,
+    ...SALZBURG_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -495,6 +559,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   koeln: KOELN_SOURCES,
   duesseldorf: DUESSELDORF_SOURCES,
   karlsruhe: KARLSRUHE_SOURCES,
+  salzburg: SALZBURG_SOURCES,
 }
 
 /**
