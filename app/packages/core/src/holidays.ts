@@ -32,6 +32,7 @@ export type Land =
   | 'BY'
   | 'NW'
   | 'BW'
+  | 'MV'
   | 'AT-W'
   | 'AT-ST'
   | 'AT-S'
@@ -215,6 +216,25 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Feiertagsseite des Innenministeriums,
  *   <https://im.baden-wuerttemberg.de/de/service/feiertage>, abgerufen am
  *   8. September 2026.
+ * - **MV** — Mecklenburg-Vorpommern hat **elf**: die neun bundesweiten plus
+ *   den **Frauentag** (8. März) und den **Reformationstag** (31. Oktober).
+ *   § 2 Abs. 1 des Gesetzes über Sonn- und Feiertage (Feiertagsgesetz
+ *   Mecklenburg-Vorpommern – FTG M-V) in der Fassung der Bekanntmachung vom
+ *   8. März 2002 (GVOBl. M-V S. 145). Der Reformationstag steht dort seit
+ *   dem ersten Gesetz von 1992 (Landtags-Drucksache 1/1870, § 2 Abs. 1
+ *   Nr. 8: „der Reformationstag (31. Oktober)"). Der Frauentag kam mit dem
+ *   Vierten Gesetz zur Änderung des Feiertagsgesetzes vom 7. Juli 2022
+ *   (GVOBl. M-V Nr. 31 vom 12. Juli 2022, S. 427), Artikel 1 Nr. 1
+ *   wörtlich: „Nach Nummer 1 wird folgende Nummer 2 eingefügt: ‚2. der
+ *   Frauentag (8. März),'. Die bisherigen Nummern 2 bis 10 werden die
+ *   Nummern 3 bis 11." — in Kraft am Tag nach der Verkündung, also erstmals
+ *   am 8. März 2023. Aus der Umnummerierung folgt die Zahl: elf. Buß- und
+ *   Bettag war nur im Entwurf von 1992 dabei (Nr. 9) und ist seit 1995 in
+ *   allen Ländern ausser Sachsen abgeschafft; Fronleichnam, Allerheiligen
+ *   und Heilige Drei Könige kennt das Land nicht. Beide Belegtexte sind am
+ *   16. September 2026 als PDF gelesen worden (`dokumentation.landtag-mv.de`,
+ *   `regierung-mv.de`); das Landesrechtsportal selbst antwortet ohne
+ *   JavaScript nur mit einer leeren Seite. Gilt für Rostock.
  */
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
@@ -223,6 +243,7 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   BY: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
   NW: { fixed: ['11-01'], fromEaster: [60] }, // Allerheiligen, Fronleichnam
   BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
+  MV: { fixed: ['03-08', '10-31'], fromEaster: [] }, // Frauentag, Reformationstag
   // Österreich: alles Bundesrecht, siehe `NATIONWIDE`.
   'AT-W': { fixed: [], fromEaster: [] },
   'AT-ST': { fixed: [], fromEaster: [] },

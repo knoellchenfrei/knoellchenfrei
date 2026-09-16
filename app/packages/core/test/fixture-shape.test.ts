@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
+import type { RostockAutomatProperties, RostockZoneProperties } from '../src/rostock.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -261,6 +262,73 @@ describe('Münchner Fixture', () => {
  * stehen und keine Meter aus EPSG:25832 — die tragen plausible Zahlen und
  * sähen auf der Karte nur „leer“ aus.
  */
+describe('Rostocker Fixtures', () => {
+  const AUTOMATS = read<RostockAutomatProperties[]>('hro-parkscheinautomaten-2026-09-16.json')
+  const AREAS = read<RostockZoneProperties[]>('hro-bewohnerparkgebiete-2026-09-16.json')
+
+  /**
+   * Der Rostocker WFS führt ein leeres Feld **nicht** als `null`, sondern
+   * lässt es weg — `absent`, nicht `null`, in jedem der zwölf Felder, die
+   * nicht immer belegt sind. Der Download derselben Daten schreibt dort
+   * `null`. Wer den Parser gegen den Download testet und gegen den WFS baut,
+   * prüft den falschen Fall; deshalb ist die Fixture ein Auszug aus der
+   * WFS-Antwort, und `absent` steht hier ausdrücklich.
+   *
+   * Und der Betrag ist eine **Zahl** — der Fall, der bei Frankfurt zu dieser
+   * Datei geführt hat, hier als Regelfall.
+   */
+  it('führt die Automaten in genau diesen Typen — fehlende Felder fehlen, statt null zu sein', () => {
+    expectShape(AUTOMATS as unknown as Record<string, unknown>[], {
+      bewirtschaftungszeiten: ['string'],
+      // Leerstring bei 63 von 111 Automaten, nie `null`, nie weggelassen.
+      bewohnerparkgebiet: ['string'],
+      bezeichnung: ['string'],
+      handyparkzone: ['number'],
+      normaltarif_gebuehren_max: ['absent', 'number'],
+      // Die zwei Automaten ohne Betrag: kein `null`, das Feld fehlt.
+      normaltarif_gebuehren_pro_stunde: ['absent', 'number'],
+      normaltarif_gebuehrenschritte: ['string'],
+      normaltarif_parkdauer_max: ['number'],
+      normaltarif_parkdauer_max_einheit: ['string'],
+      normaltarif_parkdauer_min: ['number'],
+      normaltarif_parkdauer_min_einheit: ['string'],
+      nummer: ['number'],
+      stellplaetze_bus: ['absent', 'number'],
+      stellplaetze_pkw: ['absent', 'number'],
+      tarif: ['string'],
+      uuid: ['string'],
+      veranstaltungstarif_gebuehren_max: ['absent', 'number'],
+      veranstaltungstarif_gebuehren_pro_stunde: ['absent', 'number'],
+      // Die Einheitenfelder sind immer da, auch wenn die Zahl daneben fehlt.
+      veranstaltungstarif_gebuehrenschritte: ['string'],
+      veranstaltungstarif_parkdauer_max: ['absent', 'number'],
+      veranstaltungstarif_parkdauer_max_einheit: ['string'],
+      veranstaltungstarif_parkdauer_min: ['absent', 'number'],
+      veranstaltungstarif_parkdauer_min_einheit: ['string'],
+      zone: ['string'],
+      zugelassene_muenzen: ['string'],
+    })
+  })
+
+  it('führt die Gebiete in genau diesen drei Feldern', () => {
+    expectShape(AREAS as unknown as Record<string, unknown>[], {
+      uuid: ['string'],
+      bezeichnung: ['string'],
+      adressen: ['string'],
+    })
+    expect(AREAS).toHaveLength(10)
+  })
+
+  // Die Einheit steht in einem eigenen Feld, und der Parser nimmt genau drei
+  // Werte an. Ein vierter im Feed wäre ein Abbruch des Datenbaus — hier soll
+  // er vorher auffallen.
+  it('schreibt die Höchstparkdauer nur in h, min oder d', () => {
+    for (const automat of AUTOMATS) {
+      expect(['h', 'min', 'd']).toContain(automat.normaltarif_parkdauer_max_einheit)
+    }
+  })
+})
+
 describe('Geometrie-Fixture', () => {
   interface FeatureCollection {
     type: string

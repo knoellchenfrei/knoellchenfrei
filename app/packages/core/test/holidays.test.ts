@@ -209,3 +209,42 @@ describe('die Osterformel über vierzig Jahre', () => {
     expect(dates.has(tagDavor(ostern, -2))).toBe(false)
   })
 })
+
+/**
+ * Mecklenburg-Vorpommern — der erste Kalender mit **beiden** Sondertagen der
+ * beiden Stadtstaaten: Berlins Frauentag und Hamburgs Reformationstag. Er
+ * ist damit weder mit dem einen noch mit dem anderen zeichengleich, und genau
+ * das misst dieser Block: § 2 Abs. 1 FTG M-V, Frauentag seit dem Vierten
+ * Änderungsgesetz vom 7. Juli 2022 (Belege in `holidays.ts`).
+ */
+describe('Mecklenburg-Vorpommern', () => {
+  it('hat elf Feiertage: die neun bundesweiten plus Frauentag und Reformationstag', () => {
+    const mv = holidaysFor('MV', 2026)
+    expect(mv.has('2026-03-08')).toBe(true) // Frauentag, § 2 Abs. 1 Nr. 2
+    expect(mv.has('2026-10-31')).toBe(true) // Reformationstag, Nr. 9
+    expect(mv.size).toBe(11)
+  })
+
+  it('unterscheidet sich von Hamburg um den Frauentag und von Berlin um den Reformationstag', () => {
+    const mv = holidaysFor('MV', 2026)
+    const hh = holidaysFor('HH', 2026)
+    const be = holidaysFor('BE', 2026)
+    expect([...mv].filter((date) => !hh.has(date))).toEqual(['2026-03-08'])
+    expect([...mv].filter((date) => !be.has(date))).toEqual(['2026-10-31'])
+  })
+
+  it('verwehrt dem Land, was seine Nachbarn haben und es nicht', () => {
+    const mv = holidaysFor('MV', 2026)
+    expect(mv.has('2026-11-18')).toBe(false) // Buß- und Bettag, seit 1995 nur in Sachsen
+    expect(mv.has('2026-06-04')).toBe(false) // Fronleichnam
+    expect(mv.has('2026-11-01')).toBe(false) // Allerheiligen
+    expect(mv.has('2026-01-06')).toBe(false) // Heilige Drei Könige
+  })
+
+  // Der Frauentag gilt erst seit 2023. Für frühere Jahre rechnet die Tabelle
+  // ihn trotzdem — sie kennt kein Inkrafttreten. Das ist bekannt und
+  // hingenommen: Die App fragt nach heute, nicht nach 2022.
+  it('zählt ihn auch rückwirkend, weil die Tabelle kein Inkrafttreten kennt', () => {
+    expect(holidaysFor('MV', 2022).has('2022-03-08')).toBe(true)
+  })
+})
