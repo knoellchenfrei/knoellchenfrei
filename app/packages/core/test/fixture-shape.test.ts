@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
+import type { GrazZoneProperties } from '../src/graz.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -211,6 +212,45 @@ describe('Frankfurter Fixtures', () => {
       if (automat.bewohnerparkzone === null || automat.bewohnerparkzone === undefined) continue
       expect(Number.isInteger(automat.bewohnerparkzone)).toBe(true)
     }
+  })
+})
+
+describe('Grazer Fixtures', () => {
+  const BLAU = read<GrazZoneProperties[]>('graz-kurzparkzonen-2026-09-16.json')
+  const GRUEN = read<GrazZoneProperties[]>('graz-parkzonen-2026-09-16.json')
+
+  // Beide Ebenen führen dieselben dreizehn Felder — mit einem Unterschied,
+  // den man erst hier sieht: `DELETED` ist in der grünen Ebene einmal `null`
+  // statt einer Zeichenkette. `grazDeletedMarker` rechnet mit beidem.
+  const FELDER = {
+    OBJECTID: ['number'],
+    BEZEICHNUNG: ['string'],
+    NAME: ['string'],
+    TYP: ['string'],
+    PARKDAUER: ['string'],
+    GELTUNGSZEIT: ['string'],
+    PARK_DAUER: ['string'],
+    PARK_GEBUEHR: ['string'],
+    AG_BEWOHNER_INFO: ['string'],
+    ZONEN_PLAN: ['string'],
+    HANDYPARKEN_CODE: ['string'],
+    Shape__Area: ['number'],
+  }
+
+  it('führt die Kurzparkzonen in genau diesen Typen', () => {
+    expectShape(BLAU as unknown as Record<string, unknown>[], { ...FELDER, DELETED: ['string'] })
+  })
+
+  it('führt die Parkzonen in denselben Typen, DELETED einmal als null', () => {
+    expectShape(GRUEN as unknown as Record<string, unknown>[], { ...FELDER, DELETED: ['null', 'string'] })
+  })
+
+  it('führt OBJECTID je Ebene eindeutig — über beide Ebenen hinweg nicht', () => {
+    expect(new Set(BLAU.map((row) => row.OBJECTID)).size).toBe(90)
+    expect(new Set(GRUEN.map((row) => row.OBJECTID)).size).toBe(75)
+    // Beide Ebenen zählen ab 1; die Nummer taugt deshalb nicht als Schlüssel
+    // über die ganze Stadt — `grazZoneKey` nimmt `BEZEICHNUNG`.
+    expect(new Set([...BLAU, ...GRUEN].map((row) => row.OBJECTID)).size).toBeLessThan(165)
   })
 })
 

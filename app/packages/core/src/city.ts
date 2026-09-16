@@ -564,7 +564,87 @@ export const KARLSRUHE: City = {
   // Feld, zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE]
+/**
+ * Graz — die achte Stadt, die erste in Österreich und die erste, deren Quelle
+ * **keine Lizenz nennt**.
+ *
+ * Die Box ist gemessen, nicht geschätzt: Die Ebene „Stadtgrenze" des
+ * OGD-Dienstes (`OGD_WFS/FeatureServer/45`, 3.519 Stützpunkte, abgerufen am
+ * 16. September 2026) misst 15,3497–15,5342 / 47,0119–47,1345; nach außen
+ * gerundet steht das unten. Die Parkzonen reichen nur 15,3909–15,4902 /
+ * 47,0296–47,1067 — wer die Box daraus nähme, wiese eine Meldung aus
+ * Andritz oder Puntigam als „außerhalb" ab, obwohl sie mitten in Graz liegt.
+ *
+ * Der Mittelpunkt ist der Hauptplatz. Der Zoom ist Frankfurts und Karlsruhes
+ * 12: 0,20° Länge sind weniger als Karlsruhes 0,28°, und die beiden Zonen
+ * liegen in einem Band von 7,5 × 8,5 km um die Mitte, das bei 12 ganz im
+ * Bild ist.
+ *
+ * **Die Lizenz ist offen**, und das ist keine Formalie: Der Dienst
+ * (`gisportal/sharing/rest/content/items/150ea5bc…`) führt `licenseInfo:
+ * null` und als `accessInformation` nur „© Magistrat Graz |
+ * Stadtvermessungsamt | Referat für Geoinformation | Kein Rechtsanspruch aus
+ * der Karte ableitbar!" — ein Urheberrechtsvermerk, keine Freigabe. Das
+ * OGD-Portal der Stadt stellt seine Daten unter CC BY 4.0 („Datenquelle:
+ * Stadt Graz – data.graz.gv.at"), listet die Parkzonen aber nicht, und der
+ * OGD-Dienst `OGD_WFS` führt sie ebenfalls nicht — nur Behindertenparkplätze,
+ * P+R und Parkgaragen. Ob die Freigabe des Portals den GIS-Dienst
+ * einschließt, kann nur das Stadtvermessungsamt sagen. Bis dahin: Familie
+ * `unklar`, Nennung wie bei der strengsten Lesart, und der Banner über der
+ * Karte. Die **Bezirksgrenzen** kommen dagegen aus dem OGD-Dienst und sind
+ * damit belegt CC BY 4.0.
+ *
+ * `zoneSnapMetres` ist gemessen, nicht gewählt: 122 der 165 Flächen sind
+ * „straßenzugsweise" — Streifen entlang einzelner Straßen, im Median 6,7 m
+ * (blau) bzw. 3,7 m (grün) breit (Fläche und Umfang aus dem Abzug, Rechteck
+ * angenommen). Eine Ortung auf 10 bis 20 m trifft so einen Streifen fast
+ * nie; Karlsruhes Wert für 4,8 m breite Reihen gilt hier aus demselben Grund.
+ * Die flächendeckenden Gebiete treffen strikt, der Rückfall greift nur, wo
+ * `zoneAt` nichts findet.
+ */
+export const GRAZ: City = {
+  key: 'graz',
+  name: 'Graz',
+  land: 'AT-ST',
+  center: [15.4386, 47.0707],
+  zoom: 12,
+  reportBounds: { minLon: 15.34, minLat: 47.0, maxLon: 15.54, maxLat: 47.14 },
+  sessionBounds: { minLon: 15.1, minLat: 46.8, maxLon: 15.8, maxLat: 47.35 },
+  heatGrid: { id: 'graz', originLon: 15.34, originLat: 47.0, latitude: 47.07 },
+  zoneSnapMetres: 20,
+  attribution: {
+    // Wörtlich aus `accessInformation` des Dienstes, um den Rechtsvorbehalt
+    // gekürzt — er steht in `licenceOpen`.
+    source: 'Magistrat Graz, Stadtvermessungsamt, Referat für Geoinformation (geodaten.graz.at)',
+    datasetUrl:
+      'https://geodaten.graz.at/mapping/rest/services/1_3_Verkehrswesen/Grazer_Parkzonen/FeatureServer',
+    licence: 'nicht ausgewiesen',
+    // Die Seite, auf der die Lizenz stehen müsste: der Eintrag des Dienstes
+    // im GIS-Portal der Stadt.
+    licenceUrl: 'https://geodaten.graz.at/gisportal/home/item.html?id=150ea5bc2262464abfde7392cd0b3fea',
+    attributionRequired: true,
+    licenceFamily: 'unklar',
+  },
+  licenceOpen:
+    'Der Parkzonen-Dienst des Stadtvermessungsamts Graz nennt keine Lizenz — ' +
+    'nur „© Magistrat Graz, Kein Rechtsanspruch aus der Karte ableitbar". ' +
+    'Ob die CC-BY-4.0-Freigabe des OGD-Portals data.graz.gv.at auch für ihn gilt, ' +
+    'muss das Stadtvermessungsamt (Europaplatz 20, 8020 Graz, ' +
+    'stadtvermessung@stadt.graz.at) bestätigen. Stand 16. September 2026.',
+  // Belegt auf der Seite der Stadt „Abschleppung von Kraftfahrzeugen und
+  // Fahrrädern": Die Fahrzeuge stehen beim beauftragten Unternehmen, nicht
+  // bei einer städtischen Stelle. Die Nummer steht dort als +43 316 721111;
+  // hier in der Schreibweise, in der man sie im Inland wählt.
+  towedVehicles: {
+    authority: 'ATSW 24h Service Franz Wuthe, Triester Straße 25, 8020 Graz',
+    url: 'https://www.graz.at/cms/beitrag/10211713/7749726/Abschleppung_von_Kraftfahrzeugen_und_Fahrraedern.html',
+    phone: '0316 721111',
+    checkedOn: '2026-09',
+    note: 'Abholung rund um die Uhr; Zulassungsschein und Führerschein mitbringen. Auskunft gibt auch das Straßenamt der Stadt, 0316 872-3602.',
+  },
+}
+
+export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE, GRAZ]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.

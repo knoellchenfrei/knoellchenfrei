@@ -38,6 +38,13 @@ import {
   parseFrankfurtSchedule,
 } from '../src/frankfurt.js'
 import { MuenchenParseError, muenchenParkingWindows, parseMuenchenRule } from '../src/muenchen.js'
+import {
+  GrazParseError,
+  parseGrazFee,
+  parseGrazMaxStay,
+  parseGrazMaxStayProse,
+  parseGrazSchedule,
+} from '../src/graz.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -183,6 +190,12 @@ describe('Zeitparser unter Beschuss', () => {
       for (const clause of rule.clauses) expectValidWindows(clause.windows, input)
     })
   })
+
+  it('Graz wirft nur GrazParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 200, GrazParseError, (input) => {
+      expectValidWindows(parseGrazSchedule(input), input)
+    })
+  })
 })
 
 describe('Gebührenparser unter Beschuss', () => {
@@ -203,6 +216,14 @@ describe('Gebührenparser unter Beschuss', () => {
       expectValidFee(parseFrankfurtFee(input), input)
     })
   })
+
+  it('Graz wirft nur GrazParseError, und seine Tickets sind nie null', () => {
+    fuzz(20260917, 120, GrazParseError, (input) => {
+      const tariff = parseGrazFee(input)
+      expectValidFee(tariff.fee, input)
+      for (const ticket of tariff.tickets) expect(ticket.cents, input).toBeGreaterThan(0)
+    })
+  })
 })
 
 describe('Höchstparkdauer unter Beschuss', () => {
@@ -221,6 +242,14 @@ describe('Höchstparkdauer unter Beschuss', () => {
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
     })
+    for (const parse of [parseGrazMaxStay, parseGrazMaxStayProse]) {
+      fuzz(20260918, 120, GrazParseError, (input) => {
+        const minutes = parse(input)
+        if (minutes === undefined) return
+        expect(Number.isInteger(minutes)).toBe(true)
+        expect(minutes).toBeGreaterThan(0)
+      })
+    }
   })
 })
 
@@ -230,7 +259,7 @@ describe('Zeitbudget', () => {
    * macht — nicht die Muster selbst. Eine Regression daran fiele sonst erst
    * auf, wenn der Datenbau minutenlang steht.
    */
-  it('bleibt für 1500 Eingaben durch sieben Parser unter einer Sekunde', () => {
+  it('bleibt für 1500 Eingaben durch neun Parser unter einer Sekunde', () => {
     const next = lcg(4711)
     const inputs = Array.from({ length: ITERATIONS }, () => fuzzString(next, 200))
     const parsers: readonly ((input: string) => unknown)[] = [
@@ -241,6 +270,8 @@ describe('Zeitbudget', () => {
       parseFee,
       parseHamburgFee,
       parseFrankfurtFee,
+      parseGrazSchedule,
+      parseGrazFee,
     ]
     const started = performance.now()
     for (const input of inputs) {

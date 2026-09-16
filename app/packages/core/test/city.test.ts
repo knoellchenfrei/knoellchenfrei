@@ -8,6 +8,7 @@ import {
   cityAt,
   cityByKey,
   FRANKFURT,
+  GRAZ,
   HAMBURG,
   MUENCHEN,
   suggestCity,
@@ -249,6 +250,20 @@ describe('cityAt', () => {
   it('verschluckt die Nachbarstädte nicht', () => {
     expect(cityAt(8.2473, 49.9929)).toBeUndefined() // Mainz
     expect(cityAt(8.9167, 50.0956)).toBeUndefined() // Offenbach, Rathaus
+  })
+
+  // Die erste Stadt außerhalb Deutschlands. Der Rahmen kommt aus der
+  // Stadtgrenze, nicht aus der Parkebene: Andritz im Norden und Puntigam im
+  // Süden haben keine Parkzone und gehören trotzdem dazu.
+  it('löst den Grazer Hauptplatz nach Graz auf und reicht bis Andritz und Puntigam', () => {
+    expect(cityAt(15.4386, 47.0707)?.key).toBe('graz')
+    expect(cityAt(15.4234, 47.1103)?.key).toBe('graz') // Andritz, Andritzer Hauptplatz
+    expect(cityAt(15.4358, 47.0243)?.key).toBe('graz') // Puntigam
+    expect(withinCity(GRAZ, 15.4386, 47.0707)).toBe(true)
+    // Leibnitz und Gleisdorf liegen nebenan und gehören nicht dazu.
+    expect(cityAt(15.5442, 46.7818)).toBeUndefined() // Leibnitz
+    expect(cityAt(15.7094, 47.1069)).toBeUndefined() // Gleisdorf
+    expect(cityCountry(GRAZ)).toBe('AT')
   })
 
   // Kein Rückfall auf Berlin: Zwischen den beiden Städten liegt keine, und
