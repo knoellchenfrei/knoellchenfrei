@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
+import { parseSalzburgMaxStay, parseSalzburgRule, type SalzburgZoneProperties } from '../src/salzburg.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -250,6 +251,43 @@ describe('Münchner Fixture', () => {
     // Die Summe der Schreibweisen plus die Zeilen ohne Regeltext ist der
     // ganze Abzug. Läuft das auseinander, fehlt eine Schreibweise im Test.
     expect(counted + FIXTURE.abschnitteOhneRegeltext).toBe(FIXTURE.abschnitteGesamt)
+  })
+})
+
+describe('Salzburger Fixture', () => {
+  interface Fixture {
+    zonen: (SalzburgZoneProperties & { gmlId: string })[]
+  }
+  const FIXTURE = read<Fixture>('sbg-kurzparkzonen-2026-09-16.json')
+
+  it('führt die Kurzparkzonen in genau diesen Typen', () => {
+    expectShape(FIXTURE.zonen as unknown as Record<string, unknown>[], {
+      gmlId: ['string'],
+      ID: ['number'],
+      NAME: ['string'],
+      ART: ['string'],
+      GEBUEHRENPFLICHT: ['string'],
+      MAXIMALE_PARKDAUER: ['string'],
+      GILT_VON: ['string'],
+      GILT_BIS: ['string'],
+      STATUS: ['string'],
+      // In allen 41 Zonen null — beobachtet ist kein anderer Typ.
+      STATUS_HINWEIS: ['null'],
+      KEIN_BEWOHNERPARKEN: ['string'],
+      // Fünf Zonen liegen in keiner Bewohnerparkzone; die Quelle schreibt
+      // dann `null`, nicht eine leere Zeichenkette.
+      GRUPPE: ['null', 'string'],
+      UNTERGRUPPE: ['null', 'string'],
+      DOWNLOAD_URL: ['string'],
+    })
+  })
+
+  // Beide Felder gehen in einen Parser, der `raw.length` liest.
+  it('liefert für jede Zone mindestens ein Fenster und eine Höchstparkdauer', () => {
+    for (const zone of FIXTURE.zonen) {
+      expect(parseSalzburgRule(zone.GEBUEHRENPFLICHT as string).windows.length, String(zone.ID)).toBeGreaterThan(0)
+      expect(parseSalzburgMaxStay(zone.MAXIMALE_PARKDAUER), String(zone.ID)).toBe(180)
+    }
   })
 })
 

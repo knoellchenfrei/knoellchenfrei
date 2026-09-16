@@ -514,11 +514,15 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Eine falsche Nummer kostet jemanden Zeit in einer Lage, in der er ohnehin
   // keine hat. Wo sie sich nicht belegen liess, steht sie deshalb nicht da —
   // Frankfurt ist der Fall.
-  it('nennt eine Nummer nur da, wo es eine gibt, und dann eine deutsche', () => {
+  // Seit Salzburg auch mit Landesvorwahl: Eine österreichische Nummer ohne
+  // `+43` wäre von Deutschland aus falsch gewählt.
+  it('nennt eine Nummer nur da, wo es eine gibt, und dann eine wählbare', () => {
     for (const city of CITIES) {
       const phone = city.towedVehicles?.phone
       if (phone === undefined) continue
-      expect(phone, city.name).toMatch(/^[()\d][()\d\s-]{6,}$/)
+      expect(phone, city.name).toMatch(/^[+()\d][()\d\s-]{6,}$/)
+      // Landesvorwahl genau dann, wenn die Stadt nicht in Deutschland liegt.
+      expect(phone.startsWith('+'), city.name).toBe(cityCountry(city) !== 'DE')
     }
     expect(CITIES.find((city) => city.key === 'frankfurt')?.towedVehicles?.phone).toBeUndefined()
   })

@@ -38,6 +38,7 @@ import {
   parseFrankfurtSchedule,
 } from '../src/frankfurt.js'
 import { MuenchenParseError, muenchenParkingWindows, parseMuenchenRule } from '../src/muenchen.js'
+import { SalzburgParseError, parseSalzburgMaxStay, parseSalzburgRule } from '../src/salzburg.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -176,6 +177,15 @@ describe('Zeitparser unter Beschuss', () => {
     })
   })
 
+  // Salzburg liefert zwei Fensterlisten — kassiert und nur Scheibe —, und
+  // beide müssen die Invariante halten.
+  it('Salzburg wirft nur SalzburgParseError und liefert nur gültige Fenster', () => {
+    fuzz(2026, 200, SalzburgParseError, (input) => {
+      const rule = parseSalzburgRule(input)
+      expectValidWindows([...rule.windows, ...rule.discWindows], input)
+    })
+  })
+
   it('München wirft nur MuenchenParseError und liefert nur gültige Fenster', () => {
     fuzz(20260910, 200, MuenchenParseError, (input) => {
       const rule = parseMuenchenRule(input)
@@ -221,6 +231,12 @@ describe('Höchstparkdauer unter Beschuss', () => {
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
     })
+    fuzz(20260916, 120, SalzburgParseError, (input) => {
+      const minutes = parseSalzburgMaxStay(input)
+      if (minutes === undefined) return
+      expect(Number.isInteger(minutes)).toBe(true)
+      expect(minutes).toBeGreaterThan(0)
+    })
   })
 })
 
@@ -230,7 +246,7 @@ describe('Zeitbudget', () => {
    * macht — nicht die Muster selbst. Eine Regression daran fiele sonst erst
    * auf, wenn der Datenbau minutenlang steht.
    */
-  it('bleibt für 1500 Eingaben durch sieben Parser unter einer Sekunde', () => {
+  it('bleibt für 1500 Eingaben durch acht Parser unter einer Sekunde', () => {
     const next = lcg(4711)
     const inputs = Array.from({ length: ITERATIONS }, () => fuzzString(next, 200))
     const parsers: readonly ((input: string) => unknown)[] = [
@@ -238,6 +254,7 @@ describe('Zeitbudget', () => {
       parseHamburgSchedule,
       parseFrankfurtSchedule,
       parseMuenchenRule,
+      parseSalzburgRule,
       parseFee,
       parseHamburgFee,
       parseFrankfurtFee,
