@@ -48,16 +48,31 @@ for (const source of SOURCES) {
       throw new Error(`HTTP ${response.status}${hint}`)
     }
     const body = await response.text()
-    // Ein falsches `outputFormat` liefert keinen Fehler, sondern GML — also
-    // gültiges XML, und `JSON.parse` scheitert daran mit einer Meldung, die
-    // nach kaputten Daten aussieht statt nach einer falschen Anfrage.
-    if (body.trimStart().startsWith('<')) {
-      throw new Error(
-        `XML statt JSON — outputFormat "${source.outputFormat}" kennt dieser Dienst vermutlich nicht`
-      )
+    let count: number
+    if (source.encoding === 'gml') {
+      // Schwerins Dienst kann kein JSON; hier ist XML die *richtige* Antwort.
+      // Gezählt wird, was `gml.ts` im Datenbau lesen wird — ein
+      // `ows:ExceptionReport` hat null `wfs:member` und fiele damit unten
+      // durch die 95-%-Schranke; sein Text steht trotzdem im Log statt nur
+      // einer Zahl.
+      if (!body.trimStart().startsWith('<')) {
+        throw new Error(`kein XML — der Dienst hat auf outputFormat "${source.outputFormat}" etwas anderes geantwortet`)
+      }
+      const exception = /<ows:ExceptionText[^>]*>([^<]*)</.exec(body)
+      if (exception !== null) throw new Error(`der Dienst meldet: ${(exception[1] ?? '').trim()}`)
+      count = body.match(/<wfs:member>/g)?.length ?? 0
+    } else {
+      // Ein falsches `outputFormat` liefert keinen Fehler, sondern GML — also
+      // gültiges XML, und `JSON.parse` scheitert daran mit einer Meldung, die
+      // nach kaputten Daten aussieht statt nach einer falschen Anfrage.
+      if (body.trimStart().startsWith('<')) {
+        throw new Error(
+          `XML statt JSON — outputFormat "${source.outputFormat}" kennt dieser Dienst vermutlich nicht`
+        )
+      }
+      const parsed = JSON.parse(body) as { features?: unknown[] }
+      count = parsed.features?.length ?? 0
     }
-    const parsed = JSON.parse(body) as { features?: unknown[] }
-    const count = parsed.features?.length ?? 0
     // A service that answers 200 with an empty or truncated collection would
     // otherwise silently shrink the app's data.
     //
@@ -79,7 +94,7 @@ for (const source of SOURCES) {
           'bevor die Zahl in sources.ts angepasst wird.'
       )
     }
-    writeFileSync(join(RAW, `${source.key}.json`), body)
+    writeFileSync(join(RAW, `${source.key}.${source.encoding === 'gml' ? 'gml' : 'json'}`), body)
     // Wachstum ist der Normalfall und trotzdem eine Meldung wert: Die Zahl in
     // `sources.ts` ist die Messlatte, und eine, die nie nachgezogen wird,
     // verliert ihren Sinn.

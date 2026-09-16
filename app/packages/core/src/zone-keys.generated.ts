@@ -713,6 +713,18 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "98",
     "99",
   ],
+  "schwerin": [
+    "A",
+    "A/D",
+    "A/F",
+    "C",
+    "D",
+    "F",
+    "G",
+    "H",
+    "J",
+    "O",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

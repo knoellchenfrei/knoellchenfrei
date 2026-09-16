@@ -26,6 +26,23 @@ describe('wfsUrl', () => {
   it('wirft bei einer unbekannten Stadt, statt auf Berlin zurückzufallen', () => {
     expect(() => citySources('bielefeld')).toThrow()
   })
+
+  // Schwerin ist die Ausnahme von der Grad-Regel, und zwar ausdrücklich: Der
+  // Dienst antwortet auf jedes andere srsName mit `Invalid SRS`. Deshalb
+  // steht 25833 in der Konfiguration, GML als Kodierung — und der Datenbau
+  // prüft mit `assertUtm`, dass wirklich Meter ankommen. Die Regel bleibt:
+  // srsName steht in jeder Anfrage, nie fehlt er.
+  it('fragt Schwerin in EPSG:25833 und als GML an, weil der Dienst nichts anderes kann', () => {
+    const quellen = citySources('schwerin')
+    expect(quellen.length).toBe(4)
+    for (const quelle of quellen) {
+      const url = new URL(wfsUrl(quelle))
+      expect(url.searchParams.get('srsName'), quelle.typeName).toBe('urn:ogc:def:crs:EPSG::25833')
+      expect(url.searchParams.get('outputFormat'), quelle.typeName).toBe('application/gml+xml; version=3.2')
+      expect(quelle.encoding).toBe('gml')
+      expect(quelle.axisOrder).toBe('lon,lat')
+    }
+  })
 })
 
 describe('toGeoJsonAxes', () => {
