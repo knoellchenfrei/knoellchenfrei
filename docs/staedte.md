@@ -4,8 +4,9 @@
 > Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
 > Düsseldorf und Karlsruhe, je mit eigenem Bericht:
 > [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Dieses Dokument hieß einmal „Zweite
-> Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
+> [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu **Graz**,
+> die erste Stadt in Österreich: [staedte-graz.md](staedte-graz.md). Dieses Dokument
+> hieß einmal „Zweite Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.
@@ -187,6 +188,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Berlin** | WFS, Zonen und Abschnitte | im selben Feed | im selben Feed | DL-DE/Zero-2.0 | **geprüft** |
 | **Hamburg** | 146 Bewohnerparkgebiete als WFS | je Gebiet, als „3,50 € je Stunde" | je Gebiet, zehn Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
 | **München** | 82 Parkraummanagementgebiete und 13.714 Straßenseiten als WFS | **nirgends** — nur in der Gebührenordnung | je Straßenseite, als Fließtext, 291 Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
+| **Graz** | 90 + 75 Flächen der Blauen und Grünen Zone als ArcGIS-GeoJSON | je Fläche, als „Mindestgebühr (halbe Stunde): € 1,30 …" | je Fläche, drei Schreibweisen | **nicht ausgewiesen** — siehe [staedte-graz.md](staedte-graz.md) | **geprüft** |
 | **Frankfurt / Rhein-Main** | Regionalverband stellt Karten und Geodaten als WFS bereit | offen | offen | als Open Data ausgewiesen | **Hinweis** |
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |

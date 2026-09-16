@@ -232,6 +232,49 @@ kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
 
+## Verwendet — Graz
+
+Abgerufen am 16. September 2026 vom **Magistrat Graz, Stadtvermessungsamt**
+über `geodaten.graz.at`, ArcGIS Enterprise 11.5 — kein WFS, sondern der
+REST-Dienst mit `query?where=1%3D1&outFields=*&f=geojson&outSR=4326`. Drei
+Ebenen aus **zwei** Diensten:
+
+| Ebene | Dienst / Ebene | Umfang |
+| --- | --- | --- |
+| Kurzparkzonen aktuell (Blaue Zone) | `1_3_Verkehrswesen/Grazer_Parkzonen/FeatureServer/0` | 90 Polygone — 21 flächendeckend, 69 straßenzugsweise |
+| Parkzonen aktuell (Grüne Zone) | `1_3_Verkehrswesen/Grazer_Parkzonen/FeatureServer/1` | 75 Polygone — 22 flächendeckend, 53 straßenzugsweise |
+| Bezirksgrenzen | `OGD_WFS/FeatureServer/44` | 17 Bezirke, als Kartenkontext und für die Zuordnung |
+
+**Lizenz: für die Parkzonen nicht ausgewiesen.** Der Dienst führt
+`licenseInfo: null` und als `accessInformation` nur „© Magistrat Graz |
+Stadtvermessungsamt | Referat für Geoinformation | Kein Rechtsanspruch aus
+der Karte ableitbar!". Das OGD-Portal `data.graz.gv.at` stellt seine Daten
+unter [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) („Datenquelle:
+Stadt Graz – data.graz.gv.at"), listet die Parkzonen aber nicht; der
+OGD-Dienst `OGD_WFS` führt sie ebenfalls nicht. Die App trägt deshalb
+`licenceFamily: 'unklar'` und zeigt den Banner; die Bezirksgrenzen kommen aus
+dem OGD-Dienst und sind damit belegt CC BY 4.0. Details und der Weg zur
+Klärung in [staedte-graz.md](staedte-graz.md).
+
+Vier Dinge, die man erst im Feed sieht:
+
+- **Tarif, Zeiten und Höchstparkdauer stehen je Fläche** — als Prosa in
+  `PARK_GEBUEHR`, `GELTUNGSZEIT` und `PARKDAUER`, dazu `PARK_DAUER` als Satz.
+  Zwei Gebührentexte, drei Zeitschreibweisen, vier Parkdauern in 165 Flächen.
+- **Die Gebühr steht je halbe Stunde.** „Mindestgebühr (halbe Stunde):
+  € 1,30" ist 2,60 €/h; die Stadt bestätigt auf gps.graz.at, dass in
+  10-Cent-Schritten linear weitergezahlt wird.
+- **Ohne `outSR=4326` antwortet der Dienst in MGI / Austria GK M34** (`wkid
+  31256`, Meter um −67.000 / 215.000) — dieselbe Falle wie Frankfurts UTM.
+- **122 der 165 Flächen sind Straßenzüge**, im Median 6,7 m (blau) bzw.
+  3,7 m (grün) breit — wie Karlsruhes Stellplatzreihen, deshalb
+  `zoneSnapMetres: 20`.
+
+Nicht abgerufen: `Parkzonen_Gebiete` (die zu Gebieten zusammengefassten
+Flächen — dieselbe Auskunft, gröber) und die Ebenen des OGD-Dienstes zu
+Behindertenparkplätzen, P+R, Parkgaragen und E-Ladestellen; sie wären der
+nächste Schritt für `poi.geojson`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
