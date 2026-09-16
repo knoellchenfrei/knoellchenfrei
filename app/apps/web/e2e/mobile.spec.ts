@@ -33,23 +33,24 @@ async function ready(page: Page): Promise<void> {
 }
 
 /** Das Meldungen-Blatt hinter der Karte unten links (seit dem 9. September nachts). */
+/** Der Griff weiss, ob das Blatt offen ist; der Körper bleibt beim Zufahren 240 ms sichtbar (siehe `app.spec.ts`). */
+async function panelIsOpen(page: Page): Promise<boolean> {
+  return (await page.locator('.panel-toggle').getAttribute('aria-expanded')) === 'true'
+}
+
 async function openReports(page: Page): Promise<void> {
   // Mit offenem Blatt ist die Karte auf dem Handy weg (`docs/design.md`,
   // Abschnitt 8); also erst zu, dann öffnen.
-  const body = page.locator('.sidebar__body')
-  if (await body.isVisible()) {
-    await page.locator('.panel-toggle').click()
-    await expect(body).toBeHidden()
-    await page.waitForTimeout(300)
-  }
+  if (await panelIsOpen(page)) await page.locator('.panel-toggle').click()
+  await expect(page.locator('.panel-toggle')).toHaveAttribute('aria-expanded', 'false')
+  await expect(page.locator('.sidebar__body')).toBeHidden()
   await page.locator('.reports-card').click()
   await expect(page.getByRole('dialog', { name: 'Meldungen' })).toBeVisible()
 }
 
 async function openPanel(page: Page): Promise<void> {
-  const body = page.locator('.sidebar__body')
-  if (!(await body.isVisible())) await page.locator('.panel-toggle').click()
-  await expect(body).toBeVisible()
+  if (!(await panelIsOpen(page))) await page.locator('.panel-toggle').click()
+  await expect(page.locator('.sidebar__body')).toBeVisible()
 }
 
 test.describe('Zurück schließt das Blatt, nicht die App', () => {
@@ -196,6 +197,15 @@ test.describe('das Blatt auf dem Handy', () => {
     await ready(page)
     const grip = page.locator('.panel-toggle')
     const body = page.locator('.sidebar__body')
+    // Erst eine Zone, damit das Blatt etwas zu zeigen hat: Ohne Zone ist der
+    // Inhalt 234 Pixel hoch, und „ganz" ist dann genauso hoch wie „halb" —
+    // `max-height` streckt nichts. Der Test bestand vorher nur, wenn er
+    // „halb" mitten im Übergang mass (16. September, einer von drei Läufen).
+    const box = await page.locator('.map').boundingBox()
+    await page.mouse.click(box!.x + box!.width * 0.4, box!.y + box!.height * 0.45)
+    await expect(page.locator('.sidebar__body h2').first()).toContainText('Parkzone')
+    await grip.click()
+    await expect(grip).toHaveAttribute('aria-expanded', 'false')
     await expect(body).toBeHidden()
 
     const swipe = async (dy: number): Promise<void> => {
@@ -220,6 +230,8 @@ test.describe('das Blatt auf dem Handy', () => {
     // Hoch: zu → halb.
     await swipe(-120)
     await expect(body).toBeVisible()
+    // Nach dem Rasten messen, nicht währenddessen.
+    await page.waitForTimeout(400)
     const half = (await page.locator('.sidebar').boundingBox())!.height
     // Noch einmal hoch: halb → ganz.
     await swipe(-120)

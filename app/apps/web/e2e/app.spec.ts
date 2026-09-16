@@ -63,22 +63,31 @@ async function openSettings(page: Page) {
   return sheet
 }
 
+/**
+ * Ob das Blatt offen ist, sagt der Griff (`aria-expanded`), nicht der Körper:
+ * Der bleibt nach dem Zuklappen 240 ms im Baum, damit das Blatt zufahren
+ * kann. Wer in dieser Spanne „sichtbar" liest und daraufhin den Griff
+ * drückt, öffnet ein Blatt, das gerade zuging — so fiel „bietet auf der
+ * eigenen Meldung keine Stimme an" am 16. September in einem von drei
+ * Läufen: Der Meldeknopf klappt das Blatt zu, der Dialog schloss 258 ms
+ * später, und die Hilfsfunktion erwischte die letzten Millisekunden.
+ */
+async function panelIsOpen(page: Page): Promise<boolean> {
+  return (await page.locator('.panel-toggle').getAttribute('aria-expanded')) === 'true'
+}
+
 async function openPanel(page: Page): Promise<void> {
-  const body = page.locator('.sidebar__body')
-  if (!(await body.isVisible())) await page.locator('.panel-toggle').click()
-  await expect(body).toBeVisible()
+  if (!(await panelIsOpen(page))) await page.locator('.panel-toggle').click()
+  await expect(page.locator('.sidebar__body')).toBeVisible()
 }
 
 /** Das Meldungen-Blatt hinter der Karte unten links (seit dem 9. September nachts). */
 async function openReports(page: Page): Promise<import('@playwright/test').Locator> {
   // Mit offenem Blatt ist die Karte auf dem Handy weg (`docs/design.md`,
   // Abschnitt 8); also erst zu, dann öffnen.
-  const body = page.locator('.sidebar__body')
-  if (await body.isVisible()) {
-    await page.locator('.panel-toggle').click()
-    await expect(body).toBeHidden()
-    await page.waitForTimeout(300)
-  }
+  if (await panelIsOpen(page)) await page.locator('.panel-toggle').click()
+  await expect(page.locator('.panel-toggle')).toHaveAttribute('aria-expanded', 'false')
+  await expect(page.locator('.sidebar__body')).toBeHidden()
   await page.locator('.reports-card').click()
   const dialog = page.getByRole('dialog', { name: 'Meldungen' })
   await expect(dialog).toBeVisible()

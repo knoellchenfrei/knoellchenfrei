@@ -925,6 +925,19 @@ wiederholt.
   Vorschau, die eine Minute später grün war. Der schlimmste Fall ist seitdem
   am Inhalt festgemacht (Bündel ohne Passwortfeld), nicht am Status. Wer die
   Bedeutung eines Status ändert, sucht nach allen, die ihn lesen.
+- **Ein Test liest den Zustand, nicht die Animation — und wer eine Höhe
+  vergleicht, braucht Inhalt.** Zwei E2E-Tests fielen am 16. September in
+  je einem von drei Läufen. Erstens: `openReports` las „Blatt offen" an der
+  Sichtbarkeit des Körpers ab, der nach dem Zuklappen 240 ms im Baum bleibt,
+  damit das Blatt zufahren kann. Der Meldeknopf klappt das Blatt zu, der
+  Dialog schloss 258 ms später, und die Hilfsfunktion erwischte die letzten
+  Millisekunden: Sie drückte den Griff und öffnete ein Blatt, das gerade
+  zuging. Jetzt entscheidet `aria-expanded` am Griff. Zweitens: „ganz ist
+  höher als halb" galt ohne Zone nie — der Inhalt war 234 Pixel hoch, und
+  `max-height` streckt nichts. Der Test bestand nur, wenn er „halb" mitten
+  im Übergang mass. Jetzt wählt er erst eine Zone (Inhalt 897 Pixel, halb
+  487, ganz 767) und misst nach dem Rasten. Ein Test, der nur manchmal grün
+  ist, hat keine Wackelursache, sondern eine falsche Messung.
 
 ## Balance: Tokens und Rechenminuten
 
@@ -973,7 +986,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **81 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **82 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
