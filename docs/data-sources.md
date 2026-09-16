@@ -232,6 +232,51 @@ kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
 
+## Verwendet — Innsbruck
+
+Abgerufen am 16. September 2026 von der **Stadt Innsbruck** über ihr ArcGIS
+Online („geoHub Innsbruck", Eigentümer `geoHub_Innsbruck`, Organisation
+„Stadtmagistrat Innsbruck"). Kein WFS: Beide Ebenen sind
+ArcGIS-FeatureServer-Abfragen (`query?where=1=1&outFields=*&f=geojson&outSR=4326`),
+in `sources.ts` als `FileSource` geführt.
+
+| Ebene | Adresse | Umfang |
+| --- | --- | --- |
+| Parkzonen | `…/Parkzonen_WGS84/FeatureServer/0` | 21 Polygone (Kurzparkzonen und Parkstraßen) |
+| Stadtteile | `…/statistik_06_v/FeatureServer/0` | 20 statistische Stadtteile, nur als Kartenkontext und Ortsangabe |
+
+**Lizenz: [Nutzungsbedingung der Stadt Innsbruck](https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed).**
+Das ArcGIS-Item selbst hat ein leeres `licenseInfo` und steht in keinem
+Katalog mehr — der Eintrag auf data.gv.at, den die Recherche nannte, ist
+verschwunden. Die Bedingungen stehen eine Ebene höher, auf der Seite des Hubs,
+wörtlich: „Die Daten der Stadt Innsbruck stehen unter einer offenen Lizenz
+vergleichbar mit "Creative Commons Namensnennung 4.0" (CC-BY 4.0). Bei
+Verwendung der Datensätze ist die Landeshauptstadt Innsbruck als Datenquelle
+anzugeben. Die Namensnennung der Stadt Innsbruck als Rechteinhaber hat in
+folgender Weise zu erfolgen: "Datenquelle: Stadt Innsbruck"". Dazu eine
+Auflage, die CC BY nicht kennt: Wer die Daten „für ihre öffentlichen
+Anwendungen / Dienste" verwendet, teilt der Stadt unter
+`post.vermessung-gis@innsbruck.gv.at` mit, wo und wofür — eine E-Mail des
+Betreibers, geführt in [todo.md](todo.md#5-weitere-städte--vier-laufen--ich).
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Alles steht in einem Freitextfeld.** `INFO` trägt Zeiten, Betrag je
+  halbe Stunde, Tagesdeckel und Tarifsprung in einem Satz, mit
+  **Dezimalpunkt** (`EUR 1.10`); `BEZEICH` trägt die Höchstparkdauer
+  („Kurzparkzone 180 min kostenpflichtig"). Sieben `INFO`-Werte über 21
+  Zonen, alle gezählt in [staedte-innsbruck.md](staedte-innsbruck.md).
+- **„werktags" heißt hier Mo–Fr**, ausgeschrieben als `werktags Mo-Fr` —
+  anders als in Hamburg. Ein nacktes „werktags" weist der Parser ab.
+- **Der Stand verfällt am 2. November 2026.** Der Gemeinderat hat am
+  16. Juli 2026 eine neue Parkabgabeverordnung beschlossen: Mo–Fr 8–21 Uhr,
+  Sa 8–18 Uhr in allen Zonen, drei neue Parkstraßen (Arzl, Olympisches Dorf,
+  Kranebitten). Der Feed trägt heute den alten Stand.
+
+Nicht im Feed: Behindertenparkplätze und Parkscheinautomaten führt der Hub nur
+als Karten, nicht als Ebenen mit Sachdaten; POI und Umweltzone (Innsbruck hat
+keine) fehlen, `meta.json` führt beides unter `absent`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

@@ -4,7 +4,9 @@
 > Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
 > Düsseldorf und Karlsruhe, je mit eigenem Bericht:
 > [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Dieses Dokument hieß einmal „Zweite
+> [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu
+> **Innsbruck**, die erste Stadt außerhalb Deutschlands:
+> [staedte-innsbruck.md](staedte-innsbruck.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
@@ -191,6 +193,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
+| **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen
