@@ -487,6 +487,81 @@ const KARLSRUHE_SOURCES: readonly Source[] = [
   },
 ]
 
+/**
+ * Freiburg im Breisgau — Stadt Freiburg, DL-DE/BY-2.0.
+ *
+ * Zahlen und Typnamen sind am 16. September 2026 mit `resultType=hits` gegen
+ * die Dienste selbst geprüft, nicht aus Metadaten übernommen.
+ *
+ * Zwei Dienste auf **einem** MapServer (`geoportal.freiburg.de`): `gut_parken`
+ * (Garten- und Tiefbauamt) führt alles zum Parken, die Stadtteile liegen in
+ * `abi_gliederung` (Amt für Bürgerservice und Informationsverarbeitung).
+ * Gefunden über den GeoNetwork-Katalog der Stadt
+ * (`geodaten.freiburg.de/geonetwork/srv/api/search/records/_search`,
+ * Datensatz „Stadtteile der Stadt Freiburg i. Br."), nicht durch Raten.
+ * Beide Dienste nennen in `ows:Fees` wörtlich dieselbe Lizenz und denselben
+ * Quellenvermerk „Datengrundlage: Stadt Freiburg, www.freiburg.de".
+ *
+ * **`srsName` ist Pflicht.** `DefaultCRS` ist EPSG:25832; ohne den Parameter
+ * kommen UTM-Meter (`[412031.0, 5317230.4]`) — anders als Frankfurt sagt der
+ * Dienst es immerhin dazu (`crs` im GeoJSON). Mit `srsName` kommt `[lon, lat]`
+ * ohne `crs`-Objekt. Und das Ausgabeformat verlangt den **ganzen** Wert aus
+ * `GetCapabilities` samt `charset`: `application/json; subtype=geojson`
+ * allein (Kölns Form) quittiert der Dienst mit HTTP 400.
+ *
+ * Bewusst NICHT abgerufen: `ms:bewohnerparken` (33 Bewohnerparkgebiete ohne
+ * Zeit und Betrag — sie sagen, wo ein Bewohnerausweis gilt, nicht, was
+ * Parken kostet; Begründung in `docs/staedte-freiburg.md`),
+ * `ms:behindertenparkplatz_detail` (328 Polygone, je Stellplatz eines; die
+ * Übersichtsebene mit 195 Standorten reicht für ein Symbol) und
+ * `ms:gesperrte_flaechen_pr` (6 gesperrte Flächen auf P+R-Anlagen).
+ */
+const FREIBURG_GUT_PARKEN = 'https://geoportal.freiburg.de/wfs/gut_parken/gut_parken'
+
+const FREIBURG_DEFAULTS = {
+  outputFormat: 'application/json; subtype=geojson; charset=utf-8',
+  axisOrder: 'lon,lat',
+} as const
+
+const FREIBURG_SOURCES: readonly Source[] = [
+  // Die Flächen tragen Zeit und Betrag selbst — wie Hamburg, nicht wie
+  // Frankfurt. Nur eine schreibt „Beschilderung beachten!" statt einer Zeit;
+  // für sie braucht der Datenbau die Automaten.
+  {
+    key: 'zones',
+    service: FREIBURG_GUT_PARKEN,
+    typeName: 'ms:parkgebzonen',
+    expectedFeatures: 37,
+    ...FREIBURG_DEFAULTS,
+  },
+  // Zeiten, Tarif und Höchstparkdauer je Automat: Gegenprobe zur Fläche,
+  // Quelle der Höchstparkdauer, und für die Altstadt die einzige Zeit.
+  {
+    key: 'automats',
+    service: FREIBURG_GUT_PARKEN,
+    typeName: 'ms:psa',
+    expectedFeatures: 538,
+    ...FREIBURG_DEFAULTS,
+  },
+  {
+    key: 'accessible',
+    service: FREIBURG_GUT_PARKEN,
+    typeName: 'ms:behindertenparkpl_uebersicht',
+    expectedFeatures: 195,
+    ...FREIBURG_DEFAULTS,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile: Ohne Hintergrundkarte schweben die
+  // Flächen sonst im Nichts. 28 Stadtteile; die 42 Stadtbezirke desselben
+  // Dienstes wären die feinere, die 28 die geläufige Gliederung.
+  {
+    key: 'districts',
+    service: 'https://geoportal.freiburg.de/wfs/abi_gliederung/abi_gliederung',
+    typeName: 'ms:stadtteile',
+    expectedFeatures: 28,
+    ...FREIBURG_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -495,6 +570,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   koeln: KOELN_SOURCES,
   duesseldorf: DUESSELDORF_SOURCES,
   karlsruhe: KARLSRUHE_SOURCES,
+  freiburg: FREIBURG_SOURCES,
 }
 
 /**
