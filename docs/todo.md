@@ -483,6 +483,12 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > sagt dabei den Abstand. Was je Stadt offen bleibt, steht unverändert in
 > den drei Berichten unter „Was offen bleibt" — Rückfragen an die Städte,
 > Düsseldorfs Tariflizenz, Kölns Stadtbezirke.
+
+> **Rostock, angeschlossen am 16. September:** zehn Bewohnerparkgebiete mit
+> den Angaben der Automaten darin, Feiertagskalender `MV` mit Gesetzesbeleg,
+> Lizenz CC0. Offen — 59 der 111 Automaten stehen außerhalb jeder Fläche,
+> und die Parkgebührenordnung von 2022 weicht in Zone W vom Feed ab — steht
+> in [staedte-rostock.md](staedte-rostock.md) unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

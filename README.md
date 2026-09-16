@@ -12,7 +12,8 @@ Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
 Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg, Frankfurt am
-Main, München, Köln, Düsseldorf, Karlsruhe und Freiburg im Breisgau**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
+Main, München, Köln, Düsseldorf, Karlsruhe** und seit dem 16. September die Städte der
+zweiten Runde (Tabelle unter „Datenquellen"), umschaltbar in den Einstellungen — eine Stadt zur Zeit,
 die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
@@ -22,7 +23,7 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort, Tippen auf die Karte oder Suche nach Zone, Bezirk und — seit dem 9. September nachts, über Photon — Straße. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Zone finden** | Standort, Tippen auf die Karte oder Suche nach Zone, Bezirk und — seit dem 9. September nachts, über Photon — Straße. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe, 10 Bewohnerparkgebiete in Rostock. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
@@ -78,6 +79,7 @@ Formalie:
 | **Düsseldorf** | [Landeshauptstadt Düsseldorf](https://maps.duesseldorf.de/services/verkehr/wfs), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional*; Tarife der Automaten bis zur Lizenzklärung nicht ausgeliefert | 44 Bewohnerparkgebiete aus 65 Stücken, 50 Stadtteile, Umweltzone |
 | **Karlsruhe** | [Stadt Karlsruhe über die TechnologieRegion](https://mobil.trk.de/geoserver/TBA/ows), WFS 2.0.0 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — Namensnennung ist **Lizenzbedingung** | 279 Stellplatzreihen (die Zonen sind die Reihen selbst, 4,8 m breit — deshalb der Rückfall auf die nächste Fläche), keine Stadtteile |
 | **Freiburg im Breisgau** | [Stadt Freiburg](https://geoportal.freiburg.de/wfs/gut_parken/gut_parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Datengrundlage: Stadt Freiburg, www.freiburg.de` | 37 Gebührenzonen-Flächen mit Betrag und Zeit, 538 Parkscheinautomaten als Gegenprobe und Höchstparkdauer, 195 Behindertenparkplatz-Standorte, 28 Stadtteile |
+| **Rostock** | [Hanse- und Universitätsstadt Rostock](https://geo.sv.rostock.de/geodienste/parkscheinautomaten/wfs), WFS 2.0.0 | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/deed.de) — gemeinfrei, Namensnennung *optional* | 10 Bewohnerparkgebiete mit den Angaben von 52 der 111 Parkscheinautomaten (59 stehen außerhalb jeder Fläche), 31 Ortsteile — [docs/staedte-rostock.md](docs/staedte-rostock.md) |
 
 Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
 Oberfläche: Eine Hamburg-, Frankfurt- oder München-Ansicht ohne Quellenangabe

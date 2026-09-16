@@ -489,6 +489,7 @@ const KARLSRUHE_SOURCES: readonly Source[] = [
 
 /**
  * Freiburg im Breisgau — Stadt Freiburg, DL-DE/BY-2.0.
+ * Rostock — Hanse- und Universitätsstadt Rostock, CC0 1.0.
  *
  * Zahlen und Typnamen sind am 16. September 2026 mit `resultType=hits` gegen
  * die Dienste selbst geprüft, nicht aus Metadaten übernommen.
@@ -562,6 +563,75 @@ const FREIBURG_SOURCES: readonly Source[] = [
   },
 ]
 
+/**
+ * Rostock — Hanse- und Universitätsstadt Rostock, CC0 1.0.
+ *
+ * Zahlen und Typnamen sind am 16. September 2026 mit `resultType=hits` gegen
+ * die Dienste selbst geprüft, nicht aus Metadaten übernommen.
+ *
+ * **Ein Dienst je Datensatz.** `geo.sv.rostock.de/geodienste/<name>/wfs` führt
+ * genau einen Typnamen; die drei Ebenen kommen also von drei Adressen
+ * desselben Servers. Gefunden über den CKAN-Katalog der Stadt
+ * (`opendata-hro.de/api/3/action/package_search`), der zu jedem Datensatz die
+ * WFS-Adresse und daneben fertige Downloads (GeoJSON, CSV, GML) nennt.
+ *
+ * **Ausgabeformat `application/geo+json`**, wie Hamburg — `application/json`
+ * weist der Dienst mit `InvalidParameterValue` ab. Und die Achsen sind
+ * Hamburgs: Mit `srsName=urn:ogc:def:crs:EPSG::4326` antwortet der Dienst
+ * `[54.0873, 12.1383]`, also **`[lat, lon]`**. Gemessen, nicht geraten — und
+ * mit einer Falle daneben: **Ohne** `srsName` liefert derselbe Dienst im
+ * GeoJSON `[12.1383, 54.0873]` in Grad, obwohl `DefaultCRS` EPSG:25833 ist.
+ * Wer den Parameter weglässt, bekommt also die andere Reihenfolge, nicht
+ * UTM-Meter. Der fertige GeoJSON-Download ist ebenfalls `[lon, lat]`. Weil
+ * `wfsUrl` den Parameter für alle Städte setzt, steht hier `lat,lon`, und
+ * `assertDegrees` im Datenbau prüft die Grade trotzdem.
+ *
+ * Bewusst NICHT abgerufen: die fertigen Downloads. Sie sind `[lon, lat]`
+ * ohne `crs`, tragen aber nicht die `bezeichnung` des Standorts — und die
+ * steht im Panel. Dafür eine Eigenheit des WFS, die der Download nicht hat:
+ * Ein leeres Feld wird **weggelassen**, nicht als `null` geführt (80 von 111
+ * Automaten ohne `normaltarif_gebuehren_max`, zwei ohne
+ * `normaltarif_gebuehren_pro_stunde`), und `bewohnerparkgebiet` ist bei 63
+ * Automaten ein Leerstring. `fixture-shape.test.ts` hält beides fest.
+ * Details in `docs/staedte-rostock.md`.
+ */
+const ROSTOCK_WFS = 'https://geo.sv.rostock.de/geodienste'
+
+const ROSTOCK_DEFAULTS = {
+  outputFormat: 'application/geo+json',
+  axisOrder: 'lat,lon',
+} as const
+
+const ROSTOCK_SOURCES: readonly Source[] = [
+  // Die einzigen Flächen im Feed. Die Tarifzonen A–D und W der
+  // Parkgebührenordnung gibt es nur als PDF-Karte.
+  {
+    key: 'zones',
+    service: `${ROSTOCK_WFS}/bewohnerparkgebiete/wfs`,
+    typeName: 'hro.bewohnerparkgebiete.bewohnerparkgebiete',
+    expectedFeatures: 10,
+    ...ROSTOCK_DEFAULTS,
+  },
+  // Die eigentliche Sachauskunft. Wie in Frankfurt hängen Tarif, Zeiten und
+  // Höchstparkdauer am Automaten, nicht am Gebiet.
+  {
+    key: 'automats',
+    service: `${ROSTOCK_WFS}/parkscheinautomaten/wfs`,
+    typeName: 'hro.parkscheinautomaten.parkscheinautomaten',
+    expectedFeatures: 111,
+    ...ROSTOCK_DEFAULTS,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile: Kartenkontext, und der Rahmen der
+  // Stadt für `reportBounds`. 31 Ortsteile, jeder mit `gemeindeteil_name`.
+  {
+    key: 'districts',
+    service: `${ROSTOCK_WFS}/ortsteile/wfs`,
+    typeName: 'hro.ortsteile.ortsteile',
+    expectedFeatures: 31,
+    ...ROSTOCK_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -571,6 +641,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   duesseldorf: DUESSELDORF_SOURCES,
   karlsruhe: KARLSRUHE_SOURCES,
   freiburg: FREIBURG_SOURCES,
+  rostock: ROSTOCK_SOURCES,
 }
 
 /**

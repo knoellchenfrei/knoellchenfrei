@@ -752,6 +752,18 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "3 (Fläche 45)",
     "3 (Fläche 9)",
   ],
+  "rostock": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "B1",
+    "B2",
+    "H1",
+    "W1",
+    "W2",
+    "W4",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

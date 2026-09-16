@@ -8,6 +8,9 @@
 > Freiburg im Breisgau: [staedte-freiburg.md](staedte-freiburg.md). Dieses
 > Dokument hieß einmal „Zweite Stadt"; die Frage, die es beantwortet, ist
 > dieselbe geblieben.
+> [staedte-karlsruhe.md](staedte-karlsruhe.md); seit dem 16. September Rostock,
+> [staedte-rostock.md](staedte-rostock.md). Dieses Dokument hieß einmal „Zweite
+> Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.

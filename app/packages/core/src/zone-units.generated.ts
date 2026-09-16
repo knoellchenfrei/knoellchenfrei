@@ -747,6 +747,18 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "3 (Fläche 45)": "3 (Fläche 45)",
     "3 (Fläche 9)": "bezirk:Stühlinger",
   },
+  "rostock": {
+    "A1": "A1",
+    "A2": "A2",
+    "A3": "A3",
+    "A4": "A4",
+    "B1": "B1",
+    "B2": "B2",
+    "H1": "H1",
+    "W1": "W1",
+    "W2": "W2",
+    "W4": "bezirk:Seebad Warnemünde",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -759,6 +771,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "duesseldorf": 44,
   "karlsruhe": 13,
   "freiburg": 21,
+  "rostock": 10,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

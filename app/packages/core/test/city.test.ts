@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   BERLIN,
+  ROSTOCK,
   COUNTRY_NAMES,
   cityCountry,
   CITIES,
@@ -521,5 +522,52 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
       expect(phone, city.name).toMatch(/^[()\d][()\d\s-]{6,}$/)
     }
     expect(CITIES.find((city) => city.key === 'frankfurt')?.towedVehicles?.phone).toBeUndefined()
+  })
+})
+
+/**
+ * Rostock — die erste Stadt in Mecklenburg-Vorpommern und die erste unter
+ * CC0. Der Rahmen kommt aus den 31 Ortsteilen, nicht aus den zehn
+ * Bewohnerparkgebieten: Warnemünde und Hohe Düne liegen elf Kilometer nördlich
+ * der Altstadt, und in beiden stehen Parkscheinautomaten.
+ */
+describe('Rostock', () => {
+  const NEUER_MARKT: [number, number] = [12.1406, 54.0887]
+  const LEUCHTTURM_WARNEMUENDE: [number, number] = [12.0838, 54.1811]
+  const HOHE_DUENE: [number, number] = [12.1015, 54.1795]
+
+  it('nimmt Altstadt, Warnemünde und Hohe Düne an und weist sie für Hamburg ab', () => {
+    for (const point of [NEUER_MARKT, LEUCHTTURM_WARNEMUENDE, HOHE_DUENE]) {
+      expect(withinCity(ROSTOCK, ...point)).toBe(true)
+      expect(withinCity(HAMBURG, ...point)).toBe(false)
+      expect(cityAt(...point)).toBe(ROSTOCK)
+    }
+  })
+
+  // Bad Doberan (11,9034 / 54,1069) liegt westlich der Stadtgrenze; die Box
+  // endet bei 11,99. Eine Meldung von dort ist keine Rostocker.
+  it('verschluckt Bad Doberan nicht', () => {
+    expect(withinCity(ROSTOCK, 11.9034, 54.1069)).toBe(false)
+    expect(cityAt(11.9034, 54.1069)).toBeUndefined()
+  })
+
+  it('führt CC0 ohne Nennungspflicht, mit Quellenvermerk und Datensatz', () => {
+    expect(ROSTOCK.attribution.licenceFamily).toBe('cc0')
+    expect(ROSTOCK.attribution.attributionRequired).toBe(false)
+    expect(ROSTOCK.attribution.licenceUrl).toBe('https://creativecommons.org/publicdomain/zero/1.0/deed.de')
+    expect(ROSTOCK.attribution.datasetUrl).toMatch(/^https:\/\/geo\.sv\.rostock\.de\//)
+    expect(ROSTOCK.attribution.source).toContain('Hanse- und Universitätsstadt Rostock')
+  })
+
+  it('hängt am Kalender von Mecklenburg-Vorpommern und braucht keinen Stadtfeiertag', () => {
+    expect(ROSTOCK.land).toBe('MV')
+    expect(ROSTOCK.holidays).toBeUndefined()
+  })
+
+  // Die Nummer steht wörtlich auf der Seite des Stadtamts; die Auskunft gibt
+  // die Polizei, nicht das Amt, das abschleppt.
+  it('nennt die Einsatzleitstelle der Polizei Waldeck mit der belegten Nummer', () => {
+    expect(ROSTOCK.towedVehicles?.phone).toBe('038208 8880')
+    expect(ROSTOCK.towedVehicles?.url).toContain('rathaus.rostock.de')
   })
 })

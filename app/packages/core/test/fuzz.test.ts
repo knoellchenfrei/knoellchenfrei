@@ -44,6 +44,13 @@ import {
   parseFreiburgFee,
   parseFreiburgSchedule,
 } from '../src/freiburg.js'
+import {
+  RostockParseError,
+  parseRostockAreaName,
+  parseRostockFee,
+  parseRostockMaxStay,
+  parseRostockSchedule,
+} from '../src/rostock.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -182,6 +189,22 @@ describe('Zeitparser unter Beschuss', () => {
     })
   })
 
+  it('Rostock wirft nur RostockParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 120, RostockParseError, (input) => {
+      expectValidWindows(parseRostockSchedule(input), input)
+    })
+  })
+
+  // Die Gebietsbezeichnung ist der zweite Rostocker Textparser: Aus ihr wird
+  // der Zonenschlüssel. Ein Kürzel aus Unfug wäre eine Zone, die es nicht gibt.
+  it('Rostocks Gebietsbezeichnung wirft nur RostockParseError und liefert nur Kürzel', () => {
+    fuzz(20260917, 120, RostockParseError, (input) => {
+      const { code, name } = parseRostockAreaName(input)
+      expect(code, input).toMatch(/^[A-Z]\d{1,2}$/)
+      expect(name.length, input).toBeGreaterThan(0)
+    })
+  })
+
   it('München wirft nur MuenchenParseError und liefert nur gültige Fenster', () => {
     fuzz(20260910, 200, MuenchenParseError, (input) => {
       const rule = parseMuenchenRule(input)
@@ -224,6 +247,19 @@ describe('Gebührenparser unter Beschuss', () => {
       expectValidFee(parseFreiburgAutomatFee(input), input)
     })
   })
+
+  // Rostocks Betrag ist eine Zahl. Beschossen wird er deshalb doppelt: mit
+  // Zeichenketten, die laut Typ gar nicht ankommen dürften (eine JSON-Datei
+  // hält sich nicht an Typen), und mit den Zahlen, die `Number` daraus macht
+  // — NaN, Unendlich, Negatives, Bruchteile eines Cents.
+  it('Rostock wirft nur RostockParseError und beziffert nie eine Null', () => {
+    fuzz(20260918, 120, RostockParseError, (input) => {
+      expectValidFee(parseRostockFee(input as unknown as number), input)
+    })
+    fuzz(20260919, 120, RostockParseError, (input) => {
+      expectValidFee(parseRostockFee(Number(input)), input)
+    })
+  })
 })
 
 describe('Höchstparkdauer unter Beschuss', () => {
@@ -242,6 +278,18 @@ describe('Höchstparkdauer unter Beschuss', () => {
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
     })
+    // Zahl und Einheit aus derselben Eingabe: die Zahl vorn, der Rest als
+    // Einheit. So trifft der Beschuss beide Felder und ihr Zusammenspiel.
+    fuzz(20260920, 120, RostockParseError, (input) => {
+      const number = Number.parseInt(input, 10)
+      const minutes = parseRostockMaxStay(
+        Number.isNaN(number) ? null : number,
+        input.replace(/^\s*-?\d+/, '')
+      )
+      if (minutes === undefined) return
+      expect(Number.isInteger(minutes)).toBe(true)
+      expect(minutes).toBeGreaterThan(0)
+    })
   })
 })
 
@@ -251,7 +299,7 @@ describe('Zeitbudget', () => {
    * macht — nicht die Muster selbst. Eine Regression daran fiele sonst erst
    * auf, wenn der Datenbau minutenlang steht.
    */
-  it('bleibt für 1500 Eingaben durch neun Parser unter einer Sekunde', () => {
+  it('bleibt für 1500 Eingaben durch alle Parser unter einer Sekunde', () => {
     const next = lcg(4711)
     const inputs = Array.from({ length: ITERATIONS }, () => fuzzString(next, 200))
     const parsers: readonly ((input: string) => unknown)[] = [
@@ -264,6 +312,8 @@ describe('Zeitbudget', () => {
       parseHamburgFee,
       parseFrankfurtFee,
       parseFreiburgFee,
+      parseRostockSchedule,
+      (input) => parseRostockFee(Number(input)),
     ]
     const started = performance.now()
     for (const input of inputs) {

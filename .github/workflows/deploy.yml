@@ -156,7 +156,11 @@ jobs:
         working-directory: app
         run: |
           gescheitert=""
-          for stadt in berlin hamburg frankfurt muenchen koeln duesseldorf karlsruhe freiburg; do
+          # Die Liste kommt aus core/city.ts, nicht aus dieser Datei: Mit der
+          # neunten Stadt am 16. September haben sich zwei Zweige genau an
+          # dieser Zeile gestoßen, und eine Stadt, die hier fehlt, würde
+          # still nie aufgefrischt.
+          for stadt in $(pnpm --filter @knoellchenfrei/ingest --silent city-keys); do
             skript="build-data"
             [ "$stadt" = "berlin" ] || skript="build-data-$stadt"
             if CITY="$stadt" pnpm --filter @knoellchenfrei/ingest fetch-data && CITY="$stadt" pnpm --filter @knoellchenfrei/ingest "$skript"; then

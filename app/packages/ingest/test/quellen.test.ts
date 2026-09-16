@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { CITIES } from '@knoellchenfrei/core'
+
 import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
@@ -11,9 +13,7 @@ import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
  */
 describe('wfsUrl', () => {
   it('fragt jede WFS-Quelle jeder Stadt ausdrücklich in Grad', () => {
-    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'freiburg'].flatMap(
-      (stadt) => citySources(stadt),
-    )
+    const quellen = CITIES.flatMap((city) => citySources(city.key))
     expect(quellen.length).toBeGreaterThan(8)
     for (const quelle of quellen) {
       const url = new URL(wfsUrl(quelle))

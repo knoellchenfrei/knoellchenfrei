@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
+import { CITIES } from '@knoellchenfrei/core'
+
 import { buildZoneUnits, renderCoreFile, UNIT_MIN_AREA_M2 } from '../src/zone-units.js'
 
 /**
@@ -25,16 +27,7 @@ describe('die Einheiten der Langzeitmuster', () => {
   })
 
   it('kennen jede Stadt und jeden Zonenschlüssel', () => {
-    expect(Object.keys(output.units).sort()).toEqual([
-      'berlin',
-      'duesseldorf',
-      'frankfurt',
-      'freiburg',
-      'hamburg',
-      'karlsruhe',
-      'koeln',
-      'muenchen',
-    ])
+    expect(Object.keys(output.units).sort()).toEqual([...CITIES.map((city) => city.key)].sort())
     for (const [city, map] of Object.entries(output.units)) {
       expect(Object.keys(map).length, city).toBeGreaterThan(0)
       const shapeUnits = new Set(output.shapes[city]!.map((s) => s.unit))

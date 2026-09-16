@@ -1,0 +1,52 @@
+[
+{
+"uuid": "f65139a6-ef51-11e5-b42b-0050569b7e95",
+"bezeichnung": "A3 – Östliche Altstadt",
+"adressen": "Alter Markt;Altschmiedestr.;Am Bagehl;Amberg;Am Bliesathsberg;Am Schwibbogen;Am Strande: von 18 bis 19;Am Wendländer Schilde;An der Hege;Beginenberg;Bei der Nikolaikirche;Bei der Petrikirche;Beim Kuhtor;Beim St.-Katharinenstift;Beim Waisenhaus;Brauergasse;Diebsstr.;Ellernhorst;Faule Str.;Fischbank;Gärtnerstr.;Glockengießerhof;Große Goldstr.;Große Scharrenstr.;Große Wasserstr.;Grubenstr.: alle außer 25;Hartestr.;Kleine Goldstr.;Kleine Wasserstr.;Krämerstr.: von 1 bis 5;Küterbruch;Lohgerberstr.;Molkenstr.;Mühlenstr.;Oberhalb d. Gerberbruches;Pferdestr.;Pümperstr.;Sackpfeife;Seidenstr.;Slüterstr.;Weißgerberstr.;Wendenstr.;Wollenweberstr."
+},
+{
+"uuid": "943480f4-c255-11e9-802d-0050569946ac",
+"bezeichnung": "H1 – Thünenviertel/Hansaviertel",
+"adressen": "Dethardingstr.;Dornblüthstr.;Eichendorffstr.;Ernst-Heydemann-Str.;Rembrandtstr.;Schillingallee: von 26 bis 34;Strempelstr.;Thünenstr.;Virchowstr.;Wiggersstr."
+},
+{
+"uuid": "7267ab24-ef66-11e5-89c5-0050569b7e95",
+"bezeichnung": "A4 – Steintor-Vorstadt",
+"adressen": "1. St.-Jürgen-Str.;2. St.-Jürgen-Str.;Adolf-Wilbrandt-Str.;Arndtstr.;Baleckestr.;Blücherstr.;Dehmelstr.;Freiligrathstr.;Friedrich-Engels-Platz: von 5 bis 8;Georg-Büchner-Str.;Graf-Schack-Str.;Herweghstr.;John-Brinckman-Str.;Koch-Gotha-Str.;Lessingstr.;Lindenbergstr.;Luttermannstr.;Puschkinplatz;Rosa-Luxemburg-Str.: von 1 bis 19;Schillerplatz;Schillerstr.;Schwaaner Landstr.: von 1 bis 10;Stephanstr.;Talstr.;Thomas-Mann-Str.: von 11 bis 17;Wallensteinstr.;Wilhelm-Külz-Platz: von 1 bis 3"
+},
+{
+"uuid": "a661cdae-ef68-11e5-89c7-0050569b7e95",
+"bezeichnung": "W4 – Ostseebad Warnemünde",
+"adressen": "Strandweg"
+},
+{
+"uuid": "5d1cff2e-f035-11e5-93db-0050569b7e95",
+"bezeichnung": "B2 – KTV",
+"adressen": "Doberaner Str.: von 14 bis 20 und von 144 bis 160;Friedrichstr.;Gertrudenplatz;Gertrudenstr.;Haedgestr.;Luisenstr.;Neue Werderstr.;Patriotischer Weg: von 2 bis 19 und von 119 bis 135;Zochstr."
+},
+{
+"uuid": "6aa1b816-f039-11e5-93dc-0050569b7e95",
+"bezeichnung": "B1 – KTV",
+"adressen": "Bergstr.: von 2 bis 10;Doberaner Str.: von 1 bis 9;Feldstr.: von 1 bis 9 und von 59 bis 67;Friedhofsweg: von 3 bis 12 und von 33 bis 42;Stampfmüllerstr.: von 24 bis 42;Wismarsche Str.: von 1 bis 11"
+},
+{
+"uuid": "99951be4-ef4a-11e5-b429-0050569b7e95",
+"bezeichnung": "A1 – Nördliche Altstadt",
+"adressen": "Aalstecherstr.;An der Oberkante;Auf der Huder;Badstüberstr.;Beim Hornschen Hof;Burgwall;Fischerstr.: von 1 bis 3;Grapengießerstr.;Große Mönchenstr.;Grubenstr. 25;Kleine Mönchenstr.;Koßfelderstr.;Krämerstr.: von 6 bis 10;Krönkenhagen;Lagerstr.;Lange Str.: von 1 bis 21;Lastadie;Petersilienstr.;Pläterstr.;Schnickmannstr.;Strandstr.: von 1 bis 105;Trägerstr.;Vogelsang;Weinstr.;Wokrenterstr."
+},
+{
+"uuid": "bdfd72fa-ef69-11e5-89c8-0050569b7e95",
+"bezeichnung": "W1 – Ostseebad Warnemünde",
+"adressen": "Alexandrinenstr.: von 1 bis 35 und von 119a bis 130;Alte Bahnhofstr.;Am Markt;Am Strom: von 5 bis 59;Beethovenstr.;Dänische Str.: von 1 bis 28a;Fritz-Reuter-Str.;Gewettstr.;Johann-S.-Bach-Str.;John-Brinckman-Str.;Kirchnerstr.;Laakstr.;Lilienthalstr.;Lortzingstr.: von 1 bis 10;Mozartstr.;Mühlenstr.: von 27 bis 48;Paschenstr.;Poststr.;Querstr. I;Querstr. II;Richard-Wagner-Str.;Rostocker Str.;Schwarzer Weg;Stephan-Jantzen-Str.;Trojanstr.;Wossidlostr."
+},
+{
+"uuid": "97239dbc-ef4b-11e5-b42a-0050569b7e95",
+"bezeichnung": "A2 – Zentrum",
+"adressen": "Am Ziegenmarkt;Apostelstr.;Bei der Jakobikirche;Bei der Marienkirche;Breite Str.;Buchbinderstr.;Eselföterstr.;Faule Grube;Großer Katthagen;Heiligengeisthof;Kistenmacherstr.: von 17 bis 20;Kleiner Katthagen;Kröpeliner Str.;Kuhstr.;Lange Str.: von 23 bis 37;Pädagogienstr.;Rostocker Heide;Rungestr.;Schwaansche Str.;Universitätsplatz;Zur Himmelspforte"
+},
+{
+"uuid": "73b90836-ef68-11e5-89c6-0050569b7e95",
+"bezeichnung": "W2 – Ostseebad Warnemünde",
+"adressen": "Alexandrinenstr.: von 36 bis 119;Am Leuchtturm;Am Strom: von 60 bis 125;Anastasiastr.;Dänische Str.: von 29 bis 29a;Friedrich-Franz-Str.;Georginenplatz;Georginenstr.;Heinrich-Heine-Str.;Hermannstr.;Katergang;Kirchenplatz;Kirchenstr.;Kurhausstr.;Luisenstr.;Mittelweg;Mühlenstr.: von 1 bis 26;Poststr.;Querstr. III;Querstr. IV;Querstr. V;Schillerstr.;Schulstr.;Seestr.;Wachtlerstr."
+}
+]

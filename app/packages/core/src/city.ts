@@ -622,7 +622,79 @@ export const FREIBURG: City = {
   // Berlin.
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE, FREIBURG]
+/**
+ * Rostock — die achte Stadt, die erste in Mecklenburg-Vorpommern und die
+ * erste unter **CC0**: Die Hanse- und Universitätsstadt gibt ihre Geodaten
+ * gemeinfrei heraus, Nennung nicht verlangt.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt aus den
+ * **Ortsteilen** statt aus der Parkebene: `hro.ortsteile.ortsteile` (31
+ * Polygone, abgerufen am 16. September 2026) umschließt
+ * 11,9984–12,2954 / 54,0508–54,2445; nach außen gerundet steht das unten. Die
+ * zehn Bewohnerparkgebiete reichen nur 12,0662–12,1497 / 54,0742–54,1818 —
+ * wer die Box daraus nähme, wiese eine Meldung aus Lütten Klein, Dierkow oder
+ * Hohe Düne als „außerhalb" ab, obwohl dort Parkscheinautomaten stehen und
+ * nur kein Bewohnerparkgebiet liegt.
+ *
+ * Der Mittelpunkt ist **nicht** die Altstadt, sondern die Mitte des Rahmens
+ * der zehn Gebiete: Sie liegen in zwei Haufen, sieben um die Stadtmitte
+ * (54,07–54,09) und drei in Warnemünde (54,17–54,18), elf Kilometer
+ * auseinander. Bei Zoom 12 (Frankfurts Wert, rund 0,40° × 0,21°) sind von
+ * 54,128 aus beide im Bild; vom Neuen Markt (12,1406 / 54,0887) aus fiele
+ * Warnemünde heraus, und dort stehen 27 der 111 Automaten.
+ */
+export const ROSTOCK: City = {
+  key: 'rostock',
+  name: 'Rostock',
+  land: 'MV',
+  center: [12.108, 54.128],
+  zoom: 12,
+  reportBounds: { minLon: 11.99, minLat: 54.04, maxLon: 12.3, maxLat: 54.25 },
+  sessionBounds: { minLon: 11.7, minLat: 53.8, maxLon: 12.6, maxLat: 54.5 },
+  heatGrid: { id: 'rostock', originLon: 11.99, originLat: 54.04, latitude: 54.09 },
+  attribution: {
+    // CC0 verlangt keine Nennung; der Quellenvermerk steht trotzdem, wie bei
+    // Berlin und Köln. Wörtlich aus `ows:AccessConstraints` beider Dienste:
+    // „Das von der Hanse- und Universitätsstadt Rostock hier angebotene Werk
+    // unterliegt der gemeinfreien Lizenz Creative Commons 1.0 Universell
+    // Public Domain Dedication (CC0 1.0; …)". Der Katalog `opendata-hro.de`
+    // führt beide Datensätze mit `license_id: cc-zero`, Autor „Hanse- und
+    // Universitätsstadt Rostock".
+    source: 'Hanse- und Universitätsstadt Rostock — geo.sv.rostock.de, OpenData HRO',
+    // Die Adresse, die der Datenbau wirklich abruft: der Dienst mit der
+    // Sachauskunft. Die Gebiete liegen daneben unter `/bewohnerparkgebiete/wfs`.
+    datasetUrl: 'https://geo.sv.rostock.de/geodienste/parkscheinautomaten/wfs',
+    licence: 'Creative Commons Zero 1.0 Universell (CC0 1.0)',
+    licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/deed.de',
+    attributionRequired: false,
+    licenceFamily: 'cc0',
+  },
+  // Belegt auf der Seite des Stadtamts („Park- und Halteverbot"), wörtlich:
+  // „Auskünfte über abgeschleppte Fahrzeuge erteilt die Einsatzleistelle der
+  // Polizei Waldeck unter der Telefonnummer 038208 8880. Dort wird auch
+  // mitgeteilt, wo man das Fahrzeug wieder in Empfang nehmen kann." Das
+  // Stadtamt schleppt ab, die Polizei weiß, wohin — deshalb steht hier die
+  // Stelle, die Auskunft gibt, nicht die, die den Bescheid schreibt.
+  towedVehicles: {
+    authority: 'Einsatzleitstelle der Polizei Waldeck (Auskunft laut Stadtamt Rostock)',
+    url: 'https://rathaus.rostock.de/de/service/aemter/stadtamt/park_und_halteverbot/257403',
+    phone: '038208 8880',
+    checkedOn: '2026-09',
+    note: 'Abgeschleppt wird durch das Stadtamt; wo das Fahrzeug steht, sagt die Polizei-Einsatzleitstelle.',
+  },
+}
+
+export const CITIES: readonly City[] = [
+  BERLIN,
+  HAMBURG,
+  FRANKFURT,
+  MUENCHEN,
+  KOELN,
+  DUESSELDORF,
+  KARLSRUHE,
+  FREIBURG,
+  ROSTOCK,
+]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.
