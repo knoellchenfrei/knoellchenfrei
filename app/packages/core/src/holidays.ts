@@ -36,9 +36,16 @@ export type Land =
   | 'AT-ST'
   | 'AT-S'
   | 'AT-T'
+  | 'NL-UT'
+  | 'NL-ZH'
+  | 'NL-GR'
+  | 'NL-GE'
+  | 'NL-NB'
+  | 'FR-67'
+  | 'PL-MA'
 
 /** Der Staat, dessen Feiertage und Währung gelten. */
-export type Country = 'DE' | 'AT' | 'CH'
+export type Country = 'DE' | 'AT' | 'CH' | 'NL' | 'FR' | 'PL'
 
 /**
  * Welcher Staat hinter einem Landeskürzel steht.
@@ -51,6 +58,9 @@ export type Country = 'DE' | 'AT' | 'CH'
 export function countryOf(land: Land): Country {
   if (land.startsWith('AT-')) return 'AT'
   if (land.startsWith('CH-')) return 'CH'
+  if (land.startsWith('NL-')) return 'NL'
+  if (land.startsWith('FR-')) return 'FR'
+  if (land.startsWith('PL-')) return 'PL'
   return 'DE'
 }
 
@@ -113,6 +123,33 @@ interface RegionalHolidays {
   readonly fixed: readonly string[]
   /** Bewegliche Daten als Abstand in Tagen zum Ostersonntag. */
   readonly fromEaster: readonly number[]
+  /**
+   * Bewegliche Daten, die weder fest noch österlich sind — je Regel eine
+   * Funktion vom Jahr auf `JJJJ-MM-TT`. Koningsdag weicht auf den Samstag
+   * aus, wenn der 27. April ein Sonntag ist; der Jeûne genevois ist der
+   * Donnerstag nach dem ersten Sonntag im September; Buss- und Bettag der
+   * Mittwoch vor dem 23. November. Bis zum 16. September gab es dafür
+   * keinen Platz, und der Kommentar über `REGIONAL` warnte nur davor.
+   */
+  readonly custom?: readonly ((year: number) => string)[]
+}
+
+/** `JJJJ-MM-TT` eines UTC-Datums. */
+function dateKey(date: Date): string {
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${date.getUTCFullYear()}-${month}-${day}`
+}
+
+/**
+ * Koningsdag: 27. April — fällt der auf einen Sonntag, wird am Samstag,
+ * dem 26., gefeiert (Koninklijk Besluit vom 30. Oktober 2013, Art. 1). So
+ * war es 2025, und so wird es 2031 sein.
+ */
+export function koningsdag(year: number): string {
+  const date = new Date(Date.UTC(year, 3, 27))
+  if (date.getUTCDay() === 0) date.setUTCDate(26)
+  return dateKey(date)
 }
 
 const NATIONWIDE: Record<Country, RegionalHolidays> = {
@@ -135,6 +172,38 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
     ],
   },
   CH: { fixed: ['08-01'], fromEaster: [] },
+  /**
+   * Niederlande: die „algemeen erkende feestdagen" der Algemene termijnenwet
+   * (Art. 3): Nieuwjaarsdag, Tweede Paasdag, Koningsdag, Hemelvaartsdag,
+   * Tweede Pinksterdag, Eerste en Tweede Kerstdag. **Goede Vrijdag** steht
+   * dort, ist aber kein Tag, an dem die Gemeinden das Parken freigeben —
+   * Amsterdam kassiert an ihm; er fehlt deshalb. **Bevrijdingsdag** (5. Mai)
+   * ist nur alle fünf Jahre arbeitsfrei und je Gemeinde verschieden
+   * (Amsterdam führt den 5. Mai 2026 im NPR als Sonntag) — eine Stadt, die
+   * ihn freigibt, trägt ihn an `City.holidays`. Der Feiertagskalender liegt
+   * in den Niederlanden **in der Quelle** (NPR `SPECIALE DAG`); der Datenbau
+   * gleicht ihn je Stadt gegen diese Liste ab und meldet Abweichungen.
+   */
+  NL: { fixed: ['01-01', '12-25', '12-26'], fromEaster: [1, 39, 50], custom: [koningsdag] },
+  /**
+   * Frankreich: die elf „jours fériés" nach Art. L3133-1 Code du travail.
+   * Alsace-Moselle hat zwei mehr (Art. L3134-13): Vendredi saint und
+   * 26. Dezember — die stehen bei `FR-67`, nicht hier.
+   */
+  FR: {
+    fixed: ['01-01', '05-01', '05-08', '07-14', '08-15', '11-01', '11-11', '12-25'],
+    fromEaster: [1, 39, 50],
+  },
+  /**
+   * Polen: Ustawa z dnia 18 stycznia 1951 r. o dniach wolnych od pracy,
+   * Art. 1, in der Fassung seit 2025 (Wigilia, 24. Dezember, seit dem
+   * 1. Februar 2025 frei; Dz.U. 2024 poz. 1965). Ostersonntag und
+   * Pfingstsonntag stehen im Gesetz, sind aber Sonntage.
+   */
+  PL: {
+    fixed: ['01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-24', '12-25', '12-26'],
+    fromEaster: [1, 60],
+  },
 }
 
 /**
@@ -228,6 +297,17 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   'AT-ST': { fixed: [], fromEaster: [] },
   'AT-S': { fixed: [], fromEaster: [] },
   'AT-T': { fixed: [], fromEaster: [] },
+  // Niederlande: keine Provinzfeiertage; alles national, siehe `NATIONWIDE`.
+  'NL-UT': { fixed: [], fromEaster: [] },
+  'NL-ZH': { fixed: [], fromEaster: [] },
+  'NL-GR': { fixed: [], fromEaster: [] },
+  'NL-GE': { fixed: [], fromEaster: [] },
+  'NL-NB': { fixed: [], fromEaster: [] },
+  // Bas-Rhin (Strasbourg): Alsace-Moselle, Art. L3134-13 Code du travail —
+  // Vendredi saint und Saint-Étienne (26. Dezember).
+  'FR-67': { fixed: ['12-26'], fromEaster: [-2] },
+  // Małopolska (Kraków): keine Woiwodschaftsfeiertage; alles national.
+  'PL-MA': { fixed: [], fromEaster: [] },
 }
 
 /**
@@ -293,6 +373,9 @@ export function holidaysFor(
   )
   for (const offset of [...nationwide.fromEaster, ...regional.fromEaster]) {
     dates.add(shiftFromEaster(year, offset))
+  }
+  for (const rule of [...(nationwide.custom ?? []), ...(regional.custom ?? [])]) {
+    dates.add(rule(year))
   }
 
   cache.set(cacheKey, dates)

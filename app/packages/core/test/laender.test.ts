@@ -124,3 +124,45 @@ describe('eine Zone, deren Quelle keine Zeiten nennt', () => {
     expect(estimate.chargedMinutes).toBe(0)
   })
 })
+
+describe('die Kalender der Nachbarländer', () => {
+  it('Niederlande: Koningsdag weicht vom Sonntag auf den Samstag aus', () => {
+    expect(holidaysFor('NL-UT', 2025).has('2025-04-26')).toBe(true)
+    expect(holidaysFor('NL-UT', 2025).has('2025-04-27')).toBe(false)
+    expect(holidaysFor('NL-UT', 2026).has('2026-04-27')).toBe(true)
+  })
+
+  it('Niederlande: Goede Vrijdag und Bevrijdingsdag sind keine freien Tage', () => {
+    const utrecht = holidaysFor('NL-UT', 2026)
+    expect(utrecht.has('2026-04-03')).toBe(false)
+    expect(utrecht.has('2026-05-05')).toBe(false)
+    expect(utrecht.has('2026-04-06')).toBe(true) // Tweede Paasdag
+    expect(utrecht.has('2026-05-14')).toBe(true) // Hemelvaart
+    expect(utrecht.has('2026-05-25')).toBe(true) // Tweede Pinksterdag
+    expect(utrecht.size).toBe(7)
+  })
+
+  it('Frankreich: elf national, im Bas-Rhin dreizehn', () => {
+    const strasbourg = holidaysFor('FR-67', 2026)
+    expect(strasbourg.has('2026-04-03')).toBe(true) // Vendredi saint
+    expect(strasbourg.has('2026-12-26')).toBe(true) // Saint-Étienne
+    expect(strasbourg.has('2026-07-14')).toBe(true)
+    expect(strasbourg.has('2026-11-11')).toBe(true)
+    expect(strasbourg.size).toBe(13)
+  })
+
+  it('Polen: zwölf Tage ausser den zwei Sonntagen, samt Wigilia seit 2025', () => {
+    const krakow = holidaysFor('PL-MA', 2026)
+    expect(krakow.has('2026-12-24')).toBe(true)
+    expect(krakow.has('2026-05-03')).toBe(true)
+    expect(krakow.has('2026-06-04')).toBe(true) // Boże Ciało
+    expect(krakow.has('2026-10-03')).toBe(false)
+    expect(krakow.size).toBe(12)
+  })
+
+  it('kennt den Staat jedes Präfixes', () => {
+    expect(countryOf('NL-ZH')).toBe('NL')
+    expect(countryOf('FR-67')).toBe('FR')
+    expect(countryOf('PL-MA')).toBe('PL')
+  })
+})

@@ -184,6 +184,9 @@ export const COUNTRY_NAMES: Record<Country, string> = {
   DE: 'Deutschland',
   AT: 'Österreich',
   CH: 'Schweiz',
+  NL: 'Niederlande',
+  FR: 'Frankreich',
+  PL: 'Polen',
 }
 
 /**
