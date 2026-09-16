@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
+import type { CottbusAutomatProperties, CottbusZoneProperties } from '../src/cottbus.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -250,6 +251,75 @@ describe('Münchner Fixture', () => {
     // Die Summe der Schreibweisen plus die Zeilen ohne Regeltext ist der
     // ganze Abzug. Läuft das auseinander, fehlt eine Schreibweise im Test.
     expect(counted + FIXTURE.abschnitteOhneRegeltext).toBe(FIXTURE.abschnitteGesamt)
+  })
+})
+
+describe('Cottbuser Fixtures', () => {
+  const AUTOMATS = read<{ automaten: CottbusAutomatProperties[] }>(
+    'cottbus-parkscheinautomaten-2026-09-16.json'
+  ).automaten
+  const ZONES = read<{ zonen: CottbusZoneProperties[] }>('cottbus-bewohnerparkzonen-2026-09-16.json').zonen
+
+  it('führt die Automaten in genau diesen 24 Feldern und Typen', () => {
+    expectShape(AUTOMATS as unknown as Record<string, unknown>[], {
+      OBJECTID: ['number'],
+      // Ein Feld, das die Layer-Beschreibung gar nicht nennt und das im
+      // GeoJSON trotzdem an 43 Automaten steht — immer `null`; am einen
+      // Automaten ohne Geometrie fehlt es ganz. `absent` ist ein eigener
+      // Befund, kein `null`.
+      SHAPE: ['absent', 'null'],
+      standort: ['string'],
+      naehe_bezeich: ['string', 'null'],
+      pkw: ['number'],
+      behin_stellpl: ['number'],
+      krad: ['number'],
+      zone: ['string'],
+      // Die sechs Zeitfelder — alle als Zeichenkette, nie leer.
+      wt: ['string'],
+      wt_bew_beginn: ['string'],
+      wt_bew_ende: ['string'],
+      woende: ['string'],
+      woen_bew_beginn: ['string'],
+      woen_bew_ende: ['string'],
+      // Beträge als **Zahl**, nicht als Text — der Grund, warum
+      // `parseCottbusFee` eine Zahl nimmt und rundet.
+      mind_gebuehr: ['number'],
+      gebuehr: ['number'],
+      id_postleitzahl: ['string', 'null'],
+      id_ort: ['string'],
+      id_stadtgebiete: ['string'],
+      id_ortsteile: ['string'],
+      id_bezirke: ['string'],
+      bloecke: ['string'],
+      pk_psa: ['number', 'null'],
+      lfd__Nr_: ['number'],
+    })
+  })
+
+  it('führt die Zonen in genau diesen zwölf Feldern und Typen', () => {
+    expectShape(ZONES as unknown as Record<string, unknown>[], {
+      OBJECTID: ['number'],
+      name: ['string'],
+      tel: ['string'],
+      mail: ['string'],
+      url: ['string'],
+      ansprechpa: ['string'],
+      bem: ['string'],
+      gis_id_ort: ['string'],
+      // In allen fünf Zonen `null` — der Dienst sagt nicht, wie alt sie sind.
+      geaendert_am: ['null'],
+      GlobalID: ['string'],
+      Shape__Area: ['number'],
+      Shape__Length: ['number'],
+    })
+  })
+
+  it('lässt kein Zeitfeld leer', () => {
+    for (const automat of AUTOMATS) {
+      for (const field of ['wt', 'wt_bew_beginn', 'wt_bew_ende', 'woende', 'woen_bew_beginn', 'woen_bew_ende'] as const) {
+        expect((automat[field] ?? '').trim(), `${automat.standort ?? '?'} ${field}`).not.toBe('')
+      }
+    }
   })
 })
 

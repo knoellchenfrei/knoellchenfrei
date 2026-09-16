@@ -533,7 +533,63 @@ export const KARLSRUHE: City = {
   // Feld, zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE]
+/**
+ * Cottbus/Chóśebuz — die achte Stadt, die erste in Brandenburg und die erste,
+ * deren Quelle kein WFS ist, sondern ein ArcGIS FeatureServer.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt **nicht** aus der
+ * Parkebene: Die fünf Bewohnerparkzonen liegen zwischen 14,3130 und 14,3404
+ * Länge, 51,7429 und 51,7656 Breite — 2 × 2,5 km Innenstadt. Wer die Box
+ * daraus nähme, wiese eine Meldung aus Sachsendorf oder vom Bahnhof als
+ * „außerhalb" ab, obwohl beides bewirtschaftet wird (die Automaten am
+ * Bahnhof liegen außerhalb jeder Bewohnerparkzone). Der Umriss kommt aus
+ * `FB33/Stadtgrenze/FeatureServer/1` des Datenportals der Stadt (ein
+ * Multipolygon, 2.775 Stützpunkte, `gemeinde_key` 12052000, abgerufen am
+ * 16. September 2026): 14,2733–14,5013 / 51,6926–51,8642. Nach außen gerundet
+ * steht das unten.
+ *
+ * Der Mittelpunkt ist der Altmarkt (OSM über Photon, 16. September 2026).
+ * Der Zoom ist 13 und damit enger als überall sonst: Die Stadt misst 0,23°
+ * Länge gegen Karlsruhes 0,28° bei 12, und die fünf Zonen liegen in einem
+ * Band von 1,9 × 2,5 km um den Altmarkt — bei 12 wären sie ein Fleck.
+ *
+ * **Berlin liegt nahe, aber nicht zu nahe:** Berlins `sessionBounds` reichen
+ * bis 52,0 Breite herunter, die Cottbuser enden bei 51,99 — 13 km nördlich
+ * der Stadtgrenze. Die Meldeboxen (`reportBounds`) trennen 0,43°.
+ *
+ * `holidays` fehlt mit Absicht: Brandenburg kennt keine gemeindeweise
+ * geregelten Feiertage (Begründung in `holidays.ts` beim `BB`-Eintrag).
+ */
+export const COTTBUS: City = {
+  key: 'cottbus',
+  name: 'Cottbus',
+  land: 'BB',
+  center: [14.3341, 51.7607],
+  zoom: 13,
+  reportBounds: { minLon: 14.27, minLat: 51.69, maxLon: 14.51, maxLat: 51.87 },
+  sessionBounds: { minLon: 14.0, minLat: 51.45, maxLon: 14.8, maxLat: 51.99 },
+  heatGrid: { id: 'cottbus', originLon: 14.27, originLat: 51.69, latitude: 51.76 },
+  attribution: {
+    // Wörtlich aus `licenseInfo` der Hub-Einträge beider Ebenen
+    // (ArcGIS-Online-Items `22eacadca78940b4b43d1d4c9ab77863` und
+    // `157cb566b0bf429c8eeffa04d564b27f`, abgerufen am 16. September 2026):
+    // „Als Rechteinhaber und Bereitsteller ist ‚Stadt Cottbus/Chóśebuz',
+    // sowie das Jahr des Datenbezugs in Klammern anzugeben." Das Jahr gehört
+    // also zum Vermerk, und es ist das Jahr des Abrufs, nicht das des
+    // Datensatzes.
+    source: 'Stadt Cottbus/Chóśebuz (2026), Fachbereich Ordnung und Sicherheit — opendataportal.cottbus.de',
+    datasetUrl: 'https://datenportal.cottbus.de/server/rest/services/FB32/Bewohnerparkzonen/FeatureServer/7',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
+    attributionRequired: true,
+    licenceFamily: 'dl-de-by',
+  },
+  // Bewusst ohne `towedVehicles`: Am 16. September 2026 ließ sich für Cottbus
+  // keine amtliche Seite belegen, die Verwahrstelle und Nummer nennt. Fehlt
+  // das Feld, zeigt die App den Abschnitt nicht — kein Rückfall auf Berlin.
+}
+
+export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE, COTTBUS]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.

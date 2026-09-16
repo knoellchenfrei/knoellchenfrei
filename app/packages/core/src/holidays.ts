@@ -19,7 +19,7 @@
 import { berlinDateKey, type BerlinWallClock } from './berlin-time.js'
 
 /** Amtliche Kürzel der Bundesländer, so weit belegt. */
-export type Land = 'BE' | 'HH' | 'HE' | 'BY' | 'NW' | 'BW'
+export type Land = 'BE' | 'HH' | 'HE' | 'BY' | 'NW' | 'BW' | 'BB'
 
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
@@ -142,6 +142,29 @@ const NATIONWIDE_FROM_EASTER = [
  *   Feiertagsseite des Innenministeriums,
  *   <https://im.baden-wuerttemberg.de/de/service/feiertage>, abgerufen am
  *   8. September 2026.
+ * - **BB** — Brandenburg hat **zehn** Feiertage, die auf einen Werktag fallen
+ *   können: die neun bundesweiten plus den **Reformationstag**. § 2 Abs. 1
+ *   des Gesetzes über die Sonn- und Feiertage (Feiertagsgesetz – FTG) vom
+ *   21. März 1991 (GVBl. S. 44), zuletzt geändert durch Gesetz vom
+ *   30. April 2015 (GVBl. I Nr. 13), zählt **zwölf** „gesetzlich anerkannte
+ *   Feiertage": „der Neujahrstag (1. Januar), der Karfreitag, der
+ *   Ostersonntag, der Ostermontag, der 1. Mai (Tag der Arbeit), der Christi
+ *   Himmelfahrtstag, der Pfingstsonntag, der Pfingstmontag, der Tag der
+ *   deutschen Einheit (3. Oktober), das Reformationsfest (31. Oktober), der
+ *   1. Weihnachtsfeiertag (25. Dezember), der 2. Weihnachtsfeiertag
+ *   (26. Dezember)". Zwei davon — Ostersonntag und Pfingstsonntag — führt
+ *   Brandenburg anders als die übrigen Länder ausdrücklich als gesetzliche
+ *   Feiertage; für dieses Modell sind sie unerheblich, weil sie immer auf
+ *   einen Sonntag fallen und der Sonntag ohnehin gebührenfrei ist (siehe den
+ *   Kopfkommentar). Deshalb zehn Einträge statt zwölf. Kein Frauentag (nur
+ *   BE und MV), kein Fronleichnam, kein Buß- und Bettag, keine gemeindeweise
+ *   Regelung — § 2 kennt keinen Vorbehalt wie Art. 1 Abs. 1 Nr. 2 BayFTG.
+ *   Der amtliche Text steht unter <https://bravors.brandenburg.de/gesetze/ftg>
+ *   (am 16. September 2026 aus dieser Umgebung nur als JavaScript-Hülle
+ *   abrufbar); gelesen wurde der wortgleiche Auszug im Rechtsportal der
+ *   Evangelischen Kirche Berlin-Brandenburg-schlesische Oberlausitz,
+ *   <https://www.kirchenrecht-ekbo.de/document/16>, abgerufen am
+ *   16. September 2026. Gilt für Cottbus.
  */
 interface RegionalHolidays {
   /** Feste Daten als `MM-TT`. */
@@ -157,6 +180,7 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   BY: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
   NW: { fixed: ['11-01'], fromEaster: [60] }, // Allerheiligen, Fronleichnam
   BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
+  BB: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag; Oster- und Pfingstsonntag sind Sonntage
 }
 
 /**

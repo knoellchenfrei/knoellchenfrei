@@ -1,0 +1,120 @@
+{
+  "hinweis": "Alle fünf Bewohnerparkzonen, Sachdaten wörtlich; die Geometrie nur als erster Stützpunkt je Zone.",
+  "abgerufenAm": "2026-09-16",
+  "quelle": "https://datenportal.cottbus.de/server/rest/services/FB32/Bewohnerparkzonen/FeatureServer/7/query?where=1%3D1&outFields=*&f=geojson&outSR=4326",
+  "anzahl": 5,
+  "zonen": [
+    {
+      "OBJECTID": 1,
+      "name": "Parkzone VI",
+      "tel": "0355 6124731",
+      "mail": "strassenverkehrsbehoerde@cottbus.de",
+      "url": "https://www.cottbus.de/abfrage/stadtbuero/vorgang.pl?id=3490",
+      "ansprechpa": "Fachbereich Ordnung und Sicherheit",
+      "bem": "Z6",
+      "gis_id_ort": "D1412889-E194-46BE-9851-B291BD334F88",
+      "geaendert_am": null,
+      "GlobalID": "{72135487-502D-455C-B424-5303CE9D5B87}",
+      "Shape__Area": 472319.380536635,
+      "Shape__Length": 3954.4741459710358
+    },
+    {
+      "OBJECTID": 2,
+      "name": "Parkzone V",
+      "tel": "0355 6124731",
+      "mail": "strassenverkehrsbehoerde@cottbus.de",
+      "url": "https://www.cottbus.de/abfrage/stadtbuero/vorgang.pl?id=3490",
+      "ansprechpa": "Fachbereich Ordnung und Sicherheit",
+      "bem": "Z5",
+      "gis_id_ort": "D1412889-E194-46BE-9851-B291BD334F88",
+      "geaendert_am": null,
+      "GlobalID": "{F72F66DD-7204-4A6C-B9D3-1452B796A3D7}",
+      "Shape__Area": 265227.18615229498,
+      "Shape__Length": 3135.3134053111003
+    },
+    {
+      "OBJECTID": 3,
+      "name": "Parkzone III",
+      "tel": "0355 6124731",
+      "mail": "strassenverkehrsbehoerde@cottbus.de",
+      "url": "https://www.cottbus.de/abfrage/stadtbuero/vorgang.pl?id=3490",
+      "ansprechpa": "Fachbereich Ordnung und Sicherheit",
+      "bem": "Z3",
+      "gis_id_ort": "D1412889-E194-46BE-9851-B291BD334F88",
+      "geaendert_am": null,
+      "GlobalID": "{6CFD686B-6FB5-4AA7-A9F2-97285B52DFA9}",
+      "Shape__Area": 71748.719413675004,
+      "Shape__Length": 1334.8300943907111
+    },
+    {
+      "OBJECTID": 4,
+      "name": "Parkzone II",
+      "tel": "0355 6124731",
+      "mail": "strassenverkehrsbehoerde@cottbus.de",
+      "url": "https://www.cottbus.de/abfrage/stadtbuero/vorgang.pl?id=3490",
+      "ansprechpa": "Fachbereich Ordnung und Sicherheit",
+      "bem": "Z2",
+      "gis_id_ort": "D1412889-E194-46BE-9851-B291BD334F88",
+      "geaendert_am": null,
+      "GlobalID": "{2C331F12-80CF-4D73-ACFE-892B6722078E}",
+      "Shape__Area": 400004.78089461999,
+      "Shape__Length": 2980.8073344926765
+    },
+    {
+      "OBJECTID": 5,
+      "name": "Parkzone IV",
+      "tel": "0355 6124731",
+      "mail": "strassenverkehrsbehoerde@cottbus.de",
+      "url": "https://www.cottbus.de/abfrage/stadtbuero/vorgang.pl?id=3490",
+      "ansprechpa": "Fachbereich Ordnung und Sicherheit",
+      "bem": "Z4",
+      "gis_id_ort": "D1412889-E194-46BE-9851-B291BD334F88",
+      "geaendert_am": null,
+      "GlobalID": "{00946CE8-B6CC-42A8-BF7A-030EE91A3CE2}",
+      "Shape__Area": 195039.87350198999,
+      "Shape__Length": 2020.0100775795784
+    }
+  ],
+  "ersteStuetzpunkte": [
+    {
+      "name": "Parkzone VI",
+      "typ": "Polygon",
+      "punkt": [
+        14.313025126671176,
+        51.742946052773839
+      ]
+    },
+    {
+      "name": "Parkzone V",
+      "typ": "Polygon",
+      "punkt": [
+        14.322330894822043,
+        51.754151533691946
+      ]
+    },
+    {
+      "name": "Parkzone III",
+      "typ": "Polygon",
+      "punkt": [
+        14.32813516352847,
+        51.756933676244103
+      ]
+    },
+    {
+      "name": "Parkzone II",
+      "typ": "Polygon",
+      "punkt": [
+        14.327792783243003,
+        51.761206416043457
+      ]
+    },
+    {
+      "name": "Parkzone IV",
+      "typ": "Polygon",
+      "punkt": [
+        14.327562265625494,
+        51.763421026927688
+      ]
+    }
+  ]
+}

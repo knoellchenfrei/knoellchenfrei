@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   BERLIN,
   CITIES,
+  COTTBUS,
   cityAt,
   cityByKey,
   FRANKFURT,
@@ -19,6 +20,7 @@ describe('cityByKey', () => {
     expect(cityByKey('hamburg')).toBe(HAMBURG)
     expect(cityByKey('frankfurt')).toBe(FRANKFURT)
     expect(cityByKey('muenchen')).toBe(MUENCHEN)
+    expect(cityByKey('cottbus')).toBe(COTTBUS)
   })
 
   // Der Rückfall auf Berlin ist genau der Fehler, den diese Funktion nicht
@@ -111,6 +113,25 @@ describe('withinCity', () => {
         expect(overlaps(a, b), `${a.key} / ${b.key}`).toBe(false)
       }
     }
+  })
+
+  // Cottbus ist die erste Stadt in Berlins Nachbarschaft: 100 km Luftlinie,
+  // und Berlins Sitzungsrahmen reicht bis 52,0 herunter. Der Altmarkt gehört
+  // Cottbus, das Brandenburger Tor bleibt Berlin — und der Rahmen kommt aus
+  // der Stadtgrenze, nicht aus den fünf Innenstadtzonen: Der Bahnhof und
+  // Sachsendorf liegen außerhalb jeder Bewohnerparkzone und mitten in der
+  // Stadt.
+  it('nimmt den Cottbuser Altmarkt für Cottbus an und für Berlin nicht', () => {
+    expect(withinCity(COTTBUS, 14.3341, 51.7607)).toBe(true)
+    expect(withinCity(BERLIN, 14.3341, 51.7607)).toBe(false)
+    expect(withinCity(COTTBUS, 13.3777, 52.5163)).toBe(false)
+    expect(cityAt(14.3341, 51.7607)?.key).toBe('cottbus')
+  })
+
+  it('reicht in Cottbus bis zum Bahnhof und nach Sachsendorf', () => {
+    expect(withinCity(COTTBUS, 14.3271, 51.7504)).toBe(true) // Kurzzeitparkplatz Bahnhof
+    expect(withinCity(COTTBUS, 14.3053, 51.7355)).toBe(true) // Sachsendorf
+    expect(withinCity(COTTBUS, 14.4123, 51.7448)).toBe(true) // Branitzer Park
   })
 
   it('weist NaN und Unendlich ab, statt sie durch einen Vergleich rutschen zu lassen', () => {
@@ -455,7 +476,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // das Feld, und die App zeigt den Abschnitt nicht — eine Nummer aus zweiter
   // Hand wäre schlechter als keine. Die Liste ist ausdrücklich, damit ein
   // vergessenes Feld bei einer neuen Stadt weiter auffällt.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'cottbus'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
