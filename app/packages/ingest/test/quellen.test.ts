@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { cityFiles, citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in
@@ -11,9 +11,16 @@ import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
  */
 describe('wfsUrl', () => {
   it('fragt jede WFS-Quelle jeder Stadt ausdrücklich in Grad', () => {
-    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe'].flatMap((stadt) =>
-      citySources(stadt),
-    )
+    const quellen = [
+      'berlin',
+      'hamburg',
+      'frankfurt',
+      'muenchen',
+      'koeln',
+      'duesseldorf',
+      'karlsruhe',
+      'innsbruck',
+    ].flatMap((stadt) => citySources(stadt))
     expect(quellen.length).toBeGreaterThan(7)
     for (const quelle of quellen) {
       const url = new URL(wfsUrl(quelle))
@@ -25,6 +32,35 @@ describe('wfsUrl', () => {
 
   it('wirft bei einer unbekannten Stadt, statt auf Berlin zurückzufallen', () => {
     expect(() => citySources('bielefeld')).toThrow()
+  })
+})
+
+/**
+ * Innsbruck hat keinen WFS: Beide Ebenen sind ArcGIS-Abfragen als Datei.
+ * Dieselbe Regel wie `srsName` bei WFS gilt für `outSR` — ohne den Parameter
+ * antwortet der Stadtteil-Dienst in Web Mercator, und `f=geojson` ist die
+ * einzige Form, die `[lon, lat]` liefert. Beides steht in der Adresse und
+ * wird hier gelesen, nicht geglaubt.
+ */
+describe('cityFiles', () => {
+  it('fragt jede ArcGIS-Ebene Innsbrucks als GeoJSON in Grad und mit Erwartungswert', () => {
+    const dateien = cityFiles('innsbruck')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(url.pathname.endsWith('/query'), datei.key).toBe(true)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+  })
+
+  it('ist für Städte ohne Dateien leer und wirft nicht', () => {
+    expect(cityFiles('berlin')).toEqual([])
+    expect(cityFiles('bielefeld')).toEqual([])
+    expect(cityFiles('koeln').map((d) => d.key)).toEqual(['automats'])
   })
 })
 

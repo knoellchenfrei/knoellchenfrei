@@ -95,11 +95,14 @@ for (const source of SOURCES) {
   }
 }
 
-// Dateien, die kein WFS sind — heute nur Kölns Automaten-CSV. Ohne die
-// JSON-Prüfung von oben: Eine CSV beginnt nicht mit `{`, und `JSON.parse`
-// würde sie verwerfen. Geprüft wird stattdessen, dass etwas Nennenswertes
-// kam: Ein leerer Rumpf oder eine HTML-Fehlerseite wäre sonst als Datei
-// gelandet, und der Datenbau hätte aus null Zeilen gebaut.
+// Dateien, die kein WFS sind — Kölns Automaten-CSV und Innsbrucks
+// ArcGIS-Ebenen. Ohne die JSON-Prüfung von oben: Eine CSV beginnt nicht mit
+// `{`, und `JSON.parse` würde sie verwerfen. Geprüft wird stattdessen, dass
+// etwas Nennenswertes kam: Ein leerer Rumpf oder eine HTML-Fehlerseite wäre
+// sonst als Datei gelandet, und der Datenbau hätte aus null Zeilen gebaut.
+// Nennt die Quelle `expectedFeatures`, ist sie GeoJSON, und dann gilt
+// dieselbe Schwelle wie oben — ein ArcGIS-Dienst kürzt still bei
+// `maxRecordCount` und sagt es nur in einem Feld, das niemand liest.
 const dateien = cityFiles(CITY_KEY)
 for (const datei of dateien) {
   process.stdout.write(`${datei.key} (Datei) … `)
@@ -109,6 +112,20 @@ for (const datei of dateien) {
     const body = await response.text()
     if (body.length < 1000 || body.trimStart().startsWith('<')) {
       throw new Error(`nur ${body.length} Bytes oder HTML statt einer Datei`)
+    }
+    if (datei.expectedFeatures !== undefined) {
+      const parsed = JSON.parse(body) as { features?: unknown[]; exceededTransferLimit?: unknown }
+      const count = parsed.features?.length ?? 0
+      if (parsed.exceededTransferLimit === true) {
+        throw new Error(`der Dienst hat die Antwort bei ${count} Merkmalen abgeschnitten (exceededTransferLimit)`)
+      }
+      if (count < Math.floor(datei.expectedFeatures * 0.95)) {
+        throw new Error(
+          `nur ${count} statt ${datei.expectedFeatures} Features — das ist ein Rückgang, ` +
+            'und der ist bei dieser Ebene kein normaler Vorgang. Von Hand nachsehen, ' +
+            'bevor die Zahl in sources.ts angepasst wird.'
+        )
+      }
     }
     writeFileSync(join(RAW, datei.file), body)
     console.log(`${body.length} Bytes`)

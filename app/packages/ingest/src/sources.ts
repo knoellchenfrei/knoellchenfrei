@@ -495,6 +495,10 @@ const BY_CITY: Record<string, readonly Source[]> = {
   koeln: KOELN_SOURCES,
   duesseldorf: DUESSELDORF_SOURCES,
   karlsruhe: KARLSRUHE_SOURCES,
+  // Kein WFS: Innsbruck kommt vollständig über `cityFiles`. Der Eintrag
+  // steht trotzdem hier, damit `citySources` die Stadt kennt — sonst wirft
+  // `fetch-data` „Keine Quellen", obwohl es zwei Dateien gibt.
+  innsbruck: [],
 }
 
 /**
@@ -511,6 +515,15 @@ export interface FileSource {
   url: string
   /** Dateiname unter `.raw/<stadt>/`. */
   file: string
+  /**
+   * Nur für Dateien, die eine GeoJSON-`FeatureCollection` sind: Wie viele
+   * Merkmale erwartet werden. `fetch.ts` prüft dann dieselbe 95-%-Schwelle
+   * wie bei WFS-Quellen. Ein ArcGIS-FeatureServer schneidet eine Antwort
+   * still bei `maxRecordCount` ab und meldet das nur als Feld
+   * `exceededTransferLimit` — bei 21 Zonen kein Thema, aber die Zahl ist die
+   * Messlatte, an der ein leerer oder halber Abruf auffällt.
+   */
+  expectedFeatures?: number
 }
 
 const KOELN_FILES: readonly FileSource[] = [
@@ -521,9 +534,55 @@ const KOELN_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Innsbruck — Stadt Innsbruck über ihr ArcGIS Online („geoHub Innsbruck"),
+ * Nutzungsbedingung der Stadt („vergleichbar mit CC BY 4.0").
+ *
+ * Kein WFS, sondern zwei ArcGIS-FeatureServer-Ebenen, beide als Datei
+ * abgerufen: `f=geojson&outSR=4326` liefert GeoJSON in `[lon, lat]`, am
+ * 16. September 2026 nachgemessen (erster Stützpunkt `[11.3989, 47.2810]`)
+ * und in `build-data-innsbruck.ts` mit `assertDegrees` gehalten. `where=1=1`
+ * ist die ArcGIS-Schreibweise für „alles"; ohne `where` antwortet der
+ * Dienst mit einem Fehler.
+ *
+ * Gefunden über die Hub-API (`/api/v3/datasets`), nicht über die Suche:
+ * Deren erster Treffer für „Parkzonen" ist ein Datensatz aus Gütersloh —
+ * die Suche eines ArcGIS-Hubs ist nicht auf die eigene Organisation
+ * begrenzt. Der Eigentümer `geoHub_Innsbruck` ist das Kriterium.
+ *
+ * Die Stadtteile liegen im selben Hub als Ebene `stadtteile` (20
+ * statistische Stadtteile, Feld `Stadtteil_1`); ihr Umriss deckt das ganze
+ * Gemeindegebiet, nachgemessen gegen die Gemeindegrenze aus tiris — der
+ * Rahmen beider ist auf vier Stellen derselbe. Die Statistik-Dienste
+ * (`statistik_07/0` u. a.) führen dieselben 20 Stadtteile mit Kennzahlen;
+ * `statistik_06_v/0` ist die Ebene ohne Beiwerk.
+ */
+const INNSBRUCK_ARCGIS = 'https://services8.arcgis.com/LxSaGwss445axp1E/arcgis/rest/services'
+const ARCGIS_ALL_AS_GEOJSON = 'query?where=1%3D1&outFields=*&f=geojson&outSR=4326'
+
+const INNSBRUCK_FILES: readonly FileSource[] = [
+  {
+    key: 'zones',
+    url: `${INNSBRUCK_ARCGIS}/Parkzonen_WGS84/FeatureServer/0/${ARCGIS_ALL_AS_GEOJSON}`,
+    file: 'zones.json',
+    expectedFeatures: 21,
+  },
+  {
+    key: 'districts',
+    url: `${INNSBRUCK_ARCGIS}/statistik_06_v/FeatureServer/0/${ARCGIS_ALL_AS_GEOJSON}`,
+    file: 'districts.json',
+    expectedFeatures: 20,
+  },
+]
+
+const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
+  koeln: KOELN_FILES,
+  innsbruck: INNSBRUCK_FILES,
+}
+
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
 export function cityFiles(cityKey: string): readonly FileSource[] {
-  return cityKey === 'koeln' ? KOELN_FILES : []
+  return FILES_BY_CITY[cityKey] ?? []
 }
 
 /**
