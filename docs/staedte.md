@@ -4,7 +4,8 @@
 > Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
 > Düsseldorf und Karlsruhe, je mit eigenem Bericht:
 > [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Dieses Dokument hieß einmal „Zweite
+> [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
+> Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
@@ -191,6 +192,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
+| **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

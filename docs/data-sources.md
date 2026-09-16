@@ -232,6 +232,46 @@ kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
 
+## Verwendet — Schwerin
+
+Abgerufen am 16. September 2026 von der **Landeshauptstadt Schwerin** über das
+Geoportal des Landkreises Ludwigslust-Parchim (`geoportal.kreis-lup.de`),
+WFS 2.0.0 (MapServer), **als GML 3.2 in EPSG:25833** — der Dienst kann weder
+JSON noch Grad. Vier Ebenen aus zwei Diensten:
+
+| Ebene | Dienst / Typname | Umfang |
+| --- | --- | --- |
+| Parkzonen | `parken-sn`, `masterportal:Parkzonen` | 15 Polygone **ohne ein einziges Attribut** — Schwerins Bewohnerparkzonen A bis V |
+| Parkscheinautomaten | `parken-sn`, `masterportal:Parkscheinautomaten` | 143 Punkte — Zeiten, Betrag, Höchstparkdauer, Tages- und Kurzparkticket |
+| Behindertenparkplätze | `parken-sn`, `masterportal:Behindertenparkplatz` | 64 Punkte, als POI |
+| Stadtteile | `raumgliederung-sn`, `ms:Stadtteilgrenzen_Schwerin` | 27, als Kartenkontext |
+
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0)**,
+wörtlich aus `ows:AccessConstraints` beider Dienste: „Datenlizenz Deutschland -
+Namensnennung - 2.0. Quellenvermerk: Landeshauptstadt Schwerin". Der
+Quellenvermerk ist Lizenzbedingung und steht so in `City.attribution`.
+
+Vier Dinge, die man erst im Feed sieht — ausführlich in
+[staedte-schwerin.md](staedte-schwerin.md):
+
+- **Die Zonen tragen keinen Namen.** Welche Fläche welche Zone ist, sagt nur
+  der **WMS** desselben Dienstes: Legende und Karte beschriften die 15 Flächen
+  mit `A` bis `V` und fünf Mischflächen (`A/F`, `A/D`, `C/D`, `C/O`, `A/C`).
+  `SCHWERIN_ZONE_ANCHORS` in `core` hält je Zone einen Punkt, der in ihr liegt.
+- **Nur GML, nur EPSG:25833.** `gml.ts` liest die Antwort, `utm.ts` rechnet
+  Zone 33 um — gegen 159 Berliner und 2.259 Schweriner Punktpaare gemessen.
+- **Automaten widersprechen sich.** Zone A trägt `Mo - Sa 8-20 h` (10×),
+  `Mo - So 8-21 h` (4×) und `Mo - So 8-18 h`; die Fenster werden vereinigt,
+  das Panel zeigt alle drei mit Zähler.
+- **Sieben Automaten liegen in keiner Zone** (Zoo, Zippendorf, Werder,
+  Marstall) und werden nicht ausgeliefert; fünf Zonen haben keinen Automaten
+  und ebenso wenig.
+
+Nicht abgerufen: `masterportal:Parken` (40 Parkplätze und Parkhäuser),
+`masterportal:Wohnmobilstellplaetze` (11), `masterportal:P_and_R` (leer),
+`masterportal:Parkplaetze_SN` (Serverfehler) und die Bezirks- und
+Baublockgrenzen des Raumgliederungs-Dienstes.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

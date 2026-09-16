@@ -22,6 +22,7 @@ in `packages/core/src/city.ts` trägt den Unterschied bis in die Oberfläche.
 | Köln | Stadt Köln, Amt für Verkehrsmanagement — offenedaten-koeln.de | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig |
 | Düsseldorf | Landeshauptstadt Düsseldorf, Amt für Verkehrsmanagement — opendata.duesseldorf.de | [Datenlizenz Deutschland Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Nennung freiwillig; die Tarife der Parkscheinautomaten werden nicht ausgeliefert, solange ihre Lizenz nicht belegt ist |
 | Karlsruhe | Stadt Karlsruhe (Digitale Mobilität), transparenz.karlsruhe.de | [Creative Commons Namensnennung 4.0 International](https://creativecommons.org/licenses/by/4.0/) — Nennung des Urhebers, Hinweis auf die Lizenz und auf Veränderungen |
+| Schwerin | Landeshauptstadt Schwerin (Dienste beim Landkreis Ludwigslust-Parchim, geoportal.kreis-lup.de) | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich „Landeshauptstadt Schwerin" |
 
 **Die Daten sind verändert.** Aus den amtlichen Diensten werden Teilmengen
 gebildet, Geometrien vereinfacht (Douglas-Peucker, siehe
