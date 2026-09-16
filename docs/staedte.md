@@ -4,7 +4,9 @@
 > Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
 > Düsseldorf und Karlsruhe, je mit eigenem Bericht:
 > [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Dieses Dokument hieß einmal „Zweite
+> [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu
+> **Salzburg**, die erste Stadt außerhalb Deutschlands:
+> [staedte-salzburg.md](staedte-salzburg.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,

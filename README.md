@@ -12,7 +12,7 @@ Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
 Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg, Frankfurt am
-Main, München, Köln, Düsseldorf und Karlsruhe**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
+Main, München, Köln, Düsseldorf, Karlsruhe und Salzburg**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
 die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
@@ -22,11 +22,11 @@ installierbar, ohne Server.
 
 | | |
 | --- | --- |
-| **Zone finden** | Standort, Tippen auf die Karte oder Suche nach Zone, Bezirk und — seit dem 9. September nachts, über Photon — Straße. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
-| **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
+| **Zone finden** | Standort, Tippen auf die Karte oder Suche nach Zone, Bezirk und — seit dem 9. September nachts, über Photon — Straße. 103 Zonen in Berlin, 145 Flächen in Hamburg, 27 Bewohnerparkbereiche in Frankfurt, 82 Parkraummanagementgebiete in München, 45 Bewohnerparkgebiete in Köln, 44 in Düsseldorf, 279 Stellplatzreihen in Karlsruhe, 40 Kurzparkzonen in Salzburg. Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
+| **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. In Salzburg steht der Betrag in der Parkgebührenverordnung statt im Datensatz — 2,20 € je Stunde für die ganze Stadt, mit Fundstelle. |
 | **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
-| **Umfeld** | 385 Ladepunkte, 83 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
+| **Umfeld** | 385 Ladepunkte, 83 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Salzburg 185, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
 | **Ordnungsamt** | Roter Meldeknopf auf der Karte, Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. Die aktuellen Meldungen stehen unten links auf der Karte; dahinter ein Blatt mit drei Reitern (Aktuell, Zonen, Tageszeiten). Jede Zone nennt ihre Kontrollen: heute, 7 Tage, 28 Tage, zuletzt. |
 | **Kennzahlen** | Meldungen heute, Geräte gerade offen, Geräte heute — als Leiste unter der Suche, ein Tipp führt zur Statistik. Nur was zählbar ist — sonst gar nichts. Beim Start die 28-Tage-Zahl, nach jedem Abruf „Meldungen aktualisiert" — beides verblasst von selbst. |
 | **Kontrolldichte** | Heatmap der letzten 28 Tage plus Report im Meldungen-Blatt: letzte 24 h, Histogramm über 28 Tage, Stundenprofil des Wochentags, häufigste Zonen. Aus anonymen `{Tag, Stunde, 250-m-Feld}`-Strichlisten. Zeigt nichts, solange zu wenige Meldungen da sind. |
@@ -65,8 +65,8 @@ den Funktionsumfang — sie zieht als kommentiertes Dokument mit um:
 
 ## Daten
 
-Vier Länder, sechs Dienste, zwei Lizenzen — und der Unterschied ist keine
-Formalie:
+Zwei Staaten, sieben Bundesländer, drei Lizenzfamilien — und der Unterschied
+ist keine Formalie:
 
 | | Quelle | Lizenz | Bestand |
 | --- | --- | --- | --- |
@@ -77,6 +77,7 @@ Formalie:
 | **Köln** | [Stadt Köln](https://geoportal.stadt-koeln.de/wss/service/bewohnerparken_wfs/guest), WFS 2.0.0 und CSV | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 45 Bewohnerparkgebiete mit Automaten (von 47), 2.315 Automaten; Tarif nur, wo die CSV ihn nennt |
 | **Düsseldorf** | [Landeshauptstadt Düsseldorf](https://maps.duesseldorf.de/services/verkehr/wfs), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional*; Tarife der Automaten bis zur Lizenzklärung nicht ausgeliefert | 44 Bewohnerparkgebiete aus 65 Stücken, 50 Stadtteile, Umweltzone |
 | **Karlsruhe** | [Stadt Karlsruhe über die TechnologieRegion](https://mobil.trk.de/geoserver/TBA/ows), WFS 2.0.0 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — Namensnennung ist **Lizenzbedingung** | 279 Stellplatzreihen (die Zonen sind die Reihen selbst, 4,8 m breit — deshalb der Rückfall auf die nächste Fläche), keine Stadtteile |
+| **Salzburg** | [Stadt Salzburg](https://data.stadt-salzburg.at/geodaten/wfs), WFS 2.0.0 | [CC BY 3.0 AT](https://creativecommons.org/licenses/by/3.0/at/deed.de) — Namensnennung ist **Lizenzbedingung**; Quellenvermerk wörtlich `Datenquelle: Stadt Salzburg – data.stadt-salzburg.at` | 40 von 41 Kurzparkzonen (30 mit Parkscheibe, 10 gebührenpflichtig; eine Fläche von vier Metern bleibt draußen), Tarif aus der Parkgebührenverordnung, 185 Behindertenstellplätze, 28 Stadtteile |
 
 Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
 Oberfläche: Eine Hamburg-, Frankfurt- oder München-Ansicht ohne Quellenangabe

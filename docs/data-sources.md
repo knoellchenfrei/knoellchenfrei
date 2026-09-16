@@ -2,8 +2,9 @@
 
 Alle in der App verwendeten Daten mit Herkunft, Lizenz und Abrufweg. Stand der
 Erhebung: 6. September 2026 für Berlin und Hamburg, 7. September 2026 für
-Frankfurt am Main. Drei Städte, drei Behörden, **zwei verschiedene Lizenzen** —
-der Unterschied steht bei Hamburg.
+Frankfurt am Main und München, 16. September 2026 für Salzburg. Acht Städte,
+zwei Staaten, **drei Lizenzfamilien** — der Unterschied steht bei Hamburg und
+bei Salzburg.
 
 ## Verwendet
 
@@ -231,6 +232,48 @@ außerhalb der 82 Gebiete) und 42 weitere, die auf ein Gebiet zeigen, zu dem es
 kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
+
+## Verwendet — Salzburg
+
+Abgerufen am 16. September 2026 von der **Stadtgemeinde Salzburg** über
+`data.stadt-salzburg.at/geodaten/wfs`, WFS 2.0.0 (GeoServer, Arbeitsbereich
+`ogdsbg`). Die erste Stadt außerhalb Deutschlands. Drei Ebenen aus **einem**
+Dienst:
+
+| Ebene | Typname | Umfang |
+| --- | --- | --- |
+| Kurzparkzonen | `ogdsbg:kurzparkzone` | 41, davon 40 ausgeliefert — eine Fläche von vier Metern fällt beim Vereinfachen zusammen |
+| Stadtteile | `ogdsbg:stadtteil` | 145 Flächenstücke, davon 132 in Salzburg → 28 Stadtteile, als Kartenkontext |
+| Behindertenstellplätze | `ogdsbg:behindertenstellplatz` | 185 Punkte, als POI |
+
+**Lizenz: [Creative Commons Namensnennung 3.0 Österreich](https://creativecommons.org/licenses/by/3.0/at/deed.de).**
+Wörtlich aus `ows:AccessConstraints` des Dienstes: „Datenquelle: Stadt
+Salzburg – data.stadt-salzburg.at; Nutzungsbedingungen: CC BY 3.0 AT". Der
+Katalogeintrag bei data.gv.at von 2016 nennt CC BY-**SA** 3.0 AT; warum die
+Angabe des Dienstes und der OGD-Seite der Stadt gilt, steht in
+[staedte-salzburg.md](staedte-salzburg.md).
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Der Tarif steht nicht im Feed.** Kein Feld nennt einen Betrag. § 2 Abs. 1
+  der Parkgebührenverordnung der Stadt (22. Novelle, Abl Nr 98/2025) setzt
+  1,10 € je halbe Stunde für die ganze Stadt fest; die App liefert ihn mit
+  Fundstelle aus (`SALZBURG_TARIFF` in `core/salzburg.ts`).
+- **30 der 41 Zonen sind Parkscheibenzonen** („gebührenfrei (aber
+  Parkuhrenpflicht)"), Hamburgs `disc`. Die elf gebührenpflichtigen verlangen
+  samstags nur die Scheibe — das steht als Zusatzregel an der Zone, nicht als
+  Gebührenfenster.
+- **Ohne `srsName` antwortet der Dienst in EPSG:31255** (Gauß-Krüger M31,
+  `[-20891.7, 295427.09]`); mit `srsName=urn:ogc:def:crs:EPSG::4326` kommt
+  GeoJSON als `[lon, lat]`, GML als `[lat, lon]`.
+
+Nicht abgerufen: `ogdsbg:bewohnerparkzone` (13 Bewohnerzonen — eine
+Berechtigung, keine Gebührenfrage; ihr Buchstabe steht schon an den
+Kurzparkzonen), `ogdsbg:anwohnerzone` (57 Schilder), `ogdsbg:parkscheinautomat`
+(180 Punkte ohne Tarif), `ogdsbg:parkplatz` (32). Eine Umweltzone gibt es in
+Salzburg nicht.
+
+Vollständige Feldanalyse in [staedte-salzburg.md](staedte-salzburg.md).
 
 ## Geprüft und nicht verfügbar
 
