@@ -53,8 +53,8 @@ describe('representativePoint liegt in seiner eigenen Fläche', () => {
   // aber den Fall, dass eine ganze Stadt fehlt — am 9. September sind es 357
   // (Berlin 103, Hamburg 145, Frankfurt 27, München 82), die kleinste Stadt
   // hat 27.
-  it('findet die Daten aller sieben Städte', () => {
-    expect(STAEDTE).toEqual(['berlin', 'duesseldorf', 'frankfurt', 'hamburg', 'karlsruhe', 'koeln', 'muenchen'])
+  it('findet die Daten aller acht Städte', () => {
+    expect(STAEDTE).toEqual(['berlin', 'duesseldorf', 'frankfurt', 'hamburg', 'karlsruhe', 'koeln', 'muenchen', 'rostock'])
     const summe = STAEDTE.reduce((n, stadt) => n + flaechen(stadt).length, 0)
     // Am 10. September 725 (Berlin 103, Düsseldorf 44, Frankfurt 27, Hamburg 145,
     // Karlsruhe 279, Köln 45, München 82).

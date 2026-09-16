@@ -25,7 +25,7 @@ describe('die Einheiten der Langzeitmuster', () => {
   })
 
   it('kennen jede Stadt und jeden Zonenschlüssel', () => {
-    expect(Object.keys(output.units).sort()).toEqual(['berlin', 'duesseldorf', 'frankfurt', 'hamburg', 'karlsruhe', 'koeln', 'muenchen'])
+    expect(Object.keys(output.units).sort()).toEqual(['berlin', 'duesseldorf', 'frankfurt', 'hamburg', 'karlsruhe', 'koeln', 'muenchen', 'rostock'])
     for (const [city, map] of Object.entries(output.units)) {
       expect(Object.keys(map).length, city).toBeGreaterThan(0)
       const shapeUnits = new Set(output.shapes[city]!.map((s) => s.unit))
