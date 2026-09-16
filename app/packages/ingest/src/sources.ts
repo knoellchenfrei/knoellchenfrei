@@ -487,6 +487,23 @@ const KARLSRUHE_SOURCES: readonly Source[] = [
   },
 ]
 
+/**
+ * Graz — Magistrat Graz, Stadtvermessungsamt; Lizenz am Dienst **nicht
+ * ausgewiesen** (siehe `GRAZ.licenceOpen` in `core/city.ts`).
+ *
+ * Die erste Stadt ohne einen einzigen WFS: Alles kommt als GeoJSON aus dem
+ * ArcGIS-REST-Dienst (`query?…&f=geojson&outSR=4326`), deshalb steht sie
+ * unten bei den Dateien und diese Liste bleibt leer. Sie steht trotzdem hier,
+ * damit `citySources('graz')` nicht wirft — `fetch.ts` fragt beide Listen.
+ *
+ * Gemessen am 16. September 2026: `outSR=4326` wirkt (`[15.4478, 47.0711]`,
+ * also `[lon, lat]`); ohne den Parameter käme MGI / Austria GK M34
+ * (`wkid 31256`, Meter um `-67.000 / 215.000`). `maxRecordCount` ist 2000,
+ * die größte Ebene hat 90 Features — `exceededTransferLimit` bleibt aus,
+ * und `fetch.ts` prüft es trotzdem.
+ */
+const GRAZ_SOURCES: readonly Source[] = []
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -495,6 +512,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   koeln: KOELN_SOURCES,
   duesseldorf: DUESSELDORF_SOURCES,
   karlsruhe: KARLSRUHE_SOURCES,
+  graz: GRAZ_SOURCES,
 }
 
 /**
@@ -511,6 +529,13 @@ export interface FileSource {
   url: string
   /** Dateiname unter `.raw/<stadt>/`. */
   file: string
+  /**
+   * Nur für GeoJSON-Dateien: ungefähr, damit ein still abgeschnittener Abruf
+   * auffällt — dieselbe 95-%-Schwelle wie bei den WFS-Quellen. Ein ArcGIS
+   * FeatureServer schneidet bei `maxRecordCount` ab und sagt es nur mit
+   * `exceededTransferLimit: true` im Rumpf; `fetch.ts` prüft beides.
+   */
+  expectedFeatures?: number
 }
 
 const KOELN_FILES: readonly FileSource[] = [
@@ -521,9 +546,50 @@ const KOELN_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Die Abfrage-Adresse einer ArcGIS-FeatureServer-Ebene, als GeoJSON in Grad.
+ *
+ * `outSR=4326` ist das Gegenstück zu `srsName` beim WFS und genauso Pflicht:
+ * Ohne den Parameter antwortet Graz in seinem Landessystem (`wkid 31256`,
+ * Meter). `f=geojson` liefert `[lon, lat]`, wie es GeoJSON vorschreibt.
+ */
+export function arcgisQueryUrl(layer: string): string {
+  const params = new URLSearchParams({
+    where: '1=1',
+    outFields: '*',
+    f: 'geojson',
+    outSR: '4326',
+  })
+  return `${layer}/query?${params}`
+}
+
+const GRAZ_PARKZONEN =
+  'https://geodaten.graz.at/mapping/rest/services/1_3_Verkehrswesen/Grazer_Parkzonen/FeatureServer'
+/**
+ * Die Bezirksgrenzen kommen bewusst aus dem **OGD-Dienst** der Stadt und nicht
+ * aus `3_3_Verwaltungseinheiten`, obwohl beide dieselben 17 Polygone führen:
+ * Nur der OGD-Dienst ist über data.graz.gv.at unter CC BY 4.0 belegt, der
+ * andere nennt wie der Parkzonen-Dienst keine Lizenz.
+ */
+const GRAZ_OGD = 'https://geodaten.graz.at/mapping/rest/services/OGD_WFS/FeatureServer'
+
+const GRAZ_FILES: readonly FileSource[] = [
+  // Ebene 0, „Kurzparkzonen aktuell" — die Blaue Zone.
+  { key: 'kurzparkzonen', url: arcgisQueryUrl(`${GRAZ_PARKZONEN}/0`), file: 'kurzparkzonen.json', expectedFeatures: 90 },
+  // Ebene 1, „Parkzonen aktuell" — die Grüne Zone.
+  { key: 'parkzonen', url: arcgisQueryUrl(`${GRAZ_PARKZONEN}/1`), file: 'parkzonen.json', expectedFeatures: 75 },
+  // Ebene 44 des OGD-Dienstes, die 17 Grazer Stadtbezirke.
+  { key: 'districts', url: arcgisQueryUrl(`${GRAZ_OGD}/44`), file: 'districts.json', expectedFeatures: 17 },
+]
+
+const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
+  koeln: KOELN_FILES,
+  graz: GRAZ_FILES,
+}
+
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
 export function cityFiles(cityKey: string): readonly FileSource[] {
-  return cityKey === 'koeln' ? KOELN_FILES : []
+  return FILES_BY_CITY[cityKey] ?? []
 }
 
 /**

@@ -13,6 +13,7 @@
     "build-data-koeln": "tsx src/build-data-koeln.ts",
     "build-data-duesseldorf": "tsx src/build-data-duesseldorf.ts",
     "build-data-karlsruhe": "tsx src/build-data-karlsruhe.ts",
+    "build-data-graz": "tsx src/build-data-graz.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

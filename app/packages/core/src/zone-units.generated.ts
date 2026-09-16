@@ -708,6 +708,32 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "293": "bezirk:Innenstadt-West",
     "294": "bezirk:Innenstadt-Ost",
   },
+  "graz": {
+    "10": "10",
+    "11": "11",
+    "01": "01",
+    "02": "02",
+    "03": "03",
+    "05": "05",
+    "06": "06",
+    "07": "07",
+    "08": "08",
+    "09": "09",
+    "A": "A",
+    "B": "B",
+    "C": "C",
+    "D": "D",
+    "E": "E",
+    "F": "F",
+    "G": "G",
+    "H": "H",
+    "I": "I",
+    "J": "J",
+    "S": "bezirk:St. Peter",
+    "S1": "bezirk:Lend",
+    "S2": "bezirk:Lend",
+    "S3": "bezirk:Puntigam",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -719,6 +745,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "koeln": 45,
   "duesseldorf": 44,
   "karlsruhe": 13,
+  "graz": 23,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

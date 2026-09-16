@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { arcgisQueryUrl, cityFiles, citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in
@@ -11,8 +11,8 @@ import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
  */
 describe('wfsUrl', () => {
   it('fragt jede WFS-Quelle jeder Stadt ausdrücklich in Grad', () => {
-    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe'].flatMap((stadt) =>
-      citySources(stadt),
+    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'graz'].flatMap(
+      (stadt) => citySources(stadt),
     )
     expect(quellen.length).toBeGreaterThan(7)
     for (const quelle of quellen) {
@@ -25,6 +25,38 @@ describe('wfsUrl', () => {
 
   it('wirft bei einer unbekannten Stadt, statt auf Berlin zurückzufallen', () => {
     expect(() => citySources('bielefeld')).toThrow()
+  })
+})
+
+/**
+ * Dasselbe für ArcGIS: `outSR=4326` ist das Gegenstück zu `srsName`. Ohne den
+ * Parameter antwortet Graz in MGI / Austria GK M34 (Meter), und die Karte
+ * sähe nur leer aus.
+ */
+describe('arcgisQueryUrl', () => {
+  it('fragt jede Datei-Quelle von Graz als GeoJSON in Grad und mit Messlatte', () => {
+    const dateien = cityFiles('graz')
+    expect(dateien.map((datei) => datei.key)).toEqual(['kurzparkzonen', 'parkzonen', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(url.pathname.endsWith('/query'), datei.key).toBe(true)
+      expect(datei.expectedFeatures ?? 0, datei.key).toBeGreaterThan(0)
+    }
+    expect(citySources('graz')).toEqual([])
+  })
+
+  it('hängt die Abfrage an eine Ebene, nicht an den Dienst', () => {
+    expect(arcgisQueryUrl('https://example.test/FeatureServer/3')).toBe(
+      'https://example.test/FeatureServer/3/query?where=1%3D1&outFields=*&f=geojson&outSR=4326',
+    )
+  })
+
+  it('kennt für Städte ohne Dateien eine leere Liste, ohne zu werfen', () => {
+    expect(cityFiles('berlin')).toEqual([])
+    expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
   })
 })
 
