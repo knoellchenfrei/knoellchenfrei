@@ -8,8 +8,10 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
 kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
 Angeschlossen sind Berlin, Hamburg, Frankfurt am Main, München, Köln,
-Düsseldorf und Karlsruhe — die letzten drei seit dem 9. September, siehe
-`docs/staedte-koeln.md`, `docs/staedte-duesseldorf.md`, `docs/staedte-karlsruhe.md`.
+Düsseldorf, Karlsruhe und Cottbus — Köln, Düsseldorf und Karlsruhe seit dem
+9. September, Cottbus seit dem 16., siehe `docs/staedte-koeln.md`,
+`docs/staedte-duesseldorf.md`, `docs/staedte-karlsruhe.md`,
+`docs/staedte-cottbus.md`.
 Ausgeliefert wird sie hinter einem Passwort-Riegel — der Stand ist geschlossener
 Testbetrieb, siehe `apps/web/functions/_middleware.ts` und `docs/hosting.md`.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.

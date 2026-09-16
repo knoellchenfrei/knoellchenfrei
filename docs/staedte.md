@@ -2,9 +2,10 @@
 
 > **Stand 7. September 2026:** Angeschlossen sind **vier** Städte — Berlin,
 > Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
-> Düsseldorf und Karlsruhe, je mit eigenem Bericht:
+> Düsseldorf und Karlsruhe, seit dem 16. September Cottbus, je mit eigenem Bericht:
 > [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Dieses Dokument hieß einmal „Zweite
+> [staedte-karlsruhe.md](staedte-karlsruhe.md), [staedte-cottbus.md](staedte-cottbus.md).
+> Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
@@ -191,6 +192,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
+| **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

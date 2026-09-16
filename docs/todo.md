@@ -468,6 +468,14 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > sagt dabei den Abstand. Was je Stadt offen bleibt, steht unverändert in
 > den drei Berichten unter „Was offen bleibt" — Rückfragen an die Städte,
 > Düsseldorfs Tariflizenz, Kölns Stadtbezirke.
+
+> **Angeschlossen am 16. September: Cottbus**, die erste Stadt in
+> Brandenburg und die erste aus einem ArcGIS FeatureServer statt einem WFS
+> ([staedte-cottbus.md](staedte-cottbus.md)). Dazu der Feiertagskalender `BB`
+> mit Beleg und in `fetch.ts` die Prüfung von ArcGIS-Antworten (Fehler mit
+> 200, `exceededTransferLimit`). Offen: die Rückfrage an FB 32, warum der
+> Datensatz Betrag und Zeiten von 2014 führt, und ein Lizenzvermerk für die
+> Ortsteile — beides im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

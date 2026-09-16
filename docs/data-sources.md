@@ -232,6 +232,45 @@ kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
 
+## Verwendet — Cottbus
+
+Abgerufen am 16. September 2026 von der **Stadt Cottbus/Chóśebuz**,
+Fachbereich Ordnung und Sicherheit, über `datenportal.cottbus.de` — ein
+**ArcGIS FeatureServer**, kein WFS. Zwei Ebenen im Ordner `FB32`:
+
+| Ebene | Adresse | Umfang |
+| --- | --- | --- |
+| Bewohnerparkzonen | `FB32/Bewohnerparkzonen/FeatureServer/7` | 5 Polygone, `Parkzone II` bis `VI` |
+| Parkscheinautomaten | `FB32/Parkscheinautomaten/FeatureServer/1` | 44 Punkte, einer ohne Geometrie |
+
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0).**
+Die Hub-Einträge beider Ebenen verlangen wörtlich, „als Rechteinhaber und
+Bereitsteller ist ‚Stadt Cottbus/Chóśebuz', sowie das Jahr des Datenbezugs in
+Klammern anzugeben" — der Quellenvermerk lautet deshalb
+`Stadt Cottbus/Chóśebuz (2026)`.
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Der Feed nennt den Stand von 2014.** `gebuehr` = 1 bzw. 0,5 Euro je
+  Stunde und `wt_bew_ende` = `19:00` sind die Werte der Parkgebührenordnung
+  vom 1. Januar 2014. Seit dem 1. Juni 2025 gelten 2,00 bzw. 1,00 € und
+  Montag bis Freitag bis **20:00** Uhr. Ausgeliefert wird die Ordnung, mit
+  `sourceDefect` je Zone; der Datenbau bricht ab, sobald der Feed etwas
+  Drittes nennt. Begründung in [staedte-cottbus.md](staedte-cottbus.md).
+- **Die Abfrage ist keine WFS-Anfrage.** `…/query?where=1%3D1&outFields=*&f=geojson&outSR=4326`;
+  ohne `outSR` bleibt das Layer-CRS EPSG:25833. Ein FeatureServer antwortet
+  auf Fehler mit **200** und `{"error":…}`, und auf mehr als
+  `maxRecordCount` (2000) mit einem abgeschnittenen Ergebnis und
+  `exceededTransferLimit: true` — `fetch.ts` prüft beides.
+- **Die Automaten tragen keinen Verweis auf die Bewohnerparkzone.** Die
+  Zuordnung läuft über die Geometrie: 38 der 44 liegen in einer Zone, fünf
+  außerhalb (Bahnhof, Ostrower Platz, Goethestraße), einer ohne Geometrie.
+
+Nicht abgerufen: `Daten_Admin/Ortsteile` (19 Polygone) und
+`FB33/Stadtgrenze` — beide ohne Lizenzvermerk im Portal; die Stadtgrenze
+diente nur zum Messen der Meldebox. Keine Umweltzone (Cottbus hat keine),
+keine POI. `meta.json` führt alles unter `absent`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
