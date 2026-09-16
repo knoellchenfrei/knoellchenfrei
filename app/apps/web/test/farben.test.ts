@@ -120,8 +120,13 @@ describe('Panel und Karte', () => {
     // hereingefallen und hat es selbst gemeldet.
     const layerAb = APP.indexOf(`id: '${layer}'`)
     expect(layerAb, `der Layer ${layer} steht nicht mehr in App.tsx`).toBeGreaterThan(-1)
-    const ab = APP.indexOf(`'${eigenschaft}'`, layerAb)
-    expect(ab, `${eigenschaft} steht nicht mehr in ${layer}`).toBeGreaterThan(-1)
+    const eigenschaftAb = APP.indexOf(`'${eigenschaft}'`, layerAb)
+    expect(eigenschaftAb, `${eigenschaft} steht nicht mehr in ${layer}`).toBeGreaterThan(-1)
+    // Seit dem 16. September steht vor dem Paar kassierend/frei ein dritter
+    // Fall, „Zeiten unbekannt" in Grau. Gemessen wird ab dem `chargeable`-
+    // Zweig: Die zwei Farben dahinter sind die, die das Panel auch nennt.
+    const ab = APP.indexOf("'chargeable'", eigenschaftAb)
+    expect(ab, `kein chargeable-Zweig in ${layer}/${eigenschaft}`).toBeGreaterThan(-1)
     const hexe = [...APP.slice(ab, ab + 2000).matchAll(/'(#[0-9a-fA-F]{6})'/g)]
       .map((t) => t[1] as string)
       .slice(0, 2)

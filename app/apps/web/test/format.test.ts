@@ -56,6 +56,14 @@ describe('Beträge', () => {
   it('gibt Parkscheibe und fehlendem Tarif Worte statt einer Null', () => {
     expect(feeLabel({ kind: 'disc' })).toBe('Parkscheibe')
     expect(feeLabel({ kind: 'unknown' })).toBe('Tarif nicht angegeben')
+  })
+
+  // Zürich zahlt Franken. „2,50 €" für einen Zürcher Tarif wäre eine Zahl mit
+  // der falschen Einheit; die Währung reist am Betrag mit.
+  it('schreibt Franken als Franken', () => {
+    expect(feeLabel({ kind: 'exact', centsPerHour: 250, currency: 'CHF' })).toMatch(/^CHF.2\.50\/Std\.$/)
+    expect(costLabel({ minCents: 250, maxCents: 250, exact: true, currency: 'CHF' })).toMatch(/^CHF.2\.50$/)
+    expect(costLabel({ minCents: 250, maxCents: 250, exact: true })).toBe(`2,50${nbsp}€`)
     expect(feeLabel({ kind: 'disc' })).not.toContain('0')
     expect(feeLabel({ kind: 'unknown' })).not.toContain('0')
   })
@@ -172,6 +180,9 @@ describe('Statuswort und Stundenbetrag', () => {
     expect(statusLabel({ chargeable: false, uncertain: true })).toBe('unsicher')
     expect(statusLabel({ chargeable: true, uncertain: false })).toBe('gebührenpflichtig')
     expect(statusLabel({ chargeable: false, uncertain: false })).toBe('keine Gebühr')
+    // Ohne Zeiten in der Quelle gewinnt das dritte Wort gegen alles andere.
+    expect(statusLabel({ chargeable: false, uncertain: false, unknown: true })).toBe('Zeiten unbekannt')
+    expect(statusLabel({ chargeable: true, uncertain: true, unknown: true })).toBe('Zeiten unbekannt')
   })
 
   it('schreibt einen festen Satz als eine Zahl, eine Spanne als zwei', () => {

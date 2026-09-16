@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import {
   BERLIN,
+  COUNTRY_NAMES,
+  cityCountry,
   CITIES,
   cityAt,
   cityByKey,
@@ -435,14 +437,43 @@ describe('die Lizenzangaben jeder Stadt', () => {
       const { licence, licenceUrl, licenceFamily, attributionRequired } = city.attribution
       const erwartet = /creativecommons\.org\/licenses\/by\//.test(licenceUrl)
         ? 'cc-by'
-        : /dl-de\/zero/.test(licenceUrl)
-          ? 'dl-de-zero'
-          : /dl-de\/by/.test(licenceUrl)
-            ? 'dl-de-by'
-            : 'unbekannt'
+        : /creativecommons\.org\/publicdomain\/zero/.test(licenceUrl)
+          ? 'cc0'
+          : /dl-de\/zero/.test(licenceUrl)
+            ? 'dl-de-zero'
+            : /dl-de\/by/.test(licenceUrl)
+              ? 'dl-de-by'
+              : city.licenceOpen !== undefined
+                ? 'unklar'
+                : 'unbekannt'
       expect(licenceFamily, `${city.name}: ${licence}`).toBe(erwartet)
-      expect(attributionRequired, city.name).toBe(licenceFamily !== 'dl-de-zero')
+      // Ohne Nennungspflicht nur, wo die Lizenz sie ausdrücklich erlässt.
+      // „unklar" nennt die Quelle trotzdem: Wer nicht weiss, was gilt, hält
+      // sich an die strengere Lesart.
+      expect(attributionRequired, city.name).toBe(
+        licenceFamily !== 'dl-de-zero' && licenceFamily !== 'cc0'
+      )
     }
+  })
+
+  // Der Banner über der Karte hängt an `licenceOpen`, die Familie `unklar`
+  // an der fehlenden Lizenz. Eines ohne das andere wäre entweder ein Banner
+  // über einer geklärten Lizenz oder eine ungeklärte ohne Banner.
+  it('trägt licenceOpen genau dann, wenn die Lizenz unklar ist', () => {
+    for (const city of CITIES) {
+      const offen = city.licenceOpen !== undefined
+      expect(offen, city.name).toBe(city.attribution.licenceFamily === 'unklar')
+      if (offen) expect(city.licenceOpen?.trim().length ?? 0, city.name).toBeGreaterThan(20)
+    }
+  })
+
+  // Jede Stadt hat einen Staat, und der kommt aus dem Landeskürzel — die
+  // Oberfläche gruppiert danach und der Standort-Vorschlag nennt ihn.
+  it('ordnet jede Stadt einem Staat zu, den COUNTRY_NAMES kennt', () => {
+    for (const city of CITIES) {
+      expect(COUNTRY_NAMES[cityCountry(city)], city.name).toBeTruthy()
+    }
+    expect(cityCountry(BERLIN)).toBe('DE')
   })
 })
 

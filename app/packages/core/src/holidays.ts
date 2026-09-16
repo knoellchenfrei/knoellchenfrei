@@ -18,8 +18,41 @@
 
 import { berlinDateKey, type BerlinWallClock } from './berlin-time.js'
 
-/** Amtliche Kürzel der Bundesländer, so weit belegt. */
-export type Land = 'BE' | 'HH' | 'HE' | 'BY' | 'NW' | 'BW'
+/**
+ * Amtliche Kürzel der Bundesländer, so weit belegt — und seit dem
+ * 16. September auch die Länder Österreichs und die Kantone der Schweiz, mit
+ * dem Staat als Präfix (`AT-W`, `CH-ZH`). Der Präfix ist kein Schmuck: Er
+ * entscheidet in `countryOf`, welcher **nationale** Kalender darunterliegt.
+ * Ohne ihn hätte Wien den 3. Oktober frei und den 26. Oktober nicht.
+ */
+export type Land =
+  | 'BE'
+  | 'HH'
+  | 'HE'
+  | 'BY'
+  | 'NW'
+  | 'BW'
+  | 'AT-W'
+  | 'AT-ST'
+  | 'AT-S'
+  | 'AT-T'
+
+/** Der Staat, dessen Feiertage und Währung gelten. */
+export type Country = 'DE' | 'AT' | 'CH'
+
+/**
+ * Welcher Staat hinter einem Landeskürzel steht.
+ *
+ * Aus dem Präfix gelesen und nicht aus einer zweiten Tabelle, damit es
+ * keine zwei Stellen gibt, die auseinanderlaufen können. Ein Kürzel ohne
+ * Präfix ist deutsch — das ist die Konvention der ersten sechs Länder, und
+ * sie bleibt, weil jede Stadt, die heute ausgeliefert wird, sie nutzt.
+ */
+export function countryOf(land: Land): Country {
+  if (land.startsWith('AT-')) return 'AT'
+  if (land.startsWith('CH-')) return 'CH'
+  return 'DE'
+}
 
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
@@ -52,24 +85,64 @@ function shiftFromEaster(year: number, offsetDays: number): string {
 }
 
 /**
- * Die neun Feiertage, die in allen sechzehn Ländern gelten.
+ * Die Feiertage, die im ganzen Staat gelten — je Staat eine Zeile.
  *
  * Feste Daten als `MM-TT`, bewegliche als Abstand zum Ostersonntag.
+ *
+ * **Deutschland:** die neun Tage, die in allen sechzehn Ländern gelten.
+ *
+ * **Österreich:** § 7 Abs. 2 Feiertagsruhegesetz 1957 (BGBl. Nr. 153/1957,
+ * i. d. g. F.) nennt dreizehn Tage: Neujahr, Heilige Drei Könige,
+ * Ostermontag, Staatsfeiertag (1. Mai), Christi Himmelfahrt, Pfingstmontag,
+ * Fronleichnam, Mariä Himmelfahrt, Nationalfeiertag (26. Oktober),
+ * Allerheiligen, Mariä Empfängnis (8. Dezember), Weihnachten und
+ * Stephanstag. **Karfreitag ist keiner** — er war bis 2019 nur für
+ * evangelische Arbeitnehmer frei und ist seitdem ein „persönlicher
+ * Feiertag" (BGBl. I Nr. 22/2019); die Kurzparkzonen gelten. Die
+ * Landespatrone (Leopold in Wien, Rupert in Salzburg, Josef in der
+ * Steiermark und Tirol) stehen nicht im Feiertagsruhegesetz; die Stadt
+ * Wien sagt ausdrücklich, dass die Kurzparkzonen am 15. November gelten.
+ * Deshalb hat kein österreichisches Land einen regionalen Eintrag.
+ *
+ * **Schweiz:** Der Bund kennt nur den 1. August (Art. 110 Abs. 3 BV, seit
+ * 1994 ein den Sonntagen gleichgestellter Feiertag); alles andere ist
+ * kantonal und steht bei `REGIONAL`, mit Beleg je Kanton.
  */
-const NATIONWIDE_FIXED = ['01-01', '05-01', '10-03', '12-25', '12-26'] as const
-const NATIONWIDE_FROM_EASTER = [
-  -2, // Karfreitag
-  1, // Ostermontag
-  39, // Christi Himmelfahrt
-  50, // Pfingstmontag
-] as const
+interface RegionalHolidays {
+  /** Feste Daten als `MM-TT`. */
+  readonly fixed: readonly string[]
+  /** Bewegliche Daten als Abstand in Tagen zum Ostersonntag. */
+  readonly fromEaster: readonly number[]
+}
+
+const NATIONWIDE: Record<Country, RegionalHolidays> = {
+  DE: {
+    fixed: ['01-01', '05-01', '10-03', '12-25', '12-26'],
+    fromEaster: [
+      -2, // Karfreitag
+      1, // Ostermontag
+      39, // Christi Himmelfahrt
+      50, // Pfingstmontag
+    ],
+  },
+  AT: {
+    fixed: ['01-01', '01-06', '05-01', '08-15', '10-26', '11-01', '12-08', '12-25', '12-26'],
+    fromEaster: [
+      1, // Ostermontag
+      39, // Christi Himmelfahrt
+      50, // Pfingstmontag
+      60, // Fronleichnam
+    ],
+  },
+  CH: { fixed: ['08-01'], fromEaster: [] },
+}
 
 /**
  * Was ein Land über die neun bundesweiten hinaus hat.
  *
  * **Zwei Listen, nicht eine.** Bis Hessen dazukam, hielt `REGIONAL` nur *feste*
  * Daten als `MM-TT`, und alles Bewegliche stand global in
- * `NATIONWIDE_FROM_EASTER`. Fronleichnam ist beides zugleich — beweglich
+ * `NATIONWIDE`. Fronleichnam ist beides zugleich — beweglich
  * (Ostersonntag + 60) und **nicht** bundesweit. In der alten Struktur ließ er
  * sich nur falsch unterbringen: als festes Datum wäre er jedes Jahr um Wochen
  * daneben, in der globalen Osterliste bekämen ihn Berlin und Hamburg mit, wo er
@@ -143,13 +216,6 @@ const NATIONWIDE_FROM_EASTER = [
  *   <https://im.baden-wuerttemberg.de/de/service/feiertage>, abgerufen am
  *   8. September 2026.
  */
-interface RegionalHolidays {
-  /** Feste Daten als `MM-TT`. */
-  readonly fixed: readonly string[]
-  /** Bewegliche Daten als Abstand in Tagen zum Ostersonntag. */
-  readonly fromEaster: readonly number[]
-}
-
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
   HH: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag
@@ -157,6 +223,11 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   BY: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
   NW: { fixed: ['11-01'], fromEaster: [60] }, // Allerheiligen, Fronleichnam
   BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
+  // Österreich: alles Bundesrecht, siehe `NATIONWIDE`.
+  'AT-W': { fixed: [], fromEaster: [] },
+  'AT-ST': { fixed: [], fromEaster: [] },
+  'AT-S': { fixed: [], fromEaster: [] },
+  'AT-T': { fixed: [], fromEaster: [] },
 }
 
 /**
@@ -216,10 +287,11 @@ export function holidaysFor(
     }
   }
 
+  const nationwide = NATIONWIDE[countryOf(land)]
   const dates = new Set<string>(
-    [...NATIONWIDE_FIXED, ...regional.fixed, ...extras].map((date) => `${year}-${date}`),
+    [...nationwide.fixed, ...regional.fixed, ...extras].map((date) => `${year}-${date}`),
   )
-  for (const offset of [...NATIONWIDE_FROM_EASTER, ...regional.fromEaster]) {
+  for (const offset of [...nationwide.fromEaster, ...regional.fromEaster]) {
     dates.add(shiftFromEaster(year, offset))
   }
 

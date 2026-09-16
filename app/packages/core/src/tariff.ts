@@ -10,7 +10,7 @@
 
 import { berlinWallClock, type BerlinWallClock, type Weekday } from './berlin-time.js'
 import { isAdventSaturday, isHoliday, type Land } from './holidays.js'
-import type { Fee } from './parse-fee.js'
+import type { Currency, Fee } from './parse-fee.js'
 
 /** A chargeable window on a set of weekdays, in local minutes since midnight. */
 export interface ChargeWindow {
@@ -59,10 +59,28 @@ export interface ParkingZone {
    * and the UI must say so.
    */
   unmodelledRules?: readonly string[]
+  /**
+   * Die Quelle nennt für dieses Gebiet **keine** Zeiten.
+   *
+   * Bis zum 16. September war eine Zone ohne Fenster verboten: `windows: []`
+   * ergibt in `isChargeable` immer `false`, und die Oberfläche hätte „keine
+   * Gebühr" geschrieben — eine Behauptung über einen Ort, über den die Daten
+   * nichts sagen. Mit der Marke ist die Antwort ein drittes Wort: „Zeiten
+   * unbekannt", auf der Karte grau statt frei. Die Städte, die nur ihre
+   * Zonengrenzen veröffentlichen (Essen, Kassel, Genf, Bern, …), tragen sie
+   * an jeder Zone; eine Stadt mit Zeiten trägt sie nie.
+   */
+  scheduleUnknown?: true
 }
 
 export interface ChargeableAt {
   chargeable: boolean
+  /**
+   * True, wenn die Quelle keine Zeiten nennt (`ParkingZone.scheduleUnknown`).
+   * Dann ist `chargeable` **keine Aussage** — es ist `false`, weil nichts
+   * bekannt ist, nicht weil nichts zu zahlen wäre — und `changesAt` ist null.
+   */
+  unknown: boolean
   /**
    * True when a rule this model cannot express applies today, so the answer
    * above may be wrong. Set for the Spandau zones on Advent Saturdays, where
@@ -154,6 +172,9 @@ export function isUncertainAt(zone: ParkingZone, at: Date | number): boolean {
  * DST shifts and holidays without special cases.
  */
 export function chargeableAt(zone: ParkingZone, at: Date | number): ChargeableAt {
+  if (zone.scheduleUnknown === true) {
+    return { chargeable: false, uncertain: false, unknown: true, changesAt: null }
+  }
   const start = new Date(at)
   const chargeable = isChargeable(zone, start)
   const uncertain = isUncertainAt(zone, start)
@@ -164,12 +185,12 @@ export function chargeableAt(zone: ParkingZone, at: Date | number): ChargeableAt
 
   while (cursor <= limit) {
     if (isChargeable(zone, cursor) !== chargeable) {
-      return { chargeable, uncertain, changesAt: new Date(cursor) }
+      return { chargeable, uncertain, unknown: false, changesAt: new Date(cursor) }
     }
     cursor += 60 * 1000
   }
 
-  return { chargeable, uncertain, changesAt: null }
+  return { chargeable, uncertain, unknown: false, changesAt: null }
 }
 
 export interface CostEstimate {
@@ -189,6 +210,8 @@ export interface CostEstimate {
   chargedMinutes: number
   /** True when the stay exceeds the zone's maximum. */
   exceedsMaxStay: boolean
+  /** Die Währung der beiden Beträge; Euro, wenn der Tarif keine nennt. */
+  currency: Currency
 }
 
 /**
@@ -247,5 +270,13 @@ export function estimateCost(
     priced: fee.kind === 'exact' || fee.kind === 'range',
     chargedMinutes,
     exceedsMaxStay: zone.maxStayMinutes !== undefined && minutes > zone.maxStayMinutes,
+    currency: currencyOf(fee),
   }
+}
+
+/** Die Währung eines Tarifs; Euro, wo keine steht (siehe `Currency`). */
+export function currencyOf(fee: Fee): Currency {
+  return (fee.kind === 'exact' || fee.kind === 'range') && fee.currency !== undefined
+    ? fee.currency
+    : 'EUR'
 }

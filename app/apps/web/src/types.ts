@@ -10,6 +10,12 @@ export interface ZoneProperties {
   fee: Fee
   unmodelledRules: string[]
   sourceDefect: string | null
+  /**
+   * Die Quelle nennt keine Zeiten (Klasse C: nur Zonengrenzen). Dann ist
+   * `windows` leer, und die Zone ist weder frei noch gebührenpflichtig,
+   * sondern „Zeiten unbekannt" — siehe `ParkingZone.scheduleUnknown`.
+   */
+  scheduleUnknown?: true
   spaces: number | null
   /**
    * Verbindliche Höchstparkdauer der Zone, in Minuten.

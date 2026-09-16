@@ -1,4 +1,4 @@
-import type { City } from '@knoellchenfrei/core'
+import { COUNTRY_NAMES, cityCountry, type City } from '@knoellchenfrei/core'
 
 interface Props {
   /** Die Stadt, in der die Position liegt. */
@@ -29,18 +29,24 @@ interface Props {
  * Standort-Vordialog.
  */
 export function CitySuggestion({ city, current, onSwitch, onStay }: Props) {
+  // Über eine Landesgrenze wird das Land genannt: Wer in Wien steht und
+  // „zu Wien wechseln" liest, soll wissen, dass damit auch Feiertage, Recht
+  // und Währung wechseln — der Betreiber wollte diesen Schritt bewusst.
+  const grenze = cityCountry(city) !== cityCountry(current)
+  const ziel = grenze ? `${city.name} (${COUNTRY_NAMES[cityCountry(city)]})` : city.name
   return (
     <aside className="city-hint" role="status">
       <p className="city-hint__body">
-        <strong>Dein Standort liegt in {city.name}.</strong> Zonen und Meldungen zeigt die App
-        gerade für {current.name}.
+        <strong>Dein Standort liegt in {ziel}.</strong> Zonen und Meldungen zeigt die App
+        gerade für {current.name}
+        {grenze ? ` (${COUNTRY_NAMES[cityCountry(current)]})` : ''}.
       </p>
       <div className="city-hint__actions">
         <button type="button" className="button" onClick={onStay}>
           Hier bleiben
         </button>
         <button type="button" className="button button--primary" onClick={onSwitch}>
-          Zu {city.name} wechseln
+          Zu {ziel} wechseln
         </button>
       </div>
     </aside>

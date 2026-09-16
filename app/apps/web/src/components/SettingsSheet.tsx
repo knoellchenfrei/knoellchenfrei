@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { HISTORY_DAYS } from '@knoellchenfrei/core'
+import { COUNTRY_NAMES, HISTORY_DAYS, cityCountry, type Country } from '@knoellchenfrei/core'
 
 import { CITY, selectableCities, switchCity } from '../city.js'
 import { IconWarnung, IconZurueck } from '../icons.js'
@@ -233,6 +233,13 @@ export function SettingsSheet({
   licenceUrl,
   geprueftAm,
 }: Props) {
+  // Die Länder, die diese Auslieferung zeigen kann, in fester Reihenfolge —
+  // und das Land der aktuellen Stadt vorgewählt, damit die Liste beim Öffnen
+  // die eigene Stadt enthält.
+  const laender = (Object.keys(COUNTRY_NAMES) as Country[]).filter((land) =>
+    selectableCities().some((city) => cityCountry(city) === land)
+  )
+  const [country, setCountry] = useState<Country>(cityCountry(CITY))
   const closeRef = useRef<HTMLButtonElement>(null)
   const stand = datenstand(geprueftAm, Date.now())
 
@@ -289,8 +296,31 @@ export function SettingsSheet({
         {selectableCities().length > 1 && (
           <>
             <h3 className="sheet__label">Stadt</h3>
+            {/*
+              Ein Land zur Zeit, wie eine Stadt zur Zeit: Wer nach Wien will,
+              wählt erst Österreich. Der Betreiber wollte den Wechsel über
+              eine Grenze **bewusst** — andere Feiertage, anderes Recht, in
+              der Schweiz eine andere Währung. Eine Liste mit 25 Städten
+              quer durch drei Staaten hätte das in einem Tipp verschluckt.
+              Nur sichtbar, wenn es überhaupt zwei Länder gibt.
+            */}
+            {laender.length > 1 && (
+              <div className="segmented" role="group" aria-label="Land">
+                {laender.map((land) => (
+                  <button
+                    key={land}
+                    type="button"
+                    className={`segmented__item${land === country ? ' segmented__item--on' : ''}`}
+                    aria-pressed={land === country}
+                    onClick={() => setCountry(land)}
+                  >
+                    {COUNTRY_NAMES[land]}
+                  </button>
+                ))}
+              </div>
+            )}
             <ul className="rows">
-              {selectableCities().map((city) => (
+              {selectableCities().filter((city) => cityCountry(city) === country).map((city) => (
                 <li key={city.key}>
                   <button
                     type="button"
@@ -485,6 +515,12 @@ export function SettingsSheet({
           Datenlizenz Deutschland kennt diese Auflage nicht — der Satz hängt
           deshalb an der Lizenzfamilie, nicht am Anzeigenamen der Lizenz.
         */}
+        {CITY.attribution.licenceFamily === 'unklar' && (
+          <p className="sheet__hint">
+            <strong>Lizenz ungeklärt.</strong> {CITY.licenceOpen} Bis dahin nennt die App die
+            Quelle wie unter Namensnennung und zeigt den Hinweis über der Karte.
+          </p>
+        )}
         {CITY.attribution.licenceFamily === 'cc-by' && (
           <p className="sheet__hint">
             Creative Commons verlangt zusätzlich den Hinweis, dass die Daten{' '}

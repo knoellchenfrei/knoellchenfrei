@@ -243,6 +243,21 @@ Reihenfolge zählt: Der Verein sollte stehen, **bevor** die App öffentlich
 beworben wird. Ein Impressum mit deiner Privatanschrift lässt sich später nicht
 mehr zurücknehmen — es steht dann in Archiven.
 
+## 1a. Recht für Österreich und die Schweiz — **du**
+
+Seit dem 16. September werden Städte außerhalb Deutschlands angeschlossen.
+Impressum und Datenschutzerklärung sind auf deutsches Recht geschrieben
+(TMG/DDG, DSGVO). Für Nutzer in Österreich gilt die DSGVO ebenso, dazu das
+DSG; in der Schweiz das revidierte DSG (seit 1. September 2023), das eine
+eigene Informationspflicht kennt. Solange der Riegel steht, ist das kein
+Betriebsrisiko; vor dem Öffnen gehört ein Absatz je Land in
+[datenschutz.md](datenschutz.md) und die Frage an den Verein, ob der
+Auftritt in der Schweiz eine Vertretung braucht (Art. 14 DSG: nur bei
+umfangreicher Bearbeitung — vermutlich nein, aber das entscheidet ein
+Mensch). Was **ich** getan habe: Die App nennt das Land beim Wechsel und
+gruppiert die Städte danach, siehe
+[entscheidungen.md](entscheidungen.md#länder-bewusst-wechseln-währung-am-tarif-ein-kalender-je-staat).
+
 ## 2. Domains — erledigt, bis auf die Wiedervorlage 2027
 
 Am 6. September 2026 bestellt. Begründung der Auswahl in

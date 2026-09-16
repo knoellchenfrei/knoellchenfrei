@@ -21,7 +21,9 @@
  * - **Die Zeitzone.** `Europe/Berlin` gilt für ganz Deutschland; sie ist keine
  *   Eigenheit Berlins, sondern die des Landes. `berlin-time.ts` heißt deshalb
  *   weiter so und bleibt unverändert richtig. Erst eine Stadt außerhalb dieser
- *   Zone macht daraus eine Konfiguration.
+ *   Zone macht daraus eine Konfiguration. Wien und Zürich (seit dem
+ *   16. September) liegen in derselben — `Europe/Vienna` und `Europe/Zurich`
+ *   sind dieselbe Wanduhr wie Berlin, mit derselben Sommerzeit.
  * - **Der Tarif.** Der steht je Zone im Feed, nicht je Stadt. Eine Stadt hat
  *   keinen Preis, ihre Zonen haben einen.
  *
@@ -33,7 +35,7 @@
 
 import type { BoundingBox, Position } from './geo.js'
 import type { HeatGrid } from './heatmap.js'
-import type { Land } from './holidays.js'
+import { countryOf, type Country, type Land } from './holidays.js'
 
 export interface Attribution {
   /** Wer die Daten herausgibt, wörtlich so, wie er genannt werden will. */
@@ -72,7 +74,14 @@ export interface Attribution {
   licenceFamily: LicenceFamily
 }
 
-export type LicenceFamily = 'dl-de-zero' | 'dl-de-by' | 'cc-by'
+/**
+ * `cc0` kam am 16. September mit Rostock: keine Nennung verlangt, wie
+ * DL-DE/Zero. `unklar` ist keine Lizenz, sondern ihr Fehlen — der Dienst
+ * nennt keine Bedingungen (Graz, Innsbruck, Kassel). Eine solche Stadt trägt
+ * `licenceOpen` mit dem Satz, was offen ist, und die App zeigt ihn über der
+ * Karte; ohne diese Familie hätte der Datenbau eine Lizenz erfinden müssen.
+ */
+export type LicenceFamily = 'dl-de-zero' | 'dl-de-by' | 'cc-by' | 'cc0' | 'unklar'
 
 export interface City {
   /** Kleingeschrieben, ohne Umlaute — taugt als Dateiname und als URL-Teil. */
@@ -153,6 +162,28 @@ export interface City {
    * gilt hier genauso.
    */
   towedVehicles?: TowedVehicles
+  /**
+   * Was an der Lizenz der Zonendaten ungeklärt ist — ein Satz, den die App
+   * als Banner über der Karte zeigt, solange er da steht.
+   *
+   * Nur zusammen mit `licenceFamily: 'unklar'`. Der Betreiber hat am
+   * 16. September entschieden, solche Städte trotzdem anzuschliessen und die
+   * Frage sichtbar zu machen, statt sie zu verschweigen oder die Stadt
+   * wegzulassen. Fällt die Klärung, verschwindet mit dem Feld der Banner.
+   */
+  licenceOpen?: string
+}
+
+/** Der Staat einer Stadt, aus ihrem Landeskürzel (siehe `countryOf`). */
+export function cityCountry(city: Pick<City, 'land'>): Country {
+  return countryOf(city.land)
+}
+
+/** Anzeigename je Staat, für die Stadtwahl und den Standort-Vorschlag. */
+export const COUNTRY_NAMES: Record<Country, string> = {
+  DE: 'Deutschland',
+  AT: 'Österreich',
+  CH: 'Schweiz',
 }
 
 /**

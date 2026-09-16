@@ -70,6 +70,33 @@ const striche = (patch: Partial<ZoneStats> = {}): ZoneStats => ({
 })
 
 describe('ZonePanel', () => {
+  // Klasse C: nur die Grenze ist bekannt. Vorher hätte eine solche Zone
+  // „keine Gebühr" und „Frei bis: unverändert" gezeigt — eine Zusage, die
+  // die Daten nicht decken.
+  it('sagt bei einer Zone ohne Zeiten, dass die Stadt keine nennt', () => {
+    zeichne(
+      eigenschaften({
+        windows: [],
+        fee: { kind: 'unknown' },
+        rawHours: '',
+        rawFee: '',
+        scheduleUnknown: true,
+      }),
+    )
+    expect(screen.getByText('Zeiten unbekannt')).toBeTruthy()
+    expect(screen.queryByText('Frei bis')).toBeNull()
+    expect(screen.queryByText('Noch bis')).toBeNull()
+    expect(screen.queryByText(/Keine Gebühr heißt nicht/)).toBeNull()
+    expect(screen.queryByText(/Zeiten laut Quelle/)).toBeNull()
+    expect(screen.getByText(/keine Zeiten und keinen Tarif/)).toBeTruthy()
+  })
+
+  it('nennt einen Franken-Tarif in Franken', () => {
+    zeichne(eigenschaften({ fee: { kind: 'exact', centsPerHour: 250, currency: 'CHF' }, rawFee: 'CHF 2.50' }))
+    expect(screen.getByText(/^CHF.2\.50\/Std\.$/)).toBeTruthy()
+    expect(screen.queryByText(/€/)).toBeNull()
+  })
+
   it('überschreibt eine nummerierte Zone mit ihrer Nummer und nennt den Status', () => {
     zeichne(eigenschaften())
     expect(screen.getByRole('heading', { name: 'Parkzone 12' })).toBeTruthy()

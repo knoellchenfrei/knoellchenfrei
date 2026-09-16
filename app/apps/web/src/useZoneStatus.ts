@@ -29,6 +29,7 @@ export function toParkingZone(properties: ZoneProperties): ParkingZone {
     windows: properties.windows,
     ...(maxStay === undefined ? {} : { maxStayMinutes: maxStay }),
     unmodelledRules: properties.unmodelledRules,
+    ...(properties.scheduleUnknown === true ? { scheduleUnknown: true as const } : {}),
   }
 }
 
@@ -36,6 +37,8 @@ export interface ZoneStatus {
   zone: ParkingZone
   chargeable: boolean
   uncertain: boolean
+  /** Die Quelle nennt keine Zeiten; `chargeable` ist dann keine Aussage. */
+  unknown: boolean
   changesAt: Date | null
   /** Cost of one hour from now, for a quick headline figure. */
   hourly: ReturnType<typeof estimateCost>
@@ -45,7 +48,7 @@ export function useZoneStatus(properties: ZoneProperties | null, now: number): Z
   return useMemo(() => {
     if (properties === null) return null
     const zone = toParkingZone(properties)
-    const { chargeable, uncertain, changesAt } = chargeableAt(zone, now)
-    return { zone, chargeable, uncertain, changesAt, hourly: estimateCost(zone, now, 60) }
+    const { chargeable, uncertain, unknown, changesAt } = chargeableAt(zone, now)
+    return { zone, chargeable, uncertain, unknown, changesAt, hourly: estimateCost(zone, now, 60) }
   }, [properties, now])
 }

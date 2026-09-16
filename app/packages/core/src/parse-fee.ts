@@ -22,9 +22,18 @@
  * Sinne von „hier musst du nichts beachten“ — wer ohne Scheibe steht, zahlt.
  * Und „die Quelle sagt nichts“ ist keine Aussage über den Preis.
  */
+/**
+ * Die Währung eines Betrags. Fehlt sie, ist es der Euro — die Währung jeder
+ * Stadt, die bis zum 16. September angeschlossen war. Sie hängt am Betrag und
+ * nicht an der Stadt, weil der Betrag es ist, der formatiert wird: Ein
+ * Parser, der Franken liest, schreibt sie hin, und die Oberfläche fragt den
+ * Wert, nicht die Konfiguration. So kann keine Zahl ohne ihre Einheit reisen.
+ */
+export type Currency = 'EUR' | 'CHF'
+
 export type Fee =
-  | { kind: 'exact'; centsPerHour: number }
-  | { kind: 'range'; minCentsPerHour: number; maxCentsPerHour: number }
+  | { kind: 'exact'; centsPerHour: number; currency?: Currency }
+  | { kind: 'range'; minCentsPerHour: number; maxCentsPerHour: number; currency?: Currency }
   /** Keine Gebühr, aber Parkscheibe — und damit fast immer eine Höchstparkdauer. */
   | { kind: 'disc' }
   /** Die Quelle nennt keinen Tarif. Nicht raten, sondern sagen. */

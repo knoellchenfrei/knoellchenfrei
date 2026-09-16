@@ -1081,3 +1081,48 @@ Halbwertszeit (2 Quartale) und die 2-ha-Grenze sind Setzungen, keine
 Messungen — der Rückwärtstest nach zwei Quartalen entscheidet
 (`docs/todo.md`, Abschnitt 9).
 
+
+## Länder: bewusst wechseln, Währung am Tarif, ein Kalender je Staat
+
+**Stand 16. September 2026.** Der Betreiber hat entschieden, über
+Deutschland hinauszugehen — Österreich und die Schweiz zuerst — und dabei
+zwei Dinge verlangt: Qualität vor Menge, und dass der Nutzer das Land
+**bewusst** wechselt. Drei Entscheidungen folgen daraus.
+
+**Der Staat steht im Landeskürzel, nicht in einem zweiten Feld.** `Land` in
+`core/holidays.ts` heißt jetzt auch `AT-W` oder `CH-ZH`; `countryOf` liest
+den Staat aus dem Präfix. Eine zweite Tabelle Stadt → Staat hätte
+auseinanderlaufen können, und das Präfix trägt ohnehin die Information, die
+zählt: welcher **nationale** Feiertagskalender darunterliegt. Wien aus der
+deutschen Bundesliste hätte am 3. Oktober frei und am 26. Oktober kassiert.
+Karfreitag ist in Österreich seit 2019 kein Feiertag mehr — die
+Kurzparkzonen gelten; die Landespatrone (Leopold, Rupert, Josef) sind keine
+Feiertage nach dem Feiertagsruhegesetz. Beides steht als Test.
+
+**Die Währung hängt am Betrag.** `Fee.currency` ist optional und fehlt bei
+jeder Stadt, die bis heute angeschlossen war; ein Parser, der Franken liest,
+schreibt sie hin, und `format.ts` formatiert nach ihr. Die Alternative — die
+Währung an der Stadt — hätte jede Zahl ohne ihre Einheit durch die App reisen
+lassen, und die Stelle, die vergisst nachzuschlagen, hätte „2,50 €" für
+einen Zürcher Tarif geschrieben. `CostEstimate.currency` trägt sie weiter.
+
+**Ein Land zur Zeit, wie eine Stadt zur Zeit.** In den Einstellungen steht
+vor der Städteliste eine Landeswahl; die Liste zeigt nur die Städte des
+gewählten Landes. Der Standort-Vorschlag nennt das Land, sobald es ein
+anderes ist („Dein Standort liegt in Wien (Österreich)"). Der Wechsel selbst
+bleibt, was er war: ein Neuladen mit allem, was an der Stadt hängt.
+
+**Was bewusst gleich bleibt:** die Zeitzone. `Europe/Berlin`, `Europe/Vienna`
+und `Europe/Zurich` sind dieselbe Wanduhr; `berlin-time.ts` behält seinen
+Namen, bis eine Stadt außerhalb dieser Zone dazukommt. Und die Sprache: Die
+App bleibt deutsch, auch in Genf.
+
+**Zwei neue Wörter, die aus derselben Entscheidung kommen.** Städte, die nur
+ihre Zonengrenzen veröffentlichen (Klasse C in
+[staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md)), tragen
+`scheduleUnknown` an jeder Zone; die Antwort heißt dann „Zeiten unbekannt",
+grau auf der Karte, statt „keine Gebühr" — eine Zone ohne Fenster war bis
+dahin verboten, weil `windows: []` immer „frei" ergab. Und Städte ohne
+ausgewiesene Lizenz tragen `licenceFamily: 'unklar'` samt `licenceOpen`, den
+Satz, den die App als Banner über der Karte zeigt. Der Betreiber wollte
+solche Städte lieber mit sichtbarer Frage als gar nicht.

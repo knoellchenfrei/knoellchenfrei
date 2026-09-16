@@ -852,6 +852,10 @@ export function App() {
               // Abstand zum Untergrund von 17,6 auf 10,8.
               'fill-color': [
                 'case',
+                ['boolean', ['feature-state', 'unknown'], false],
+                // Grau für „Zeiten unbekannt": weder Messing noch Cyan, damit
+                // die Fläche nicht als Aussage über Gebühren gelesen wird.
+                '#9ca3af',
                 ['boolean', ['feature-state', 'chargeable'], false],
                 '#cd8700',
                 '#22d3ee',
@@ -885,6 +889,8 @@ export function App() {
               // Konturkollision von 7,3 auf 10,4.
               'line-color': [
                 'case',
+                ['boolean', ['feature-state', 'unknown'], false],
+                '#d1d5db',
                 ['boolean', ['feature-state', 'chargeable'], false],
                 '#f5cfa0',
                 '#a5f3fc',
@@ -1156,7 +1162,11 @@ export function App() {
     // phone, that is the whole interaction budget.
     for (const zone of zones) {
       const chargeable = isChargeable(toParkingZone(zone.properties), now)
-      map.setFeatureState({ source: 'zones', id: zone.id }, { chargeable })
+      // `unknown` ist ein drittes Wort, keine Spielart von frei: Eine Zone
+      // ohne Zeiten in der Quelle wäre sonst hellblau wie eine, die gerade
+      // nicht kassiert — und das ist genau die Aussage, die niemand treffen kann.
+      const unknown = zone.properties.scheduleUnknown === true
+      map.setFeatureState({ source: 'zones', id: zone.id }, { chargeable, unknown })
     }
   }, [ready, zones, now])
 
@@ -1995,6 +2005,18 @@ export function App() {
           </button>
         </div>
         <UpdateBar />
+        {/*
+          Der Betreiber hat am 16. September entschieden, Städte ohne
+          ausgewiesene Lizenz anzuschliessen und die offene Frage zu zeigen,
+          statt sie zu verschweigen. Im Kopf, damit die Messung der
+          Kopfzeile (`--topbar-height`) ihn mitzählt und nichts darunter
+          verdeckt wird.
+        */}
+        {CITY.licenceOpen !== undefined && (
+          <p className="licence-hint" role="note">
+            <strong>Lizenz ungeklärt.</strong> {CITY.licenceOpen}
+          </p>
+        )}
       </header>
 
       {/*

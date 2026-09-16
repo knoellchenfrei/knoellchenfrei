@@ -222,6 +222,8 @@ body {
 }
 .badge--paid { background: rgba(245, 207, 160, 0.16); color: var(--paid); }
 .badge--free { background: rgba(165, 243, 252, 0.16); color: var(--free); }
+/* „Zeiten unbekannt": weder Messing noch Cyan, ein drittes Wort in Grau. */
+.badge--unknown { background: rgba(156, 163, 175, 0.18); color: #d1d5db; }
 
 .facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; margin: 14px 0 0; }
 .facts dt { color: var(--muted); font-size: 12px; }
@@ -1431,6 +1433,18 @@ body {
   color: #fff; background: var(--accent); border: 0; border-radius: 999px;
 }
 .updatebar__go:hover { background: #1d4ed8; }
+
+/* Lizenzbanner: dieselbe Pille wie die Aktualisierung, in der Warnfarbe.
+   Kein `.callout` (siehe `.city-hint`), kein Knopf — er ist eine Auskunft,
+   keine Entscheidung. */
+.licence-hint {
+  margin: 6px auto 0; padding: 6px 12px;
+  max-width: 560px;
+  font-size: 12.5px; line-height: 1.35; color: var(--text);
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.45); border-radius: 12px;
+}
+.licence-hint strong { color: var(--warn); }
 
 /* ------------------------------------------------------------------- Beta */
 

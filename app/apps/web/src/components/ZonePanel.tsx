@@ -70,7 +70,7 @@ export function ZonePanel({
   patternWeeks = null,
   patternSince = null,
 }: Props) {
-  const { chargeable, changesAt, hourly, uncertain } = status
+  const { chargeable, changesAt, hourly, uncertain, unknown } = status
   const jetzt = berlinWallClock(now)
   const stunde = Math.floor(jetzt.minuteOfDay / 60)
   const satz = patternWeeks === null ? null : patternSentence(pattern, jetzt.weekday, stunde, patternWeeks)
@@ -92,7 +92,7 @@ export function ZonePanel({
           </h2>
         </div>
         <span
-          className={`badge badge--${uncertain ? 'unsure' : chargeable ? 'paid' : 'free'}`}
+          className={`badge badge--${unknown ? 'unknown' : uncertain ? 'unsure' : chargeable ? 'paid' : 'free'}`}
         >
           {statusLabel(status)}
         </span>
@@ -103,10 +103,17 @@ export function ZonePanel({
           <dt>Tarif</dt>
           <dd>{feeLabel(properties.fee)}</dd>
         </div>
-        <div>
-          <dt>{chargeable ? 'Noch bis' : 'Frei bis'}</dt>
-          <dd>{changesAt === null ? 'unverändert' : until(changesAt, new Date(now))}</dd>
-        </div>
+        {/*
+          Ohne Zeiten kein „Frei bis: unverändert" — das läse sich als
+          Zusage, dass hier nie kassiert wird, und genau das wissen die
+          Daten nicht.
+        */}
+        {!unknown && (
+          <div>
+            <dt>{chargeable ? 'Noch bis' : 'Frei bis'}</dt>
+            <dd>{changesAt === null ? 'unverändert' : until(changesAt, new Date(now))}</dd>
+          </div>
+        )}
         {/*
           Maximum stay is deliberately NOT a fact tile. It is set on 1-2% of a
           zone's segments; showing the most common value as the zone's rule told
@@ -155,7 +162,20 @@ export function ZonePanel({
         </p>
       )}
 
-      {!chargeable && (
+      {/*
+        Klasse C: Die Stadt veröffentlicht ihre Zonengrenzen, aber weder
+        Zeiten noch Tarif. Die App zeigt die Grenze und sagt, was sie nicht
+        weiss — ein Gebiet ohne Auskunft ist immer noch mehr als kein Gebiet,
+        denn Meldungen und Kontrolldichte hängen an der Fläche.
+      */}
+      {unknown && (
+        <p className="cost">
+          Die Stadt veröffentlicht für dieses Gebiet <strong>keine Zeiten und keinen Tarif</strong>,
+          nur seine Grenze. Was gilt, steht am Schild oder am Automaten.
+        </p>
+      )}
+
+      {!chargeable && !unknown && (
         <p className="hours">
           Keine Gebühr heißt nicht „Parken erlaubt“: Halteverbote, Ladezonen und
           reine Bewohnerplätze gelten unabhängig davon weiter.
@@ -330,9 +350,11 @@ export function ZonePanel({
         {parked ? 'Parkplatz hierher verschieben' : 'Hier geparkt'}
       </button>
 
-      <p className="hours">
-        Zeiten laut Quelle: <code>{properties.rawHours}</code>
-      </p>
+      {!unknown && (
+        <p className="hours">
+          Zeiten laut Quelle: <code>{properties.rawHours}</code>
+        </p>
+      )}
 
       {uncertain && (
         <p className="warn warn--loud">

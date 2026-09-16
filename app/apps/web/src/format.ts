@@ -1,6 +1,14 @@
-import type { CostEstimate, Fee } from '@knoellchenfrei/core'
+import { currencyOf, type CostEstimate, type Currency, type Fee } from '@knoellchenfrei/core'
 
-const EURO = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' })
+/**
+ * Ein Formatierer je Währung. Bis zum 16. September gab es nur den Euro;
+ * Zürich zahlt Franken, und „2,50 €" für einen Zürcher Tarif wäre eine
+ * Zahl mit der falschen Einheit — schlimmer als keine.
+ */
+const MONEY: Record<Currency, Intl.NumberFormat> = {
+  EUR: new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }),
+  CHF: new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }),
+}
 const CLOCK = new Intl.DateTimeFormat('de-DE', {
   timeZone: 'Europe/Berlin',
   hour: '2-digit',
@@ -13,7 +21,10 @@ const WEEKDAY_CLOCK = new Intl.DateTimeFormat('de-DE', {
   minute: '2-digit',
 })
 
-export const euro = (cents: number): string => EURO.format(cents / 100)
+export const money = (cents: number, currency: Currency = 'EUR'): string =>
+  MONEY[currency].format(cents / 100)
+/** Nur noch für Beträge, die sicher Euro sind (der Parkzähler in Berlin). */
+export const euro = (cents: number): string => money(cents, 'EUR')
 export const clock = (at: Date): string => CLOCK.format(at)
 
 /**
@@ -52,9 +63,9 @@ function untilRaw(at: Date, from: Date): string {
 export function feeLabel(fee: Fee): string {
   switch (fee.kind) {
     case 'exact':
-      return `${euro(fee.centsPerHour)}/Std.`
+      return `${money(fee.centsPerHour, currencyOf(fee))}/Std.`
     case 'range':
-      return `${euro(fee.minCentsPerHour)}–${euro(fee.maxCentsPerHour)}/Std.`
+      return `${money(fee.minCentsPerHour, currencyOf(fee))}–${money(fee.maxCentsPerHour, currencyOf(fee))}/Std.`
     case 'disc':
       return 'Parkscheibe'
     case 'unknown':
@@ -116,7 +127,14 @@ export function tidyPoiDetail(detail: string): string {
  * „unsicher" gewinnt gegen beides: Eine Regel, die die App nicht rechnen kann,
  * macht auch aus „gebührenpflichtig" eine Vermutung.
  */
-export function statusLabel(status: { chargeable: boolean; uncertain: boolean }): string {
+export function statusLabel(status: {
+  chargeable: boolean
+  uncertain: boolean
+  unknown?: boolean
+}): string {
+  // „Zeiten unbekannt" gewinnt gegen alles: Wo die Quelle keine Zeiten
+  // nennt, ist „keine Gebühr" keine Auskunft, sondern eine Behauptung.
+  if (status.unknown === true) return 'Zeiten unbekannt'
   return status.uncertain ? 'unsicher' : status.chargeable ? 'gebührenpflichtig' : 'keine Gebühr'
 }
 
@@ -126,8 +144,11 @@ export function statusLabel(status: { chargeable: boolean; uncertain: boolean })
  * gedacht — bei Parkscheibe oder fehlendem Tarif sind beide Werte 0, und die
  * Aufrufer sagen dann etwas anderes statt „0,00 €" (siehe `feeLabel`).
  */
-export function costLabel(estimate: Pick<CostEstimate, 'minCents' | 'maxCents' | 'exact'>): string {
+export function costLabel(
+  estimate: Pick<CostEstimate, 'minCents' | 'maxCents' | 'exact'> & Partial<Pick<CostEstimate, 'currency'>>
+): string {
+  const currency = estimate.currency ?? 'EUR'
   return estimate.exact
-    ? euro(estimate.maxCents)
-    : `${euro(estimate.minCents)}–${euro(estimate.maxCents)}`
+    ? money(estimate.maxCents, currency)
+    : `${money(estimate.minCents, currency)}–${money(estimate.maxCents, currency)}`
 }
