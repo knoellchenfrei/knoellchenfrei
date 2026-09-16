@@ -449,7 +449,9 @@ die Schriften von `protomaps.github.io`. Details in
 
 Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
 weiteren Städten in
-[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md). Hamburg ist seit
+[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md), zweite Runde mit
+86 weiteren Städten in
+[staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md). Hamburg ist seit
 dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
 **vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
 angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.

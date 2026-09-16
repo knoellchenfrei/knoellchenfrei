@@ -494,6 +494,13 @@ Parkleitsystems: dreißig Anzeigetafeln, drei Zonen, Parkhäuser. WFS unter
 `geoportal.freiburg.de/wfs/gdm_pls/gdm_pls`, zusätzlich über ParkAPI/ParkenDD.
 Für „kostet das hier gerade etwas" trägt er nichts bei.
 
+> **Überholt am 16. September:** Der Befund galt für den Belegungsfeed.
+> Inzwischen führt GovData den Datensatz
+> `parkgebuhrenzonen-der-stadt-freiburg-i-br`, WFS unter
+> `geoportal.freiburg.de/wfs/gut_parken/gut_parken` — Zonen, Tarif und
+> Zeiten. Freiburg ist damit Klasse A und der erste Kandidat der zweiten
+> Runde, siehe [staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md).
+
 **MobiData BW ParkAPI — Punkte, keine Zonen.**
 `https://api.mobidata-bw.de/park-api/api/public/v3/parking-sites` antwortet mit
 HTTP 200 und meldet **30.979** Parkmöglichkeiten in Baden-Württemberg unter

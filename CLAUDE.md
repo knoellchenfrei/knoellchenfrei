@@ -1001,6 +1001,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
 | [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg, Frankfurt und München im Einzelnen; Köln, Düsseldorf und Karlsruhe in eigenen Berichten |
 | [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
+| [docs/staedte-recherche-2026-09-16.md](docs/staedte-recherche-2026-09-16.md) | Zweite Runde: 86 weitere Städte in fünf Klassen, Rangliste der Kandidaten, 62 Städte mit Zonen ohne Schnittstelle |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
 | [docs/sitzungsstatistik.md](docs/sitzungsstatistik.md) | Gemessene Kennzahlen der Sitzungen: Modell, Tokens, Werkzeuge, Agenten |
 | [docs/nachtplan-2026-09-08.md](docs/nachtplan-2026-09-08.md) | Der Plan der Nacht zum 8. September und was jeder Abschnitt ergeben hat |
