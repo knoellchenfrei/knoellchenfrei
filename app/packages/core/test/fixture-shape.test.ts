@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
+import type { SchwerinAutomatProperties } from '../src/schwerin.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -261,6 +262,66 @@ describe('Münchner Fixture', () => {
  * stehen und keine Meter aus EPSG:25832 — die tragen plausible Zahlen und
  * sähen auf der Karte nur „leer“ aus.
  */
+describe('Schweriner Fixtures', () => {
+  interface Psa {
+    auszug: { id: string; properties: SchwerinAutomatProperties; positionUtm: unknown }[]
+  }
+  interface Zonen {
+    flaechen: { id: unknown; properties: Record<string, unknown>; geometry: { type: string; coordinates: unknown } }[]
+  }
+  const PSA = read<Psa>('sn-parkscheinautomaten-2026-09-16.json')
+  const ZONEN = read<Zonen>('sn-parkzonen-2026-09-16.json')
+
+  // Alles Zeichenkette, nie `null`, nie fehlend: So liefert `gml.ts` ein
+  // MapServer-GML, und ein leeres Feld ist eine leere Zeichenkette — der
+  // Datenbau prüft `=== ''`, nicht `== null`. Ein `null` hier hiesse, dass
+  // der Leser oder der Dienst sich geändert hat.
+  it('führt die Automaten in genau diesen acht Feldern, alle als Zeichenkette', () => {
+    expectShape(PSA.auszug.map((automat) => automat.properties) as unknown as Record<string, unknown>[], {
+      Bezeichnung: ['string'],
+      Bemerkung: ['string'],
+      Standort: ['string'],
+      Bewirtschaftungszeit: ['string'],
+      Hoechstparkdauer: ['string'],
+      Gebuehr: ['string'],
+      Tagesticket: ['string'],
+      Kurzparkticket: ['string'],
+    })
+  })
+
+  it('trägt je Automat eine Position in UTM-Metern, Ost vor Nord', () => {
+    for (const automat of PSA.auszug) {
+      const [easting, northing] = automat.positionUtm as number[]
+      expect(easting).toBeGreaterThan(255_000)
+      expect(easting).toBeLessThan(270_000)
+      expect(northing).toBeGreaterThan(5_938_000)
+      expect(northing).toBeLessThan(5_955_000)
+    }
+  })
+
+  // Der Befund, um den sich Schwerins Datenbau dreht: kein Feld, keine
+  // Kennung. Taucht hier je ein Feld auf, ist `SCHWERIN_ZONE_ANCHORS`
+  // dagegen zu prüfen — und vermutlich überflüssig.
+  it('führt die Zonen ohne Kennung und ohne ein einziges Sachfeld, mit geschlossenen Ringen', () => {
+    expect(ZONEN.flaechen).toHaveLength(15)
+    for (const flaeche of ZONEN.flaechen) {
+      expect(flaeche.id).toBeNull()
+      expect(Object.keys(flaeche.properties)).toEqual([])
+      expect(['Polygon', 'MultiPolygon']).toContain(flaeche.geometry.type)
+      const polygons =
+        flaeche.geometry.type === 'Polygon'
+          ? [flaeche.geometry.coordinates as number[][][]]
+          : (flaeche.geometry.coordinates as number[][][][])
+      for (const rings of polygons) {
+        for (const ring of rings) {
+          expect(ring.length).toBeGreaterThanOrEqual(4)
+          expect(ring[0]).toEqual(ring[ring.length - 1])
+        }
+      }
+    }
+  })
+})
+
 describe('Geometrie-Fixture', () => {
   interface FeatureCollection {
     type: string

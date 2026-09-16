@@ -112,6 +112,23 @@ describe('holidaysFor', () => {
     expect(by.has('2026-11-18')).toBe(false) // Buss- und Bettag, nur in SN
   })
 
+  // Mecklenburg-Vorpommern ist das einzige Land mit Berlins Frauentag UND
+  // Hamburgs Reformationstag — der Eintrag ist gegen beide Nachbarn gemessen,
+  // damit ein vertauschtes Kürzel auffällt.
+  it('gibt Mecklenburg-Vorpommern Frauentag und Reformationstag, sonst nichts', () => {
+    const mv = holidaysFor('MV', 2026)
+    expect(mv.has('2026-03-08')).toBe(true) // Frauentag, seit 2023
+    expect(mv.has('2026-10-31')).toBe(true) // Reformationstag
+    expect(mv.has('2026-06-04')).toBe(false) // Fronleichnam
+    expect(mv.has('2026-11-01')).toBe(false) // Allerheiligen
+    expect(mv.has('2026-11-18')).toBe(false) // Buss- und Bettag
+    expect(mv.has('2026-01-06')).toBe(false) // Drei Könige
+    expect(mv.size).toBe(11)
+    // Gegen die Nachbarn: HH fehlt der Frauentag, BE der Reformationstag.
+    expect(holidaysFor('HH', 2026).has('2026-03-08')).toBe(false)
+    expect(holidaysFor('BE', 2026).has('2026-10-31')).toBe(false)
+  })
+
   /**
    * Der Fall, für den `extraFixed` überhaupt existiert.
    *

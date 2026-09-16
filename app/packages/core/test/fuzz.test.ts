@@ -38,6 +38,12 @@ import {
   parseFrankfurtSchedule,
 } from '../src/frankfurt.js'
 import { MuenchenParseError, muenchenParkingWindows, parseMuenchenRule } from '../src/muenchen.js'
+import {
+  SchwerinParseError,
+  parseSchwerinFee,
+  parseSchwerinMaxStay,
+  parseSchwerinSchedule,
+} from '../src/schwerin.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -176,6 +182,12 @@ describe('Zeitparser unter Beschuss', () => {
     })
   })
 
+  it('Schwerin wirft nur SchwerinParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 120, SchwerinParseError, (input) => {
+      expectValidWindows(parseSchwerinSchedule(input), input)
+    })
+  })
+
   it('München wirft nur MuenchenParseError und liefert nur gültige Fenster', () => {
     fuzz(20260910, 200, MuenchenParseError, (input) => {
       const rule = parseMuenchenRule(input)
@@ -203,6 +215,14 @@ describe('Gebührenparser unter Beschuss', () => {
       expectValidFee(parseFrankfurtFee(input), input)
     })
   })
+
+  // Schwerin schreibt den Dezimalpunkt; `0.00 Euro je Std.` ist trotzdem
+  // eine Null und muss abbrechen wie `0,00 Euro` in Berlin.
+  it('Schwerin wirft nur SchwerinParseError und beziffert nie eine Null', () => {
+    fuzz(20260917, 120, SchwerinParseError, (input) => {
+      expectValidFee(parseSchwerinFee(input), input)
+    })
+  })
 })
 
 describe('Höchstparkdauer unter Beschuss', () => {
@@ -221,6 +241,12 @@ describe('Höchstparkdauer unter Beschuss', () => {
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
     })
+    fuzz(20260918, 120, SchwerinParseError, (input) => {
+      const minutes = parseSchwerinMaxStay(input)
+      if (minutes === undefined) return
+      expect(Number.isInteger(minutes)).toBe(true)
+      expect(minutes).toBeGreaterThan(0)
+    })
   })
 })
 
@@ -230,7 +256,7 @@ describe('Zeitbudget', () => {
    * macht — nicht die Muster selbst. Eine Regression daran fiele sonst erst
    * auf, wenn der Datenbau minutenlang steht.
    */
-  it('bleibt für 1500 Eingaben durch sieben Parser unter einer Sekunde', () => {
+  it('bleibt für 1500 Eingaben durch neun Parser unter einer Sekunde', () => {
     const next = lcg(4711)
     const inputs = Array.from({ length: ITERATIONS }, () => fuzzString(next, 200))
     const parsers: readonly ((input: string) => unknown)[] = [
@@ -241,6 +267,8 @@ describe('Zeitbudget', () => {
       parseFee,
       parseHamburgFee,
       parseFrankfurtFee,
+      parseSchwerinSchedule,
+      parseSchwerinFee,
     ]
     const started = performance.now()
     for (const input of inputs) {
