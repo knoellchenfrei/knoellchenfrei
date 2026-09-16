@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
+import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -211,6 +212,46 @@ describe('Frankfurter Fixtures', () => {
       if (automat.bewohnerparkzone === null || automat.bewohnerparkzone === undefined) continue
       expect(Number.isInteger(automat.bewohnerparkzone)).toBe(true)
     }
+  })
+})
+
+describe('Freiburger Fixtures', () => {
+  const ZONES = read<FreiburgZoneProperties[]>('fr-parkgebzonen-2026-09-16.json')
+  const AUTOMATS = read<{ automaten: FreiburgAutomatProperties[] }>(
+    'fr-parkscheinautomaten-2026-09-16.json'
+  ).automaten
+
+  it('führt die Flächen in genau diesen Typen', () => {
+    expectShape(ZONES as unknown as Record<string, unknown>[], {
+      fid: ['number'],
+      // Die Zonennummer als **Zeichenkette** — am Automaten ist sie eine Zahl.
+      // Der Datenbau vergleicht deshalb über `String(...)`, nicht mit `===`.
+      parkgebuehrenzone: ['string'],
+      parkgebuehr_je_stunde: ['string'],
+      'tages-parkpauschale': ['string'],
+      zeit_der_gebuehrenpflicht: ['string'],
+      zonenname: ['string'],
+    })
+  })
+
+  it('führt die Automaten in genau diesen Typen', () => {
+    expectShape(AUTOMATS as unknown as Record<string, unknown>[], {
+      gid: ['number'],
+      // Echte Booleans, nicht `"True"` — die Recherche vom Vormittag hatte
+      // die Zeichenkette notiert, der Feed liefert den Typ.
+      kartenzahlung: ['boolean'],
+      aktiv: ['boolean'],
+      gebiet: ['string'],
+      gebuehrenzone: ['number'],
+      laufzeiten: ['string'],
+      hoechstparkdauer_in_h: ['number'],
+      handyparkzone: ['string'],
+      standort: ['string'],
+      stadtteil: ['string'],
+      tarif_in_euro_h: ['number'],
+      tarif_e_h: ['string'],
+      kartenzahlung_i: ['number'],
+    })
   })
 })
 
