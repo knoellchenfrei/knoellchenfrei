@@ -1,0 +1,163 @@
+{
+ "abgerufenAm": "2026-09-16",
+ "quelle": "https://services8.arcgis.com/LxSaGwss445axp1E/arcgis/rest/services/Parkzonen_WGS84/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&outSR=4326",
+ "anzahl": 21,
+ "geometrieTypen": {
+  "Polygon": 20,
+  "MultiPolygon": 1
+ },
+ "ersterStuetzpunkt": [
+  11.3988653088294,
+  47.28100930523
+ ],
+ "laengsterInfoText": 233,
+ "zonen": [
+  {
+   "FID": 132,
+   "BEZEICH": "Parkstraße kostenpflichtig (täglich)",
+   "INFO": "täglich von 9-19 Uhr, EUR 0.50 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, ab 4. Stunde EUR 1 je halbe Stunde in EUR 0.10 - Schritten (auch dann, wenn Parkvorgang über abgabenfreie Zeit hinaus fortgesetzt wird)",
+   "Shape__Area": 12541.12451171875,
+   "Shape__Length": 1914.7011884486276
+  },
+  {
+   "FID": 133,
+   "BEZEICH": "Parkstraße kostenpflichtig (täglich)",
+   "INFO": "täglich von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 2317.78369140625,
+   "Shape__Length": 391.66590809712727
+  },
+  {
+   "FID": 134,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags/täglich)",
+   "INFO": "täglich (1.5. bis 31.8.) bzw. werktags Mo-Fr (1.9. bis 30.4.) von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 1133088.7895507812,
+   "Shape__Length": 4659.296777106727
+  },
+  {
+   "FID": 135,
+   "BEZEICH": "Parkstraße kostenpflichtig (täglich)",
+   "INFO": "täglich von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 15726.05322265625,
+   "Shape__Length": 1319.1700911675068
+  },
+  {
+   "FID": 136,
+   "BEZEICH": "Parkstraße kostenpflichtig (täglich)",
+   "INFO": "täglich von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 2115177.6577148438,
+   "Shape__Length": 8717.682326751798
+  },
+  {
+   "FID": 137,
+   "BEZEICH": "Parkstraße kostenpflichtig (täglich)",
+   "INFO": "täglich von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 567.67333984375,
+   "Shape__Length": 200.20752925525142
+  },
+  {
+   "FID": 138,
+   "BEZEICH": "Kurzparkzone 180 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 780423.2905273438,
+   "Shape__Length": 4521.504851787947
+  },
+  {
+   "FID": 139,
+   "BEZEICH": "Kurzparkzone 180 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 1156559.845703125,
+   "Shape__Length": 5902.567148737855
+  },
+  {
+   "FID": 140,
+   "BEZEICH": "Kurzparkzone 180 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 479892.1796875,
+   "Shape__Length": 3747.5826528527978
+  },
+  {
+   "FID": 141,
+   "BEZEICH": "Kurzparkzone 180 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 1601670.1640625,
+   "Shape__Length": 9483.482538528151
+  },
+  {
+   "FID": 142,
+   "BEZEICH": "Kurzparkzone 180 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 679018.3203125,
+   "Shape__Length": 4279.832216502899
+  },
+  {
+   "FID": 143,
+   "BEZEICH": "Kurzparkzone 90 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-21 Uhr und Sa von 9-13 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 3769117.2822265625,
+   "Shape__Length": 10314.129233116899
+  },
+  {
+   "FID": 144,
+   "BEZEICH": "Kurzparkzone 90 min kostenpflichtig",
+   "INFO": "werktags Mo-Fr von 9-21 Uhr und Sa von 9-13 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten",
+   "Shape__Area": 1431254.5473632812,
+   "Shape__Length": 7838.024851158018
+  },
+  {
+   "FID": 145,
+   "BEZEICH": "Kurzparkzone kostenfrei 180 min 1-5 Uhr",
+   "INFO": "täglich von 1-5 Uhr, kostenfrei",
+   "Shape__Area": 3193778.1186523438,
+   "Shape__Length": 10621.779740854934
+  },
+  {
+   "FID": 146,
+   "BEZEICH": "Kurzparkzone kostenfrei 180 min 1-5 Uhr",
+   "INFO": "täglich von 1-5 Uhr, kostenfrei",
+   "Shape__Area": 1117455.107421875,
+   "Shape__Length": 5676.0735568434775
+  },
+  {
+   "FID": 147,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags)",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 1260400.7109375,
+   "Shape__Length": 7142.916158240392
+  },
+  {
+   "FID": 148,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags)",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 3077276.2905273438,
+   "Shape__Length": 12572.049412881643
+  },
+  {
+   "FID": 149,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags)",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 7675505.405671254,
+   "Shape__Length": 19434.972605480154
+  },
+  {
+   "FID": 150,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags)",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 6017240.946777344,
+   "Shape__Length": 15080.763877437734
+  },
+  {
+   "FID": 151,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags)",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 1286055.2978515625,
+   "Shape__Length": 5351.287229456276
+  },
+  {
+   "FID": 152,
+   "BEZEICH": "Parkstraße kostenpflichtig (werktags)",
+   "INFO": "werktags Mo-Fr von 9-19 Uhr, EUR 1.10 erste halbe Stunde, danach gleicher Tarif in EUR 0.10 - Schritten, jedoch höchstens EUR 9 pro Kalendertag",
+   "Shape__Area": 2544615.0126953125,
+   "Shape__Length": 8301.224586657936
+  }
+ ]
+}

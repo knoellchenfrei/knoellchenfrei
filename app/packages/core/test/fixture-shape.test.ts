@@ -27,6 +27,7 @@ import type {
   FrankfurtAutomatProperties,
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
+import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 
 const read = <T>(name: string): T =>
@@ -172,6 +173,30 @@ describe('Hamburger Fixture', () => {
 
   it('führt `geplant_aktiv` nur als ganze Zahl', () => {
     for (const row of ROWS) expect(Number.isInteger(row.geplant_aktiv)).toBe(true)
+  })
+})
+
+describe('Innsbrucker Fixture', () => {
+  const ROWS = read<{ zonen: InnsbruckZoneProperties[] }>('ibk-parkzonen-2026-09-16.json').zonen
+
+  // Fünf Felder, keines fehlt je, keines ist je null. `FID` ist der einzige
+  // Schlüssel des Feeds — käme er als `"132"`, wäre er als Zonenschlüssel
+  // derselbe Text, aber die Prüfung auf Ganzzahl im Datenbau fiele.
+  it('führt genau diese fünf Felder in genau diesen Typen', () => {
+    expectShape(ROWS as unknown as Record<string, unknown>[], {
+      FID: ['number'],
+      BEZEICH: ['string'],
+      INFO: ['string'],
+      Shape__Area: ['number'],
+      Shape__Length: ['number'],
+    })
+  })
+
+  it('lässt weder Bezeichnung noch Beschreibung leer', () => {
+    for (const row of ROWS) {
+      expect((row.BEZEICH ?? '').trim().length, String(row.FID)).toBeGreaterThan(0)
+      expect((row.INFO ?? '').trim().length, String(row.FID)).toBeGreaterThan(0)
+    }
   })
 })
 

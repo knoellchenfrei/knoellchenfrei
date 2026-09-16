@@ -564,7 +564,81 @@ export const KARLSRUHE: City = {
   // Feld, zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE]
+/**
+ * Innsbruck — die achte Stadt und die erste außerhalb Deutschlands.
+ *
+ * Die Box ist gemessen, nicht geschätzt: Der Umriss der Gemeinde Innsbruck
+ * aus dem OGD-Dienst des Landes Tirol (tiris, `Service_Public/ogd_basis`,
+ * Ebene 45 „Gemeinden", `GEMOESTAT` 70101, 3.029 Stützpunkte, abgerufen am
+ * 16. September 2026) misst 11,3006–11,4580 / 47,2107–47,3606; nach außen
+ * gerundet steht das unten. Die 21 Parkzonen reichen nur 11,3220–11,4530 /
+ * 47,2463–47,2906 — wer die Box daraus nähme, wiese eine Meldung aus Igls
+ * oder von der Hungerburg als „außerhalb" ab, obwohl beide zur Stadt gehören
+ * und die Hungerburg ab November 2026 selbst eine Parkstraße wird.
+ *
+ * Der Mittelpunkt ist das Goldene Dachl. Der Zoom ist Frankfurts und
+ * Karlsruhes 12, nicht 13: Die Zonen spannen 0,13° Länge, und das ist bei
+ * Zoom 12 genau die Breite eines Handybildschirms — bei 13 fiele die Hälfte
+ * heraus, bei 11,5 wären es zwei Drittel Nordkette.
+ *
+ * `holidays` fehlt mit Absicht: Alle österreichischen Feiertage sind
+ * Bundesrecht (§ 7 Abs. 2 Feiertagsruhegesetz, siehe `holidays.ts`), und der
+ * Tiroler Landespatron Josef am 19. März ist keiner davon. `towedVehicles`
+ * fehlt, weil sich am 16. September auf `innsbruck.gv.at` keine Seite mit
+ * Verwahrstelle und Nummer finden ließ.
+ */
+export const INNSBRUCK: City = {
+  key: 'innsbruck',
+  name: 'Innsbruck',
+  land: 'AT-T',
+  center: [11.3934, 47.2685],
+  zoom: 12,
+  reportBounds: { minLon: 11.3, minLat: 47.21, maxLon: 11.46, maxLat: 47.37 },
+  sessionBounds: { minLon: 11.05, minLat: 47.0, maxLon: 11.7, maxLat: 47.55 },
+  heatGrid: { id: 'innsbruck', originLon: 11.3, originLat: 47.21, latitude: 47.27 },
+  attribution: {
+    /**
+     * Wörtlich die vorgeschriebene Form aus der Nutzungsbedingung des geoHub
+     * Innsbruck: „Die Namensnennung der Stadt Innsbruck als Rechteinhaber
+     * hat in folgender Weise zu erfolgen: "Datenquelle: Stadt Innsbruck"".
+     * Das ArcGIS-Item selbst hat ein leeres `licenseInfo`; die Bedingungen
+     * stehen eine Ebene höher, auf der Seite des Hubs, und gelten laut ihrem
+     * ersten Satz für „die Daten der Stadt Innsbruck".
+     */
+    source: 'Datenquelle: Stadt Innsbruck',
+    // Die Adresse, die der Datenbau wirklich abruft — der ArcGIS-Layer, nicht
+    // die Hub-Seite daneben.
+    datasetUrl:
+      'https://services8.arcgis.com/LxSaGwss445axp1E/arcgis/rest/services/Parkzonen_WGS84/FeatureServer/0',
+    /**
+     * Keine der bekannten Lizenzen wörtlich, sondern eine eigene Bedingung
+     * der Stadt: „eine offene Lizenz vergleichbar mit "Creative Commons
+     * Namensnennung 4.0" (CC-BY 4.0)". Die Familie ist trotzdem `cc-by`, weil
+     * die beiden Auflagen, an denen die Oberfläche hängt, dieselben sind:
+     * Nennung in vorgeschriebener Form und der Hinweis, dass die Daten
+     * „ohne jegliche Gewähr" kommen. Was CC BY **nicht** kennt und hier
+     * dazukommt, steht in `docs/staedte-innsbruck.md`: Wer die Daten in einer
+     * öffentlichen Anwendung benutzt, teilt der Stadt unter
+     * post.vermessung-gis@innsbruck.gv.at mit, wo und wofür — das ist eine
+     * E-Mail des Betreibers, `docs/todo.md` führt sie.
+     */
+    licence: 'Nutzungsbedingung der Stadt Innsbruck — offene Lizenz, „vergleichbar mit CC BY 4.0"',
+    licenceUrl: 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+}
+
+export const CITIES: readonly City[] = [
+  BERLIN,
+  HAMBURG,
+  FRANKFURT,
+  MUENCHEN,
+  KOELN,
+  DUESSELDORF,
+  KARLSRUHE,
+  INNSBRUCK,
+]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.
