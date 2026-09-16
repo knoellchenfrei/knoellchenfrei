@@ -11,10 +11,10 @@ import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
  */
 describe('wfsUrl', () => {
   it('fragt jede WFS-Quelle jeder Stadt ausdrücklich in Grad', () => {
-    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe'].flatMap((stadt) =>
-      citySources(stadt),
+    const quellen = ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'freiburg'].flatMap(
+      (stadt) => citySources(stadt),
     )
-    expect(quellen.length).toBeGreaterThan(7)
+    expect(quellen.length).toBeGreaterThan(8)
     for (const quelle of quellen) {
       const url = new URL(wfsUrl(quelle))
       expect(url.searchParams.get('srsName'), quelle.typeName).toBe('urn:ogc:def:crs:EPSG::4326')

@@ -232,6 +232,49 @@ kein Polygon gibt.
 
 Vollständige Feldanalyse in [staedte.md](staedte.md#münchen-im-einzelnen).
 
+## Verwendet — Freiburg im Breisgau
+
+Abgerufen am 16. September 2026 von der **Stadt Freiburg i. Br.** über
+`geoportal.freiburg.de`, WFS 2.0.0 (MapServer). Vier Ebenen aus **zwei**
+Diensten desselben Servers:
+
+| Ebene | Dienst / Typname | Umfang |
+| --- | --- | --- |
+| Parkgebührenzonen | `gut_parken` / `ms:parkgebzonen` | 37 Polygone — Zone 1/2/3, Betrag je Stunde, Tagespauschale, Zeit |
+| Parkscheinautomaten | `gut_parken` / `ms:psa` | 538 Punkte — Laufzeiten, Tarif, Höchstparkdauer; Gegenprobe zur Fläche |
+| Behindertenparkplätze | `gut_parken` / `ms:behindertenparkpl_uebersicht` | 195 Standorte, als POI |
+| Stadtteile | `abi_gliederung` / `ms:stadtteile` | 28 Polygone, als Kartenkontext |
+
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0)**,
+wie Hamburg, Frankfurt und München. Beide Dienste nennen sie wörtlich in
+`ows:Fees` ihrer `GetCapabilities`:
+
+```
+Dieser Datensatz/Dienst kann gemäß der 'Datenlizenz Deutschland - Namensnennung - Version 2.0'
+(https://www.govdata.de/dl-de/by-2-0) genutzt werden. 'Datengrundlage: Stadt Freiburg, www.freiburg.de'
+```
+
+Vier Dinge, die man erst im Feed sieht:
+
+- **Die Fläche trägt Zeit und Betrag selbst** — wie Hamburg. Die Automaten
+  sind Gegenprobe: 383 von 406 Automaten in einer Fläche mit lesbarer Zeit
+  sagen dasselbe wie die Fläche.
+- **Eine Fläche nennt keine Zeit**, sondern `Beschilderung beachten!` — die
+  einzige der Zone 1 (Altstadt, 4,20 €). Ihre Zeiten kommen aus den 109
+  Automaten darin (93 davon `werktags 9–23 Uhr`, was auch die Stadtseite
+  nennt), und `sourceDefect` sagt es.
+- **Ohne `srsName` antwortet der Dienst in EPSG:25832** — anders als Frankfurt
+  mit `crs`-Objekt im GeoJSON, also angekündigt. Mit
+  `srsName=urn:ogc:def:crs:EPSG::4326` kommen `[lon, lat]`.
+- **Das Ausgabeformat braucht den ganzen Wert aus `GetCapabilities`**:
+  `application/json; subtype=geojson; charset=utf-8`. Ohne `charset` (Kölns
+  Form) antwortet der Dienst mit HTTP 400.
+
+Nicht abgerufen: `ms:bewohnerparken` (33 Bewohnerparkgebiete ohne Zeit und
+Betrag), `ms:behindertenparkplatz_detail` (328 Einzelplätze als Polygone),
+`ms:gesperrte_flaechen_pr` (6). Bericht mit allen Messungen in
+[staedte-freiburg.md](staedte-freiburg.md).
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

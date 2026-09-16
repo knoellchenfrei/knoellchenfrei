@@ -1,0 +1,393 @@
+{
+ "abgerufenAm": "2026-09-16",
+ "quelle": "https://geoportal.freiburg.de/wfs/gut_parken/gut_parken, ms:psa, srsName=urn:ogc:def:crs:EPSG::4326",
+ "automatenGesamt": 538,
+ "laufzeiten": [
+  {
+   "text": "werktags\n09:00 - 19:00",
+   "anzahl": 324
+  },
+  {
+   "text": "werktags\n09:00 - 23:00",
+   "anzahl": 87
+  },
+  {
+   "text": "werktags 09:00 - 19:00",
+   "anzahl": 50
+  },
+  {
+   "text": "werktags 09:00 - 23:00",
+   "anzahl": 26
+  },
+  {
+   "text": "täglich\n00:00 - 24:00",
+   "anzahl": 15
+  },
+  {
+   "text": "werktags 9-19 Uhr",
+   "anzahl": 13
+  },
+  {
+   "text": "täglich\n09:00 - 19:00",
+   "anzahl": 8
+  },
+  {
+   "text": "werktags 9:00 - 19:00",
+   "anzahl": 4
+  },
+  {
+   "text": "täglich\n09:00 - 23:00",
+   "anzahl": 3
+  },
+  {
+   "text": "werktags 9:00 - 23:00",
+   "anzahl": 1
+  },
+  {
+   "text": "werktags\n09:00 - 19:00\n",
+   "anzahl": 1
+  },
+  {
+   "text": "werktags\n05:30 - 20:45",
+   "anzahl": 1
+  },
+  {
+   "text": "Mo-Fr 07:30-19:00; Sa 09-19",
+   "anzahl": 1
+  },
+  {
+   "text": "werktags 09:00 - 18:00",
+   "anzahl": 1
+  },
+  {
+   "text": "täglich\n08:00 - 19:00",
+   "anzahl": 1
+  },
+  {
+   "text": "werktags 07:30 - 23:00",
+   "anzahl": 1
+  },
+  {
+   "text": "9 - 19 Uhr",
+   "anzahl": 1
+  }
+ ],
+ "hoechstparkdauern": [
+  {
+   "text": "24",
+   "anzahl": 506
+  },
+  {
+   "text": "1",
+   "anzahl": 30
+  },
+  {
+   "text": "2",
+   "anzahl": 1
+  },
+  {
+   "text": "4",
+   "anzahl": 1
+  }
+ ],
+ "gebuehrenzonen": [
+  {
+   "text": "3",
+   "anzahl": 227
+  },
+  {
+   "text": "2",
+   "anzahl": 201
+  },
+  {
+   "text": "1",
+   "anzahl": 110
+  }
+ ],
+ "tarife": [
+  {
+   "text": "1.80",
+   "anzahl": 227
+  },
+  {
+   "text": "3.50",
+   "anzahl": 201
+  },
+  {
+   "text": "4.20",
+   "anzahl": 110
+  }
+ ],
+ "automaten": [
+  {
+   "gid": 426,
+   "kartenzahlung": true,
+   "gebiet": "",
+   "gebuehrenzone": 3,
+   "laufzeiten": "täglich\n00:00 - 24:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791050",
+   "standort": "Gundelfinger Straße 55",
+   "stadtteil": "Zähringen",
+   "tarif_in_euro_h": 1.8,
+   "aktiv": true,
+   "tarif_e_h": "1.80",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 26,
+   "kartenzahlung": true,
+   "gebiet": "Stühlinger",
+   "gebuehrenzone": 1,
+   "laufzeiten": "werktags 09:00 - 19:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791016",
+   "standort": "Wentzingerstraße G 6",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 27,
+   "kartenzahlung": false,
+   "gebiet": "Stühlinger",
+   "gebuehrenzone": 1,
+   "laufzeiten": "werktags\n09:00 - 23:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791016",
+   "standort": "Wentzingerstraße 20",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 28,
+   "kartenzahlung": true,
+   "gebiet": "Stühlinger",
+   "gebuehrenzone": 1,
+   "laufzeiten": "werktags 09:00 - 23:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791016",
+   "standort": "Klarastraße 2",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 43,
+   "kartenzahlung": false,
+   "gebiet": "Kleineschholz",
+   "gebuehrenzone": 2,
+   "laufzeiten": "werktags\n09:00 - 19:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791020",
+   "standort": "Egonstraße 55",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 3.5,
+   "aktiv": true,
+   "tarif_e_h": "3.50",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 17,
+   "kartenzahlung": false,
+   "gebiet": "Colmarer Straße",
+   "gebuehrenzone": 1,
+   "laufzeiten": "werktags 9:00 - 23:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791016",
+   "standort": "Colmarer Straße G 3",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 225,
+   "kartenzahlung": true,
+   "gebiet": "Colombiquartier",
+   "gebuehrenzone": 1,
+   "laufzeiten": "werktags\n09:00 - 23:00",
+   "hoechstparkdauer_in_h": 1,
+   "handyparkzone": "791010",
+   "standort": "Eisenbahnstraße 64",
+   "stadtteil": "Altstadt",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 235,
+   "kartenzahlung": false,
+   "gebiet": "Sedanquartier",
+   "gebuehrenzone": 1,
+   "laufzeiten": "täglich\n09:00 - 19:00",
+   "hoechstparkdauer_in_h": 1,
+   "handyparkzone": "791011",
+   "standort": "Moltkestraße G 30",
+   "stadtteil": "Altstadt",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 13,
+   "kartenzahlung": true,
+   "gebiet": "Quartier Marchstraße",
+   "gebuehrenzone": 2,
+   "laufzeiten": "werktags\n09:00 - 19:00\n",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791020",
+   "standort": "Mathildenstraße 18",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 3.5,
+   "aktiv": true,
+   "tarif_e_h": "3.50",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 139,
+   "kartenzahlung": false,
+   "gebiet": "Herdern West",
+   "gebuehrenzone": 2,
+   "laufzeiten": "werktags\n05:30 - 20:45",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791020",
+   "standort": "Rotlaubgarage",
+   "stadtteil": "Herdern",
+   "tarif_in_euro_h": 3.5,
+   "aktiv": true,
+   "tarif_e_h": "3.50",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 240,
+   "kartenzahlung": true,
+   "gebiet": "Sedanquartier",
+   "gebuehrenzone": 1,
+   "laufzeiten": "täglich\n09:00 - 23:00",
+   "hoechstparkdauer_in_h": 1,
+   "handyparkzone": "791015",
+   "standort": "Werthmannstraße 18",
+   "stadtteil": "Altstadt",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 318,
+   "kartenzahlung": false,
+   "gebiet": "",
+   "gebuehrenzone": 2,
+   "laufzeiten": "Mo-Fr 07:30-19:00; Sa 09-19",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791042",
+   "standort": "Walter-Eucken-Gymnasium",
+   "stadtteil": "Wiehre",
+   "tarif_in_euro_h": 3.5,
+   "aktiv": true,
+   "tarif_e_h": "3.50",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 441,
+   "kartenzahlung": true,
+   "gebiet": "",
+   "gebuehrenzone": 3,
+   "laufzeiten": "werktags 09:00 - 18:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791030",
+   "standort": "Bissierstraße (Schule)",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 1.8,
+   "aktiv": true,
+   "tarif_e_h": "1.80",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 442,
+   "kartenzahlung": true,
+   "gebiet": "",
+   "gebuehrenzone": 3,
+   "laufzeiten": "täglich\n08:00 - 19:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791030",
+   "standort": "Bissierstraße 17",
+   "stadtteil": "Stühlinger",
+   "tarif_in_euro_h": 1.8,
+   "aktiv": true,
+   "tarif_e_h": "1.80",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 482,
+   "kartenzahlung": false,
+   "gebiet": "Mittel- und Oberwiehre 3a",
+   "gebuehrenzone": 2,
+   "laufzeiten": "werktags 9:00 - 19:00",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791020",
+   "standort": "Urachstraße G 3",
+   "stadtteil": "Wiehre",
+   "tarif_in_euro_h": 3.5,
+   "aktiv": true,
+   "tarif_e_h": "3.50",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 485,
+   "kartenzahlung": false,
+   "gebiet": "",
+   "gebuehrenzone": 1,
+   "laufzeiten": "werktags 07:30 - 23:00",
+   "hoechstparkdauer_in_h": 2,
+   "handyparkzone": "791041",
+   "standort": "Gewerbeschulzentrum",
+   "stadtteil": "Neuburg",
+   "tarif_in_euro_h": 4.2,
+   "aktiv": true,
+   "tarif_e_h": "4.20",
+   "kartenzahlung_i": 0
+  },
+  {
+   "gid": 527,
+   "kartenzahlung": true,
+   "gebiet": "",
+   "gebuehrenzone": 3,
+   "laufzeiten": "9 - 19 Uhr",
+   "hoechstparkdauer_in_h": 4,
+   "handyparkzone": "",
+   "standort": "Bürgerhaus Zähringen",
+   "stadtteil": "Zähringen",
+   "tarif_in_euro_h": 1.8,
+   "aktiv": true,
+   "tarif_e_h": "1.80",
+   "kartenzahlung_i": 1
+  },
+  {
+   "gid": 546,
+   "kartenzahlung": true,
+   "gebiet": "Holbeinviertel",
+   "gebuehrenzone": 3,
+   "laufzeiten": "werktags 9-19 Uhr",
+   "hoechstparkdauer_in_h": 24,
+   "handyparkzone": "791030",
+   "standort": "Silberbachstraße 25",
+   "stadtteil": "Wiehre",
+   "tarif_in_euro_h": 1.8,
+   "aktiv": true,
+   "tarif_e_h": "1.80",
+   "kartenzahlung_i": 1
+  }
+ ]
+}

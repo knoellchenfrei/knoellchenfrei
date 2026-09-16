@@ -1,0 +1,298 @@
+[
+ {
+  "fid": 12,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "--",
+  "tages-parkpauschale": "9,00 € oder ÖPNV-Ticket",
+  "zeit_der_gebuehrenpflicht": "durchgehend",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 42,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 43,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 14,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "--",
+  "tages-parkpauschale": "9,00 € oder ÖPNV-Ticket",
+  "zeit_der_gebuehrenpflicht": "durchgehend",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 13,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "--",
+  "tages-parkpauschale": "9,00 € oder ÖPNV-Ticket",
+  "zeit_der_gebuehrenpflicht": "durchgehend",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 9,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 10,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 08:00-18:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 45,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 32,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhrä",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 5,
+  "parkgebuehrenzone": "2",
+  "parkgebuehr_je_stunde": "3,50 €",
+  "tages-parkpauschale": "17,50 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 2"
+ },
+ {
+  "fid": 23,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 44,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 37,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 38,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 18,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 6,
+  "parkgebuehrenzone": "2",
+  "parkgebuehr_je_stunde": "3,50 €",
+  "tages-parkpauschale": "17,50 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 2"
+ },
+ {
+  "fid": 26,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 39,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 7,
+  "parkgebuehrenzone": "1",
+  "parkgebuehr_je_stunde": "4,20 €",
+  "tages-parkpauschale": "21,00 €",
+  "zeit_der_gebuehrenpflicht": "Beschilderung beachten!",
+  "zonenname": "Zone 1"
+ },
+ {
+  "fid": 15,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "--",
+  "tages-parkpauschale": "9,00 € oder ÖPNV-Ticket",
+  "zeit_der_gebuehrenpflicht": "durchgehend",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 36,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 16,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "--",
+  "tages-parkpauschale": "9,00 € oder ÖPNV-Ticket",
+  "zeit_der_gebuehrenpflicht": "durchgehend",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 17,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "--",
+  "tages-parkpauschale": "9,00 € oder ÖPNV-Ticket",
+  "zeit_der_gebuehrenpflicht": "durchgehend",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 25,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 24,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 28,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 29,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 30,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 31,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 40,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 35,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 21,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 27,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "Montag - Freitag 07:30-19:00 Uhr; Samstag 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 19,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 20,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 07:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 22,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ },
+ {
+  "fid": 41,
+  "parkgebuehrenzone": "3",
+  "parkgebuehr_je_stunde": "1,80 €",
+  "tages-parkpauschale": "9,00 €",
+  "zeit_der_gebuehrenpflicht": "werktags 09:00-19:00 Uhr",
+  "zonenname": "Zone 3"
+ }
+]

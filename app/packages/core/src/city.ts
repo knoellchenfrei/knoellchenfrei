@@ -567,7 +567,62 @@ export const KARLSRUHE: City = {
   // Feld, zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
 }
 
-export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE]
+/**
+ * Freiburg im Breisgau — die achte Stadt, die zweite in Baden-Württemberg.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt **nicht** aus der
+ * Parkebene: Die 37 Gebührenzonen-Flächen liegen zwischen 7,7955 und 7,8954
+ * Länge, 47,9724 und 48,0356 Breite — ein Band von 7 × 7 km um die Altstadt.
+ * Wer die Box daraus nähme, wiese eine Meldung aus Tiengen, Munzingen oder
+ * Kappel als „außerhalb" ab, obwohl sie mitten im Stadtkreis liegt. Der
+ * Umriss kommt aus `ms:stadtkreis` des Dienstes `gdm_gemarkung`
+ * (`geoportal.freiburg.de`, abgerufen am 16. September 2026, ein Polygon):
+ * 7,6619–7,9309 / 47,9036–48,0710. Nach außen gerundet steht das unten.
+ *
+ * Karlsruhe, die andere BW-Stadt, beginnt bei 8,27 Länge und 48,93 Breite —
+ * über 30 km weiter östlich und 90 km nördlich; die Boxen überschneiden sich
+ * nicht, und der Test in `city.test.ts` hält das fest.
+ *
+ * Der Mittelpunkt ist das Münster. Der Zoom ist Frankfurts und Karlsruhes 12:
+ * 0,27° Länge sind Karlsruhes 0,28°, und die Flächen liegen dicht um die
+ * Altstadt; bei 11,5 wären sie ein Fleck.
+ *
+ * `holidays` fehlt mit Absicht: Baden-Württemberg kennt keine gemeindeweise
+ * geregelten Feiertage (Begründung in `holidays.ts` beim `BW`-Eintrag).
+ */
+export const FREIBURG: City = {
+  key: 'freiburg',
+  name: 'Freiburg im Breisgau',
+  land: 'BW',
+  center: [7.8523, 47.9955],
+  zoom: 12,
+  reportBounds: { minLon: 7.66, minLat: 47.9, maxLon: 7.94, maxLat: 48.08 },
+  sessionBounds: { minLon: 7.4, minLat: 47.7, maxLon: 8.2, maxLat: 48.3 },
+  heatGrid: { id: 'freiburg', originLon: 7.66, originLat: 47.9, latitude: 47.99 },
+  attribution: {
+    // Wörtlich aus `ows:Fees` des WFS `gut_parken` (und zeichengleich in
+    // `abi_gliederung`): „Dieser Datensatz/Dienst kann gemäß der
+    // 'Datenlizenz Deutschland - Namensnennung - Version 2.0'
+    // (https://www.govdata.de/dl-de/by-2-0) genutzt werden.
+    // 'Datengrundlage: Stadt Freiburg, www.freiburg.de'". Der Quellenvermerk
+    // ist der in den Anführungszeichen; er steht hier so, wie er genannt
+    // werden will.
+    source: 'Stadt Freiburg, www.freiburg.de',
+    // Die Adresse, die der Datenbau wirklich abruft — nicht die Katalogseite.
+    datasetUrl: 'https://geoportal.freiburg.de/wfs/gut_parken/gut_parken',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
+    attributionRequired: true,
+    licenceFamily: 'dl-de-by',
+  },
+  // Bewusst ohne `towedVehicles`: Auf freiburg.de fand sich am 16. September
+  // keine Seite, die eine Verwahrstelle mit Namen und Nummer nennt — die Seite
+  // „Parkverstoß" verweist nur auf Gemeindevollzugsdienst und Polizei. Fehlt
+  // das Feld, zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf
+  // Berlin.
+}
+
+export const CITIES: readonly City[] = [BERLIN, HAMBURG, FRANKFURT, MUENCHEN, KOELN, DUESSELDORF, KARLSRUHE, FREIBURG]
 
 /**
  * Eine Stadt zu ihrem Schlüssel.

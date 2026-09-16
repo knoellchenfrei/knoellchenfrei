@@ -12,7 +12,7 @@ Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
 Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg, Frankfurt am
-Main, München, Köln, Düsseldorf und Karlsruhe**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
+Main, München, Köln, Düsseldorf, Karlsruhe und Freiburg im Breisgau**, umschaltbar in den Einstellungen — eine Stadt zur Zeit,
 die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
@@ -77,6 +77,7 @@ Formalie:
 | **Köln** | [Stadt Köln](https://geoportal.stadt-koeln.de/wss/service/bewohnerparken_wfs/guest), WFS 2.0.0 und CSV | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional* | 45 Bewohnerparkgebiete mit Automaten (von 47), 2.315 Automaten; Tarif nur, wo die CSV ihn nennt |
 | **Düsseldorf** | [Landeshauptstadt Düsseldorf](https://maps.duesseldorf.de/services/verkehr/wfs), WFS 2.0.0 | [DL-DE/Zero 2.0](https://www.govdata.de/dl-de/zero-2-0) — Namensnennung *optional*; Tarife der Automaten bis zur Lizenzklärung nicht ausgeliefert | 44 Bewohnerparkgebiete aus 65 Stücken, 50 Stadtteile, Umweltzone |
 | **Karlsruhe** | [Stadt Karlsruhe über die TechnologieRegion](https://mobil.trk.de/geoserver/TBA/ows), WFS 2.0.0 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — Namensnennung ist **Lizenzbedingung** | 279 Stellplatzreihen (die Zonen sind die Reihen selbst, 4,8 m breit — deshalb der Rückfall auf die nächste Fläche), keine Stadtteile |
+| **Freiburg im Breisgau** | [Stadt Freiburg](https://geoportal.freiburg.de/wfs/gut_parken/gut_parken), WFS 2.0.0 | [DL-DE/Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — Quellenvermerk wörtlich `Datengrundlage: Stadt Freiburg, www.freiburg.de` | 37 Gebührenzonen-Flächen mit Betrag und Zeit, 538 Parkscheinautomaten als Gegenprobe und Höchstparkdauer, 195 Behindertenparkplatz-Standorte, 28 Stadtteile |
 
 Deshalb trägt `City.attribution` ein `attributionRequired`-Flag bis in die
 Oberfläche: Eine Hamburg-, Frankfurt- oder München-Ansicht ohne Quellenangabe

@@ -38,6 +38,12 @@ import {
   parseFrankfurtSchedule,
 } from '../src/frankfurt.js'
 import { MuenchenParseError, muenchenParkingWindows, parseMuenchenRule } from '../src/muenchen.js'
+import {
+  FreiburgParseError,
+  parseFreiburgAutomatFee,
+  parseFreiburgFee,
+  parseFreiburgSchedule,
+} from '../src/freiburg.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -183,6 +189,12 @@ describe('Zeitparser unter Beschuss', () => {
       for (const clause of rule.clauses) expectValidWindows(clause.windows, input)
     })
   })
+
+  it('Freiburg wirft nur FreiburgParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 120, FreiburgParseError, (input) => {
+      expectValidWindows(parseFreiburgSchedule(input), input)
+    })
+  })
 })
 
 describe('Gebührenparser unter Beschuss', () => {
@@ -201,6 +213,15 @@ describe('Gebührenparser unter Beschuss', () => {
   it('Frankfurt wirft nur FrankfurtParseError', () => {
     fuzz(20260913, 120, FrankfurtParseError, (input) => {
       expectValidFee(parseFrankfurtFee(input), input)
+    })
+  })
+
+  it('Freiburg wirft nur FreiburgParseError, für Flächen wie für Automaten', () => {
+    fuzz(20260917, 120, FreiburgParseError, (input) => {
+      expectValidFee(parseFreiburgFee(input), input)
+    })
+    fuzz(20260918, 120, FreiburgParseError, (input) => {
+      expectValidFee(parseFreiburgAutomatFee(input), input)
     })
   })
 })
@@ -230,7 +251,7 @@ describe('Zeitbudget', () => {
    * macht — nicht die Muster selbst. Eine Regression daran fiele sonst erst
    * auf, wenn der Datenbau minutenlang steht.
    */
-  it('bleibt für 1500 Eingaben durch sieben Parser unter einer Sekunde', () => {
+  it('bleibt für 1500 Eingaben durch neun Parser unter einer Sekunde', () => {
     const next = lcg(4711)
     const inputs = Array.from({ length: ITERATIONS }, () => fuzzString(next, 200))
     const parsers: readonly ((input: string) => unknown)[] = [
@@ -238,9 +259,11 @@ describe('Zeitbudget', () => {
       parseHamburgSchedule,
       parseFrankfurtSchedule,
       parseMuenchenRule,
+      parseFreiburgSchedule,
       parseFee,
       parseHamburgFee,
       parseFrankfurtFee,
+      parseFreiburgFee,
     ]
     const started = performance.now()
     for (const input of inputs) {
