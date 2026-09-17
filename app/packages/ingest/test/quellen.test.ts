@@ -2,7 +2,39 @@ import { describe, expect, it } from 'vitest'
 
 import { CITIES, KASSEL } from '@knoellchenfrei/core'
 
-import { NPR_AREA_MANAGERS, NPR_TABLES, arcgisIdentifyUrl, arcgisQueryUrl, cityFiles, citySources, nprFiles, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { NPR_AREA_MANAGERS, NPR_TABLES, arcgisIdentifyUrl, arcgisQueryUrl, cityFiles, citySources, nprFiles, odsExportUrl, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+
+describe('cityFiles für Straßburg', () => {
+  // Drei Opendatasoft-Exporte desselben Portals, alle als ganze Ebene
+  // (`/exports/geojson`, keine Seitengrenze) und mit Erwartungswert — ein
+  // Portal, das eines Tages `/records` mit 100 Zeilen liefert, fiele an der
+  // 95-%-Schranke auf.
+  it('holt Tarifzonen, Quartiere und Bewohnerzonen als GeoJSON-Export mit Erwartungswert', () => {
+    const dateien = cityFiles('strasbourg')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'districts', 'residents'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.host).toBe('data.strasbourg.eu')
+      expect(url.pathname).toMatch(/^\/api\/explore\/v2\.1\/catalog\/datasets\/[a-z0-9_-]+\/exports\/geojson$/)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.paged, datei.key).toBeUndefined()
+      expect(datei.paginate, datei.key).toBeUndefined()
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.map((d) => d.expectedFeatures)).toEqual([19, 10, 15])
+    expect(dateien[0]?.url).toBe(odsExportUrl('data.strasbourg.eu', 'stationnement-payant'))
+  })
+
+  it('kennt Straßburg auch in citySources — mit leerer WFS-Liste, ohne zu werfen', () => {
+    expect(citySources('strasbourg')).toEqual([])
+  })
+
+  it('baut die Export-Adresse ohne Abfrageteil — der Export nimmt keinen', () => {
+    expect(odsExportUrl('example.test', 'meine-ebene')).toBe(
+      'https://example.test/api/explore/v2.1/catalog/datasets/meine-ebene/exports/geojson'
+    )
+  })
+})
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in

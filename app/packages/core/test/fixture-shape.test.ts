@@ -53,6 +53,11 @@ import type {
   ZuerichZoneProperties,
 } from '../src/zuerich.js'
 import type { WienAreaProperties, WienDistrictProperties, WienStripProperties } from '../src/wien.js'
+import type {
+  StrasbourgQuartierProperties,
+  StrasbourgResidentZoneProperties,
+  StrasbourgZoneProperties,
+} from '../src/strasbourg.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -1051,6 +1056,60 @@ describe('Essener Fixture', () => {
   it('zählt FID von 0 bis 8 durch und führt Id überall als 0', () => {
     expect(AREAS.map((area) => area.FID).sort((a, b) => (a ?? 0) - (b ?? 0))).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8])
     expect(AREAS.every((area) => area.Id === 0)).toBe(true)
+  })
+})
+
+describe('Straßburger Fixtures', () => {
+  const ZONES = read<{ features: StrasbourgZoneProperties[] }>('sxb-stationnement-payant-2026-09-17.json').features
+  const QUARTIERS = read<{ features: StrasbourgQuartierProperties[] }>('sxb-quartiers-2026-09-17.json').features
+  const RESIDENTS = read<{ features: StrasbourgResidentZoneProperties[] }>('sxb-residant-2026-09-17.json').features
+
+  /**
+   * Opendatasoft führt jedes Feld, nie weggelassen, und `geo_point_2d` als
+   * Objekt. `id_zone_visiteur` und `numero_zone_resident` sind an den
+   * Tarifzonen **Zahlen** — an den Bewohnerzonen ist `numero_zone_resident`
+   * dagegen **Text**. Der Datenbau vergleicht die beiden deshalb über
+   * `String(…)`; käme die Nummer an den Tarifzonen eines Tages als Text,
+   * fiele es hier auf und nicht als stiller Schlüsselvergleich, der nie
+   * stimmt. `geometryType` und `firstPoint` stammen aus der Fixture selbst.
+   */
+  it('führt die Tarifzonen in genau diesen Typen — Nummern als Zahl, Tarif als Text', () => {
+    expectShape(ZONES as unknown as Record<string, unknown>[], {
+      geometryType: ['string'],
+      firstPoint: ['array'],
+      geo_point_2d: ['object'],
+      id_zone_visiteur: ['number'],
+      couleur: ['string'],
+      tarif: ['string'],
+      numero_zone_resident: ['number'],
+      date_maj: ['string'],
+    })
+    expect(ZONES).toHaveLength(19)
+  })
+
+  it('führt die Quartiere mit Nummer als Zahl und Namen als Text', () => {
+    expectShape(QUARTIERS as unknown as Record<string, unknown>[], {
+      geometryType: ['string'],
+      firstPoint: ['array'],
+      geo_point_2d: ['object'],
+      id_quart10: ['number'],
+      nom: ['string'],
+    })
+    expect(QUARTIERS).toHaveLength(10)
+  })
+
+  it('führt die Bewohnerzonen mit der Nummer als Text — anders als die Tarifzonen', () => {
+    expectShape(RESIDENTS as unknown as Record<string, unknown>[], {
+      geometryType: ['string'],
+      firstPoint: ['array'],
+      geo_point_2d: ['object'],
+      id_zone_resident: ['number'],
+      numero_zone_resident: ['string'],
+      annee_mise_en_place: ['string'],
+      type_zone: ['string'],
+      date_maj: ['string'],
+    })
+    expect(RESIDENTS).toHaveLength(15)
   })
 })
 

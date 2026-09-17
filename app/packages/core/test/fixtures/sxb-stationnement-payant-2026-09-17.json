@@ -1,0 +1,324 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://data.strasbourg.eu/api/explore/v2.1/catalog/datasets/stationnement-payant/exports/geojson",
+  "anzahl": 19,
+  "couleur": {
+    "orange": 7,
+    "vert": 7,
+    "rouge": 5
+  },
+  "tarif": {
+    "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€": 7,
+    "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€": 7,
+    "1h = 3.5€ / 2h = 8€ / 2h15 = 10€ / 2h30 = 12€ / 2h50 = 16.5€ / 3h = 17€": 5
+  },
+  "date_maj": {
+    "2026-09-03": 19
+  },
+  "features": [
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.732059,
+        48.582282
+      ],
+      "geo_point_2d": {
+        "lon": 7.736873429143477,
+        "lat": 48.58412799567864
+      },
+      "id_zone_visiteur": 10,
+      "couleur": "rouge",
+      "tarif": "1h = 3.5€ / 2h = 8€ / 2h15 = 10€ / 2h30 = 12€ / 2h50 = 16.5€ / 3h = 17€",
+      "numero_zone_resident": 1,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.729267,
+        48.579686
+      ],
+      "geo_point_2d": {
+        "lon": 7.731983491495027,
+        "lat": 48.57662775681345
+      },
+      "id_zone_visiteur": 6,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 10,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.738528,
+        48.577545
+      ],
+      "geo_point_2d": {
+        "lon": 7.7380576490341335,
+        "lat": 48.575699528047046
+      },
+      "id_zone_visiteur": 7,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 3,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.730072,
+        48.579777
+      ],
+      "geo_point_2d": {
+        "lon": 7.73324506401303,
+        "lat": 48.579338549569734
+      },
+      "id_zone_visiteur": 11,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 10,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.746295,
+        48.591129
+      ],
+      "geo_point_2d": {
+        "lon": 7.753636462410189,
+        "lat": 48.58745209060675
+      },
+      "id_zone_visiteur": 12,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 7,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.77409,
+        48.560753
+      ],
+      "geo_point_2d": {
+        "lon": 7.777781770146482,
+        "lat": 48.56831056082367
+      },
+      "id_zone_visiteur": 20,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 16,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.744918,
+        48.586016
+      ],
+      "geo_point_2d": {
+        "lon": 7.744210872367639,
+        "lat": 48.58216261549951
+      },
+      "id_zone_visiteur": 14,
+      "couleur": "rouge",
+      "tarif": "1h = 3.5€ / 2h = 8€ / 2h15 = 10€ / 2h30 = 12€ / 2h50 = 16.5€ / 3h = 17€",
+      "numero_zone_resident": 3,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.75884,
+        48.58739
+      ],
+      "geo_point_2d": {
+        "lon": 7.762101804766712,
+        "lat": 48.59063594134873
+      },
+      "id_zone_visiteur": 16,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 8,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.738072,
+        48.574034
+      ],
+      "geo_point_2d": {
+        "lon": 7.7586878537695805,
+        "lat": 48.57196357415337
+      },
+      "id_zone_visiteur": 18,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 14,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.724405,
+        48.572516
+      ],
+      "geo_point_2d": {
+        "lon": 7.727195735482218,
+        "lat": 48.57332009156969
+      },
+      "id_zone_visiteur": 3,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 12,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.761371,
+        48.578189
+      ],
+      "geo_point_2d": {
+        "lon": 7.764725965636237,
+        "lat": 48.5760681844982
+      },
+      "id_zone_visiteur": 1,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 5,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.770347,
+        48.581234
+      ],
+      "geo_point_2d": {
+        "lon": 7.766682916649034,
+        "lat": 48.58459613346432
+      },
+      "id_zone_visiteur": 2,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 9,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.758806,
+        48.587591
+      ],
+      "geo_point_2d": {
+        "lon": 7.754025419514862,
+        "lat": 48.5912420401518
+      },
+      "id_zone_visiteur": 4,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 8,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.736793,
+        48.577935
+      ],
+      "geo_point_2d": {
+        "lon": 7.741796281085205,
+        "lat": 48.578324922633776
+      },
+      "id_zone_visiteur": 8,
+      "couleur": "orange",
+      "tarif": "1h = 2.5€ / 2h = 3.5€ / 2h15 = 6€ / 2h30 = 8€ / 2h50 = 9€ / 3h = 10€ / 3h20 = 14€ / 3h45 = 16.5€ / 4h = 17€",
+      "numero_zone_resident": 3,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.737061,
+        48.588284
+      ],
+      "geo_point_2d": {
+        "lon": 7.743127750827859,
+        "lat": 48.58874549307579
+      },
+      "id_zone_visiteur": 13,
+      "couleur": "rouge",
+      "tarif": "1h = 3.5€ / 2h = 8€ / 2h15 = 10€ / 2h30 = 12€ / 2h50 = 16.5€ / 3h = 17€",
+      "numero_zone_resident": 6,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.75309,
+        48.5864
+      ],
+      "geo_point_2d": {
+        "lon": 7.7513060441044255,
+        "lat": 48.583634498349625
+      },
+      "id_zone_visiteur": 17,
+      "couleur": "rouge",
+      "tarif": "1h = 3.5€ / 2h = 8€ / 2h15 = 10€ / 2h30 = 12€ / 2h50 = 16.5€ / 3h = 17€",
+      "numero_zone_resident": 2,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.770308,
+        48.592415
+      ],
+      "geo_point_2d": {
+        "lon": 7.770949354510987,
+        "lat": 48.58879028656062
+      },
+      "id_zone_visiteur": 5,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 11,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.741222,
+        48.570379
+      ],
+      "geo_point_2d": {
+        "lon": 7.760165995969405,
+        "lat": 48.565558980635224
+      },
+      "id_zone_visiteur": 19,
+      "couleur": "vert",
+      "tarif": "1h = 1€ / 2h = 2€ / 3h = 4.5€ / 3h15 = 5.50€ / 3h30 = 6.50€ / 4h = 10€ / 4h15 = 12€ / 4h30 = 14€ / 4h45 = 16.5€ / 5h = 17€",
+      "numero_zone_resident": 15,
+      "date_maj": "2026-09-03"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.749726,
+        48.574307
+      ],
+      "geo_point_2d": {
+        "lon": 7.756208648015325,
+        "lat": 48.579140130293965
+      },
+      "id_zone_visiteur": 9,
+      "couleur": "rouge",
+      "tarif": "1h = 3.5€ / 2h = 8€ / 2h15 = 10€ / 2h30 = 12€ / 2h50 = 16.5€ / 3h = 17€",
+      "numero_zone_resident": 4,
+      "date_maj": "2026-09-03"
+    }
+  ]
+}
