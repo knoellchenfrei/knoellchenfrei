@@ -77,11 +77,15 @@ jobs:
           # Ausdruck-Einsetzung direkt in die Zeile: Eine Eingabe, die die
           # Shell zu sehen bekommt, ist eine Eingabe, die die Shell ausführen
           # kann. Und sie wird geprüft, statt geglaubt.
+          # Kein case mit einer Alternation aus einer Kommandosubstitution:
+          # Bash liest den Strich darin als Zeichen, nicht als "oder", und
+          # das Muster passte auf keine Stadt - der erste Lauf mit 25
+          # Staedten brach an "Unbekannte Stadt: bern" ab (17. September).
+          bekannt="$(pnpm --filter @knoellchenfrei/ingest --silent city-keys)"
           for stadt in $STAEDTE; do
-            case "$stadt" in
-              $(pnpm --filter @knoellchenfrei/ingest --silent city-keys | paste -sd '|')) ;;
-              *) echo "::error::Unbekannte Stadt: $stadt"; exit 2 ;;
-            esac
+            if ! printf '%s\n' "$bekannt" | grep -qx -- "$stadt"; then
+              echo "::error::Unbekannte Stadt: $stadt"; exit 2
+            fi
           done
           # shellcheck disable=SC2086
           ./app/packages/ingest/scripts/build-tiles.sh $STAEDTE --hochladen
