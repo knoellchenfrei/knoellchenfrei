@@ -514,6 +514,55 @@ Nicht im Feed: Behindertenparkplätze und Parkscheinautomaten führt der Hub nur
 als Karten, nicht als Ebenen mit Sachdaten; POI und Umweltzone (Innsbruck hat
 keine) fehlen, `meta.json` führt beides unter `absent`.
 
+## Verwendet — Krakau
+
+Abgerufen am 17. September 2026 vom **Zarząd Transportu Publicznego w Krakowie**
+(ZTP, Gmina Miejska Kraków) über das ArcGIS Online der Stadt
+(`services-eu1.arcgis.com/svTzSt3AvH7sK6q9`, 390 Dienste) — kein WFS, sondern
+`query?where=1%3D1&outFields=*&f=geojson&outSR=4326`. Vier Ebenen:
+
+| Ebene | Dienst / Ebene | Umfang |
+| --- | --- | --- |
+| Sektorgrenzen der amtlichen Karte | `Granice_Stref_2026/FeatureServer/1` | **23** Polygone, Podstrefa A/B/C und `Nr_sektora`; die Ebene, die die ZDMK-Karte („Mapa ZDMK v2", Stand 6. August 2026) zeichnet — **die Flächen** |
+| Erweiterung vom 10. August 2026 | `Poszerzenie_OPP_od_10_08_2026/FeatureServer/0` | 4 Polygone (C23, C24, C31 neu; B30 um die Błonia erweitert), `Uwagi: "Od 10 sierpnia 2026"` |
+| Beschriebener Datensatz „Strefa Płatnego Parkowania w Krakowie" | `Sektory_SPP_wyświetlenie/FeatureServer/37` | 26 Polygone, Stand 9. Dezember 2024: 20 geltende und sechs geplante mit Präfix `n` — nur zur Gegenprobe im Log |
+| Dzielnice | `Dzielnice_Krakowa/FeatureServer/10` (aus dem ISDP der Stadt) | 18 Bezirke, `NAZWA`, `NR_DZIELNI` (römisch) |
+
+**Lizenz: nicht ausgewiesen.** Das Item `d9e0ef7c33cd4f4a99c4e7d8024d3956`
+trägt `accessInformation: "Zarząd Transportu Publicznego w Krakowie"`, den
+Tag „Dane Otwarte" und als `licenseInfo` nur den Vorbehalt: „Warstwa nie
+jest załącznikiem do Uchwały, została narysowana na podstawie interpretacji
+słownego opisu granic i ma charakter poglądowy. Informacje na niej zawarte
+nie mogą być podstawą do jakichkolwiek roszczeń." Die jüngeren Ebenen und
+die Dzielnice haben gar keinen Vermerk. Die App trägt deshalb
+`licenceFamily: 'unklar'` und zeigt den Banner; Details und der Weg zur
+Klärung in [staedte-krakau.md](staedte-krakau.md).
+
+Was der Feed **nicht** sagt, und warum hier nichts erfunden wird:
+
+- **Keine Zeiten, kein Tarif, keine Höchstparkdauer** in irgendeinem Feld —
+  nur der Buchstabe der Podstrefa. Beides steht in der Uchwała
+  LXXXIX/2177/17 der Rada Miasta Krakowa samt Änderungen (die jüngsten,
+  XLIV/899/25 und XLVII/1005/26, liegen beim ZDMK nur als Scan ohne
+  Textebene) und auf den Seiten des ZDMK: A Montag bis Sonntag, B und C
+  Montag bis Samstag, je 9–22 Uhr; ansteigende Stundensätze in Złoty.
+  Das Modell kennt weder PLN noch Staffeln noch Handelssonntage; jede Zone
+  trägt `scheduleUnknown: true`, `fee: { kind: 'unknown' }`, und `meta.json`
+  führt `schedule` und `fee` unter `absent`.
+- **Ohne `outSR=4326` antwortet der Dienst in PUWG 1992** (`wkid 2180`,
+  Meter um 565.000 / 243.000) — dieselbe Falle wie Frankfurts UTM.
+- **Die drei Sektorebenen sind nicht identisch**, auch nicht in den 20
+  unveränderten Sektoren: Kein einziges Polygon der Ebene 37 hat dieselbe
+  Punktmenge wie sein Gegenstück in der Karte (C8: 203 zu 176 Stützpunkte,
+  A20 in der Karte ein MultiPolygon). Die Karte ist die jüngere Fassung und
+  deshalb die Quelle; die Ebene 37 sagt im Log, was sie anders kennt.
+
+Nicht abgerufen: `Strefa_ulice/FeatureServer/0` (571 Straßenlinien mit
+Podstrefa, darunter 20 mit zwei Podstrefen und Warntext),
+`Oznakowanie_strefy_płatnego_parkowania/0` (145 Beschilderungspunkte),
+`Parkomaty_Ewidencja/1` (Parkautomaten der ZDMK-Karte), `Tereny_newralgiczne_OPP/1`
+(eine Warnfläche an der ul. Wrocławska) — alle ohne Zeiten und Tarif.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

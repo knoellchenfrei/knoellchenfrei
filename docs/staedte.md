@@ -17,7 +17,10 @@
 > **Salzburg**, die erste Stadt außerhalb Deutschlands:
 > [staedte-salzburg.md](staedte-salzburg.md). Dieses Dokument hieß einmal „Zweite
 > **Innsbruck**, die erste Stadt außerhalb Deutschlands:
-> [staedte-innsbruck.md](staedte-innsbruck.md). Dieses Dokument hieß einmal „Zweite
+> [staedte-innsbruck.md](staedte-innsbruck.md). Seit dem 17. September
+> **Krakau**, die erste Stadt in Polen und die erste der Klasse C — nur
+> Zonengrenzen, keine Zeiten: [staedte-krakau.md](staedte-krakau.md).
+> Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 > [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu **Graz**,
 > die erste Stadt in Österreich: [staedte-graz.md](staedte-graz.md). Dieses Dokument
@@ -211,6 +214,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
+| **Krakau** | 23 Sektoren des Obszar Płatnego Parkowania als ArcGIS-GeoJSON (ZTP), 18 Dzielnice | **nirgends** — nur in der Uchwała und beim ZDMK, in Złoty | **nirgends** — nur in der Uchwała; A täglich, B/C Mo–Sa, 9–22 Uhr | **nicht ausgewiesen** — siehe [staedte-krakau.md](staedte-krakau.md) | **geprüft**, angeschlossen am 17. September als erste Stadt der **Klasse C** (`scheduleUnknown`) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
