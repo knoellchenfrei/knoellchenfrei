@@ -67,6 +67,65 @@ describe('der österreichische Kalender', () => {
   })
 })
 
+describe('der Berner Kalender', () => {
+  // Art. 2 des Gesetzes über die Ruhe an öffentlichen Feiertagen (FRG,
+  // BSG 555.1): acht kantonale Tage, dazu der Bundesfeiertag aus
+  // `NATIONWIDE.CH`. Ostern, Pfingsten und der Bettag stehen im Gesetz und
+  // sind Sonntage — sie fehlen in der Tabelle mit Absicht.
+  it('zählt neun Tage, die auf einen Werktag fallen können', () => {
+    const bern = holidaysFor('CH-BE', 2026)
+    for (const tag of [
+      '2026-01-01', // Neujahrstag
+      '2026-01-02', // Berchtoldstag, im Gesetz „der 2. Januar"
+      '2026-04-03', // Karfreitag
+      '2026-04-06', // Ostermontag
+      '2026-05-14', // Auffahrt
+      '2026-05-25', // Pfingstmontag
+      '2026-08-01', // Bundesfeiertag, Art. 110 Abs. 3 BV
+      '2026-12-25', // Weihnachten
+      '2026-12-26', // Stephanstag, im Gesetz „der 26. Dezember"
+    ]) {
+      expect(bern.has(tag), tag).toBe(true)
+    }
+    expect(bern.size).toBe(9)
+  })
+
+  // Der Fehler, den der Präfix verhindert: Ein Berner Kalender aus der
+  // deutschen Liste hätte am 1. Mai und am 3. Oktober frei und am
+  // 2. Januar und am 1. August kassiert.
+  it('unterscheidet sich vom deutschen Berlin in genau fünf Tagen', () => {
+    const bern = holidaysFor('CH-BE', 2026)
+    const berlin = holidaysFor('BE', 2026)
+    expect([...bern].filter((tag) => !berlin.has(tag)).sort()).toEqual(['2026-01-02', '2026-08-01'])
+    expect([...berlin].filter((tag) => !bern.has(tag)).sort()).toEqual(['2026-03-08', '2026-05-01', '2026-10-03'])
+  })
+
+  it('kennt weder Fronleichnam noch Allerheiligen noch Drei Könige', () => {
+    // Art. 12 FRG erlaubte sie allein der Gemeinde Vellerat — die gehört
+    // seit 1996 zum Kanton Jura.
+    const bern = holidaysFor('CH-BE', 2026)
+    expect(bern.has('2026-06-04')).toBe(false) // Fronleichnam
+    expect(bern.has('2026-08-15')).toBe(false) // Mariä Himmelfahrt
+    expect(bern.has('2026-11-01')).toBe(false) // Allerheiligen
+    expect(bern.has('2026-01-06')).toBe(false) // Drei Könige
+    expect(bern.has('2026-10-26')).toBe(false) // Österreichs Nationalfeiertag
+  })
+
+  // Der Bettag ist der dritte Sonntag im September — ein Sonntag, den die
+  // Fenster ohnehin freigeben. Er steht im Gesetz, nicht in der Tabelle.
+  it('braucht für den Bettag keinen Eintrag', () => {
+    expect(new Date('2026-09-20T12:00:00Z').getUTCDay()).toBe(0)
+    expect(holidaysFor('CH-BE', 2026).has('2026-09-20')).toBe(false)
+  })
+
+  it('liegt in der Schweiz und hat den 2. Januar auch in einem Jahr mit frühem Ostern', () => {
+    expect(countryOf('CH-BE')).toBe('CH')
+    expect(holidaysFor('CH-BE', 2024).has('2024-01-02')).toBe(true)
+    expect(holidaysFor('CH-BE', 2024).has('2024-03-29')).toBe(true) // Karfreitag bei Ostern am 31. März
+    expect(isHoliday('CH-BE', berlinWallClock(Date.UTC(2027, 0, 2, 10)))).toBe(true)
+  })
+})
+
 describe('die Währung am Tarif', () => {
   it('ist Euro, wo keine steht, und Franken, wo der Parser sie hinschreibt', () => {
     expect(currencyOf({ kind: 'exact', centsPerHour: 200 })).toBe('EUR')
