@@ -7,6 +7,8 @@ import {
   cityCountry,
   CITIES,
   COTTBUS,
+  DUESSELDORF,
+  ESSEN,
   ZUERICH,
   DENHAAG,
   EINDHOVEN,
@@ -605,7 +607,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
@@ -915,5 +917,70 @@ describe('Kassel', () => {
     expect(KASSEL.heatGrid.id).toBe('kassel')
     expect(KASSEL.heatGrid.originLon).toBe(KASSEL.reportBounds.minLon)
     expect(KASSEL.heatGrid.originLat).toBe(KASSEL.reportBounds.minLat)
+  })
+})
+
+/**
+ * Essen — die erste Stadt der Klasse C, und die erste, deren Rahmen an einen
+ * Nachbarn stösst: Düsseldorfs Stadtgrenze reicht bei Wittlaer bis 51,3525
+ * hinauf, Essens bei Kettwig bis 51,3476 hinunter. Die Trennlinie liegt bei
+ * 51,35/51,351; was das kostet, steht in `core/city.ts` bei `ESSEN`.
+ */
+describe('Essen', () => {
+  const KENNEDYPLATZ: [number, number] = [7.0115, 51.4568]
+  const STEELE: [number, number] = [7.0768, 51.4506]
+  const BORBECK: [number, number] = [6.9486, 51.4726]
+  /** Ortsmitte laut Photon, nördlich der Trennlinie. */
+  const KETTWIG_VOR_DER_BRUECKE: [number, number] = [6.9333, 51.3601]
+
+  it('nimmt Innenstadt, Steele, Borbeck und Kettwig vor der Brücke an', () => {
+    for (const point of [KENNEDYPLATZ, STEELE, BORBECK, KETTWIG_VOR_DER_BRUECKE]) {
+      expect(withinCity(ESSEN, ...point)).toBe(true)
+      expect(withinCity(DUESSELDORF, ...point)).toBe(false)
+      expect(cityAt(...point)).toBe(ESSEN)
+    }
+  })
+
+  // Bochum (Rathaus 7,2158 / 51,4818) liegt östlich, Mülheim (Rathaus
+  // 6,8834 / 51,4275) westlich des Rahmens. Gelsenkirchen dagegen liegt
+  // **im** Rahmen (Hauptbahnhof 7,1018 / 51,5049) — ein achsenparalleler
+  // Rahmen um Essen kann das nicht ausschliessen, und wie in Köln gilt: Eine
+  // Meldung von dort wird angenommen und liegt in keiner Zone.
+  it('verschluckt Bochum und Mülheim nicht', () => {
+    expect(cityAt(7.2158, 51.4818)).toBeUndefined()
+    expect(cityAt(6.8834, 51.4275)).toBeUndefined()
+  })
+
+  // Die Trennlinie zu Düsseldorf: Wittlaer bleibt Düsseldorf, die Rheinspitze
+  // nördlich von Bockum (51,3525) gehört seit dem 17. September keiner Stadt
+  // mehr, und Kettwigs Südhang unter 51,351 auch nicht. Dazwischen liegen
+  // 0,002° — mehr als die 0,001°, die der Test „knapp innerhalb" prüft.
+  it('trennt Düsseldorf und Essen zwischen 51,349 und 51,351 ohne einen gemeinsamen Punkt', () => {
+    expect(cityAt(6.7408, 51.322)?.key).toBe('duesseldorf') // Wittlaer
+    expect(cityAt(6.748, 51.3524)).toBeUndefined() // Rheinspitze, Düsseldorfs nördlichster Punkt
+    expect(cityAt(6.961, 51.3476)).toBeUndefined() // Essens südlichster Punkt
+    expect(cityAt(6.9, 51.349)?.key).toBe('duesseldorf')
+    expect(cityAt(6.9, 51.35)).toBeUndefined()
+    expect(cityAt(6.9, 51.351)?.key).toBe('essen')
+    expect(ESSEN.reportBounds.minLat - DUESSELDORF.reportBounds.maxLat).toBeGreaterThan(0.001)
+  })
+
+  it('führt DL-DE/Namensnennung mit Nennungspflicht und der abgerufenen Datei', () => {
+    expect(ESSEN.attribution.licenceFamily).toBe('dl-de-by')
+    expect(ESSEN.attribution.attributionRequired).toBe(true)
+    expect(ESSEN.attribution.datasetUrl).toMatch(/^https:\/\/opendata\.essen\.de\/sites\/default\/files\//)
+    expect(ESSEN.licenceOpen).toBeUndefined()
+  })
+
+  it('hängt am Kalender von Nordrhein-Westfalen wie Köln und Düsseldorf', () => {
+    expect(ESSEN.land).toBe('NW')
+    expect(cityCountry(ESSEN)).toBe('DE')
+    expect(ESSEN.holidays).toBeUndefined()
+  })
+
+  it('hat ein eigenes Raster mit Ursprung an der Südwestecke des Rahmens', () => {
+    expect(ESSEN.heatGrid.id).toBe('essen')
+    expect(ESSEN.heatGrid.originLon).toBe(ESSEN.reportBounds.minLon)
+    expect(ESSEN.heatGrid.originLat).toBe(ESSEN.reportBounds.minLat)
   })
 })

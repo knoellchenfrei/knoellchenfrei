@@ -148,6 +148,46 @@ describe('cityFiles', () => {
     expect(citySources('zuerich')).toEqual([])
   })
 
+  /**
+   * Essen hat weder WFS noch FeatureServer: drei fertige GeoJSON-Dateien aus
+   * dem DKAN-Portal. Ohne `expectedFeatures` sähe eine Datei mit null
+   * Features (etwa nach einem Umzug des Portals, der eine HTML-Seite mit 200
+   * liefert) wie ein Erfolg aus — deshalb je Datei eine Messlatte.
+   */
+  it('holt Essen als drei GeoJSON-Dateien vom Open-Data-Portal, mit Messlatte je Datei', () => {
+    const dateien = cityFiles('essen')
+    expect(dateien.map((datei) => datei.key)).toEqual(['zones', 'districts', 'lowEmissionZone'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('opendata.essen.de')
+      expect(url.pathname).toMatch(/^\/sites\/default\/files\/[A-Za-z0-9_]+\.geojson$/)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.find((datei) => datei.key === 'zones')?.expectedFeatures).toBe(9)
+    expect(citySources('essen')).toEqual([])
+  })
+
+  /**
+   * Essen hat weder WFS noch FeatureServer: drei fertige GeoJSON-Dateien aus
+   * dem DKAN-Portal. Ohne `expectedFeatures` sähe eine Datei mit null
+   * Features (etwa nach einem Umzug des Portals, der eine HTML-Seite mit 200
+   * liefert) wie ein Erfolg aus — deshalb je Datei eine Messlatte.
+   */
+  it('holt Essen als drei GeoJSON-Dateien vom Open-Data-Portal, mit Messlatte je Datei', () => {
+    const dateien = cityFiles('essen')
+    expect(dateien.map((datei) => datei.key)).toEqual(['zones', 'districts', 'lowEmissionZone'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('opendata.essen.de')
+      expect(url.pathname).toMatch(/^\/sites\/default\/files\/[A-Za-z0-9_]+\.geojson$/)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.find((datei) => datei.key === 'zones')?.expectedFeatures).toBe(9)
+    expect(citySources('essen')).toEqual([])
+  })
+
   it('gibt für Städte, die alles aus WFS bekommen, eine leere Liste', () => {
     expect(cityFiles('berlin')).toEqual([])
     expect(cityFiles('bielefeld')).toEqual([])
@@ -156,7 +196,7 @@ describe('cityFiles', () => {
 
   // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
   it('lässt keine Stadt ohne eine einzige Quelle', () => {
-    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'zuerich']) {
+    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'zuerich', 'essen']) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
   })

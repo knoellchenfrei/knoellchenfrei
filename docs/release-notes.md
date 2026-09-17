@@ -15,7 +15,8 @@ befindet, bekommt wie bisher einen Vorschlag — über eine Landesgrenze nennt
 er das Land dazu („Dein Standort liegt in Wien (Österreich)").
 
 **Neue Städte.** Deutschland: Freiburg im Breisgau, Rostock, Schwerin,
-Cottbus. Österreich: Graz, Salzburg, Innsbruck. Die vollständige Liste mit
+Cottbus, Essen (nur die Grenzen der Bewohnerparkbereiche — „Zeiten
+unbekannt"). Österreich: Graz, Salzburg, Innsbruck. Die vollständige Liste mit
 dem Stand je Stadt steht in [staedte.md](staedte.md).
 
 **Drei Dinge, die man in den neuen Städten sehen kann und die es vorher

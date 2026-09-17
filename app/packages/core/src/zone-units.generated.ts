@@ -2168,6 +2168,17 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "WT1": "WT1",
     "Zentrum": "Zentrum",
   },
+  "essen": {
+    "Innenstadt Nord": "Innenstadt Nord",
+    "Innenstadt Süd": "Innenstadt Süd",
+    "Museum-Nord (II)": "Museum-Nord (II)",
+    "Museum-Ost (III)": "Museum-Ost (III)",
+    "Museum-Süd (V)": "Museum-Süd (V)",
+    "Museum-West (IV)": "Museum-West (IV)",
+    "Ostviertel": "Ostviertel",
+    "Ostviertel 2": "Ostviertel 2",
+    "Sternviertel (I)": "Sternviertel (I)",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2198,6 +2209,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "genf": 17,
   "krakau": 23,
   "kassel": 29,
+  "essen": 9,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

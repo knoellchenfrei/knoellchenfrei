@@ -617,6 +617,15 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > an vermgeo@kassel.de, ob die DL-DE/BY 2.0 der übrigen Ebenen auch hier
 > gilt) und Zeiten und Tarif, die nirgends maschinenlesbar stehen — im
 > Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: Essen**, die erste Stadt der Klasse C
+> ([staedte-essen.md](staedte-essen.md)): neun Bewohnerparkbereiche als
+> Flächen aus dem DKAN-Portal, ohne Zeiten und Tarif — jede Zone
+> `scheduleUnknown`, die App sagt „Zeiten unbekannt". Dazu 50 Stadtteile
+> und die Umweltzone, Lizenz DL-DE/BY-2.0 belegt. Düsseldorfs Nordkante
+> ist dafür von 51,37 auf 51,349 gerückt (Kettwig gegen Wittlaer). Offen:
+> die Rückfrage an FB 66 nach Parkzonen oder Automaten als Datensatz, der
+> Stand von 2022, `geodaten.essen.de` von einem anderen Rechner prüfen —
+> im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

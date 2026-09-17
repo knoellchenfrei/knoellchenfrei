@@ -20,6 +20,9 @@
 > [staedte-niederlande.md](staedte-niederlande.md).
 > Am selben Tag Kassel, die erste Stadt, deren Quelle nur Grenzen nennt:
 > [staedte-kassel.md](staedte-kassel.md).
+> [staedte-zuerich.md](staedte-zuerich.md). Und seit demselben Tag **Essen**,
+> die erste Stadt der Klasse C — nur Zonengrenzen, „Zeiten unbekannt":
+> [staedte-essen.md](staedte-essen.md).
 > Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
@@ -236,6 +239,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |
 | **Genf** | 53 Macaron-Zonen (17 in der Ville de Genève) und 13.236 Stellplatzreihen als ArcGIS REST des SITG | **nirgends** — weder im Feed noch an den Reihen | **nirgends** — Klasse C, jede Zone trägt `scheduleUnknown`; die Reihen nennen nur Art und Höchstdauer (`Payant 90 min`, `Gratuit 60 min`, 28 Werte) | SITG-Stufe „A – Accès libre (Open Data)", Quellenangabe Pflicht | **geprüft**, angeschlossen am 17. September — [staedte-genf.md](staedte-genf.md) |
 | **Kassel** | 29 Bewohnerparkbezirke als ArcGIS-`identify` (die Ebene gibt über `query` keine Geometrie heraus), 24 Ortsbezirke | **nirgends** — nur in der Parkgebührenordnung, je Gebührenzone und Straßenliste | **nirgends** — nur am Schild; jede Zone `scheduleUnknown` | **nicht ausgewiesen** (Ortsbezirke DL-DE/BY 2.0) — siehe [staedte-kassel.md](staedte-kassel.md) | **geprüft**, Klasse C |
+| **Essen** | 9 Bewohnerparkbereiche als GeoJSON-Datei (DKAN, Stand 2022), dazu 50 Stadtteile und Umweltzone | **nirgends** — die sechs Parkzonen der Stadtseite gibt es nicht als Geometrie | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-essen.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

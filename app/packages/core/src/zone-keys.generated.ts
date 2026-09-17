@@ -2173,6 +2173,17 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "WT1",
     "Zentrum",
   ],
+  "essen": [
+    "Innenstadt Nord",
+    "Innenstadt Süd",
+    "Museum-Nord (II)",
+    "Museum-Ost (III)",
+    "Museum-Süd (V)",
+    "Museum-West (IV)",
+    "Ostviertel",
+    "Ostviertel 2",
+    "Sternviertel (I)",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */
