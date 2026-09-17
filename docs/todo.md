@@ -626,6 +626,15 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > die Rückfrage an FB 66 nach Parkzonen oder Automaten als Datensatz, der
 > Stand von 2022, `geodaten.essen.de` von einem anderen Rechner prüfen —
 > im Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: Hildesheim**, die erste Stadt in
+> Niedersachsen und die dritte der Klasse C
+> ([staedte-hildesheim.md](staedte-hildesheim.md)): sieben
+> Bewohnerparkzonen A–G als MapServer-WFS, nur Grenzen — jede Zone
+> `scheduleUnknown`. Dazu 14 Ortschaften und `NI` im Feiertagskalender
+> (§ 2 NFeiertagsG, belegt). Offen: die Lizenz (die Nutzungsbedingungen
+> nennen DL-DE/BY-2.0 und untersagen zugleich kommerzielle Nutzung —
+> Anfrage an die Stadt) und die Gebührenordnung, deren Download 410
+> antwortet — im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

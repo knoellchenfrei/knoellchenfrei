@@ -881,6 +881,50 @@ die Shape-Fassungen in ETRS89/UTM (EPSG 4647). Keine POI (der Katalog führt
 keine Behindertenparkplätze), keine Straßenabschnitte; `meta.json` führt sie
 unter `absent`, dazu `schedule` und `fee`.
 
+## Verwendet — Hildesheim
+
+Abgerufen am 17. September 2026 vom **Geoportal der Stadt Hildesheim** über
+zwei MapServer-WFS 2.0.0 (`gdi.stadt-hildesheim.de/interface/wfs-ms/<Ebene>`,
+je Dienst ein Typname). Gefunden über die Viewer-Konfiguration der Karte
+„Verkehr" (`/api/v2/viewer/view/…/config`), die ihre Ebenen mit Namen
+listet — nicht durch Raten (`Stadtgrenze`, `Ortsteile`, `Stadtteile` als
+`wfs-ms`-Pfad: dreimal 404).
+
+| Ebene | Typname | Umfang | Verwendung in der App |
+| --- | --- | --- | --- |
+| `Bewohnerparkzonen` | `ms:Bewohnerparkzonen` | 7 Polygone, `Zone A` … `Zone G` — **keine Zeiten, kein Betrag** | Zonen, alle mit `scheduleUnknown` |
+| `Ortschaften` | `ms:Ortschaften` | 14 Polygone, `Name_lang` | Kartenkontext, Ortschaft im Panel, Rahmen der Stadt |
+
+**Achsen:** Mit `srsName=urn:ogc:def:crs:EPSG::4326` liefert das GeoJSON
+`[lon, lat]` — anders als das GML derselben Ebene, das die Recherche vom
+16. September gedreht sah. Ohne `srsName` kommt EPSG:25832 in Metern, mit
+`crs` im Kopf und ohne Fehler. `assertInHildesheim` im Datenbau misst beides.
+
+**Lizenz: offen durch Widerspruch.** Die
+[Nutzungsbedingungen des Geoportals](https://geoportal.stadt-hildesheim.de/portal/seiten/nutzungsbedingungen-geoportal-900004129-33610.html)
+stellen die Daten „unter der Lizenz L-DE->BY-2.0
+(https://www.govdata.de/dl-de/by-2-0)" bereit und verlangen den Vermerk
+„Geodaten © Stadt Hildesheim" — und untersagen vier Absätze weiter, „das
+Geoportal oder seine Inhalte für kommerzielle Zwecke zu nutzen, es sei denn,
+es liegt eine ausdrückliche Genehmigung der Stadt Hildesheim vor". Der Dienst
+selbst nennt keine Bedingungen (`ows:Fees` „None", `AccessConstraints` leer).
+Familie `unklar`, Banner in der App; die Anfrage an die Stadt steht in
+[staedte-hildesheim.md](staedte-hildesheim.md).
+
+Die eine Sache, die man erst im Feed sieht: **Der Feed sagt nur den
+Buchstaben.** Zeiten und Beträge stünden in der „Gebührenordnung für das
+Parken an Parkscheinautomaten in der Stadt Hildesheim", deren Download-Link
+im Stadtrecht am 17. September mit 410 antwortete; die fünf Infoblätter zum
+Bewohnerparken (Stand 13. November 2024) nennen kein „Uhr" und kein „Euro".
+Die App zeigt deshalb die Grenze und sagt „Zeiten unbekannt" (Klasse C).
+
+Nicht abgerufen: die `Stadtgrenze` des Viewers (nur als
+`/interface/geojson/<uuid>` in EPSG:25832; die Ortschaften decken dieselbe
+Fläche), `Schwerbehindertenparkplätze` (Mapproxy-Kachel, kein Vektordienst
+gefunden), `Park and Ride` (Viewer-Ebene ohne gefundenen `wfs-ms`-Pfad).
+Keine Umweltzone (Hildesheim hat keine), keine Straßenabschnitte;
+`meta.json` führt sie unter `absent`, dazu `schedule` und `fee`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

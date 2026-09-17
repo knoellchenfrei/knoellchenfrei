@@ -23,6 +23,8 @@
 > [staedte-zuerich.md](staedte-zuerich.md). Und seit demselben Tag **Essen**,
 > die erste Stadt der Klasse C — nur Zonengrenzen, „Zeiten unbekannt":
 > [staedte-essen.md](staedte-essen.md).
+> Und Hildesheim, die erste Stadt in Niedersachsen, ebenfalls Klasse C:
+> [staedte-hildesheim.md](staedte-hildesheim.md).
 > Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
@@ -240,6 +242,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Genf** | 53 Macaron-Zonen (17 in der Ville de Genève) und 13.236 Stellplatzreihen als ArcGIS REST des SITG | **nirgends** — weder im Feed noch an den Reihen | **nirgends** — Klasse C, jede Zone trägt `scheduleUnknown`; die Reihen nennen nur Art und Höchstdauer (`Payant 90 min`, `Gratuit 60 min`, 28 Werte) | SITG-Stufe „A – Accès libre (Open Data)", Quellenangabe Pflicht | **geprüft**, angeschlossen am 17. September — [staedte-genf.md](staedte-genf.md) |
 | **Kassel** | 29 Bewohnerparkbezirke als ArcGIS-`identify` (die Ebene gibt über `query` keine Geometrie heraus), 24 Ortsbezirke | **nirgends** — nur in der Parkgebührenordnung, je Gebührenzone und Straßenliste | **nirgends** — nur am Schild; jede Zone `scheduleUnknown` | **nicht ausgewiesen** (Ortsbezirke DL-DE/BY 2.0) — siehe [staedte-kassel.md](staedte-kassel.md) | **geprüft**, Klasse C |
 | **Essen** | 9 Bewohnerparkbereiche als GeoJSON-Datei (DKAN, Stand 2022), dazu 50 Stadtteile und Umweltzone | **nirgends** — die sechs Parkzonen der Stadtseite gibt es nicht als Geometrie | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-essen.md) |
+| **Hildesheim** | 7 Bewohnerparkzonen A–G als MapServer-WFS (GeoJSON `[lon, lat]`), 14 Ortschaften | **nirgends** — nur in der Gebührenordnung für das Parken an Parkscheinautomaten, deren Download am 17. September 410 antwortete | **nirgends** — Klasse C, jede Zone `scheduleUnknown`; die Infoblätter der Stadt nennen kein „Uhr" | DL-DE/**Namensnennung** 2.0 laut Nutzungsbedingungen, dort zugleich Vorbehalt gegen kommerzielle Nutzung — siehe [staedte-hildesheim.md](staedte-hildesheim.md) | **geprüft**, angeschlossen am 17. September |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen
