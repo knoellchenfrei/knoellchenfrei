@@ -1,0 +1,1394 @@
+{
+ "hinweis": "Alle 81 Kurzparkzonen-Flächen (KURZPARKZONEOGD), Sachdaten wörtlich; die Geometrie nur als Typ und erster Stützpunkt je Fläche.",
+ "abgerufenAm": "2026-09-17",
+ "quelle": "https://data.wien.gv.at/daten/geo?service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&srsName=urn:ogc:def:crs:EPSG::4326&typeNames=ogdwien:KURZPARKZONEOGD",
+ "anzahl": 81,
+ "zeitraum": {
+  "Mo.-Fr. (werkt.) v. 9-22 Uhr": 78,
+  "Mo.-Fr. (werkt.) v. 8-11 Uhr": 2,
+  "Mo.-Fr. (werkt.) v. 8-18 Uhr; Sa. (werkt.) v. 8-12 Uhr": 1
+ },
+ "dauer": {
+  "2 h": 80,
+  "1,5 h": 1
+ },
+ "flaechen": [
+  {
+   "id": "KURZPARKZONEOGD.44526",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.34236146,
+    48.24573949
+   ],
+   "BEZIRK": 19,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44526,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44527",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.23618739,
+    48.13697647
+   ],
+   "BEZIRK": 23,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-11-30Z",
+   "SE_SDO_ROWID": 44527,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44528",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.39068986,
+    48.12488419
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44528,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44529",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.29299847,
+    48.23526624
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44529,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44530",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.30202196,
+    48.18599794
+   ],
+   "BEZIRK": 13,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 8-18 Uhr; Sa. (werkt.) v. 8-12 Uhr",
+   "DAUER": "1,5 h",
+   "WEBLINK2": null,
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44530,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44531",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.43873591,
+    48.20020541
+   ],
+   "BEZIRK": 2,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2007-09-02Z",
+   "SE_SDO_ROWID": 44531,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44532",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.34186956,
+    48.19632031
+   ],
+   "BEZIRK": 6,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2014-06-01Z",
+   "SE_SDO_ROWID": 44532,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44534",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.31414499,
+    48.17475446
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44534,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44535",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.33240212,
+    48.16396598
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44535,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44536",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.3828508,
+    48.18621698
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44536,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44537",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.3420011,
+    48.22730833
+   ],
+   "BEZIRK": 18,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44537,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44538",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.28803535,
+    48.23411786
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44538,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44539",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.23394844,
+    48.20242383
+   ],
+   "BEZIRK": 13,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44539,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44540",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.36159262,
+    48.23048731
+   ],
+   "BEZIRK": 9,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2015-05-31Z",
+   "SE_SDO_ROWID": 44540,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44541",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.33850726,
+    48.22314521
+   ],
+   "BEZIRK": 18,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44541,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44542",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.48024957,
+    48.17051136
+   ],
+   "BEZIRK": 11,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44542,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44543",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.28260207,
+    48.2366914
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2024-01-07Z",
+   "SE_SDO_ROWID": 44543,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44544",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.29299847,
+    48.23526624
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44544,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44545",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.30493958,
+    48.21365367
+   ],
+   "BEZIRK": 16,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44545,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44546",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.3027802,
+    48.16087339
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44546,
+   "SE_ANNO_CAD_DATA": "[B@7f09cd90"
+  },
+  {
+   "id": "KURZPARKZONEOGD.44547",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.32807471,
+    48.19833858
+   ],
+   "BEZIRK": 15,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44547,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44548",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.41276026,
+    48.19203476
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44548,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44533",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.33020114,
+    48.19885599
+   ],
+   "BEZIRK": 15,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-07-03Z",
+   "SE_SDO_ROWID": 44533,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44549",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.40635651,
+    48.18516809
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44549,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44550",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.21272109,
+    48.20652402
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44550,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44551",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.32158623,
+    48.2636924
+   ],
+   "BEZIRK": 19,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 8-11 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2024-01-07Z",
+   "SE_SDO_ROWID": 44551,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44552",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.39137669,
+    48.12446733
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44552,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44553",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.26927138,
+    48.15130354
+   ],
+   "BEZIRK": 23,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-07-03Z",
+   "SE_SDO_ROWID": 44553,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44554",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.29606141,
+    48.16188133
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44554,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44555",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.4432799,
+    48.15370925
+   ],
+   "BEZIRK": 11,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-07-03Z",
+   "SE_SDO_ROWID": 44555,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44556",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.32807471,
+    48.19833858
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": 15,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44556,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44557",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.28089381,
+    48.25325823
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-07-03Z",
+   "SE_SDO_ROWID": 44557,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44558",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.3359184,
+    48.22319522
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44558,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44559",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.30234038,
+    48.12614652
+   ],
+   "BEZIRK": 23,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-12-05Z",
+   "SE_SDO_ROWID": 44559,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44560",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.33581031,
+    48.22328972
+   ],
+   "BEZIRK": 18,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44560,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44561",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.40253264,
+    48.18493034
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44561,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44563",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.43873591,
+    48.20020541
+   ],
+   "BEZIRK": 2,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-07-03Z",
+   "SE_SDO_ROWID": 44563,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44564",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.24096218,
+    48.21928279
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-07-03Z",
+   "SE_SDO_ROWID": 44564,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44565",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.36151817,
+    48.19730503
+   ],
+   "BEZIRK": 4,
+   "BEZIRK2": 5,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2007-09-02Z",
+   "SE_SDO_ROWID": 44565,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44566",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.40232617,
+    48.23858482
+   ],
+   "BEZIRK": 22,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44566,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44567",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.28606217,
+    48.25379851
+   ],
+   "BEZIRK": 19,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44567,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44568",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.46667312,
+    48.19339365
+   ],
+   "BEZIRK": 22,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 8-11 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44568,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44569",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.36112246,
+    48.23406585
+   ],
+   "BEZIRK": 9,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2025-04-06Z",
+   "SE_SDO_ROWID": 44569,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44570",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.28681689,
+    48.22423731
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2024-01-07Z",
+   "SE_SDO_ROWID": 44570,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44571",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.26947418,
+    48.2059752
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44571,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44572",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.3473421,
+    48.1657766
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44572,
+   "SE_ANNO_CAD_DATA": "[B@6fe6e47d"
+  },
+  {
+   "id": "KURZPARKZONEOGD.44573",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.31772918,
+    48.16105686
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44573,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44574",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.36976972,
+    48.2594024
+   ],
+   "BEZIRK": 20,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2020-05-03Z",
+   "SE_SDO_ROWID": 44574,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44575",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.29895474,
+    48.23301776
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44575,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44576",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.26947418,
+    48.2059752
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44576,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44577",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.30367501,
+    48.16074994
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44577,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44562",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.40426047,
+    48.20124544
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44562,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44497",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.40581167,
+    48.20076529
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44497,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44498",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.40253264,
+    48.18493034
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44498,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44499",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.3408107,
+    48.21506148
+   ],
+   "BEZIRK": 8,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2007-09-02Z",
+   "SE_SDO_ROWID": 44499,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44500",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.3330989,
+    48.16489611
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44500,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44501",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.28794751,
+    48.22165036
+   ],
+   "BEZIRK": 16,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44501,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44502",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.27035794,
+    48.1992242
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44502,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44503",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.34186956,
+    48.19632031
+   ],
+   "BEZIRK": 7,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2014-06-01Z",
+   "SE_SDO_ROWID": 44503,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44504",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.31880751,
+    48.19900836
+   ],
+   "BEZIRK": 14,
+   "BEZIRK2": 15,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44504,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44505",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.43436837,
+    48.20323805
+   ],
+   "BEZIRK": 2,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2012-09-30Z",
+   "SE_SDO_ROWID": 44505,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44506",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.34090822,
+    48.21522585
+   ],
+   "BEZIRK": 9,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2007-09-02Z",
+   "SE_SDO_ROWID": 44506,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44507",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.45808789,
+    48.26612312
+   ],
+   "BEZIRK": 21,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44507,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44508",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.41064595,
+    48.21133403
+   ],
+   "BEZIRK": 2,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2014-03-30Z",
+   "SE_SDO_ROWID": 44508,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44509",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.32131364,
+    48.15687499
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44509,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44510",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.32558492,
+    48.21324332
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44510,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44511",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.33387443,
+    48.16594669
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44511,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44512",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.39040591,
+    48.12596189
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44512,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44513",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.31047455,
+    48.24395726
+   ],
+   "BEZIRK": 18,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44513,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44518",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.41781004,
+    48.18592344
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44518,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44519",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.30277286,
+    48.16100622
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44519,
+   "SE_ANNO_CAD_DATA": "[B@6c3a5ba0"
+  },
+  {
+   "id": "KURZPARKZONEOGD.44520",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.3385106,
+    48.2086948
+   ],
+   "BEZIRK": 16,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44520,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44521",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.36593947,
+    48.19969036
+   ],
+   "BEZIRK": 1,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2007-09-02Z",
+   "SE_SDO_ROWID": 44521,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44522",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.24491353,
+    48.13788456
+   ],
+   "BEZIRK": 23,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44522,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44523",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.29407403,
+    48.22852262
+   ],
+   "BEZIRK": 17,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44523,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44524",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.37501896,
+    48.18636951
+   ],
+   "BEZIRK": 10,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44524,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44525",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.40264694,
+    48.18498416
+   ],
+   "BEZIRK": 3,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44525,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44514",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.40095575,
+    48.2178662
+   ],
+   "BEZIRK": 2,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2012-09-30Z",
+   "SE_SDO_ROWID": 44514,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44515",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.36112246,
+    48.23406585
+   ],
+   "BEZIRK": 20,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2007-09-02Z",
+   "SE_SDO_ROWID": 44515,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44516",
+   "geometryType": "Polygon",
+   "firstPoint": [
+    16.33736216,
+    48.17104171
+   ],
+   "BEZIRK": 12,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44516,
+   "SE_ANNO_CAD_DATA": null
+  },
+  {
+   "id": "KURZPARKZONEOGD.44517",
+   "geometryType": "MultiPolygon",
+   "firstPoint": [
+    16.39545185,
+    48.17552772
+   ],
+   "BEZIRK": 11,
+   "BEZIRK2": null,
+   "WEBLINK1": null,
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 9-22 Uhr",
+   "DAUER": "2 h",
+   "WEBLINK2": "http://www.wien.gv.at/verkehr/parken/kurzparkzonen/index.html",
+   "GUELTIG_VON": "2022-02-28Z",
+   "SE_SDO_ROWID": 44517,
+   "SE_ANNO_CAD_DATA": null
+  }
+ ]
+}

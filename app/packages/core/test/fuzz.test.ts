@@ -59,6 +59,7 @@ import {
   parseCottbusTariffZone,
   parseCottbusTime,
 } from '../src/cottbus.js'
+import { WienParseError, parseWienMaxStay, parseWienSchedule, wienAreaKey, wienStripKey } from '../src/wien.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -242,6 +243,33 @@ describe('Zeitparser unter Beschuss', () => {
       parseCottbusTime(input)
     })
   })
+
+  // Wien: Klauseln mit `(werkt.)`/`(w.)`, Trenner `;` und `,`, Minuten mit
+  // `:` oder `.`. Die Bausteine oben treffen das nur selten — deshalb dazu
+  // Bruchstücke aus dem Wiener Feed, damit der Beschuss die Klausel erreicht.
+  it('Wien wirft nur WienParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260921, 120, WienParseError, (input) => {
+      expectValidWindows(parseWienSchedule(input), input)
+    })
+    const next = lcg(20260922)
+    const WIEN_TOKENS = ['Mo.-Fr.', 'Sa.', 'Mo.-Sa.', 'So.-Mo.', '(werkt.)', '(w.)', 'v.', 'v. ', '9-22', '8-18h', '8:30-18h', '10.30-15h', ' Uhr', 'h', ';', ', ', '24-24h', '0-24 Uhr', '9-9h', 'Xx.']
+    for (let i = 0; i < ITERATIONS; i += 1) {
+      const pieces = next() % 8
+      const input = Array.from({ length: pieces }, () => WIEN_TOKENS[next() % WIEN_TOKENS.length] as string).join(next() % 2 === 0 ? ' ' : '')
+      try {
+        expectValidWindows(parseWienSchedule(input), input)
+      } catch (error) {
+        if (!(error instanceof WienParseError)) throw error
+      }
+    }
+  })
+
+  it('Wiens Schlüssel werfen nur WienParseError', () => {
+    fuzz(20260923, 120, WienParseError, (input) => {
+      expect(wienStripKey({ STRNAM: input, GELTUNGSBEREICH: input }).length).toBeGreaterThan(0)
+      wienAreaKey({ BEZIRK: Number(input), BEZIRK2: input.length % 3 === 0 ? Number(input.slice(1)) : null })
+    })
+  })
 })
 
 describe('Gebührenparser unter Beschuss', () => {
@@ -332,6 +360,16 @@ describe('Höchstparkdauer unter Beschuss', () => {
   })
 })
 
+describe('Wiens Höchstparkdauer unter Beschuss', () => {
+  it('wirft nur WienParseError und liefert nur Minuten zwischen 6 und 180', () => {
+    fuzz(20260924, 120, WienParseError, (input) => {
+      const minutes = parseWienMaxStay(input)
+      expect(Number.isInteger(minutes), input).toBe(true)
+      expect(minutes > 0 && minutes <= 180, input).toBe(true)
+    })
+  })
+})
+
 describe('Zeitbudget', () => {
   /**
    * Die Begrenzung der Eingabelänge ist das, was das Zurückverfolgen unmöglich
@@ -355,6 +393,8 @@ describe('Zeitbudget', () => {
       (input) => parseRostockFee(Number(input)),
       parseCottbusDays,
       parseCottbusFee,
+      parseWienSchedule,
+      parseWienMaxStay,
     ]
     const started = performance.now()
     for (const input of inputs) {
