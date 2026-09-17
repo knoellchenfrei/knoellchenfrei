@@ -7,6 +7,7 @@ import {
   cityCountry,
   CITIES,
   COTTBUS,
+  ZUERICH,
   cityAt,
   cityByKey,
   FRANKFURT,
@@ -24,6 +25,7 @@ describe('cityByKey', () => {
     expect(cityByKey('frankfurt')).toBe(FRANKFURT)
     expect(cityByKey('muenchen')).toBe(MUENCHEN)
     expect(cityByKey('cottbus')).toBe(COTTBUS)
+    expect(cityByKey('zuerich')).toBe(ZUERICH)
   })
 
   // Der Rückfall auf Berlin ist genau der Fehler, den diese Funktion nicht
@@ -508,7 +510,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // das Feld, und die App zeigt den Abschnitt nicht — eine Nummer aus zweiter
   // Hand wäre schlechter als keine. Die Liste ist ausdrücklich, damit ein
   // vergessenes Feld bei einer neuen Stadt weiter auffällt.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'zuerich'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
@@ -590,5 +592,55 @@ describe('Rostock', () => {
   it('nennt die Einsatzleitstelle der Polizei Waldeck mit der belegten Nummer', () => {
     expect(ROSTOCK.towedVehicles?.phone).toBe('038208 8880')
     expect(ROSTOCK.towedVehicles?.url).toContain('rathaus.rostock.de')
+  })
+})
+
+/**
+ * Zürich — die erste Stadt ausserhalb Deutschlands und Österreichs, die
+ * erste in Franken. Der Rahmen kommt aus den 34 Statistischen Quartieren,
+ * nicht aus den zwei Hochtarifflächen: Altstetten, Höngg und der Zoo liegen
+ * ausserhalb beider Flächen, und dort stehen Parkuhren zum Niedertarif.
+ */
+describe('Zürich', () => {
+  const PARADEPLATZ: [number, number] = [8.5391, 47.3699]
+  const MARKTPLATZ_OERLIKON: [number, number] = [8.5464, 47.4098]
+  const BAHNHOF_ALTSTETTEN: [number, number] = [8.4889, 47.3914]
+  const ZOO: [number, number] = [8.5738, 47.3852]
+
+  it('nimmt Paradeplatz, Oerlikon, Altstetten und den Zoo an', () => {
+    for (const point of [PARADEPLATZ, MARKTPLATZ_OERLIKON, BAHNHOF_ALTSTETTEN, ZOO]) {
+      expect(withinCity(ZUERICH, ...point)).toBe(true)
+      expect(cityAt(...point)).toBe(ZUERICH)
+    }
+  })
+
+  // Winterthur (8,7241 / 47,4997) und Baden (8,3064 / 47,4733) liegen
+  // ausserhalb der Box; eine Meldung von dort ist keine Zürcher.
+  it('verschluckt Winterthur und Baden nicht', () => {
+    expect(withinCity(ZUERICH, 8.7241, 47.4997)).toBe(false)
+    expect(withinCity(ZUERICH, 8.3064, 47.4733)).toBe(false)
+    expect(cityAt(8.7241, 47.4997)).toBeUndefined()
+  })
+
+  it('führt CC0 ohne Nennungspflicht, mit dem empfohlenen Quellenvermerk und dem Datensatz', () => {
+    expect(ZUERICH.attribution.licenceFamily).toBe('cc0')
+    expect(ZUERICH.attribution.attributionRequired).toBe(false)
+    expect(ZUERICH.attribution.licenceUrl).toBe('https://creativecommons.org/publicdomain/zero/1.0/deed.de')
+    expect(ZUERICH.attribution.datasetUrl).toMatch(/^https:\/\/www\.ogd\.stadt-zuerich\.ch\//)
+    // Wörtlich die von der Stadt empfohlene Form.
+    expect(ZUERICH.attribution.source).toContain('Quelle: Stadt Zürich')
+    expect(ZUERICH.licenceOpen).toBeUndefined()
+  })
+
+  it('hängt am Kalender des Kantons Zürich, liegt in der Schweiz und braucht keinen Stadtfeiertag', () => {
+    expect(ZUERICH.land).toBe('CH-ZH')
+    expect(cityCountry(ZUERICH)).toBe('CH')
+    expect(ZUERICH.holidays).toBeUndefined()
+  })
+
+  it('hat ein eigenes Raster mit Ursprung an der Südwestecke des Rahmens', () => {
+    expect(ZUERICH.heatGrid.id).toBe('zuerich')
+    expect(ZUERICH.heatGrid.originLon).toBe(ZUERICH.reportBounds.minLon)
+    expect(ZUERICH.heatGrid.originLat).toBe(ZUERICH.reportBounds.minLat)
   })
 })

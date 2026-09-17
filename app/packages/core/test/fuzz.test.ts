@@ -59,6 +59,13 @@ import {
   parseCottbusTariffZone,
   parseCottbusTime,
 } from '../src/cottbus.js'
+import {
+  ZuerichParseError,
+  parseZuerichMaxStay,
+  parseZuerichMeterTariff,
+  parseZuerichSchedule,
+  parseZuerichTariffZone,
+} from '../src/zuerich.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -227,6 +234,22 @@ describe('Zeitparser unter Beschuss', () => {
     })
   })
 
+  // Zürich liest zwei Sätze: die Bedienungszeit der Fläche und die Tarifzeile
+  // der Parkuhr, die Stufe, Dauer und Zeiten in einer Zeile trägt.
+  it('Zürich wirft nur ZuerichParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260921, 120, ZuerichParseError, (input) => {
+      expectValidWindows(parseZuerichSchedule(input), input)
+    })
+    fuzz(20260922, 120, ZuerichParseError, (input) => {
+      const tariff = parseZuerichMeterTariff(input)
+      if (tariff.kind === 'regular') {
+        expectValidWindows(tariff.windows, input)
+        expect(tariff.maxStayMinutes > 0, input).toBe(true)
+      }
+      parseZuerichTariffZone(input)
+    })
+  })
+
   // Cottbus liest sechs Felder statt eines Satzes. Der Unfug geht deshalb in
   // jedes Feld einzeln und in alle drei Felder einer Gruppe zugleich.
   it('Cottbus wirft nur CottbusParseError und liefert nur gültige Fenster', () => {
@@ -332,6 +355,22 @@ describe('Höchstparkdauer unter Beschuss', () => {
   })
 })
 
+describe('Zürcher Parkdauer unter Beschuss', () => {
+  // Eine Zahl oder eine Zeichenkette, nie eine Null und nie mehr als eine
+  // Woche — sonst stünde „0 min" oder „999 h" als Höchstparkdauer im Panel.
+  it('wirft nur ZuerichParseError und liefert nur Minuten über null', () => {
+    fuzz(20260923, 20, ZuerichParseError, (input) => {
+      for (const value of [input, Number(input)]) {
+        const minutes = parseZuerichMaxStay(value)
+        if (minutes !== undefined) {
+          expect(Number.isInteger(minutes), input).toBe(true)
+          expect(minutes > 0 && minutes <= 7 * 24 * 60, input).toBe(true)
+        }
+      }
+    })
+  })
+})
+
 describe('Zeitbudget', () => {
   /**
    * Die Begrenzung der Eingabelänge ist das, was das Zurückverfolgen unmöglich
@@ -355,6 +394,8 @@ describe('Zeitbudget', () => {
       (input) => parseRostockFee(Number(input)),
       parseCottbusDays,
       parseCottbusFee,
+      parseZuerichSchedule,
+      parseZuerichMeterTariff,
     ]
     const started = performance.now()
     for (const input of inputs) {
