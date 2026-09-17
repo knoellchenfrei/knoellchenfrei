@@ -742,6 +742,69 @@ export const ROSTOCK: City = {
   },
 }
 
+/**
+ * Wien — die erste Stadt außerhalb Deutschlands, unter dem Kalender `AT-W`
+ * (alle österreichischen Feiertage sind Bundesrecht, siehe `holidays.ts`).
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt aus den
+ * **Bezirksgrenzen** (`ogdwien:BEZIRKSGRENZEOGD`, 23 Polygone, abgerufen am
+ * 17. September 2026): 16,1818–16,5775 / 48,1179–48,3227, nach außen
+ * gerundet steht das unten. Die 81 Kurzparkzonen-Flächen reichen
+ * 16,1999–16,5527 / 48,1210–48,3054 — fast dasselbe, weil die Kurzparkzone
+ * flächendeckend ist; die Ränder von Liesing und Donaustadt liegen trotzdem
+ * außerhalb der Parkebene und innerhalb der Stadt.
+ *
+ * Der Mittelpunkt ist der Stephansplatz. Zoom 11,5 wie Berlin: Die Stadt
+ * misst 0,40° Länge und 0,20° Breite, Berlins Rahmen 0,80° × 0,40° — bei 12
+ * fielen Floridsdorf und Liesing aus dem ersten Bild.
+ *
+ * Keine Überschneidung mit einer anderen Stadt: Die nächste ist München,
+ * 3° westlich.
+ */
+export const WIEN: City = {
+  key: 'wien',
+  name: 'Wien',
+  land: 'AT-W',
+  center: [16.3725, 48.2083],
+  zoom: 11.5,
+  reportBounds: { minLon: 16.18, minLat: 48.11, maxLon: 16.58, maxLat: 48.33 },
+  sessionBounds: { minLon: 15.9, minLat: 47.9, maxLon: 16.9, maxLat: 48.55 },
+  heatGrid: { id: 'wien', originLon: 16.18, originLat: 48.11, latitude: 48.21 },
+  attribution: {
+    // Wörtlich aus den Nutzungsbedingungen der Stadt
+    // (`digitales.wien.gv.at/ogd-nutzungsbedingungen/`, wohin
+    // `data.wien.gv.at/nutzungsbedingungen` aus den `ows:AccessConstraints`
+    // des WFS weiterleitet; gelesen am 17. September 2026): „Open Government
+    // Data der Stadt Wien stehen unter einer ‚Creative Commons Namensnennung
+    // 4.0 Lizenz' (CC BY 4.0). […] Die Namensnennung der Stadt Wien als
+    // Rechteinhaberin hat in folgender Weise zu erfolgen: ‚Datenquelle:
+    // Stadt Wien – data.wien.gv.at'". Der Katalog data.gv.at führt den
+    // Datensatz „Kurzparkzonen Wien" (6858b208-…) mit derselben Lizenz an
+    // jeder Verteilung. Nur `ows:Fees` des WFS nennt noch CC BY **3.0 AT**;
+    // beide verlangen die Nennung, 4.0 dazu den Hinweis auf den
+    // Gewährleistungsausschluss — die App hält sich an die strengere.
+    source: 'Datenquelle: Stadt Wien – data.wien.gv.at',
+    datasetUrl: 'https://data.wien.gv.at/daten/geo',
+    licence: 'Creative Commons Namensnennung 4.0 (CC BY 4.0)',
+    licenceUrl: 'https://creativecommons.org/licenses/by/4.0/deed.de',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+  // Belegt auf der Seite der Stadt „Fahrzeug abholen" (wien.gv.at, gelesen am
+  // 17. September 2026), wörtlich: „Ob Ihr Fahrzeug abgeschleppt wurde,
+  // erfahren Sie unter der Telefonnummer +43 1 760 43 oder bei der nächsten
+  // Polizei-Dienststelle. Abholung Ort: 11., Jedletzbergerstraße 1
+  // (Autobahnknoten Simmeringer Haide)". Zuständig ist die Abschleppgruppe
+  // der MA 48 (Abfallwirtschaft, Straßenreinigung und Fuhrpark).
+  towedVehicles: {
+    authority: 'Abschleppgruppe der MA 48 (Stadt Wien)',
+    url: 'https://www.wien.gv.at/verkehr/auto-abgeschleppt',
+    phone: '+43 1 760 43',
+    checkedOn: '2026-09',
+    note: 'Abholung in 11., Jedletzbergerstraße 1 (Autobahnknoten Simmeringer Haide); für Fahrzeuge mit Kennzeichen rund um die Uhr.',
+  },
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -753,6 +816,7 @@ export const CITIES: readonly City[] = [
   FREIBURG,
   ROSTOCK,
   COTTBUS,
+  WIEN,
 ]
 
 

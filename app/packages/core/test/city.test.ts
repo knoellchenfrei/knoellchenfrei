@@ -14,6 +14,7 @@ import {
   MUENCHEN,
   suggestCity,
   withinCity,
+  WIEN,
   withinCitySession,
 } from '../src/city.js'
 
@@ -24,6 +25,7 @@ describe('cityByKey', () => {
     expect(cityByKey('frankfurt')).toBe(FRANKFURT)
     expect(cityByKey('muenchen')).toBe(MUENCHEN)
     expect(cityByKey('cottbus')).toBe(COTTBUS)
+    expect(cityByKey('wien')).toBe(WIEN)
   })
 
   // Der Rückfall auf Berlin ist genau der Fehler, den diese Funktion nicht
@@ -536,11 +538,13 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Eine falsche Nummer kostet jemanden Zeit in einer Lage, in der er ohnehin
   // keine hat. Wo sie sich nicht belegen liess, steht sie deshalb nicht da —
   // Frankfurt ist der Fall.
-  it('nennt eine Nummer nur da, wo es eine gibt, und dann eine deutsche', () => {
+  // Seit Wien darf die Nummer mit `+43` beginnen — eine Wiener Nummer ohne
+  // Landeskennung wäre von Deutschland aus die falsche.
+  it('nennt eine Nummer nur da, wo es eine gibt, und dann eine deutsche oder österreichische', () => {
     for (const city of CITIES) {
       const phone = city.towedVehicles?.phone
       if (phone === undefined) continue
-      expect(phone, city.name).toMatch(/^[()\d][()\d\s-]{6,}$/)
+      expect(phone, city.name).toMatch(/^[+()\d][()\d\s-]{6,}$/)
     }
     expect(CITIES.find((city) => city.key === 'frankfurt')?.towedVehicles?.phone).toBeUndefined()
   })
@@ -590,5 +594,64 @@ describe('Rostock', () => {
   it('nennt die Einsatzleitstelle der Polizei Waldeck mit der belegten Nummer', () => {
     expect(ROSTOCK.towedVehicles?.phone).toBe('038208 8880')
     expect(ROSTOCK.towedVehicles?.url).toContain('rathaus.rostock.de')
+  })
+})
+
+/**
+ * Wien — die erste Stadt außerhalb Deutschlands. Der Rahmen kommt aus den 23
+ * Bezirksgrenzen; Liesing im Süden und Donaustadt im Osten liegen darin,
+ * obwohl die Kurzparkzone dort Ausnahmen hat.
+ */
+describe('Wien', () => {
+  const STEPHANSPLATZ: [number, number] = [16.3725, 48.2083]
+  const LIESING_SUED: [number, number] = [16.28, 48.13]
+  const DONAUSTADT_OST: [number, number] = [16.55, 48.2]
+  const FLORIDSDORF_NORD: [number, number] = [16.4, 48.31]
+
+  it('nimmt Stephansplatz, Liesing, Donaustadt und Floridsdorf an', () => {
+    for (const point of [STEPHANSPLATZ, LIESING_SUED, DONAUSTADT_OST, FLORIDSDORF_NORD]) {
+      expect(withinCity(WIEN, ...point)).toBe(true)
+      expect(cityAt(...point)).toBe(WIEN)
+    }
+  })
+
+  // Mödling (16,2887 / 48,0855) liegt südlich außerhalb der Stadtgrenze,
+  // Gänserndorf (16,7203 / 48,3392) nordöstlich; beide sind Niederösterreich,
+  // und die Box endet vorher. Die Sitzungsbox nimmt beide — wer dort parkt,
+  // soll seine Uhr behalten. Was die Box **nicht** trennt: Schwechat und
+  // Klosterneuburg liegen im Rechteck um die Bezirke, weil ein Rechteck
+  // keine Stadtgrenze ist; das ist in jeder Stadt so.
+  it('verschluckt Mödling und Gänserndorf nicht, lässt sie aber als Sitzung zu', () => {
+    expect(withinCity(WIEN, 16.2887, 48.0855)).toBe(false)
+    expect(withinCity(WIEN, 16.7203, 48.3392)).toBe(false)
+    expect(cityAt(16.2887, 48.0855)).toBeUndefined()
+    expect(withinCitySession(WIEN, 16.2887, 48.0855)).toBe(true)
+    expect(withinCitySession(WIEN, 16.7203, 48.3392)).toBe(true)
+  })
+
+  it('hängt am Kalender AT-W, liegt in Österreich und braucht keinen Stadtfeiertag', () => {
+    expect(WIEN.land).toBe('AT-W')
+    expect(cityCountry(WIEN)).toBe('AT')
+    expect(WIEN.holidays).toBeUndefined()
+  })
+
+  it('führt CC BY 4.0 mit dem Quellenvermerk, den die Stadt verlangt', () => {
+    expect(WIEN.attribution.licenceFamily).toBe('cc-by')
+    expect(WIEN.attribution.attributionRequired).toBe(true)
+    expect(WIEN.attribution.source).toBe('Datenquelle: Stadt Wien – data.wien.gv.at')
+    expect(WIEN.attribution.licenceUrl).toBe('https://creativecommons.org/licenses/by/4.0/deed.de')
+    expect(WIEN.attribution.datasetUrl).toBe('https://data.wien.gv.at/daten/geo')
+  })
+
+  it('nennt die Abschleppgruppe der MA 48 mit der belegten Nummer', () => {
+    expect(WIEN.towedVehicles?.phone).toBe('+43 1 760 43')
+    expect(WIEN.towedVehicles?.url).toBe('https://www.wien.gv.at/verkehr/auto-abgeschleppt')
+    expect(WIEN.towedVehicles?.authority).toContain('MA 48')
+  })
+
+  it('hat ein eigenes Heatmap-Raster mit Ursprung in der Südwestecke', () => {
+    expect(WIEN.heatGrid.id).toBe('wien')
+    expect(WIEN.heatGrid.originLon).toBe(WIEN.reportBounds.minLon)
+    expect(WIEN.heatGrid.originLat).toBe(WIEN.reportBounds.minLat)
   })
 })
