@@ -1,6 +1,6 @@
 # Weitere Städte: was dafür an Daten da sein muss
 
-> **Stand 17. September 2026: 27 Städte in sechs Ländern angeschlossen.**
+> **Stand 17. September 2026: 32 Städte in sechs Ländern angeschlossen.**
 > Deutschland: Berlin, Hamburg, Frankfurt am Main, München (die ersten vier,
 > im Text unten), Köln ([staedte-koeln.md](staedte-koeln.md)), Düsseldorf
 > ([staedte-duesseldorf.md](staedte-duesseldorf.md)), Karlsruhe
@@ -247,7 +247,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Essen** | 9 Bewohnerparkbereiche als GeoJSON-Datei (DKAN, Stand 2022), dazu 50 Stadtteile und Umweltzone | **nirgends** — die sechs Parkzonen der Stadtseite gibt es nicht als Geometrie | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-essen.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
-Nüchtern gelesen heißt die Tabelle: **27 Städte tragen einen benannten,
+Nüchtern gelesen heißt die Tabelle: **32 Städte tragen einen benannten,
 abgerufenen Datensatz**, und die Spalten Tarif und Zeiten trennen die drei
 Klassen aus dem Kopf dieser Datei. Was in keiner Zeile steht, hat entweder
 keinen Datensatz (Stuttgart, Leipzig, Bremen, Hannover und die übrigen aus

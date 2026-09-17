@@ -494,7 +494,7 @@ folgender Weise zu erfolgen: "Datenquelle: Stadt Innsbruck"". Dazu eine
 Auflage, die CC BY nicht kennt: Wer die Daten „für ihre öffentlichen
 Anwendungen / Dienste" verwendet, teilt der Stadt unter
 `post.vermessung-gis@innsbruck.gv.at` mit, wo und wofür — eine E-Mail des
-Betreibers, geführt in [todo.md](todo.md#5-weitere-städte--27-in-sechs-ländern-laufen--ich).
+Betreibers, geführt in [todo.md](todo.md#5-weitere-städte--32-in-sechs-ländern-laufen--ich).
 
 Drei Dinge, die man erst im Feed sieht:
 

@@ -460,14 +460,14 @@ erledigt**; die Rasterkacheln sind nur noch der Rückfall für Bauten ohne
 die Schriften von `protomaps.github.io`. Details in
 [hosting.md](hosting.md#4-eigene-kartenkacheln).
 
-## 5. Weitere Städte — 27 in sechs Ländern laufen — **ich**
+## 5. Weitere Städte — 32 in sechs Ländern laufen — **ich**
 
 Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
 weiteren Städten in
 [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md), zweite Runde mit
 86 weiteren Städten in
 [staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md). Stand
-17. September: **27** Städte in Deutschland, Österreich, der Schweiz, den
+17. September: **32** Städte in Deutschland, Österreich, der Schweiz, den
 Niederlanden, Frankreich und Polen, umschaltbar in den Einstellungen — erst das
 Land, dann die Stadt. Die Liste je Land mit Klasse und Lizenz steht im Kopf von
 [staedte.md](staedte.md).

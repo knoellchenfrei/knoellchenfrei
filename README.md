@@ -11,7 +11,7 @@
 Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
-Eine PWA auf den amtlichen Geodaten der Städte. **27 Städte in sechs Ländern** —
+Eine PWA auf den amtlichen Geodaten der Städte. **32 Städte in sechs Ländern** —
 Deutschland, Österreich, Schweiz, Niederlande, Frankreich und Polen, die Liste
 steht in [docs/staedte.md](docs/staedte.md) —, umschaltbar in den Einstellungen,
 erst das Land, dann die Stadt. Eine Stadt zur Zeit; die Daten der anderen werden
@@ -274,11 +274,11 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 1299 Unit-Tests
+pnpm test                              # 2394 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
-cd apps/web && npx playwright test     # 222 End-to-End-Tests
+cd apps/web && npx playwright test     # 234 End-to-End-Tests
 ```
 
 **Voraussetzungen:** Node ≥ 22 und pnpm 10 — Letzteres am einfachsten über
@@ -313,8 +313,8 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 1299 — 848 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 297 für die Web-App, 53 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 82 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
-| End-to-End | 222 über Desktop und Handy, gegen den Produktions-Build, rund fünf Minuten; 210 bestehen, zwölf überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, elf auf dem Gerät, für das sie nicht gedacht sind |
+| Unit-Tests | 2394 — 1828 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 331 für die Web-App, 134 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 82 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| End-to-End | 234 über Desktop und Handy, gegen den Produktions-Build, rund neun Minuten; 222 bestehen, zwölf überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, elf auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |

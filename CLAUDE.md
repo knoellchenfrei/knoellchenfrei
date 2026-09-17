@@ -7,7 +7,7 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 
 Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
 kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
-Angeschlossen sind 27 Städte in sechs Ländern — Deutschland, Österreich,
+Angeschlossen sind 32 Städte in sechs Ländern — Deutschland, Österreich,
 Schweiz, Niederlande, Frankreich und Polen; die vollständige Liste mit Klasse,
 Lizenz und je einem Bericht `docs/staedte-<stadt>.md` steht in `docs/staedte.md`.
 Das Land wählt der Nutzer in den Einstellungen bewusst, dann die Stadt.
@@ -32,11 +32,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 1299 Unit-Tests (core, api, web, ingest)
+pnpm test                                           # 2394 Unit-Tests (core, api, web, ingest)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 222 End-to-End-Tests, rund 5 Minuten
+cd apps/web && npx playwright test                  # 234 End-to-End-Tests, rund 9 Minuten
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -88,11 +88,11 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (848), `apps/api` (101, Worker gegen SQLite und Zählwerk),
-`apps/web` (297, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+**alle vier** Tests: `core` (1828), `apps/api` (101, Worker gegen SQLite und Zählwerk),
+`apps/web` (331, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, Straßensuche, Langzeitmuster, sieben Komponentendateien mit jsdom, Service
-Worker im gestellten `self`) und `packages/ingest` (53: Wächter des Artifact-Baus, Datenstand,
+Worker im gestellten `self`) und `packages/ingest` (134: Wächter des Artifact-Baus, Datenstand,
 Abzeichen, UTM-Messung, Quellen, Einheiten der Langzeitmuster). Die drei letzten haben eine eigene `vitest.config.ts`, die eng
 auf `test/` schneidet — ohne diese Grenze greift Vitest in `apps/web` die
 Playwright-Dateien unter `e2e/` ab. `npx vitest run` von dort greift versehentlich die Playwright-Dateien
@@ -107,7 +107,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=1299 E2E_COUNT=222 npx tsx src/build-badges.ts
+TEST_COUNT=2394 E2E_COUNT=234 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -1014,7 +1014,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 | [docs/notfall.md](docs/notfall.md) | Was läuft, was bei Verlust weg ist, in welcher Reihenfolge es zurückkommt |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
-| [docs/staedte.md](docs/staedte.md) | Alle 27 Städte in sechs Ländern mit Klasse A/B/C und Lizenz; Hamburg, Frankfurt und München im Einzelnen, jede weitere Stadt in `docs/staedte-<stadt>.md` |
+| [docs/staedte.md](docs/staedte.md) | Alle 32 Städte in sechs Ländern mit Klasse A/B/C und Lizenz; Hamburg, Frankfurt und München im Einzelnen, jede weitere Stadt in `docs/staedte-<stadt>.md` |
 | [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
 | [docs/staedte-recherche-2026-09-16.md](docs/staedte-recherche-2026-09-16.md) | Zweite Runde: 86 weitere Städte in fünf Klassen, Rangliste der Kandidaten, 62 Städte mit Zonen ohne Schnittstelle |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
