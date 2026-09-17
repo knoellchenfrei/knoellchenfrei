@@ -1509,3 +1509,54 @@ test.describe('Länder', () => {
     await expect(page.locator('.licence-hint')).toHaveCount(0)
   })
 })
+
+/**
+ * Drei Dinge, die es erst seit der zweiten Runde gibt und die je eine Stadt
+ * zeigt: Franken (Zürich), „Zeiten unbekannt" (Kassel, nur Grenzen) und ein
+ * Tarif aus dem Nationaal Parkeer Register (Utrecht).
+ */
+test.describe('Städte der zweiten Runde', () => {
+  async function wechsleZu(page: Page, land: string, stadt: string): Promise<void> {
+    const sheet = await openSettings(page)
+    await sheet.getByRole('group', { name: 'Land' }).getByRole('button', { name: land }).click()
+    await sheet.getByRole('button', { name: stadt }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+  }
+
+  test('nennt in Zürich den Tarif in Franken, nie in Euro', async ({ page }) => {
+    await ready(page)
+    await wechsleZu(page, 'Schweiz', 'Zürich')
+    await page.locator('.search__input').fill('Innenstadt')
+    await expect(page.locator('.search__results button').first()).toBeVisible({ timeout: 15_000 })
+    await page.locator('.search__results button').first().click()
+    await openPanel(page)
+    const zonePanel = page.getByRole('region', { name: /Innenstadt/ })
+    await expect(zonePanel.locator('.facts')).toContainText('CHF')
+    await expect(zonePanel).not.toContainText('€')
+  })
+
+  test('sagt in Kassel „Zeiten unbekannt" statt „keine Gebühr"', async ({ page }) => {
+    await ready(page)
+    await wechsleZu(page, 'Deutschland', 'Kassel')
+    await page.locator('.search__input').fill('BW1')
+    await expect(page.locator('.search__results button').first()).toBeVisible({ timeout: 15_000 })
+    await page.locator('.search__results button').first().click()
+    await openPanel(page)
+    const zonePanel = page.getByRole('region', { name: /BW1/ })
+    await expect(zonePanel.locator('.badge')).toHaveText('Zeiten unbekannt')
+    await expect(zonePanel).toContainText('keine Zeiten und keinen Tarif')
+    await expect(zonePanel).not.toContainText('keine Gebühr')
+    await expect(zonePanel).not.toContainText('Frei bis')
+  })
+
+  test('zeigt in Utrecht einen Tarif aus dem Parkeer Register in Euro', async ({ page }) => {
+    await ready(page)
+    await wechsleZu(page, 'Niederlande', 'Utrecht')
+    const box = await page.locator('.map').boundingBox()
+    await page.mouse.click(box!.x + box!.width * 0.5, box!.y + box!.height * 0.5)
+    await openPanel(page)
+    const zonePanel = page.getByRole('region', { name: /^Parkzone / })
+    await expect(zonePanel.locator('.facts')).toContainText('€')
+  })
+})

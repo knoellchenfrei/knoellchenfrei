@@ -75,7 +75,7 @@ const SOCIAL = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" w
   <text x="416" y="290" font-family="Archivo, Helvetica Neue, Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="-3" fill="#e3ebee">knoellchenfrei</text>
   <text x="418" y="352" font-family="Helvetica Neue, Arial, sans-serif" font-size="34" fill="#9aa8ae">Was Parken hier gerade kostet —</text>
   <text x="418" y="396" font-family="Helvetica Neue, Arial, sans-serif" font-size="34" fill="#9aa8ae">und ob das Ordnungsamt unterwegs ist.</text>
-  <text x="418" y="452" font-family="Helvetica Neue, Arial, sans-serif" font-size="25" fill="#74aae4">Berlin · Hamburg · Frankfurt · München · Köln · Düsseldorf · Karlsruhe</text>
+  <text x="418" y="452" font-family="Helvetica Neue, Arial, sans-serif" font-size="25" fill="#74aae4">Deutschland · Österreich · Schweiz · Niederlande · Frankreich · Polen</text>
 </svg>`
 
 /**
