@@ -1,0 +1,264 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://data.strasbourg.eu/api/explore/v2.1/catalog/datasets/stationnement_residant/exports/geojson",
+  "anzahl": 15,
+  "numero_zone_resident": {
+    "4": 1,
+    "7": 1,
+    "3": 1,
+    "1": 1,
+    "12": 1,
+    "9": 1,
+    "2": 1,
+    "14": 1,
+    "15": 1,
+    "6": 1,
+    "10": 1,
+    "5": 1,
+    "16": 1,
+    "8": 1,
+    "11": 1
+  },
+  "features": [
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.758629,
+        48.584247
+      ],
+      "id_zone_resident": 3,
+      "numero_zone_resident": "4",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.756208473840538,
+        "lat": 48.57913977855307
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.746295,
+        48.591129
+      ],
+      "id_zone_resident": 6,
+      "numero_zone_resident": "7",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.753636788749974,
+        "lat": 48.58745179567747
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.746571,
+        48.586861
+      ],
+      "id_zone_resident": 8,
+      "numero_zone_resident": "3",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.742851286830734,
+        "lat": 48.58065631270301
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.737061,
+        48.588284
+      ],
+      "id_zone_resident": 10,
+      "numero_zone_resident": "1",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.736873429143475,
+        "lat": 48.58412799567864
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.726241,
+        48.574501
+      ],
+      "id_zone_resident": 12,
+      "numero_zone_resident": "12",
+      "annee_mise_en_place": "2019",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.727195834085619,
+        "lat": 48.5733199089019
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.763748,
+        48.588231
+      ],
+      "id_zone_resident": 2,
+      "numero_zone_resident": "9",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.7666829166490325,
+        "lat": 48.58459613346436
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.746571,
+        48.586861
+      ],
+      "id_zone_resident": 7,
+      "numero_zone_resident": "2",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.751709602370086,
+        "lat": 48.58366960898636
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.738072,
+        48.574034
+      ],
+      "id_zone_resident": 13,
+      "numero_zone_resident": "14",
+      "annee_mise_en_place": "2024",
+      "type_zone": "zonage résident",
+      "date_maj": "2024-08-08",
+      "geo_point_2d": {
+        "lon": 7.7586878537695805,
+        "lat": 48.57196357415337
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.741222,
+        48.570379
+      ],
+      "id_zone_resident": 14,
+      "numero_zone_resident": "15",
+      "annee_mise_en_place": "2024",
+      "type_zone": "zonage résident",
+      "date_maj": "2024-08-08",
+      "geo_point_2d": {
+        "lon": 7.760165995969405,
+        "lat": 48.565558980635224
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.737061,
+        48.588284
+      ],
+      "id_zone_resident": 9,
+      "numero_zone_resident": "6",
+      "annee_mise_en_place": "2008",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.743127691048461,
+        "lat": 48.58874550891625
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.732059,
+        48.582282
+      ],
+      "id_zone_resident": 11,
+      "numero_zone_resident": "10",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-10",
+      "geo_point_2d": {
+        "lon": 7.732539196850159,
+        "lat": 48.57782183475419
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.761371,
+        48.578189
+      ],
+      "id_zone_resident": 4,
+      "numero_zone_resident": "5",
+      "annee_mise_en_place": "2010",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-07-18",
+      "geo_point_2d": {
+        "lon": 7.764725963517098,
+        "lat": 48.57606818576015
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.77409,
+        48.560753
+      ],
+      "id_zone_resident": 15,
+      "numero_zone_resident": "16",
+      "annee_mise_en_place": "2024",
+      "type_zone": "zonage résident",
+      "date_maj": "2023-08-22",
+      "geo_point_2d": {
+        "lon": 7.777781770146482,
+        "lat": 48.56831056082367
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.74419,
+        48.592268
+      ],
+      "id_zone_resident": 5,
+      "numero_zone_resident": "8",
+      "annee_mise_en_place": "2024",
+      "type_zone": "zonage résident",
+      "date_maj": "2024-08-08",
+      "geo_point_2d": {
+        "lon": 7.757200201415416,
+        "lat": 48.590983950399476
+      }
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.767043,
+        48.592704
+      ],
+      "id_zone_resident": 1,
+      "numero_zone_resident": "11",
+      "annee_mise_en_place": "2024",
+      "type_zone": "zonage résident",
+      "date_maj": "2024-08-08",
+      "geo_point_2d": {
+        "lon": 7.770948954386508,
+        "lat": 48.58879033365141
+      }
+    }
+  ]
+}

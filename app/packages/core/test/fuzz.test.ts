@@ -106,6 +106,15 @@ import {
   parseBernZoneName,
 } from '../src/bern.js'
 import { KrakauParseError, parseKrakauPodstrefa, parseKrakauSince } from '../src/krakau.js'
+import {
+  StrasbourgParseError,
+  parseStrasbourgColour,
+  parseStrasbourgTariff,
+  strasbourgFee,
+  strasbourgHourlyRates,
+  strasbourgMaxStay,
+  strasbourgZoneKey,
+} from '../src/strasbourg.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -509,6 +518,36 @@ describe('die Krakauer Leser unter Beschuss', () => {
   })
 })
 
+// Straßburg hat keinen Zeitparser — die Zeiten stehen in der Beschreibung.
+// Beschossen werden die Staffel und die zwei Leser daneben. Die Staffel
+// muss, wenn sie durchgeht, eine Spanne ohne Null und ohne Betrag über der
+// letzten Stufe ergeben, und eine Höchstparkdauer von mindestens einer Stunde.
+describe('die Straßburger Staffel unter Beschuss', () => {
+  it('Tarif: nur StrasbourgParseError, und nur eine Spanne ohne Null aus steigenden Stufen', () => {
+    fuzz(20260925, 200, StrasbourgParseError, (input) => {
+      const tariff = parseStrasbourgTariff(input)
+      expect(tariff.steps.length, input).toBeGreaterThan(0)
+      for (let i = 1; i < tariff.steps.length; i += 1) {
+        expect(tariff.steps[i]?.minutes, input).toBeGreaterThan(tariff.steps[i - 1]?.minutes ?? 0)
+        expect(tariff.steps[i]?.cents, input).toBeGreaterThan(tariff.steps[i - 1]?.cents ?? 0)
+      }
+      expectValidFee(strasbourgFee(tariff), input)
+      for (const rate of strasbourgHourlyRates(tariff)) expect(rate, input).toBeGreaterThan(0)
+      expect(strasbourgMaxStay(tariff), input).toBeGreaterThanOrEqual(60)
+    })
+  })
+
+  it('Farbe und Schlüssel: nur StrasbourgParseError, nur die drei Farben', () => {
+    fuzz(20260926, 120, StrasbourgParseError, (input) => {
+      expect(['rouge', 'orange', 'vert'], input).toContain(parseStrasbourgColour(input))
+    })
+    fuzz(20260927, 120, StrasbourgParseError, (input) => {
+      const key = strasbourgZoneKey({ couleur: input, id_zone_visiteur: input.length })
+      expect(key, input).toMatch(/^(rouge|orange|vert) [1-9]\d*$/)
+    })
+  })
+})
+
 describe('Höchstparkdauer unter Beschuss', () => {
   // `undefined` heisst „keine Begrenzung“, `0` hiesse „Parken verboten“ — der
   // Unterschied ist der ganze Punkt dieser beiden Funktionen.
@@ -689,6 +728,8 @@ describe('Zeitbudget', () => {
       parseBernInfo,
       parseKrakauPodstrefa,
       parseKrakauSince,
+      parseStrasbourgTariff,
+      parseStrasbourgColour,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

@@ -1508,6 +1508,85 @@ export const KRAKAU: City = {
   },
 }
 
+/**
+ * Straßburg — die erste Stadt in Frankreich, unter dem Kalender `FR-67`
+ * (Bas-Rhin: die elf nationalen Feiertage plus Vendredi saint und
+ * 26. Dezember nach dem Alsace-Moselle-Recht, siehe `holidays.ts`). Beides
+ * hängt am Département, nicht an der Stadt — `holidays` bleibt leer.
+ *
+ * Der Rahmen ist die **Gemeindegrenze der Ville de Strasbourg** aus dem
+ * Datensatz `limites_de_communes` der Eurométropole (33 Gemeinden, Licence
+ * Ouverte v2.0, Stand 25. August 2026; gemessen am 17. September 2026):
+ * 7,6880–7,8361 / 48,4919–48,6462, nach außen gerundet steht das unten. Die
+ * 19 Tarifzonen reichen nur 7,7244–7,7836 / 48,5587–48,5940 — der Kern; die
+ * Robertsau, der Port du Rhin und der Neuhof liegen außerhalb der Parkebene
+ * und innerhalb der Stadt. Kehl liegt jenseits des Rheins und trotzdem im
+ * Rechteck (7,81 / 48,57) — wie Wieliczka bei Krakau; ein Rechteck um eine
+ * Stadt am Fluss fängt das andere Ufer mit. Keine Überschneidung mit einer
+ * anderen Stadt: Freiburg endet bei 48,08, Karlsruhe beginnt bei 8,27.
+ *
+ * Der Mittelpunkt ist die Place Kléber. Zoom 12 wie Frankfurt: 0,15° Länge
+ * und 0,15° Breite sind ein Drittel von Berlins Rahmen; bei 11,5 wäre die
+ * Grande Île eine Briefmarke, bei 13 fielen Robertsau und Neuhof heraus.
+ */
+export const STRASBOURG: City = {
+  key: 'strasbourg',
+  name: 'Straßburg',
+  land: 'FR-67',
+  center: [7.7455, 48.5834],
+  zoom: 12,
+  reportBounds: { minLon: 7.68, minLat: 48.49, maxLon: 7.84, maxLat: 48.65 },
+  sessionBounds: { minLon: 7.45, minLat: 48.3, maxLon: 8.05, maxLat: 48.85 },
+  heatGrid: { id: 'strasbourg', originLon: 7.68, originLat: 48.49, latitude: 48.58 },
+  attribution: {
+    /**
+     * Wörtlich aus den Metadaten des Datensatzes (`publisher` und
+     * `attributions`: „Ville de Strasbourg"); der Katalog ist das
+     * Opendatasoft-Portal der Ville et Eurométropole. Die Licence Ouverte
+     * verlangt „la paternité de l'« Information » : sa source (a minima le
+     * nom du « Producteur ») et la date de sa dernière mise à jour" — das
+     * Datum steht in `meta.json` (`geprueftAm`) und in der Quellenzeile der App.
+     */
+    source: 'Ville de Strasbourg — Open Data de la Ville et Eurométropole de Strasbourg (data.strasbourg.eu)',
+    // Die Adresse, die der Datenbau wirklich abruft.
+    datasetUrl: 'https://data.strasbourg.eu/api/explore/v2.1/catalog/datasets/stationnement-payant/exports/geojson',
+    /**
+     * **Version 1.0, nicht 2.0** — nachgemessen, nicht angenommen: Das Feld
+     * `license` des Datensatzes lautet „Licence Ouverte (Etalab)" und
+     * `license_url` zeigt auf das PDF von 2014 (Dokument vom 17. Oktober
+     * 2011, die Fassung 1.0); andere Datensätze desselben Portals tragen
+     * ausdrücklich „Licence Ouverte v2.0 (Etalab)" mit dem PDF von 2017, und
+     * data.gouv.fr führt den geernteten Eintrag mit dem Lizenzschlüssel
+     * `fr-lo` (Licence Ouverte 1.0). Beide Fassungen verlangen dieselbe
+     * Nennung von Quelle und Stand; 2.0 ist laut eigenem Text mit CC BY
+     * kompatibel. Die Familie ist `cc-by`, weil die App an genau diesen
+     * beiden Auflagen hängt: Nennung und der Hinweis, dass die Daten ohne
+     * Gewähr kommen („L'« Information » est mise à disposition telle que
+     * produite ou reçue").
+     */
+    licence: 'Licence Ouverte / Open Licence (Etalab), Version 1.0',
+    licenceUrl: 'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+  // Belegt auf der Seite der Ville et Eurométropole „Véhicule mis en
+  // fourrière : que faire ?" (gelesen am 17. September 2026), wörtlich: „La
+  // fourrière eurométropolitaine est confiée à la Société strasbourgeoise
+  // d'Enlèvement - SEG, au 1C Rue du Doubs, 67100 Strasbourg. Accueil 24h/24h
+  // et 7j/7j – Téléphone : 03 90 40 14 00". Ohne „mainlevée" (Freigabe der
+  // Polizei oder über den Dienst des Innenministeriums) gibt die Fourrière
+  // kein Fahrzeug heraus — deshalb der Satz in `note`.
+  towedVehicles: {
+    authority: 'Fourrière eurométropolitaine — Société strasbourgeoise d\'Enlèvement (SEG), 1C Rue du Doubs, 67100 Strasbourg',
+    url: 'https://www.strasbourg.eu/vehicule-fourriere-que-faire',
+    phone: '+33 3 90 40 14 00',
+    checkedOn: '2026-09',
+    note:
+      'Rund um die Uhr besetzt. Vor der Abholung braucht es die Freigabe (mainlevée) der Polizei ' +
+      'oder aus dem Online-Dienst des Innenministeriums; 121,27 € Abschleppen plus 6,42 € je angefangenem Tag.',
+  },
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1534,6 +1613,7 @@ export const CITIES: readonly City[] = [
   EINDHOVEN,
   GENF,
   KRAKAU,
+  STRASBOURG,
 ]
 
 /**

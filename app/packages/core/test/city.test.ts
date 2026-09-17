@@ -21,6 +21,7 @@ import {
   GRAZ,
   HAMBURG,
   MUENCHEN,
+  STRASBOURG,
   suggestCity,
   withinCity,
   WIEN,
@@ -361,6 +362,23 @@ describe('cityAt', () => {
     expect(cityCountry(cityByKey('krakau'))).toBe('PL')
   })
 
+  // Straßburg ist die erste Stadt in Frankreich. Der Rahmen kommt aus der
+  // Gemeindegrenze (limites_de_communes), nicht aus den 19 Tarifzonen des
+  // Kerns: Die Robertsau im Norden und der Neuhof im Süden haben keine
+  // Zone und gehören dazu. Kehl liegt im Rechteck — das andere Rheinufer,
+  // wie Wieliczka bei Krakau —, Offenburg, Haguenau und Freiburg nicht.
+  it('löst die Place Kléber nach Straßburg auf und reicht bis Robertsau und Neuhof', () => {
+    expect(cityAt(7.7455, 48.5834)?.key).toBe('strasbourg')
+    expect(cityAt(7.7895, 48.6155)?.key).toBe('strasbourg') // Robertsau
+    expect(cityAt(7.7485, 48.5215)?.key).toBe('strasbourg') // Neuhof
+    expect(cityAt(7.8096, 48.5716)?.key).toBe('strasbourg') // Kehl — das Rechteck fängt das andere Ufer
+    expect(cityAt(7.9405, 48.4736)).toBeUndefined() // Offenburg
+    expect(cityAt(7.7906, 48.8156)).toBeUndefined() // Haguenau
+    expect(cityAt(7.8522, 47.9959)?.key).toBe('freiburg') // Freiburg bleibt Freiburg
+    expect(cityCountry(STRASBOURG)).toBe('FR')
+    expect(COUNTRY_NAMES[cityCountry(STRASBOURG)]).toBe('Frankreich')
+  })
+
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
     for (const city of CITIES) {
       const { minLon, minLat, maxLon, maxLat } = city.reportBounds
@@ -535,6 +553,11 @@ describe('die Lizenzangaben jeder Stadt', () => {
     // Bern: Nutzungsbedingungen Version 1.0 — „Freie Nutzung. Quellenangabe ist
     // Pflicht." laut Geodatenkatalog, „keine Gewähr" laut Ziffer 7.
     'https://map.bern.ch/geoportal/data/Nutzungsbedingungen_Geodaten_Stadt-Bern_1.0.pdf',
+    // Straßburg: Licence Ouverte (Etalab) 1.0 — „mentionner la paternité de
+    // l'« Information » : sa source (a minima le nom du « Producteur ») et la
+    // date de sa dernière mise à jour"; die Fassung 2.0 nennt sich selbst
+    // kompatibel mit CC BY. Die Adresse ist die, die der Datensatz nennt.
+    'https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf',
   ])
 
   it('setzt licenceFamily passend zu Lizenztext und Namensnennung', () => {

@@ -1,0 +1,137 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://data.strasbourg.eu/api/explore/v2.1/catalog/datasets/strasbourg-10-quartiers/exports/geojson",
+  "anzahl": 10,
+  "features": [
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.785669,
+        48.619298
+      ],
+      "geo_point_2d": {
+        "lon": 7.79827738457183,
+        "lat": 48.61400106674178
+      },
+      "id_quart10": 6,
+      "nom": "Robertsau-Wacken"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.740206,
+        48.547535
+      ],
+      "geo_point_2d": {
+        "lon": 7.746147762240887,
+        "lat": 48.55603413926517
+      },
+      "id_quart10": 4,
+      "nom": "Meinau"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.762224,
+        48.586535
+      ],
+      "geo_point_2d": {
+        "lon": 7.77413438745706,
+        "lat": 48.587424443650725
+      },
+      "id_quart10": 1,
+      "nom": "Conseil des XV"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.741012,
+        48.570479
+      ],
+      "geo_point_2d": {
+        "lon": 7.780130150297827,
+        "lat": 48.56997944045209
+      },
+      "id_quart10": 9,
+      "nom": "Neudorf-Musau-Port du Rhin"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.759787,
+        48.545562
+      ],
+      "geo_point_2d": {
+        "lon": 7.780716885953766,
+        "lat": 48.527942669700415
+      },
+      "id_quart10": 2,
+      "nom": "Neuhof"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.707393,
+        48.602961
+      ],
+      "geo_point_2d": {
+        "lon": 7.712441856631713,
+        "lat": 48.59363632683772
+      },
+      "id_quart10": 5,
+      "nom": "Cronenbourg-Hautepierre-Poteries-Hohberg"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.73863,
+        48.58761
+      ],
+      "geo_point_2d": {
+        "lon": 7.737517900176487,
+        "lat": 48.58079015043795
+      },
+      "id_quart10": 8,
+      "nom": "Gare-Kléber"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.696582,
+        48.575904
+      ],
+      "geo_point_2d": {
+        "lon": 7.715098841225947,
+        "lat": 48.571347382062605
+      },
+      "id_quart10": 10,
+      "nom": "Koenigshoffen-Montagne Verte-Elsau"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.75092,
+        48.579366
+      ],
+      "geo_point_2d": {
+        "lon": 7.765113763224038,
+        "lat": 48.57805340837964
+      },
+      "id_quart10": 7,
+      "nom": "Bourse-Esplanade-Krutenau"
+    },
+    {
+      "geometryType": "Polygon",
+      "firstPoint": [
+        7.739439,
+        48.590787
+      ],
+      "geo_point_2d": {
+        "lon": 7.751508686562046,
+        "lat": 48.59038277025896
+      },
+      "id_quart10": 3,
+      "nom": "Strasbourg-centre"
+    }
+  ]
+}
