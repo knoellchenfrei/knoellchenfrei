@@ -31,6 +31,12 @@ import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import { GenfParseError, parseGenfTypeStationnement, type GenfLineProperties, type GenfZoneProperties } from '../src/genf.js'
 import { isBernZoneUnattributed, type BernZoneProperties } from '../src/bern.js'
 import type { KrakauGranicaProperties, KrakauSektorProperties } from '../src/krakau.js'
+import {
+  isSaarbrueckenLabelEmpty,
+  type SaarbrueckenLabelProperties,
+  type SaarbrueckenStadtteilLabelProperties,
+  type SaarbrueckenZoneProperties,
+} from '../src/saarbruecken.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
 import type { RostockAutomatProperties, RostockZoneProperties } from '../src/rostock.js'
@@ -1061,5 +1067,44 @@ describe('Geometrie-Fixture', () => {
       expect(ring.length).toBeGreaterThanOrEqual(4)
       expect(ring[0]).toEqual(ring[ring.length - 1])
     }
+  })
+})
+
+describe('Saarbrücker Fixtures', () => {
+  const FIXTURE = read<{
+    flaechen: SaarbrueckenZoneProperties[]
+    beschriftungen: { properties: SaarbrueckenLabelProperties }[]
+    stadtteile: { properties: SaarbrueckenStadtteilLabelProperties }[]
+  }>('saarbruecken-parkzonen-2026-09-17.json')
+
+  // Ein Feld, immer eine Zahl, immer 0 — die Fläche weiß nichts über sich.
+  it('führt an den Flächen genau ein Feld', () => {
+    expectShape(FIXTURE.flaechen as unknown as Record<string, unknown>[], { ID: ['number'] })
+  })
+
+  // Alles Text, auch was wie eine Zahl aussieht (`'1495'`, `'15'`); bei den
+  // drei leeren Punkten ist jedes Feld `null`. Wer `Text-Hoehe` als Zahl
+  // läse, bekäme `NaN` — hier stört das nicht, weil nur `Text` gelesen wird,
+  // aber die Typmenge soll es festhalten.
+  it('führt an den Beschriftungen fünf Textfelder, jedes auch null', () => {
+    expectShape(FIXTURE.beschriftungen.map((row) => row.properties) as unknown as Record<string, unknown>[], {
+      Text: ['string', 'null'],
+      'Layer-Ezs': ['string', 'null'],
+      'Text-Attr': ['string', 'null'],
+      'Text-Rot': ['string', 'null'],
+      'Text-Hoehe': ['string', 'null'],
+    })
+    expect(FIXTURE.beschriftungen.filter((row) => isSaarbrueckenLabelEmpty(row.properties))).toHaveLength(3)
+  })
+
+  // Der Text ist Text, die drei Lagefelder sind Zahlen — Rechts- und Hochwert
+  // in Metern, nicht die Lage in Grad; die steht in der Geometrie.
+  it('führt an den Stadtteil-Beschriftungen einen Text und drei Zahlen', () => {
+    expectShape(FIXTURE.stadtteile.map((row) => row.properties) as unknown as Record<string, unknown>[], {
+      PGIS_TXT: ['string'],
+      PGIS_ANG: ['number'],
+      PGIS_R: ['number'],
+      PGIS_H: ['number'],
+    })
   })
 })

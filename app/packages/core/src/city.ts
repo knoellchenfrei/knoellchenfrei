@@ -1508,6 +1508,59 @@ export const KRAKAU: City = {
   },
 }
 
+/**
+ * Saarbrücken — die erste Stadt im Saarland, Klasse C aus dem Open-Data-Portal
+ * der Landeshauptstadt: 27 Bewohnerparkzonen als attributlose MultiPolygone,
+ * die Buchstaben (`A1` … `U`) nur als CAD-Beschriftungspunkte in einer
+ * zweiten Datei, weder Zeiten noch Beträge. Jede Zone trägt `scheduleUnknown`,
+ * die App sagt „Zeiten unbekannt". Was die Stadt an Gebühren regelt
+ * (Gebührenordnung für das Parken auf öffentlichen Straßen und Plätzen,
+ * seit dem 1. März 2026: 0,90 € je angefangene halbe Stunde in der Zone 1,
+ * sonst 0,40/0,50 €, Mo–Sa 8–20 Uhr, Höchstparkdauer 3 Stunden) betrifft die
+ * **Kurzparkzonen**, nicht diese Bewohnerparkzonen — und steht deshalb als
+ * Zitat in `docs/staedte-saarbruecken.md`, nicht als Konstante.
+ *
+ * Der Rahmen kommt aus dem Umriss der 20 Stadtteile (Datensatz „Stadtteile"
+ * desselben Portals, 6,8270–7,1380 / 49,1722–49,3222), nicht aus den Zonen —
+ * die liegen alle in Mitte, bis auf `U` in Dudweiler. Mit 0,31 × 0,15 Grad
+ * ist die Stadt so groß wie Düsseldorf: Zoom 12.
+ *
+ * Lizenz: Das Portal nennt `datenliz-de` — Datenlizenz Deutschland, aber
+ * **ohne** Variante und ohne Verweis; Zero und Namensnennung unterscheiden
+ * sich genau in der Auflage, an der die Oberfläche hängt. Deshalb `unklar`
+ * und die strengere Lesart (Nennung), bis das Ordnungsamt die Variante
+ * bestätigt.
+ *
+ * Feiertage: `SL` — § 2 Abs. 1 SFG, zwölf Tage, Mariä Himmelfahrt landesweit.
+ */
+export const SAARBRUECKEN: City = {
+  key: 'saarbruecken',
+  name: 'Saarbrücken',
+  land: 'SL',
+  center: [6.9965, 49.2335],
+  zoom: 12,
+  reportBounds: { minLon: 6.82, minLat: 49.17, maxLon: 7.14, maxLat: 49.33 },
+  sessionBounds: { minLon: 6.6, minLat: 49.0, maxLon: 7.4, maxLat: 49.5 },
+  heatGrid: { id: 'saarbruecken', originLon: 6.82, originLat: 49.17, latitude: 49.24 },
+  attribution: {
+    // `author` und `maintainer` des CKAN-Datensatzes, wörtlich.
+    source: 'Landeshauptstadt Saarbrücken, Ordnungsamt — opendata.saarbruecken.de',
+    // Die Datei, die der Datenbau als Flächen liest.
+    datasetUrl:
+      'https://opendata.saarbruecken.de/dataset/bc0c5b4c-986c-4e7e-92c7-70a150ef3bc3/resource/7ec001d8-f31a-4c6a-84c3-fafe0046ac0f/download/parkzonen_fl.geojson',
+    licence: 'Datenlizenz Deutschland, Variante nicht ausgewiesen („datenliz-de")',
+    // Die Seite, auf der die Variante stehen müsste.
+    licenceUrl: 'https://opendata.saarbruecken.de/dataset/parkzonen',
+    attributionRequired: true,
+    licenceFamily: 'unklar',
+  },
+  licenceOpen:
+    'Das Open-Data-Portal der Landeshauptstadt Saarbrücken nennt für die Parkzonen nur „datenliz-de" — ' +
+    'Datenlizenz Deutschland ohne Variante (Zero oder Namensnennung) und ohne Verweis; die Lizenzliste ' +
+    'des Portals kennt den Schlüssel nicht, GovData führt den Datensatz nicht. Welche Variante gilt, muss ' +
+    'das Ordnungsamt bestätigen (opendata@saarbruecken.de). Stand 17. September 2026.',
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1534,6 +1587,7 @@ export const CITIES: readonly City[] = [
   EINDHOVEN,
   GENF,
   KRAKAU,
+  SAARBRUECKEN,
 ]
 
 /**

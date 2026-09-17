@@ -106,6 +106,7 @@ import {
   parseBernZoneName,
 } from '../src/bern.js'
 import { KrakauParseError, parseKrakauPodstrefa, parseKrakauSince } from '../src/krakau.js'
+import { SaarbrueckenParseError, parseSaarbrueckenStadtteil, parseSaarbrueckenZoneLabel } from '../src/saarbruecken.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -642,6 +643,26 @@ describe('Berner Feldparser unter Beschuss', () => {
     })
     fuzz(20260921, 120, BernParseError, (input) => {
       expect(bernZoneNameFromPlz('3006', input), input).toMatch(/^3006(\/[1-9]\d?)?$/)
+    })
+  })
+})
+
+/**
+ * Saarbrücken hat weder Zeit- noch Gebührenparser — die Flächen tragen kein
+ * einziges Attribut. Beschossen werden die zwei Leser der Beschriftungen:
+ * Ein Zonenschlüssel aus Unfug stünde in `zone-keys.generated.ts`, ein
+ * Stadtteil aus Unfug in der Kopfzeile des Panels.
+ */
+describe('Saarbrücker Beschriftungsleser unter Beschuss', () => {
+  it('wirft nur SaarbrueckenParseError und liefert nur Zonen A–U und Stadtteile mit Bezirk', () => {
+    fuzz(20260922, 120, SaarbrueckenParseError, (input) => {
+      expect(parseSaarbrueckenZoneLabel(input), input).toMatch(/^[ABCDEFGHIJLNRU][1-9]?$/)
+    })
+    fuzz(20260923, 120, SaarbrueckenParseError, (input) => {
+      const teil = parseSaarbrueckenStadtteil(input)
+      expect(teil.number, input).toBeGreaterThanOrEqual(11)
+      expect(teil.number, input).toBeLessThanOrEqual(48)
+      expect(['Mitte', 'West', 'Dudweiler', 'Halberg'], input).toContain(teil.bezirk)
     })
   })
 })
