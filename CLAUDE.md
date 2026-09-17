@@ -10,7 +10,8 @@ kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
 Angeschlossen sind Berlin, Hamburg, Frankfurt am Main, München, Köln,
 Düsseldorf und Karlsruhe — die letzten drei seit dem 9. September — und seit dem
 16. September die Städte der zweiten Runde, seit dem 17. September Wien als
-erste Stadt außerhalb Deutschlands; die vollständige Liste mit je einem
+erste Stadt außerhalb Deutschlands und Saarbrücken als erste Stadt im
+Saarland (Klasse C, Zonen ohne Zeiten); die vollständige Liste mit je einem
 Bericht `docs/staedte-<stadt>.md` steht in `docs/staedte.md`.
 Ausgeliefert wird sie hinter einem Passwort-Riegel — der Stand ist geschlossener
 Testbetrieb, siehe `apps/web/functions/_middleware.ts` und `docs/hosting.md`.

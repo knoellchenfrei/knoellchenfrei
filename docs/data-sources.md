@@ -806,6 +806,54 @@ Podstrefa, darunter 20 mit zwei Podstrefen und Warntext),
 `Parkomaty_Ewidencja/1` (Parkautomaten der ZDMK-Karte), `Tereny_newralgiczne_OPP/1`
 (eine Warnfläche an der ul. Wrocławska) — alle ohne Zeiten und Tarif.
 
+## Verwendet — Saarbrücken
+
+Abgerufen am 17. September 2026 von der **Landeshauptstadt Saarbrücken** über
+ihr Open-Data-Portal (`opendata.saarbruecken.de`, CKAN 2.11.4) — die erste
+Stadt im Saarland und die erste deutsche Stadt der **Klasse C**: Die Quelle
+nennt Zonengrenzen und Buchstaben, aber weder Zeiten noch Beträge. Kein
+Dienst, sondern vier statische GeoJSON-Dateien, in `sources.ts` als
+`SAARBRUECKEN_FILES`:
+
+| Ebene | Datei | Umfang |
+| --- | --- | --- |
+| Parkzonen, Flächen | `dataset/parkzonen` → `parkzonen_fl.geojson` (Ordnungsamt) | **27** MultiPolygone mit den Sachdaten `{"ID": 0}` — sonst nichts |
+| Parkzonen, Beschriftung | `parkzonen_txt_pos.geojson` | 30 CAD-Beschriftungspunkte, 27 mit `Text` (`A1` … `U`), drei leer; der Datenbau legt sie in die Flächen, eins zu eins |
+| Stadtteile, Flächen | `dataset/stadtteile` → `stadtteile_fl.geojson` (Hauptamt) | 20 MultiPolygone ohne Attribut, dritte Koordinate `0.0` |
+| Stadtteile, Beschriftung | `stadtteile_txt.geojson` | 20 Punkte `11 Alt-Saarbrücken` … `48 Bübingen`; die Zehnerstelle ist der Stadtbezirk (Mitte, West, Dudweiler, Halberg), gegen die Bezirksseiten der Stadt geprüft |
+
+**Lizenz: Datenlizenz Deutschland, Variante nicht ausgewiesen.** Das Portal
+führt an jedem Datensatz `"license_id": "datenliz-de"` mit
+`"license_url": null`; die Lizenzliste des Portals kennt den Schlüssel nicht,
+die Datensatzseite zeigt ihn wörtlich, GovData führt den Datensatz nicht. Ob
+Zero 2.0 oder Namensnennung 2.0 gemeint ist, sagt niemand. Die App trägt
+deshalb `licenceFamily: 'unklar'`, verlangt bis zur Klärung die Nennung und
+zeigt den Banner; Details und der Weg zur Klärung in
+[staedte-saarbruecken.md](staedte-saarbruecken.md).
+
+Was der Feed **nicht** sagt, und warum hier nichts erfunden wird:
+
+- **Keine Zeiten, kein Tarif, keine Höchstparkdauer** in irgendeinem Feld.
+  Die Gebührenordnung der Stadt (1. Änderungsordnung vom 19. Januar 2026, in
+  Kraft seit 1. März 2026: 0,90 € je angefangene halbe Stunde in Zone 1,
+  sonst 0,40/0,50 €, Höchstparkdauer 3 Stunden, laut Pressemeldung Mo–Sa
+  8–20 Uhr) regelt die **Kurzparkzonen** mit Parkscheinautomaten — nicht die
+  Bewohnerparkzonen des Datensatzes, und wie sich beide überlagern, sagt
+  keine offene Quelle. Jede Zone trägt `scheduleUnknown: true`,
+  `fee: { kind: 'unknown' }`, und `meta.json` führt `schedule` und `fee`
+  unter `absent`.
+- **Die Fläche weiß nichts über sich.** Ein Zonenbuchstabe kommt nur über
+  Punkt-in-Polygon aus der zweiten Datei; der Datenbau bricht ab, sobald
+  eine Fläche keinen oder mehr als einen Punkt trägt oder ein Punkt in
+  keiner Fläche liegt. Am 17. September: 27 zu 27.
+- **Zone G** steht in der Datensatzbeschreibung („A, B, C, D, E, F, G, H,
+  I, J, L, N, R und U") und hat weder Fläche noch Beschriftung noch Seite
+  bei der Stadt.
+
+Nicht abgerufen: `dataset/distrikte` (57 Distrikte, nur mit Nummer),
+`wahlbezirke`, `postleitzahl`, `geocodierte-hausnummern`, `radrouten`,
+`sportflaechen`. Parkscheinautomaten, Kurzparkzonen oder Tarife führt das
+Portal nicht. Eine Umweltzone gibt es in Saarbrücken nicht in den Daten.
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
