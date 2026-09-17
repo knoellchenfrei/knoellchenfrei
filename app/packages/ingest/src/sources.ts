@@ -897,6 +897,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   // `fetch-data` „Keine Quellen", obwohl es zwei Dateien gibt.
   innsbruck: [],
   zuerich: ZUERICH_SOURCES,
+  // Kein WFS: Essen kommt vollständig über `cityFiles` (drei DKAN-Dateien).
+  essen: [],
 }
 
 /**
@@ -1099,12 +1101,44 @@ const ZUERICH_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Essen — Stadt Essen, DL-DE/BY-2.0, drei **fertige GeoJSON-Dateien** aus dem
+ * DKAN-Portal `opendata.essen.de`. Kein WFS, kein FeatureServer: Das
+ * Geodatenportal der Stadt (`geodaten.essen.de`) ist aus dieser Umgebung
+ * nicht erreichbar (`CONNECT tunnel failed, 502`), und die Dateien sind der
+ * Weg, den das Open-Data-Portal selbst nennt. Alle drei am 17. September 2026
+ * gemessen: `application/geo+json`, `[lon, lat]` in Grad (die Zonen tragen
+ * `crs: EPSG:4326` im Kopf, die Stadtteile keinen), Zahlen unten aus den
+ * Dateien gezählt.
+ *
+ * Bewusst NICHT abgerufen: `Stadtgrenze_WGS84.geojson` (1 Polygon, diente nur
+ * zum Messen der `reportBounds`), `Stadtbezirke_WGS84.geojson` (9 Bezirke —
+ * die 50 Stadtteile verorten feiner, wie in Düsseldorf), und die Shape-Fassungen
+ * in ETRS89/UTM (EPSG 4647). Einen Datensatz mit Parkscheinautomaten, Tarif-
+ * oder Bewirtschaftungszonen führt der Katalog nicht (110 Datensätze, nach
+ * `park|bewohner|gebühr` gefiltert: nur dieser eine) — Essen bleibt Klasse C.
+ */
+const ESSEN_OPENDATA = 'https://opendata.essen.de/sites/default/files'
+
+const ESSEN_FILES: readonly FileSource[] = [
+  // Die einzigen Flächen: neun Bewohnerparkbereiche, drei Felder, keine
+  // Zeiten, kein Betrag. Katalog `modified` 2022-11-09.
+  { key: 'zones', url: `${ESSEN_OPENDATA}/Bewohnerparkbereiche.geojson`, file: 'zones.json', expectedFeatures: 9 },
+  // Dieselbe Rolle wie Berlins Ortsteile: Kartenkontext und Stadtteilname
+  // im Panel. 50 Polygone mit `STADTTEILE`, aus „Verwaltungsgrenzen der
+  // Stadt Essen" (FB 12 / FB 62), `modified` 2024-07-02.
+  { key: 'districts', url: `${ESSEN_OPENDATA}/Stadtteile_WGS84.geojson`, file: 'districts.json', expectedFeatures: 50 },
+  // Die Umweltzone als drei Polygone (FB 62 / FB 59), `modified` 2024-07-02.
+  { key: 'lowEmissionZone', url: `${ESSEN_OPENDATA}/Umweltzone_Essen_0.geojson`, file: 'umweltzone.json', expectedFeatures: 3 },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
   graz: GRAZ_FILES,
   innsbruck: INNSBRUCK_FILES,
   zuerich: ZUERICH_FILES,
+  essen: ESSEN_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
