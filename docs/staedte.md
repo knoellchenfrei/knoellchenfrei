@@ -11,6 +11,9 @@
 > [staedte-karlsruhe.md](staedte-karlsruhe.md); seit dem 16. September Rostock,
 > [staedte-rostock.md](staedte-rostock.md). Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md), [staedte-cottbus.md](staedte-cottbus.md).
+> Seit dem 17. September die **Niederlande** als Land — Utrecht, Den Haag,
+> Rotterdam, Groningen, Nijmegen, Eindhoven aus einer Quelle, ein Bericht:
+> [staedte-niederlande.md](staedte-niederlande.md).
 > Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
@@ -199,6 +202,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
+| **Niederlande: Utrecht, Den Haag, Rotterdam, Groningen, Nijmegen, Eindhoven** | Nationaal Parkeer Register (RDW), acht Socrata-Tabellen, Gebiete als WKT | je Fenster als Staffel (Betrag je Schrittweite) | je Regelung und Tagestyp, als `900`/`2100` — Feiertage in der Quelle | CC0 | **geprüft**, [ein Bericht für alle sechs](staedte-niederlande.md) |
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
