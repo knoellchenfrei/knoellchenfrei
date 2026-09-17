@@ -19,6 +19,9 @@
 > **Innsbruck**, die erste Stadt außerhalb Deutschlands:
 > [staedte-innsbruck.md](staedte-innsbruck.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
+> Seit dem 17. September **Genf**, die erste Stadt in der Schweiz und die
+> erste der Klasse C — Zonengrenzen ohne Zeiten und Tarif:
+> [staedte-genf.md](staedte-genf.md).
 > [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu **Graz**,
 > die erste Stadt in Österreich: [staedte-graz.md](staedte-graz.md). Dieses Dokument
 > hieß einmal „Zweite Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
@@ -212,6 +215,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
+| **Genf** | 53 Macaron-Zonen (17 in der Ville de Genève) und 13.236 Stellplatzreihen als ArcGIS REST des SITG | **nirgends** — weder im Feed noch an den Reihen | **nirgends** — Klasse C, jede Zone trägt `scheduleUnknown`; die Reihen nennen nur Art und Höchstdauer (`Payant 90 min`, `Gratuit 60 min`, 28 Werte) | SITG-Stufe „A – Accès libre (Open Data)", Quellenangabe Pflicht | **geprüft**, angeschlossen am 17. September — [staedte-genf.md](staedte-genf.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

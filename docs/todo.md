@@ -496,6 +496,23 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 >       schon (`8-21`, `8-18` sind gewöhnliche Stundenspannen); die drei
 >       neuen Zonen kommen mit dem Feed.
 
+> **Genf seit dem 17. September** — die erste Stadt in der Schweiz und die
+> erste der Klasse C, Bericht in [staedte-genf.md](staedte-genf.md). 17
+> Macaron-Zonen der Ville de Genève aus dem SITG, ohne Zeiten und ohne
+> Tarif; Lizenz belegt (Stufe „A – Accès libre", Quellenangabe Pflicht).
+> Drei Punkte bleiben:
+>
+> - [ ] **Zeiten und Tarif — ich, sobald es eine Quelle gibt.** Die
+>       Parkuhren der Fondation des Parkings und die Blaue Zone (Mo–Sa,
+>       Parkscheibe) stehen auf `geneve.ch` als Prosa, in keinem Datensatz.
+>       Bis dahin sagt die App „Zeiten unbekannt", und das ist richtig so.
+> - [ ] **Kanton statt Ville — Entscheidung des Betreibers.** 35 Zonen in
+>       Carouge, Lancy, Vernier, Meyrin, Versoix und 17 weiteren Gemeinden
+>       liegen im selben Datensatz und werden nicht ausgeliefert; der Weg
+>       steht im Bericht unter „Was offen bleibt".
+> - [ ] **Kachelarchiv für Genf — ich.** `build-tiles.sh` liest die Städte
+>       aus `core`; der nächste Lauf legt `genf.pmtiles` an.
+
 > **Angeschaltet am 9. September, auf Anweisung des Betreibers: Köln,
 > Düsseldorf und Karlsruhe.** Der vorbereitete Zweig hatte keine gemeinsame
 > Basis mehr mit `main` (Neuanfang der Historie nach dem Passwort-Fund) und
