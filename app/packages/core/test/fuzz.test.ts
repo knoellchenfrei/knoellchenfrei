@@ -108,6 +108,7 @@ import {
 import { KrakauParseError, parseKrakauPodstrefa, parseKrakauSince } from '../src/krakau.js'
 import { KasselParseError, parseKasselZoneName } from '../src/kassel.js'
 import { EssenParseError, parseEssenAreaName } from '../src/essen.js'
+import { GeraParseError, parseGeraAccessible, parseGeraInfostring, parseGeraZoneKey } from '../src/gera.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -344,6 +345,29 @@ describe('Zeitparser unter Beschuss', () => {
       const name = parseKasselZoneName(input)
       expect(['quartier', 'nummer', 'zentrum']).toContain(name.kind)
       expect(name.key).toBe(input.replace(/\s+/gu, ' ').trim())
+    })
+  })
+
+  // Gera hat drei Parser, und keiner liest eine Zeit: Zonenbuchstabe,
+  // Infotext (`L - Calvinstraße`) und Behindertenparkplatz (`Ort (n Platz)`).
+  // Der Infotext-Parser ruft den Buchstaben-Parser — auch diese Kette darf
+  // nichts anderes als die eigene Klasse werfen.
+  it('Gera wirft nur GeraParseError und liefert nur Buchstaben, Namen und Plätze', () => {
+    fuzz(20260917, 60, GeraParseError, (input) => {
+      const key = parseGeraZoneKey(input)
+      expect(key.letters.length).toBeGreaterThan(0)
+      expect(key.letters.length).toBeLessThan(3)
+      expect(key.key).toBe(key.letters.join('/'))
+    })
+    fuzz(20260918, 120, GeraParseError, (input) => {
+      const info = parseGeraInfostring(input)
+      expect(info.name.length).toBeGreaterThan(0)
+      expect(info.name).toBe(info.name.trim())
+    })
+    fuzz(20260919, 120, GeraParseError, (input) => {
+      const place = parseGeraAccessible(input)
+      expect(place.spaces).toBeGreaterThan(0)
+      expect(place.label.length).toBeGreaterThan(0)
     })
   })
 
@@ -717,6 +741,9 @@ describe('Zeitbudget', () => {
       parseKrakauSince,
       parseKasselZoneName,
       parseEssenAreaName,
+      parseGeraZoneKey,
+      parseGeraInfostring,
+      parseGeraAccessible,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

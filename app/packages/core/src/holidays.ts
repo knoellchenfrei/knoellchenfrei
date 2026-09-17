@@ -34,6 +34,7 @@ export type Land =
   | 'BW'
   | 'MV'
   | 'BB'
+  | 'TH'
   | 'AT-W'
   | 'AT-ST'
   | 'AT-S'
@@ -410,6 +411,33 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Nachtrag 045, in Kraft seit dem 1. Mai 2004), verlinkt von
  *   <https://www.zh.ch/de/politik-staat/gesetze-beschluesse/gesetzessammlung/zhlex-ls/erlass-822_4-2000_06_26-2004_05_01-045.html>.
  *   Gilt für Zürich.
+ * - **TH** — Thüringen hat **elf** Feiertage, die auf einen Werktag fallen
+ *   können: die neun bundesweiten plus den **Weltkindertag** (20. September)
+ *   und den **Reformationstag** (31. Oktober). § 2 Abs. 1 des Thüringer
+ *   Feiertagsgesetzes (ThürFtG) vom 21. Dezember 1994 (GVBl. S. 1221),
+ *   zuletzt geändert durch das Gesetz zur Einführung des Weltkindertages als
+ *   gesetzlicher Feiertag von 2019 — der 20. September war 2019 zum ersten
+ *   Mal frei; Thüringen ist das einzige Land mit diesem Tag. **Fronleichnam
+ *   steht in § 2 Abs. 2 und gilt nicht landesweit**: nur „in Gemeinden mit
+ *   überwiegend katholischer Bevölkerung", die die Landesregierung durch
+ *   Rechtsverordnung bestimmt — das ist das Eichsfeld und ein Streifen des
+ *   Unstrut-Hainich- und des Wartburgkreises, **nicht Gera** (evangelisch
+ *   geprägt, keine Gemeinde des Landkreises Greiz oder der Stadt Gera in der
+ *   Verordnung). Wie Mariä Himmelfahrt in Bayern gehört er deshalb nicht in
+ *   diese Tabelle, sondern an `City.holidays` einer Stadt, für die er gilt;
+ *   Gera trägt keins. Kein Frauentag, kein Allerheiligen, kein Buß- und
+ *   Bettag (den hat nur Sachsen). **Der Wortlaut ist aus dieser
+ *   Arbeitsumgebung nicht abrufbar**: `landesrecht.thueringen.de` (juris)
+ *   liefert an einen Abruf nur die Hülle seiner React-Anwendung, die
+ *   Dokumentadresse bricht die Verbindung ab, die Feiertagsseite des
+ *   Innenministeriums (`innen.thueringen.de/service/feiertage`) ist ebenso
+ *   eine leere Hülle, und die Rechtssammlung der Evangelischen Kirche in
+ *   Mitteldeutschland kennt das Gesetz nicht. Die Aufzählung oben ist damit
+ *   wie bei MV aus dem Gedächtnis belegt und nicht wörtlich zitiert — der
+ *   offene Punkt in `docs/staedte-gera.md`, „Feiertage", nachzuholen mit
+ *   einem Browser in einer Minute. Bis dahin ist der Zustand laut: Ein Test
+ *   in `holidays.test.ts` hält elf Tage und den Weltkindertag fest, und wer
+ *   den Wortlaut liest, prüft gegen diese Zahl. Gilt für Gera.
  */
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
@@ -420,6 +448,7 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
   MV: { fixed: ['03-08', '10-31'], fromEaster: [] }, // Frauentag, Reformationstag
   BB: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag; Oster- und Pfingstsonntag sind Sonntage
+  TH: { fixed: ['09-20', '10-31'], fromEaster: [] }, // Weltkindertag, Reformationstag; Fronleichnam nur gemeindeweise
   // Österreich: alles Bundesrecht, siehe `NATIONWIDE`.
   'AT-W': { fixed: [], fromEaster: [] },
   'AT-ST': { fixed: [], fromEaster: [] },
