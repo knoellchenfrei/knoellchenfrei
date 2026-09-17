@@ -1,0 +1,186 @@
+[
+  {
+    "OBJECTID": 1,
+    "Podstrefa_": "A",
+    "Nr_sektora": 1,
+    "Uwagi": " ",
+    "Shape__Area": 788753.8359375,
+    "Shape__Length": 3656.751337191849
+  },
+  {
+    "OBJECTID": 2,
+    "Podstrefa_": "A",
+    "Nr_sektora": 2,
+    "Uwagi": " ",
+    "Shape__Area": 737906.26953125,
+    "Shape__Length": 3992.042895298351
+  },
+  {
+    "OBJECTID": 3,
+    "Podstrefa_": "A",
+    "Nr_sektora": 3,
+    "Uwagi": " ",
+    "Shape__Area": 1208501.765625,
+    "Shape__Length": 4700.424418642629
+  },
+  {
+    "OBJECTID": 4,
+    "Podstrefa_": "A",
+    "Nr_sektora": 4,
+    "Uwagi": " ",
+    "Shape__Area": 759798.140625,
+    "Shape__Length": 5562.196918982556
+  },
+  {
+    "OBJECTID": 5,
+    "Podstrefa_": "B",
+    "Nr_sektora": 5,
+    "Uwagi": " ",
+    "Shape__Area": 670925.05078125,
+    "Shape__Length": 3377.771318133581
+  },
+  {
+    "OBJECTID": 6,
+    "Podstrefa_": "A",
+    "Nr_sektora": 6,
+    "Uwagi": " ",
+    "Shape__Area": 759217.8515625,
+    "Shape__Length": 3932.455710654849
+  },
+  {
+    "OBJECTID": 7,
+    "Podstrefa_": "C",
+    "Nr_sektora": 7,
+    "Uwagi": " ",
+    "Shape__Area": 244414.82421875,
+    "Shape__Length": 4817.852017099122
+  },
+  {
+    "OBJECTID": 8,
+    "Podstrefa_": "C",
+    "Nr_sektora": 8,
+    "Uwagi": " ",
+    "Shape__Area": 838382.66796875,
+    "Shape__Length": 4414.651877586236
+  },
+  {
+    "OBJECTID": 9,
+    "Podstrefa_": "C",
+    "Nr_sektora": 9,
+    "Uwagi": " ",
+    "Shape__Area": 1485860.9453125,
+    "Shape__Length": 5562.006947339139
+  },
+  {
+    "OBJECTID": 10,
+    "Podstrefa_": "B",
+    "Nr_sektora": 10,
+    "Uwagi": " ",
+    "Shape__Area": 1055223.66015625,
+    "Shape__Length": 5818.912069488793
+  },
+  {
+    "OBJECTID": 11,
+    "Podstrefa_": "B",
+    "Nr_sektora": 11,
+    "Uwagi": " ",
+    "Shape__Area": 262899.62890625,
+    "Shape__Length": 2362.326392103256
+  },
+  {
+    "OBJECTID": 12,
+    "Podstrefa_": "B",
+    "Nr_sektora": 12,
+    "Uwagi": " ",
+    "Shape__Area": 1180688.9140625,
+    "Shape__Length": 4542.381096904922
+  },
+  {
+    "OBJECTID": 13,
+    "Podstrefa_": "A",
+    "Nr_sektora": 13,
+    "Uwagi": " ",
+    "Shape__Area": 1001242.37109375,
+    "Shape__Length": 4497.185520154099
+  },
+  {
+    "OBJECTID": 14,
+    "Podstrefa_": "C",
+    "Nr_sektora": 15,
+    "Uwagi": " ",
+    "Shape__Area": 2453143.05078125,
+    "Shape__Length": 6319.579171403858
+  },
+  {
+    "OBJECTID": 15,
+    "Podstrefa_": "C",
+    "Nr_sektora": 16,
+    "Uwagi": " ",
+    "Shape__Area": 1596460.80859375,
+    "Shape__Length": 5118.444392112078
+  },
+  {
+    "OBJECTID": 16,
+    "Podstrefa_": "C",
+    "Nr_sektora": 19,
+    "Uwagi": " ",
+    "Shape__Area": 864610.62109375,
+    "Shape__Length": 4073.440144092129
+  },
+  {
+    "OBJECTID": 17,
+    "Podstrefa_": "A",
+    "Nr_sektora": 20,
+    "Uwagi": " ",
+    "Shape__Area": 1748775.46875,
+    "Shape__Length": 5837.374407178214
+  },
+  {
+    "OBJECTID": 18,
+    "Podstrefa_": "C",
+    "Nr_sektora": 21,
+    "Uwagi": " ",
+    "Shape__Area": 828357.01171875,
+    "Shape__Length": 3946.8057920388023
+  },
+  {
+    "OBJECTID": 19,
+    "Podstrefa_": "C",
+    "Nr_sektora": 22,
+    "Uwagi": " ",
+    "Shape__Area": 1178532.44140625,
+    "Shape__Length": 4802.507641391137
+  },
+  {
+    "OBJECTID": 20,
+    "Podstrefa_": "B",
+    "Nr_sektora": 30,
+    "Uwagi": " ",
+    "Shape__Area": 604008.421875,
+    "Shape__Length": 3253.7983838371315
+  },
+  {
+    "OBJECTID": 21,
+    "Podstrefa_": "C",
+    "Nr_sektora": 23,
+    "Uwagi": " ",
+    "Shape__Area": 425635.5703125,
+    "Shape__Length": 2578.766939431115
+  },
+  {
+    "OBJECTID": 22,
+    "Podstrefa_": "C",
+    "Nr_sektora": 24,
+    "Uwagi": " ",
+    "Shape__Area": 99692.109375,
+    "Shape__Length": 2007.2070406770974
+  },
+  {
+    "OBJECTID": 24,
+    "Podstrefa_": "C",
+    "Nr_sektora": 31,
+    "Uwagi": " ",
+    "Shape__Area": 723439.296875,
+    "Shape__Length": 6817.946202940856
+  }
+]

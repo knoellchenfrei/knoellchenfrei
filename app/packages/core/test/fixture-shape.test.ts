@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
+import type { KrakauGranicaProperties, KrakauSektorProperties } from '../src/krakau.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
 import type { RostockAutomatProperties, RostockZoneProperties } from '../src/rostock.js'
@@ -179,6 +180,51 @@ describe('Hamburger Fixture', () => {
 
   it('führt `geplant_aktiv` nur als ganze Zahl', () => {
     for (const row of ROWS) expect(Number.isInteger(row.geplant_aktiv)).toBe(true)
+  })
+})
+
+describe('Krakauer Fixtures', () => {
+  const GRENZEN = read<KrakauGranicaProperties[]>('krk-granice-stref-2026-09-17.json')
+  const ERWEITERUNG = read<KrakauGranicaProperties[]>('krk-poszerzenie-2026-09-17.json')
+  const SEKTOREN = read<KrakauSektorProperties[]>('krk-sektory-2026-09-17.json')
+
+  // Sechs Felder in allen drei Ebenen, nur der Name der Podstrefa wechselt:
+  // `Podstrefa_spp` in der Ebene 37, `Podstrefa_` in den beiden jüngeren.
+  // `Nr_sektora` ist eine Zahl — käme sie als `"12"`, wäre `krakauSektor`
+  // ein Abbruch, nicht ein stiller Schlüsselvergleich, der nie stimmt.
+  it('führt die Grenzen in genau diesen Typen — Uwagi ist ein Leerzeichen', () => {
+    expectShape(GRENZEN as unknown as Record<string, unknown>[], {
+      OBJECTID: ['number'],
+      Podstrefa_: ['string'],
+      Nr_sektora: ['number'],
+      Uwagi: ['string'],
+      Shape__Area: ['number'],
+      Shape__Length: ['number'],
+    })
+    for (const row of GRENZEN) expect(row.Uwagi, String(row.OBJECTID)).toBe(' ')
+  })
+
+  it('führt die Erweiterung in denselben Typen — Uwagi trägt das Datum', () => {
+    expectShape(ERWEITERUNG as unknown as Record<string, unknown>[], {
+      OBJECTID: ['number'],
+      Podstrefa_: ['string'],
+      Nr_sektora: ['number'],
+      Uwagi: ['string'],
+      Shape__Area: ['number'],
+      Shape__Length: ['number'],
+    })
+    for (const row of ERWEITERUNG) expect(row.Uwagi, String(row.OBJECTID)).toBe('Od 10 sierpnia 2026')
+  })
+
+  it('führt die Ebene 37 mit Podstrefa_spp — und Uwagi durchweg null', () => {
+    expectShape(SEKTOREN as unknown as Record<string, unknown>[], {
+      OBJECTID: ['number'],
+      Podstrefa_spp: ['string'],
+      Nr_sektora: ['number'],
+      Uwagi: ['null'],
+      Shape__Area: ['number'],
+      Shape__Length: ['number'],
+    })
   })
 })
 
