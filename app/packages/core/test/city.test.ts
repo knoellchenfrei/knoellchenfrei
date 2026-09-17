@@ -23,6 +23,7 @@ import {
   GERA,
   GRAZ,
   HAMBURG,
+  HILDESHEIM,
   KASSEL,
   MUENCHEN,
   STRASBOURG,
@@ -650,7 +651,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen', 'saarbruecken', 'stgallen', 'gera'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen', 'saarbruecken', 'stgallen', 'gera', 'hildesheim'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
@@ -1087,3 +1088,57 @@ describe('Gera', () => {
   })
 })
 
+/**
+ * Hildesheim — die erste Stadt in Niedersachsen und die dritte der Klasse C.
+ * Der Rahmen kommt aus den 14 Ortschaften, nicht aus den sieben Zonen:
+ * Sorsum, Himmelsthür und Itzum liegen außerhalb jeder Zone und gehören
+ * dazu.
+ */
+describe('Hildesheim', () => {
+  const MARKTPLATZ: [number, number] = [9.9519, 52.1527]
+  const HAUPTBAHNHOF: [number, number] = [9.9536, 52.1613]
+  const SORSUM: [number, number] = [9.8735, 52.1587]
+  const ITZUM: [number, number] = [9.9891, 52.1218]
+
+  it('nimmt Marktplatz, Hauptbahnhof, Sorsum und Itzum an', () => {
+    for (const point of [MARKTPLATZ, HAUPTBAHNHOF, SORSUM, ITZUM]) {
+      expect(withinCity(HILDESHEIM, ...point)).toBe(true)
+      expect(cityAt(...point)).toBe(HILDESHEIM)
+    }
+  })
+
+  // Hannover (Kröpcke 9,7377 / 52,3744) liegt nördlich, Salzgitter-Bad
+  // (10,3673 / 52,0500) östlich, Alfeld (9,8265 / 51,9852) südlich des
+  // Rahmens. Sarstedt (9,8552 / 52,2359) liegt 4 km nördlich der Nordkante
+  // — auch draußen; Giesen (9,9000 / 52,1950) dagegen knapp drinnen, und
+  // wie in Köln gilt: Eine Meldung von dort wird angenommen und liegt in
+  // keiner Zone.
+  it('verschluckt Hannover, Salzgitter, Alfeld und Sarstedt nicht', () => {
+    expect(cityAt(9.7377, 52.3744)).toBeUndefined()
+    expect(cityAt(10.3673, 52.05)).toBeUndefined()
+    expect(cityAt(9.8265, 51.9852)).toBeUndefined()
+    expect(cityAt(9.8552, 52.2359)).toBeUndefined()
+  })
+
+  it('führt die Lizenz als unklar, mit Nennung, Banner und der Stelle, die sie klären kann', () => {
+    expect(HILDESHEIM.attribution.licenceFamily).toBe('unklar')
+    expect(HILDESHEIM.attribution.attributionRequired).toBe(true)
+    expect(HILDESHEIM.attribution.licenceUrl).toMatch(/^https:\/\/geoportal\.stadt-hildesheim\.de\//)
+    expect(HILDESHEIM.attribution.datasetUrl).toMatch(/^https:\/\/gdi\.stadt-hildesheim\.de\//)
+    expect(HILDESHEIM.licenceOpen).toContain('anfrage@stadt-hildesheim.de')
+    expect(HILDESHEIM.licenceOpen).toMatch(/Stand \d+\. \w+ 20\d\d\./)
+  })
+
+  it('hängt am niedersächsischen Kalender — das erste Land, das nur eine Stadt hat', () => {
+    expect(HILDESHEIM.land).toBe('NI')
+    expect(cityCountry(HILDESHEIM)).toBe('DE')
+    expect(HILDESHEIM.holidays).toBeUndefined()
+    expect(CITIES.filter((city) => city.land === 'NI')).toEqual([HILDESHEIM])
+  })
+
+  it('hat ein eigenes Raster mit Ursprung an der Südwestecke des Rahmens', () => {
+    expect(HILDESHEIM.heatGrid.id).toBe('hildesheim')
+    expect(HILDESHEIM.heatGrid.originLon).toBe(HILDESHEIM.reportBounds.minLon)
+    expect(HILDESHEIM.heatGrid.originLat).toBe(HILDESHEIM.reportBounds.minLat)
+  })
+})

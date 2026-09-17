@@ -709,6 +709,15 @@ Land, dann die Stadt. Die Liste je Land mit Klasse und Lizenz steht im Kopf von
 > keine; Anfrage an das Zentrale GIS der Stadt), Zeiten und Tarif (nur in
 > der Parkgebührenordnung als PDF), der Wortlaut des ThürFtG (aus dieser
 > Umgebung nicht abrufbar) — im Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: Hildesheim**, die erste Stadt in
+> Niedersachsen und die dritte der Klasse C
+> ([staedte-hildesheim.md](staedte-hildesheim.md)): sieben
+> Bewohnerparkzonen A–G als MapServer-WFS, nur Grenzen — jede Zone
+> `scheduleUnknown`. Dazu 14 Ortschaften und `NI` im Feiertagskalender
+> (§ 2 NFeiertagsG, belegt). Offen: die Lizenz (die Nutzungsbedingungen
+> nennen DL-DE/BY-2.0 und untersagen zugleich kommerzielle Nutzung —
+> Anfrage an die Stadt) und die Gebührenordnung, deren Download 410
+> antwortet — im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

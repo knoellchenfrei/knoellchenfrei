@@ -126,6 +126,7 @@ import {
   strasbourgZoneKey,
 } from '../src/strasbourg.js'
 import { GeraParseError, parseGeraAccessible, parseGeraInfostring, parseGeraZoneKey } from '../src/gera.js'
+import { HildesheimParseError, parseHildesheimZoneName } from '../src/hildesheim.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -290,6 +291,17 @@ describe('Zeitparser unter Beschuss', () => {
       expect(name, input).not.toMatch(/^\s|\s$|\s\s|[-.]$/)
       expect(label, input).toBe(numeral === null ? name : `${name} (${numeral})`)
       if (numeral !== null) expect(numeral, input).toMatch(/^(I{1,3}|IV|V|VI{0,3}|IX|X|XI|XII)$/)
+    })
+  })
+
+  // Hildesheims einziger Parser: Der Buchstabe ist der Zonenschlüssel, und
+  // er ist genau ein Großbuchstabe — alles andere wäre eine Zone, die auf
+  // keinem Ausweis der Stadt steht.
+  it('Hildesheims Zonenname wirft nur HildesheimParseError und liefert nur einen Großbuchstaben', () => {
+    fuzz(20260917, 120, HildesheimParseError, (input) => {
+      const { letter, label } = parseHildesheimZoneName(input)
+      expect(letter, input).toMatch(/^[A-Z]$/)
+      expect(label, input).toBe(`Bewohnerparkzone ${letter}`)
     })
   })
 
@@ -845,6 +857,7 @@ describe('Zeitbudget', () => {
       parseGeraZoneKey,
       parseGeraInfostring,
       parseGeraAccessible,
+      parseHildesheimZoneName,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

@@ -2245,6 +2245,15 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "K": "K",
     "L": "L",
   },
+  "hildesheim": {
+    "A": "A",
+    "B": "B",
+    "C": "C",
+    "D": "bezirk:Stadtmitte/Neustadt",
+    "E": "bezirk:Moritzberg/Bockfeld",
+    "F": "F",
+    "G": "G",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2280,6 +2289,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "strasbourg": 19,
   "stgallen": 2,
   "gera": 10,
+  "hildesheim": 7,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

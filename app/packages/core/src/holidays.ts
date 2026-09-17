@@ -36,6 +36,7 @@ export type Land =
   | 'BB'
   | 'SL'
   | 'TH'
+  | 'NI'
   | 'AT-W'
   | 'AT-ST'
   | 'AT-S'
@@ -387,6 +388,27 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Browser in einer Minute. Bis dahin ist der Zustand laut: Ein Test in
  *   `holidays.test.ts` hält elf Tage fest, und wer den Wortlaut liest, prüft
  *   gegen diese Zahl.
+ * - **NI** — Niedersachsen hat **zehn** Feiertage, die auf einen Werktag
+ *   fallen können: die neun bundesweiten plus den **Reformationstag** —
+ *   derselbe Kalender wie Hamburg und Brandenburg. § 2 Abs. 1 des
+ *   Niedersächsischen Gesetzes über die Feiertage (NFeiertagsG), Fassung
+ *   ab dem 29. Juni 2018, wörtlich: „Staatlich anerkannte Feiertage sind:
+ *   a) Neujahrstag, b) Karfreitag, c) Ostermontag, d) der 1. Mai,
+ *   e) Himmelfahrtstag, f) Pfingstmontag, g) der 3. Oktober, als Tag der
+ *   Deutschen Einheit, h) der 31. Oktober, als Reformationstag,
+ *   i) 1. Weihnachtstag, j) 2. Weihnachtstag." Abs. 2: „Diese Tage sind
+ *   Fest-, allgemeine oder gesetzliche Feiertage im Sinne bundes- oder
+ *   landesrechtlicher Vorschriften." Der Buchstabe h kam durch das
+ *   Änderungsgesetz vom 22. Juni 2018 hinein (Innenministerium: „Der
+ *   31. Oktober wurde als Reformationstag durch Änderungsgesetz vom 22. Juni
+ *   2018 neu als staatlich anerkannter Feiertag in das NFeiertagsG
+ *   aufgenommen"); 2017 war er einmalig frei, zum 500. Jahrestag. Kein
+ *   Frauentag, kein Fronleichnam, kein Allerheiligen, kein Buß- und Bettag
+ *   (1995 abgeschafft), keine gemeindeweise Regelung. Gelesen am
+ *   17. September 2026 in NI-VORIS
+ *   (<https://voris.wolterskluwer-online.de/browse/document/f74bc6e7-6ded-3c2c-9afb-b34620456e56>)
+ *   und auf der Seite „Feiertagsrecht" des Niedersächsischen Ministeriums
+ *   für Inneres, Sport und Digitalisierung. Gilt für Hildesheim.
  * - **CH-ZH** — Der Kanton Zürich hat **neun** öffentliche Ruhetage, die
  *   auf einen Werktag fallen können. § 1 Abs. 1 des Ruhetags- und
  *   Ladenöffnungsgesetzes vom 26. Juni 2000 (RLG, LS 822.4), wörtlich:
@@ -494,6 +516,7 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
    */
   SL: { fixed: ['08-15', '11-01'], fromEaster: [60] }, // Mariä Himmelfahrt, Allerheiligen, Fronleichnam
   TH: { fixed: ['09-20', '10-31'], fromEaster: [] }, // Weltkindertag, Reformationstag; Fronleichnam nur gemeindeweise
+  NI: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag, § 2 Abs. 1 Buchst. h NFeiertagsG
   // Österreich: alles Bundesrecht, siehe `NATIONWIDE`.
   'AT-W': { fixed: [], fromEaster: [] },
   'AT-ST': { fixed: [], fromEaster: [] },

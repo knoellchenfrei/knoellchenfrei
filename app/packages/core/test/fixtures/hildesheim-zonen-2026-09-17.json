@@ -1,0 +1,70 @@
+{
+  "quelle": "https://gdi.stadt-hildesheim.de/interface/wfs-ms/Bewohnerparkzonen?service=WFS&version=2.0.0&request=GetFeature&typeNames=ms:Bewohnerparkzonen&outputFormat=application/json&srsName=urn:ogc:def:crs:EPSG::4326",
+  "abgerufenAm": "2026-09-17",
+  "numberMatched": 7,
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379215",
+        "ID": "1",
+        "Zone": "Zone D",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone D_A.shp"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379216",
+        "ID": "2",
+        "Zone": "Zone G",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone G_A.shp"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379217",
+        "ID": "3",
+        "Zone": "Zone A",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone A_A.shp"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379218",
+        "ID": "4",
+        "Zone": "Zone B",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone B_A.shp"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379219",
+        "ID": "5",
+        "Zone": "Zone E",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone E_A.shp"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379220",
+        "ID": "6",
+        "Zone": "Zone F",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone F_A.shp"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "_feature_id": "3379221",
+        "ID": "7",
+        "Zone": "Zone C",
+        "path": "I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone C_A.shp"
+      }
+    }
+  ]
+}

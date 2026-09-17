@@ -2250,6 +2250,15 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "K",
     "L",
   ],
+  "hildesheim": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

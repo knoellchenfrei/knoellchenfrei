@@ -16,7 +16,7 @@ Landesgrenze nennt er das Land dazu („Dein Standort liegt in Wien
 (Österreich)").
 
 **Neue Städte.** Deutschland: Freiburg im Breisgau, Rostock, Schwerin,
-Cottbus, Kassel, Essen, Saarbrücken. Österreich: Wien, Graz, Salzburg,
+Cottbus, Kassel, Essen, Saarbrücken, Gera, Hildesheim. Österreich: Wien, Graz, Salzburg,
 Innsbruck. Schweiz: Zürich, Bern, Genf, St. Gallen. Niederlande: Utrecht,
 Den Haag, Rotterdam, Groningen, Nijmegen, Eindhoven. Frankreich: Strasbourg.
 Polen: Krakau. Die vollständige Liste mit dem
@@ -27,12 +27,13 @@ nicht gab:**
 
 - **„Zeiten unbekannt".** Manche Städte veröffentlichen nur die Grenzen
   ihrer Zonen, weder Zeiten noch Tarif (Bern, Genf, St. Gallen, Krakau,
-  Kassel, Essen, Saarbrücken).
+  Kassel, Essen, Saarbrücken, Gera, Hildesheim).
   Solche Zonen sind grau statt messing oder cyan, und das Blatt sagt, dass
   die Stadt keine Zeiten nennt — statt „keine Gebühr", was dort eine
   Behauptung wäre.
 - **„Lizenz ungeklärt".** Wo eine Stadt ihre Daten ohne Nutzungsbedingungen
-  bereitstellt (Graz, Kassel, Krakau, Saarbrücken), steht ein Hinweis über der Karte und
+  bereitstellt (Graz, Kassel, Krakau, Saarbrücken, Gera, Hildesheim), steht
+  ein Hinweis über der Karte und
   in den Einstellungen. Die Zonen sind trotzdem da; die Frage an die Stadt
   ist gestellt.
 - **„Tarif laut Verordnung".** Wien, Salzburg und Zürich veröffentlichen die

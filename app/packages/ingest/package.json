@@ -32,6 +32,7 @@
     "build-data-strasbourg": "tsx src/build-data-strasbourg.ts",
     "build-data-stgallen": "tsx src/build-data-stgallen.ts",
     "build-data-gera": "tsx src/build-data-gera.ts",
+    "build-data-hildesheim": "tsx src/build-data-hildesheim.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

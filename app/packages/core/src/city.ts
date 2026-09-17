@@ -1922,6 +1922,80 @@ export const GERA: City = {
   // das Feld, zeigt die Oberfläche den Abschnitt nicht; kein Rückfall auf Berlin.
 }
 
+/**
+ * Hildesheim — die erste Stadt in Niedersachsen und die dritte der
+ * **Klasse C**: Der MapServer-WFS der Stadt liefert sieben Bewohnerparkzonen
+ * A bis G als Polygone mit dem Buchstaben und sonst nichts — keine Zeiten,
+ * keinen Betrag, keine Höchstparkdauer. Jede Zone trägt deshalb
+ * `scheduleUnknown`, und die App sagt „Zeiten unbekannt" statt „frei".
+ *
+ * Der Rahmen ist gemessen, nicht geschätzt, und stammt aus den
+ * **14 Ortschaften** desselben Dienstes (`ms:Ortschaften`, abgerufen am
+ * 17. September 2026), die zusammen das Stadtgebiet bilden:
+ * 9,846585–10,042798 / 52,093304–52,193905; die `WGS84BoundingBox` der Ebene
+ * im GetCapabilities (9,844003–10,046531 / 52,090628–52,196575) ist die
+ * gröbere Hülle derselben Fläche. Nach außen gerundet steht das unten. Die
+ * sieben Zonen selbst liegen nur zwischen 9,927 und 9,959 Länge in der
+ * Innenstadt — wer den Rahmen daraus nähme, wiese eine Meldung aus Sorsum,
+ * Himmelsthür oder Itzum als „außerhalb" ab.
+ *
+ * Der Mittelpunkt ist die Mitte des Rahmens der sieben Zonen (9,9272–9,9589 /
+ * 52,1448–52,1594), also die Altstadt zwischen Bahnhof und Dom. Zoom **13**
+ * wie in Kassel und Essen: Die Zonen spannen 0,03° × 0,015°; bei 12 wären sie
+ * ein Fleck.
+ *
+ * **Die Lizenz ist offen, und zwar durch Widerspruch, nicht durch Schweigen.**
+ * Die Nutzungsbedingungen des Geoportals (`licenceUrl`) sagen im ersten Satz:
+ * „Die von der Stadt Hildesheim angebotenen und in ihrem Eigentum
+ * befindlichen Daten und Dienste des Geoportals werden unter der Lizenz
+ * L-DE->BY-2.0 (https://www.govdata.de/dl-de/by-2-0) bereitgestellt" — die
+ * Datenlizenz Deutschland Namensnennung 2.0 mit einem Tippfehler im Kürzel —
+ * und verlangen den Vermerk „Geodaten © Stadt Hildesheim". Vier Absätze
+ * weiter, unter „Nutzungseinschränkungen": „Es ist nicht gestattet, das
+ * Geoportal oder seine Inhalte für kommerzielle Zwecke zu nutzen, es sei
+ * denn, es liegt eine ausdrückliche Genehmigung der Stadt Hildesheim vor."
+ * Die DL-DE/BY-2.0 erlaubt kommerzielle Nutzung ausdrücklich; welcher der
+ * beiden Sätze gilt, kann nur die Stadt sagen. Bis dahin: Familie `unklar`,
+ * Nennung wie bei der strengsten Lesart, und der Banner über der Karte.
+ */
+export const HILDESHEIM: City = {
+  key: 'hildesheim',
+  name: 'Hildesheim',
+  land: 'NI',
+  center: [9.943, 52.152],
+  zoom: 13,
+  reportBounds: { minLon: 9.84, minLat: 52.09, maxLon: 10.05, maxLat: 52.2 },
+  sessionBounds: { minLon: 9.6, minLat: 51.9, maxLon: 10.3, maxLat: 52.4 },
+  heatGrid: { id: 'hildesheim', originLon: 9.84, originLat: 52.09, latitude: 52.15 },
+  attribution: {
+    // Der Vermerk, den die Nutzungsbedingungen wörtlich verlangen („Für
+    // Veröffentlichungen … ist … der Urheberrechtsvermerk anzubringen:
+    // Geodaten © Stadt Hildesheim"); der Dienst selbst nennt keinen
+    // Anbieter (`ows:ProviderName` leer).
+    source: 'Geodaten © Stadt Hildesheim — Geoportal der Stadt Hildesheim (gdi.stadt-hildesheim.de)',
+    // Der Dienst, den der Datenbau wirklich abruft — nicht die Portalseite
+    // (`geoportal.stadt-hildesheim.de/…/bewohnerparkzonen-karte-im-geoportal-900004318-33610.html`).
+    datasetUrl: 'https://gdi.stadt-hildesheim.de/interface/wfs-ms/Bewohnerparkzonen',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0 laut Nutzungsbedingungen, dort zugleich mit Vorbehalt gegen kommerzielle Nutzung',
+    // Die Seite, auf der die Lizenz steht — und der Vorbehalt dazu.
+    licenceUrl:
+      'https://geoportal.stadt-hildesheim.de/portal/seiten/nutzungsbedingungen-geoportal-900004129-33610.html',
+    attributionRequired: true,
+    licenceFamily: 'unklar',
+  },
+  licenceOpen:
+    'Die Nutzungsbedingungen des Geoportals Hildesheim stellen die Daten unter die Datenlizenz ' +
+    'Deutschland Namensnennung 2.0 und untersagen vier Absätze weiter jede kommerzielle Nutzung ' +
+    'ohne ausdrückliche Genehmigung — die Lizenz erlaubt sie. Welcher Satz gilt, muss die Stadt ' +
+    'Hildesheim (anfrage@stadt-hildesheim.de, Markt 1, 31134 Hildesheim, oder das Kontaktformular ' +
+    'des Geoportals) bestätigen. Stand 17. September 2026.',
+  // Bewusst ohne `towedVehicles`: Auf stadt-hildesheim.de fand sich am
+  // 17. September keine Seite, die eine Auskunftsstelle für abgeschleppte
+  // Fahrzeuge mit Namen und Nummer nennt — die Parkseite nennt nur
+  // 33.2 Ordnung und Gewerbe für Ausweise und Bußgelder. Fehlt das Feld,
+  // zeigt die Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1954,6 +2028,7 @@ export const CITIES: readonly City[] = [
   STRASBOURG,
   STGALLEN,
   GERA,
+  HILDESHEIM,
 ]
 
 /**

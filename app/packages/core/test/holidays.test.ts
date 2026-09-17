@@ -403,3 +403,53 @@ describe('Thüringen', () => {
   })
 })
 
+/**
+ * Niedersachsen — das erste Land, das genau Hamburgs Kalender hat: die neun
+ * bundesweiten plus den Reformationstag, § 2 Abs. 1 NFeiertagsG. Gemessen
+ * gegen drei Nachbarn, damit der Eintrag nicht nur „stimmt", sondern sich
+ * an den Stellen unterscheidet, an denen die Länder sich unterscheiden.
+ */
+describe('Niedersachsen', () => {
+  it('hat zehn Feiertage: die neun bundesweiten plus den Reformationstag', () => {
+    const ni = holidaysFor('NI', 2026)
+    expect(ni.size).toBe(10)
+    expect(ni.has('2026-10-31')).toBe(true) // Reformationstag, Buchst. h
+    expect(ni.has('2026-01-01')).toBe(true) // Neujahrstag, Buchst. a
+    expect(ni.has('2026-04-03')).toBe(true) // Karfreitag, Buchst. b
+    expect(ni.has('2026-05-14')).toBe(true) // Himmelfahrtstag, Buchst. e
+    expect(ni.has('2026-10-03')).toBe(true) // Tag der Deutschen Einheit, Buchst. g
+  })
+
+  it('verwehrt dem Land, was seine Nachbarn haben und es nicht', () => {
+    const ni = holidaysFor('NI', 2026)
+    expect(ni.has('2026-03-08')).toBe(false) // Frauentag: Berlin, Mecklenburg-Vorpommern
+    expect(ni.has('2026-06-04')).toBe(false) // Fronleichnam: Hessen, NRW
+    expect(ni.has('2026-11-01')).toBe(false) // Allerheiligen: NRW, Bayern
+    expect(ni.has('2026-01-06')).toBe(false) // Drei Könige: Bayern, Baden-Württemberg
+    expect(ni.has('2026-11-18')).toBe(false) // Buß- und Bettag: seit 1995 nur Sachsen
+  })
+
+  it('ist mit Hamburg und Brandenburg identisch und unterscheidet sich von Hessen um zwei Tage', () => {
+    const ni = [...holidaysFor('NI', 2026)].sort()
+    expect(ni).toEqual([...holidaysFor('HH', 2026)].sort())
+    expect(ni).toEqual([...holidaysFor('BB', 2026)].sort())
+    const he = holidaysFor('HE', 2026)
+    const nurNi = ni.filter((tag) => !he.has(tag))
+    const nurHe = [...he].filter((tag) => !holidaysFor('NI', 2026).has(tag))
+    expect(nurNi).toEqual(['2026-10-31'])
+    expect(nurHe).toEqual(['2026-06-04'])
+  })
+
+  it('erkennt den Reformationstag aus einer Ortszeit-Ablesung — in Hildesheim, nicht in Frankfurt', () => {
+    const clock = berlinWallClock(Date.parse('2026-10-31T11:00:00+01:00'))
+    expect(isHoliday('NI', clock)).toBe(true)
+    expect(isHoliday('HE', clock)).toBe(false)
+  })
+
+  it('zählt ihn auch rückwirkend, weil die Tabelle kein Inkrafttreten kennt', () => {
+    // 2018 ist das erste Jahr mit Buchstabe h; die Tabelle kennt kein
+    // Datum, also gilt er auch für 2016 — wer historische Zeiten rechnet,
+    // muss das wissen. Für die App zählt nur die Gegenwart.
+    expect(holidaysFor('NI', 2016).has('2016-10-31')).toBe(true)
+  })
+})
