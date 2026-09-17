@@ -11,6 +11,8 @@
 > [staedte-karlsruhe.md](staedte-karlsruhe.md); seit dem 16. September Rostock,
 > [staedte-rostock.md](staedte-rostock.md). Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md), [staedte-cottbus.md](staedte-cottbus.md).
+> Seit dem 17. September Wien, die erste Stadt außerhalb Deutschlands:
+> [staedte-wien.md](staedte-wien.md).
 > Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
@@ -200,6 +202,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
+| **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

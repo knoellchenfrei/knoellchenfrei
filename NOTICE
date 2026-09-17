@@ -25,6 +25,7 @@ in `packages/core/src/city.ts` trägt den Unterschied bis in die Oberfläche.
 | Freiburg im Breisgau | Stadt Freiburg, www.freiburg.de (Garten- und Tiefbauamt, Stabsstelle Digitales Bauen und GeoIT) | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) |
 | Rostock | Hanse- und Universitätsstadt Rostock — geo.sv.rostock.de, OpenData HRO | [Creative Commons Zero 1.0 Universell (CC0 1.0)](https://creativecommons.org/publicdomain/zero/1.0/deed.de) — gemeinfrei, Nennung freiwillig |
 | Cottbus | Stadt Cottbus/Chóśebuz (2026), Fachbereich Ordnung und Sicherheit — opendataportal.cottbus.de | [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0) — die Stadt verlangt als Quellenvermerk „Stadt Cottbus/Chóśebuz" mit dem Jahr des Datenbezugs in Klammern; Tarif und Zeiten werden aus der Parkgebührenordnung vom 1. Juni 2025 ausgeliefert, weil der Datensatz den Stand von 2014 nennt |
+| Wien | Stadt Wien – data.wien.gv.at (Open Government Data Wien) | [Creative Commons Namensnennung 4.0 International](https://creativecommons.org/licenses/by/4.0/deed.de) — die Stadt verlangt den Quellenvermerk wörtlich als „Datenquelle: Stadt Wien – data.wien.gv.at"; der Tarif wird aus der Parkometerabgabeverordnung (ABl. 2025/41) ausgeliefert, weil der Datensatz keinen Betrag führt |
 
 **Die Daten sind verändert.** Aus den amtlichen Diensten werden Teilmengen
 gebildet, Geometrien vereinfacht (Douglas-Peucker, siehe

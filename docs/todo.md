@@ -496,6 +496,12 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > 200, `exceededTransferLimit`). Offen: die Rückfrage an FB 32, warum der
 > Datensatz Betrag und Zeiten von 2014 führt, und ein Lizenzvermerk für die
 > Ortsteile — beides im Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: Wien**, die erste Stadt außerhalb
+> Deutschlands ([staedte-wien.md](staedte-wien.md)): 81 Bezirksflächen und
+> 796 Geschäftsstraßen, die als 24-m-Bänder vor den Flächen liegen und sie
+> überstimmen; Tarif aus der Parkometerabgabeverordnung, Lizenz CC BY 4.0.
+> Offen: die 3.0-AT-Angabe im WFS, ein Satz der Stadt zu Feiertagen, die
+> Abend-Kurzparkzone Stadthalle — im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig
