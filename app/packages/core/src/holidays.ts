@@ -33,6 +33,7 @@ export type Land =
   | 'NW'
   | 'BW'
   | 'MV'
+  | 'BB'
   | 'AT-W'
   | 'AT-ST'
   | 'AT-S'
@@ -304,6 +305,29 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   16. September 2026 als PDF gelesen worden (`dokumentation.landtag-mv.de`,
  *   `regierung-mv.de`); das Landesrechtsportal selbst antwortet ohne
  *   JavaScript nur mit einer leeren Seite. Gilt für Rostock.
+ * - **BB** — Brandenburg hat **zehn** Feiertage, die auf einen Werktag fallen
+ *   können: die neun bundesweiten plus den **Reformationstag**. § 2 Abs. 1
+ *   des Gesetzes über die Sonn- und Feiertage (Feiertagsgesetz – FTG) vom
+ *   21. März 1991 (GVBl. S. 44), zuletzt geändert durch Gesetz vom
+ *   30. April 2015 (GVBl. I Nr. 13), zählt **zwölf** „gesetzlich anerkannte
+ *   Feiertage": „der Neujahrstag (1. Januar), der Karfreitag, der
+ *   Ostersonntag, der Ostermontag, der 1. Mai (Tag der Arbeit), der Christi
+ *   Himmelfahrtstag, der Pfingstsonntag, der Pfingstmontag, der Tag der
+ *   deutschen Einheit (3. Oktober), das Reformationsfest (31. Oktober), der
+ *   1. Weihnachtsfeiertag (25. Dezember), der 2. Weihnachtsfeiertag
+ *   (26. Dezember)". Zwei davon — Ostersonntag und Pfingstsonntag — führt
+ *   Brandenburg anders als die übrigen Länder ausdrücklich als gesetzliche
+ *   Feiertage; für dieses Modell sind sie unerheblich, weil sie immer auf
+ *   einen Sonntag fallen und der Sonntag ohnehin gebührenfrei ist (siehe den
+ *   Kopfkommentar). Deshalb zehn Einträge statt zwölf. Kein Frauentag (nur
+ *   BE und MV), kein Fronleichnam, kein Buß- und Bettag, keine gemeindeweise
+ *   Regelung — § 2 kennt keinen Vorbehalt wie Art. 1 Abs. 1 Nr. 2 BayFTG.
+ *   Der amtliche Text steht unter <https://bravors.brandenburg.de/gesetze/ftg>
+ *   (am 16. September 2026 aus dieser Umgebung nur als JavaScript-Hülle
+ *   abrufbar); gelesen wurde der wortgleiche Auszug im Rechtsportal der
+ *   Evangelischen Kirche Berlin-Brandenburg-schlesische Oberlausitz,
+ *   <https://www.kirchenrecht-ekbo.de/document/16>, abgerufen am
+ *   16. September 2026. Gilt für Cottbus.
  */
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
@@ -313,6 +337,7 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   NW: { fixed: ['11-01'], fromEaster: [60] }, // Allerheiligen, Fronleichnam
   BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
   MV: { fixed: ['03-08', '10-31'], fromEaster: [] }, // Frauentag, Reformationstag
+  BB: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag; Oster- und Pfingstsonntag sind Sonntage
   // Österreich: alles Bundesrecht, siehe `NATIONWIDE`.
   'AT-W': { fixed: [], fromEaster: [] },
   'AT-ST': { fixed: [], fromEaster: [] },

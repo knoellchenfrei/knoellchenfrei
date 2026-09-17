@@ -632,6 +632,34 @@ const ROSTOCK_SOURCES: readonly Source[] = [
   },
 ]
 
+/**
+ * Cottbus/Chóśebuz — Stadt Cottbus, DL-DE/BY-2.0.
+ *
+ * **Kein WFS.** Die Stadt betreibt ein ArcGIS Enterprise
+ * (`datenportal.cottbus.de/server/rest/services`), und beide Parkebenen
+ * liegen als FeatureServer im Ordner `FB32`. Ein FeatureServer kennt weder
+ * `typeNames` noch `outputFormat` noch `srsName`; die Abfrage ist
+ * `…/FeatureServer/<n>/query?where=1%3D1&outFields=*&f=geojson&outSR=4326`.
+ * Deshalb steht Cottbus hier mit einer **leeren** WFS-Liste und zwei
+ * Einträgen in `COTTBUS_FILES` — dieselbe Form wie Kölns CSV, nur zweimal.
+ *
+ * Gemessen am 16. September 2026: `outSR=4326` wirkt (`[14.313, 51.743]`,
+ * also `[lon, lat]`); **ohne** den Parameter antwortet der Dienst im
+ * GeoJSON ebenfalls in Grad, das Layer-CRS ist trotzdem EPSG:25833 — der
+ * Parameter bleibt gesetzt und `assertDegrees` im Datenbau misst nach.
+ * `maxRecordCount` ist 2000, `exceededTransferLimit` fehlt in beiden
+ * Antworten; `fetch.ts` prüft das Feld, weil ein Dienst, der es eines Tages
+ * auf `true` setzt, einen abgeschnittenen Abzug mit 200 liefert.
+ *
+ * Bewusst NICHT abgerufen: `Daten_Admin/Ortsteile` (19 Polygone) und
+ * `FB33/Stadtgrenze` — für keine der beiden Ebenen führt das Open-Data-Portal
+ * einen Eintrag mit Lizenz, nur die Parkebenen tragen den
+ * DL-DE/BY-2.0-Vermerk. Die Stadtgrenze diente nur zum Messen der
+ * `reportBounds`. `FB32/Parkplätze`, `Fahrradboxen` und `Taxistandplätze`
+ * beantworten andere Fragen.
+ */
+const COTTBUS_SOURCES: readonly Source[] = []
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -642,6 +670,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   karlsruhe: KARLSRUHE_SOURCES,
   freiburg: FREIBURG_SOURCES,
   rostock: ROSTOCK_SOURCES,
+  cottbus: COTTBUS_SOURCES,
 }
 
 /**
@@ -658,6 +687,16 @@ export interface FileSource {
   url: string
   /** Dateiname unter `.raw/<stadt>/`. */
   file: string
+  /**
+   * Nur für GeoJSON-Dateien: Wie viele Features erwartet werden.
+   *
+   * Ein ArcGIS FeatureServer antwortet auf jede Frage mit 200 — auch mit
+   * `{"error":{…}}` und auch mit einem abgeschnittenen Ergebnis, das
+   * `exceededTransferLimit: true` trägt. Beides sieht für die Längenprüfung
+   * in `fetch.ts` aus wie eine Datei. Mit dieser Zahl gilt dieselbe
+   * 95-%-Schranke wie bei einem WFS.
+   */
+  expectedFeatures?: number
 }
 
 const KOELN_FILES: readonly FileSource[] = [
@@ -668,9 +707,34 @@ const KOELN_FILES: readonly FileSource[] = [
   },
 ]
 
+const COTTBUS_FB32 = 'https://datenportal.cottbus.de/server/rest/services/FB32'
+const ARCGIS_QUERY = 'query?where=1%3D1&outFields=*&f=geojson&outSR=4326'
+
+const COTTBUS_FILES: readonly FileSource[] = [
+  {
+    key: 'zones',
+    url: `${COTTBUS_FB32}/Bewohnerparkzonen/FeatureServer/7/${ARCGIS_QUERY}`,
+    file: 'zones.json',
+    expectedFeatures: 5,
+  },
+  // Die eigentliche Sachauskunft: Zeiten, Tarifzone und Betrag hängen am
+  // Automaten, nicht an der Zone — wie in Frankfurt und Köln.
+  {
+    key: 'automats',
+    url: `${COTTBUS_FB32}/Parkscheinautomaten/FeatureServer/1/${ARCGIS_QUERY}`,
+    file: 'automats.json',
+    expectedFeatures: 44,
+  },
+]
+
+const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
+  koeln: KOELN_FILES,
+  cottbus: COTTBUS_FILES,
+}
+
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
 export function cityFiles(cityKey: string): readonly FileSource[] {
-  return cityKey === 'koeln' ? KOELN_FILES : []
+  return FILES_BY_CITY[cityKey] ?? []
 }
 
 /**

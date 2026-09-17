@@ -95,11 +95,13 @@ for (const source of SOURCES) {
   }
 }
 
-// Dateien, die kein WFS sind — heute nur Kölns Automaten-CSV. Ohne die
-// JSON-Prüfung von oben: Eine CSV beginnt nicht mit `{`, und `JSON.parse`
-// würde sie verwerfen. Geprüft wird stattdessen, dass etwas Nennenswertes
-// kam: Ein leerer Rumpf oder eine HTML-Fehlerseite wäre sonst als Datei
-// gelandet, und der Datenbau hätte aus null Zeilen gebaut.
+// Dateien, die kein WFS sind — Kölns Automaten-CSV und Cottbus' zwei
+// ArcGIS-Abfragen. Ohne die JSON-Prüfung von oben: Eine CSV beginnt nicht
+// mit `{`, und `JSON.parse` würde sie verwerfen. Geprüft wird stattdessen,
+// dass etwas Nennenswertes kam: Ein leerer Rumpf oder eine HTML-Fehlerseite
+// wäre sonst als Datei gelandet, und der Datenbau hätte aus null Zeilen
+// gebaut. Trägt der Eintrag `expectedFeatures`, ist die Datei GeoJSON und
+// wird wie ein WFS-Abzug gezählt — siehe `pruefeArcGisAntwort`.
 const dateien = cityFiles(CITY_KEY)
 for (const datei of dateien) {
   process.stdout.write(`${datei.key} (Datei) … `)
@@ -110,12 +112,50 @@ for (const datei of dateien) {
     if (body.length < 1000 || body.trimStart().startsWith('<')) {
       throw new Error(`nur ${body.length} Bytes oder HTML statt einer Datei`)
     }
+    const zaehlung =
+      datei.expectedFeatures === undefined ? '' : pruefeArcGisAntwort(body, datei.expectedFeatures)
     writeFileSync(join(RAW, datei.file), body)
-    console.log(`${body.length} Bytes`)
+    console.log(`${body.length} Bytes${zaehlung}`)
   } catch (error) {
     failed += 1
     console.log(`FAILED: ${(error as Error).message}`)
   }
+}
+
+/**
+ * Ein ArcGIS FeatureServer antwortet auf alles mit 200.
+ *
+ * Auf einen falschen Layer, einen Tippfehler in `where` oder einen
+ * gesperrten Dienst kommt `{"error":{"code":400,…}}` — gültiges JSON, 200,
+ * und lang genug für die Längenprüfung oben. Und ein Ergebnis über
+ * `maxRecordCount` (in Cottbus 2000) kommt **abgeschnitten**, mit
+ * `exceededTransferLimit: true` daneben; wer das Feld nicht liest, baut aus
+ * dem ersten Stück und meldet Erfolg. Danach dieselbe 95-%-Schranke wie bei
+ * einem WFS, aus demselben Grund: Eine Parkzone verschwindet nicht.
+ */
+function pruefeArcGisAntwort(body: string, expectedFeatures: number): string {
+  const parsed = JSON.parse(body) as {
+    error?: { code?: number; message?: string }
+    exceededTransferLimit?: boolean
+    features?: unknown[]
+  }
+  if (parsed.error !== undefined) {
+    throw new Error(`ArcGIS meldet Fehler ${parsed.error.code ?? '?'}: ${parsed.error.message ?? ''}`)
+  }
+  if (parsed.exceededTransferLimit === true) {
+    throw new Error('exceededTransferLimit — der Dienst hat das Ergebnis abgeschnitten')
+  }
+  const count = parsed.features?.length ?? 0
+  if (count < Math.floor(expectedFeatures * 0.95)) {
+    throw new Error(
+      `nur ${count} statt ${expectedFeatures} Features — das ist ein Rückgang, und der ist bei ` +
+        'dieser Ebene kein normaler Vorgang. Von Hand nachsehen, bevor die Zahl in sources.ts angepasst wird.'
+    )
+  }
+  const abweichung = count - expectedFeatures
+  return abweichung === 0
+    ? `, ${count} Features`
+    : `, ${count} Features (${abweichung > 0 ? '+' : ''}${abweichung} gegenüber sources.ts — Zahl dort nachziehen)`
 }
 
 if (failed > 0) {

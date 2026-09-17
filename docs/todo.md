@@ -489,6 +489,13 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > Lizenz CC0. Offen — 59 der 111 Automaten stehen außerhalb jeder Fläche,
 > und die Parkgebührenordnung von 2022 weicht in Zone W vom Feed ab — steht
 > in [staedte-rostock.md](staedte-rostock.md) unter „Was offen bleibt".
+> **Angeschlossen am 16. September: Cottbus**, die erste Stadt in
+> Brandenburg und die erste aus einem ArcGIS FeatureServer statt einem WFS
+> ([staedte-cottbus.md](staedte-cottbus.md)). Dazu der Feiertagskalender `BB`
+> mit Beleg und in `fetch.ts` die Prüfung von ArcGIS-Antworten (Fehler mit
+> 200, `exceededTransferLimit`). Offen: die Rückfrage an FB 32, warum der
+> Datensatz Betrag und Zeiten von 2014 führt, und ein Lizenzvermerk für die
+> Ortsteile — beides im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

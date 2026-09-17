@@ -764,6 +764,13 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "W2",
     "W4",
   ],
+  "cottbus": [
+    "II",
+    "III",
+    "IV",
+    "V",
+    "VI",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { CITIES } from '@knoellchenfrei/core'
 
-import { citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { cityFiles, citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in
@@ -57,5 +57,43 @@ describe('toGeoJsonAxes', () => {
   it('lässt Unfug durch, statt zu werfen — der Datenbau prüft die Grade danach', () => {
     expect(toGeoJsonAxes(null, 'lat,lon')).toBeNull()
     expect(toGeoJsonAxes(['a', 'b'], 'lat,lon')).toEqual(['a', 'b'])
+  })
+})
+
+/**
+ * Cottbus hat keinen WFS: Beide Ebenen kommen als ArcGIS-Abfrage über
+ * `cityFiles`. Eine Stadt, die dort **und** in `citySources` leer wäre,
+ * meldete beim Abruf Erfolg und holte nichts — dieselbe Falle wie ein
+ * stiller Rückfall auf Berlin.
+ */
+describe('cityFiles', () => {
+  it('holt Cottbus in Grad, als GeoJSON und mit einer Messlatte je Ebene', () => {
+    const dateien = cityFiles('cottbus')
+    expect(dateien.map((datei) => datei.key)).toEqual(['zones', 'automats'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('datenportal.cottbus.de')
+      expect(url.pathname).toMatch(/\/FeatureServer\/\d+\/query$/)
+      expect(url.searchParams.get('outSR')).toBe('4326')
+      expect(url.searchParams.get('f')).toBe('geojson')
+      expect(url.searchParams.get('outFields')).toBe('*')
+      expect(url.searchParams.get('where')).toBe('1=1')
+      expect(datei.expectedFeatures).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(citySources('cottbus')).toEqual([])
+  })
+
+  it('gibt für Städte, die alles aus WFS bekommen, eine leere Liste', () => {
+    expect(cityFiles('berlin')).toEqual([])
+    expect(cityFiles('bielefeld')).toEqual([])
+    expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
+  })
+
+  // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
+  it('lässt keine Stadt ohne eine einzige Quelle', () => {
+    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus']) {
+      expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
+    }
   })
 })

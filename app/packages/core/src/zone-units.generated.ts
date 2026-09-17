@@ -759,6 +759,13 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "W2": "W2",
     "W4": "bezirk:Seebad Warnemünde",
   },
+  "cottbus": {
+    "II": "II",
+    "III": "III",
+    "IV": "IV",
+    "V": "V",
+    "VI": "VI",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -772,6 +779,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "karlsruhe": 13,
   "freiburg": 21,
   "rostock": 10,
+  "cottbus": 5,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

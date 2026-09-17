@@ -51,6 +51,14 @@ import {
   parseRostockMaxStay,
   parseRostockSchedule,
 } from '../src/rostock.js'
+import {
+  CottbusParseError,
+  parseCottbusDays,
+  parseCottbusFee,
+  parseCottbusSchedule,
+  parseCottbusTariffZone,
+  parseCottbusTime,
+} from '../src/cottbus.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -218,6 +226,22 @@ describe('Zeitparser unter Beschuss', () => {
       expectValidWindows(parseFreiburgSchedule(input), input)
     })
   })
+
+  // Cottbus liest sechs Felder statt eines Satzes. Der Unfug geht deshalb in
+  // jedes Feld einzeln und in alle drei Felder einer Gruppe zugleich.
+  it('Cottbus wirft nur CottbusParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 40, CottbusParseError, (input) => {
+      expectValidWindows(parseCottbusSchedule({ wt: input, wt_bew_beginn: '08:00', wt_bew_ende: '20:00' }), input)
+      expectValidWindows(parseCottbusSchedule({ wt: 'Mo - Fr', wt_bew_beginn: input, wt_bew_ende: '20:00' }), input)
+      expectValidWindows(parseCottbusSchedule({ woende: 'Sa', woen_bew_beginn: '09:00', woen_bew_ende: input }), input)
+      expectValidWindows(
+        parseCottbusSchedule({ wt: input, wt_bew_beginn: input, wt_bew_ende: input, woende: input }),
+        input
+      )
+      parseCottbusDays(input)
+      parseCottbusTime(input)
+    })
+  })
 })
 
 describe('Gebührenparser unter Beschuss', () => {
@@ -259,6 +283,21 @@ describe('Gebührenparser unter Beschuss', () => {
     fuzz(20260919, 120, RostockParseError, (input) => {
       expectValidFee(parseRostockFee(Number(input)), input)
     })
+  })
+
+  it('Cottbus wirft nur CottbusParseError — für Zeichenketten und für Zahlen', () => {
+    fuzz(20260917, 40, CottbusParseError, (input) => {
+      expectValidFee(parseCottbusFee(input), input)
+      parseCottbusTariffZone(input)
+    })
+    // Der Feed liefert Zahlen; auch die können Unfug sein.
+    for (const value of [0, -0, -1, 0.001, 0.004, 0.005, 1e-9, 1e9, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.MAX_SAFE_INTEGER]) {
+      try {
+        expectValidFee(parseCottbusFee(value), String(value))
+      } catch (error) {
+        if (!(error instanceof CottbusParseError)) throw error
+      }
+    }
   })
 })
 
@@ -314,6 +353,8 @@ describe('Zeitbudget', () => {
       parseFreiburgFee,
       parseRostockSchedule,
       (input) => parseRostockFee(Number(input)),
+      parseCottbusDays,
+      parseCottbusFee,
     ]
     const started = performance.now()
     for (const input of inputs) {

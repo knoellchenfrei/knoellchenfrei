@@ -113,6 +113,49 @@ describe('holidaysFor', () => {
   })
 
   /**
+   * Brandenburg: das erste Land, das Oster- und Pfingstsonntag ausdrücklich
+   * als gesetzliche Feiertage führt (§ 2 Abs. 1 Nr. 3 und 7 FTG). Für das
+   * Modell sind sie unerheblich — beide fallen auf einen Sonntag, und der
+   * Sonntag ist ohnehin frei. Der Eintrag zählt deshalb zehn, nicht zwölf,
+   * und der Test hält fest, dass die beiden Sonntage auch nicht *drin* sind:
+   * Stünden sie in der Menge, zählte ein Test, der Feiertage zählt, doppelt.
+   */
+  it('gibt Brandenburg den Reformationstag und sonst nur die neun bundesweiten', () => {
+    const bb = holidaysFor('BB', 2026)
+    expect(bb.has('2026-10-31')).toBe(true) // Reformationstag, § 2 Abs. 1 Nr. 10 FTG
+    expect(bb.size).toBe(10)
+    expect(bb.has('2026-03-08')).toBe(false) // Frauentag, nur BE und MV
+    expect(bb.has('2026-06-04')).toBe(false) // Fronleichnam, nicht in BB
+    expect(bb.has('2026-11-01')).toBe(false) // Allerheiligen, nicht in BB
+    expect(bb.has('2026-11-18')).toBe(false) // Buss- und Bettag, nur in SN
+    // Ostersonntag (5. April) und Pfingstsonntag (24. Mai) 2026: Sonntage,
+    // bewusst nicht in der Menge.
+    expect(bb.has('2026-04-05')).toBe(false)
+    expect(bb.has('2026-05-24')).toBe(false)
+    expect(new Date('2026-04-05T12:00:00Z').getUTCDay()).toBe(0)
+    expect(new Date('2026-05-24T12:00:00Z').getUTCDay()).toBe(0)
+  })
+
+  // Der Unterschied zum Nachbarn: Berlin hat den Frauentag und keinen
+  // Reformationstag, Brandenburg genau andersherum — gleich gross, ungleich.
+  it('unterscheidet Brandenburg von Berlin um genau zwei Tage', () => {
+    const be = holidaysFor('BE', 2026)
+    const bb = holidaysFor('BB', 2026)
+    expect(be.size).toBe(bb.size)
+    const nurBerlin = [...be].filter((date) => !bb.has(date))
+    const nurBrandenburg = [...bb].filter((date) => !be.has(date))
+    expect(nurBerlin).toEqual(['2026-03-08'])
+    expect(nurBrandenburg).toEqual(['2026-10-31'])
+  })
+
+  it('erkennt den Reformationstag aus einer Ortszeit-Ablesung — in Cottbus, nicht in Berlin', () => {
+    // Samstag, 31. Oktober 2026, 11:00 Berliner Zeit.
+    const clock = berlinWallClock(Date.UTC(2026, 9, 31, 10, 0))
+    expect(isHoliday('BB', clock)).toBe(true)
+    expect(isHoliday('BE', clock)).toBe(false)
+  })
+
+  /**
    * Der Fall, für den `extraFixed` überhaupt existiert.
    *
    * Art. 1 Abs. 1 Nr. 2 BayFTG: Mariä Himmelfahrt ist Feiertag „in Gemeinden
