@@ -460,16 +460,39 @@ erledigt**; die Rasterkacheln sind nur noch der Rückfall für Bauten ohne
 die Schriften von `protomaps.github.io`. Details in
 [hosting.md](hosting.md#4-eigene-kartenkacheln).
 
-## 5. Weitere Städte — vier laufen — **ich**
+## 5. Weitere Städte — 27 in sechs Ländern laufen — **ich**
 
 Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
 weiteren Städten in
 [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md), zweite Runde mit
 86 weiteren Städten in
-[staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md). Hamburg ist seit
-dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
-**vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
-angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
+[staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md). Stand
+17. September: **27** Städte in Deutschland, Österreich, der Schweiz, den
+Niederlanden, Frankreich und Polen, umschaltbar in den Einstellungen — erst das
+Land, dann die Stadt. Die Liste je Land mit Klasse und Lizenz steht im Kopf von
+[staedte.md](staedte.md).
+
+> **Was nach der zweiten Runde offen ist, kurz:**
+>
+> - [ ] **Drei Lizenzanfragen — du.** Graz, Kassel und Krakau liefern ihre
+>       Zonen ohne ausgewiesene Lizenz; die App zeigt dort einen Hinweis über
+>       der Karte. Adressen und Wortlaut stehen in den drei Berichten
+>       ([staedte-graz.md](staedte-graz.md), [staedte-kassel.md](staedte-kassel.md),
+>       [staedte-krakau.md](staedte-krakau.md)). Antwortet eine Stadt mit
+>       einer Lizenz, fällt `licenceOpen` in `core/city.ts` weg und der
+>       Hinweis verschwindet; antwortet sie mit Nein, fliegt die Stadt.
+> - [ ] **Dresden als Klasse C — ich.** 15 Parkzonen-Polygone ohne Zeiten,
+>       Tarif und Lizenz ([staedte-recherche-2026-09.md](staedte-recherche-2026-09.md),
+>       „ungeeignet" — das war vor der Klasse C). Anschließbar wie Essen,
+>       mit Lizenzhinweis wie Graz.
+> - [ ] **Toulouse und Paris — zurückgestellt.** Beide haben offene
+>       Zonendaten, Paris mit Tarif; Frankreich ist mit Strasbourg als Land
+>       angelegt (Feiertage, Land `FR-…`). Der Anschluss ist Handwerk nach
+>       demselben Muster, nur nicht mehr in dieser Runde.
+> - [ ] **PDF-Städte (Klasse D) bleiben draußen.** 62 Städte veröffentlichen
+>       Zonen nur als PDF-Karte; daraus lässt sich keine Fläche verlässlich auf
+>       die Karte legen, und „ungefähr" ist bei einer Gebührenpflicht die
+>       falsche Antwort.
 
 > **Krakau seit dem 17. September** — die erste Stadt in Polen und die
 > erste der **Klasse C**, Bericht in [staedte-krakau.md](staedte-krakau.md):

@@ -11,10 +11,11 @@
 Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
-Eine PWA auf den amtlichen Geodaten der Städte. **Berlin, Hamburg, Frankfurt am
-Main, München, Köln, Düsseldorf, Karlsruhe** und seit dem 16. September die Städte der
-zweiten Runde (Tabelle unter „Datenquellen"), umschaltbar in den Einstellungen — eine Stadt zur Zeit,
-die Daten der anderen werden erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
+Eine PWA auf den amtlichen Geodaten der Städte. **27 Städte in sechs Ländern** —
+Deutschland, Österreich, Schweiz, Niederlande, Frankreich und Polen, die Liste
+steht in [docs/staedte.md](docs/staedte.md) —, umschaltbar in den Einstellungen,
+erst das Land, dann die Stadt. Eine Stadt zur Zeit; die Daten der anderen werden
+erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
 ![Übersicht über Berlin mit Parkzonen, Umweltzone und Ladepunkten](docs/images/overview.png)
@@ -27,7 +28,7 @@ Was sich zuletzt geändert hat: [docs/release-notes.md](docs/release-notes.md).
 | --- | --- |
 | **Zone finden** | Standort, Tippen auf die Karte oder Suche nach Zone, Bezirk und — seit dem 9. September nachts, über Photon — Straße. Wie viele Zonen jede Stadt hat, steht in der Quellentabelle unter „Daten". Farbe trägt eine Aussage: Orange füllt, wenn kassiert wird, gebührenfreie Zonen bleiben als leise Kontur stehen — sonst wäre an einem Sonntag ganz Berlin eingefärbt und die eine Fläche, auf die es ankommt, ginge unter. |
 | **Kosten** | Tarif, Geltungszeiten, „noch bis" / „frei bis". Berücksichtigt Feiertage und Sommerzeit — je Bundesland, nicht pauschal. Kein Betrag ist nicht null Euro: Hamburgs Parkscheibengebiete kosten nichts und verlangen trotzdem etwas, und die App sagt das statt „0,00 €". In München nennt die Quelle für **kein** Gebiet einen Betrag; dort steht „Tarif nicht angegeben" statt einer Zahl. |
-| **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen der vier Städte, bietet die App den Wechsel an, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
+| **Stadt wechseln** | In den Einstellungen, nach FreiFahrens Vorbild — und auf Vorschlag: Liegt der abgerufene Standort in einer anderen angeschlossenen Stadt, bietet die App den Wechsel an — über eine Landesgrenze mit Nennung des Landes, ohne dafür eine zweite Berechtigung zu verlangen. Die Wahl liegt im Browser, nicht im Build; ein unbekannter Stadtschlüssel fällt **nicht** still auf Berlin zurück, sondern bricht ab. |
 | **Parkuhr** | Auto-Position merken, Laufzeit, Erinnerung. Marker verschiebbar. Übersteht Neuladen. |
 | **Umfeld** | 385 Ladepunkte, 83 Carsharing-Plätze, 108 P+R-Anlagen, 923 Behindertenparkplätze, Umweltzone — **in Berlin**. München bedient als einzige weitere Stadt alle vier Arten (369 Ladeorte, 710 Carsharing-Plätze, 25 P+R-Anlagen, 556 Behindertenparkplätze) und liefert die Umweltzone als 12 Flächen; Frankfurt nur die 458 Behindertenparkplätze, Salzburg 185, Hamburg keine dieser Ebenen. Die App blendet aus, was eine Stadt nicht hat, statt eine leere Karte als Ergebnis auszugeben. |
 | **Ordnungsamt** | Roter Meldeknopf auf der Karte, Melde-Sheet mit Ortswahl (angetippt, Standort, in der Nähe, Suche), Bestätigung durch andere, Sterne-Bewertung, Verfall nach 90 Minuten. Die aktuellen Meldungen stehen unten links auf der Karte; dahinter ein Blatt mit drei Reitern (Aktuell, Zonen, Tageszeiten). Jede Zone nennt ihre Kontrollen: heute, 7 Tage, 28 Tage, zuletzt. |
@@ -251,7 +252,9 @@ Zwei Dateien darin tragen die Mehrstädtigkeit: `core/city.ts` hält jede
 Stadtgrenze **genau einmal** — vorher stand sie an sechs Stellen als Zahlenpaar,
 und laufen zwei davon auseinander, nimmt die App eine Meldung an, die der Server
 danach verwirft, ohne dass im Log etwas nach einem Fehler aussieht.
-`core/holidays.ts` kennt Berlin, Hamburg, Hessen und Bayern; ein Bundesland
+`core/holidays.ts` kennt jedes Land, in dem eine Stadt liegt — deutsche
+Bundesländer, österreichische Länder, Schweizer Kantone, die Niederlande,
+Frankreich und Polen mit je eigenem Staatskalender; ein Land
 ohne hinterlegte Tabelle wirft, statt eine leere Menge zu liefern — sonst
 forderte die App an Karfreitag zum Zahlen auf. Zwei Städte haben die Tabelle
 umgebaut: Hessen, weil Fronleichnam beweglich **und** nicht bundesweit ist und

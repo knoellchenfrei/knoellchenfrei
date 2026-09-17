@@ -7,11 +7,10 @@ das, was eine neue Sitzung sonst durch Ausprobieren herausfinden müsste.
 
 Eine PWA, die für Parkzonen sagt, ob gerade Gebührenpflicht gilt, was es
 kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
-Angeschlossen sind Berlin, Hamburg, Frankfurt am Main, München, Köln,
-Düsseldorf und Karlsruhe — die letzten drei seit dem 9. September — und seit dem
-16. September die Städte der zweiten Runde, seit dem 17. September Wien als
-erste Stadt außerhalb Deutschlands; die vollständige Liste mit je einem
-Bericht `docs/staedte-<stadt>.md` steht in `docs/staedte.md`.
+Angeschlossen sind 27 Städte in sechs Ländern — Deutschland, Österreich,
+Schweiz, Niederlande, Frankreich und Polen; die vollständige Liste mit Klasse,
+Lizenz und je einem Bericht `docs/staedte-<stadt>.md` steht in `docs/staedte.md`.
+Das Land wählt der Nutzer in den Einstellungen bewusst, dann die Stadt.
 Ausgeliefert wird sie hinter einem Passwort-Riegel — der Stand ist geschlossener
 Testbetrieb, siehe `apps/web/functions/_middleware.ts` und `docs/hosting.md`.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.
@@ -1015,7 +1014,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 | [docs/notfall.md](docs/notfall.md) | Was läuft, was bei Verlust weg ist, in welcher Reihenfolge es zurückkommt |
 | [docs/architecture.md](docs/architecture.md) | Aufbau und die Fallstricke im Detail |
 | [docs/data-sources.md](docs/data-sources.md) | Woher die Daten kommen, was sie taugen |
-| [docs/staedte.md](docs/staedte.md) | Weitere Städte: Datenlage, Prüfliste, Hamburg, Frankfurt und München im Einzelnen; Köln, Düsseldorf und Karlsruhe in eigenen Berichten |
+| [docs/staedte.md](docs/staedte.md) | Alle 27 Städte in sechs Ländern mit Klasse A/B/C und Lizenz; Hamburg, Frankfurt und München im Einzelnen, jede weitere Stadt in `docs/staedte-<stadt>.md` |
 | [docs/staedte-recherche-2026-09.md](docs/staedte-recherche-2026-09.md) | 24 geprüfte Städte, Rangliste und Negativbefunde |
 | [docs/staedte-recherche-2026-09-16.md](docs/staedte-recherche-2026-09-16.md) | Zweite Runde: 86 weitere Städte in fünf Klassen, Rangliste der Kandidaten, 62 Städte mit Zonen ohne Schnittstelle |
 | [docs/marke.md](docs/marke.md) | Bilder, Beschreibungstexte, Namensschema — und was davon von Hand geht |
