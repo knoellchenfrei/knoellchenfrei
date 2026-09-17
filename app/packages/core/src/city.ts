@@ -877,9 +877,88 @@ export const GRAZ: City = {
   towedVehicles: {
     authority: 'ATSW 24h Service Franz Wuthe, Triester Straße 25, 8020 Graz',
     url: 'https://www.graz.at/cms/beitrag/10211713/7749726/Abschleppung_von_Kraftfahrzeugen_und_Fahrraedern.html',
-    phone: '0316 721111',
+    phone: '+43 316 721111',
     checkedOn: '2026-09',
     note: 'Abholung rund um die Uhr; Zulassungsschein und Führerschein mitbringen. Auskunft gibt auch das Straßenamt der Stadt, 0316 872-3602.',
+  },
+}
+
+/**
+ * Salzburg — die achte Stadt, die erste außerhalb Deutschlands, und die erste
+ * unter Creative Commons **3.0** statt 4.0.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt **nicht** aus der
+ * Parkebene: Die 41 Kurzparkzonen liegen zwischen 13,0062 und 13,0782 Länge —
+ * wer die Box daraus nähme, wiese eine Meldung aus Liefering oder Aigen als
+ * „außerhalb" ab, obwohl sie mitten in Salzburg liegt. Der Umriss kommt aus
+ * den 132 Flächen der Ebene `ogdsbg:stadtteil` mit `GEMEINDE = Salzburg`
+ * (abgerufen am 16. September 2026): 12,9856–13,1275 / 47,7512–47,8544. Nach
+ * außen gerundet steht das unten. Die Ebene führt daneben 13 Flächen der
+ * Nachbargemeinden; die sind nicht mitgemessen.
+ *
+ * **Freilassing liegt am Rand der Box.** Die Saalach ist die Staatsgrenze,
+ * und die bayerische Nachbarstadt beginnt bei 12,98 — der Westrand. Eine Box
+ * ist grob, und das ist bei jeder Stadt so (Kölns Box reicht nach Leverkusen
+ * hinein); solange keine zweite Stadt daneben liegt, entscheidet sie nur
+ * „Salzburg oder nichts", und das ist für Freilassing die richtige Antwort
+ * auf beide Fragen: keine Zone, keine Meldung.
+ *
+ * Der Mittelpunkt ist der Residenzplatz. Der Zoom ist **13**, enger als
+ * Karlsruhes 12: Das Stadtgebiet misst 0,14° × 0,10°, die Kurzparkzonen liegen
+ * in einem Band von 0,072° × 0,057° um die Altstadt — bei Zoom 13 zeigt ein
+ * 400 Pixel breites Telefon rund 0,069° Länge, also fast alle 41 auf einmal.
+ * Bei 12 wären sie ein Fleck in der Mitte.
+ *
+ * `land: 'AT-S'`: Alle österreichischen Feiertage sind Bundesrecht (§ 7 Abs. 2
+ * Feiertagsruhegesetz, siehe `holidays.ts`). Der Rupertitag (24. September)
+ * ist Landesfeiertag ohne Feiertagsruhe — die Kurzparkzonen gelten; ein Test
+ * in `salzburg.test.ts` hält das fest. `holidays` fehlt deshalb mit Absicht.
+ */
+export const SALZBURG: City = {
+  key: 'salzburg',
+  name: 'Salzburg',
+  land: 'AT-S',
+  center: [13.0466, 47.7982],
+  zoom: 13,
+  reportBounds: { minLon: 12.98, minLat: 47.75, maxLon: 13.13, maxLat: 47.86 },
+  sessionBounds: { minLon: 12.7, minLat: 47.55, maxLon: 13.4, maxLat: 48.05 },
+  heatGrid: { id: 'salzburg', originLon: 12.98, originLat: 47.75, latitude: 47.8 },
+  attribution: {
+    /**
+     * Wörtlich aus `ows:AccessConstraints` des WFS (abgerufen am
+     * 16. September 2026): „Datenquelle: Stadt Salzburg –
+     * data.stadt-salzburg.at; Nutzungsbedingungen: CC BY 3.0 AT
+     * (https://creativecommons.org/licenses/by/3.0/at/deed.de)". Dasselbe
+     * sagt die OGD-Seite der Stadt (<https://www.stadt-salzburg.at/ogd/>):
+     * „Die Daten werden unter der CC BY 3.0 AT Lizenz zur Verfügung
+     * gestellt." Der Katalogeintrag bei data.gv.at von 2016
+     * (`200e7304-f01d-4acd-91ff-1becafe98641`) nennt dagegen CC BY-**SA**
+     * 3.0 AT — die Stadt selbst, am Dienst und auf ihrer Seite, sagt heute
+     * BY. Abwägung in `docs/staedte-salzburg.md`.
+     */
+    source: 'Datenquelle: Stadt Salzburg – data.stadt-salzburg.at',
+    datasetUrl: 'https://data.stadt-salzburg.at/geodaten/wfs',
+    licence: 'Creative Commons Namensnennung 3.0 Österreich (CC BY 3.0 AT)',
+    licenceUrl: 'https://creativecommons.org/licenses/by/3.0/at/deed.de',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+  // Belegt auf der Seite des Verkehrs- und Straßenrechtsamts, wörtlich:
+  // „Wenn Ihr Fahrzeug abgeschleppt wurde, wenden Sie sich bitte an die
+  // nächste Polizeiinspektion oder an das Abschleppunternehmen Car &
+  // Transport GmbH, Tel. +43 (0)676 44 44 650" — Fahrzeugabholung
+  // Mayrwiesstraße 7a, 5300 Hallwang, „NACHTS NUR NACH telefonischem
+  // Kontakt". Eine städtische Verwahrstelle gibt es nicht; das Amt selbst ist
+  // unter +43 662 8072 3191 erreichbar.
+  towedVehicles: {
+    authority: 'Verkehrs- und Straßenrechtsamt der Stadt Salzburg',
+    url: 'https://www.stadt-salzburg.at/verkehr-und-strassenraum/fahrzeugabschleppung',
+    phone: '+43 676 44 44 650',
+    checkedOn: '2026-09',
+    note:
+      'Fahrzeuge mit Kennzeichen stehen beim Abschleppunternehmen Car & Transport GmbH, ' +
+      'Mayrwiesstraße 7a, 5300 Hallwang — nachts nur nach telefonischem Kontakt. ' +
+      'Die Stadt rät, zuerst die nächste Polizeiinspektion zu fragen.',
   },
 }
 
@@ -896,6 +975,7 @@ export const CITIES: readonly City[] = [
   COTTBUS,
   SCHWERIN,
   GRAZ,
+  SALZBURG,
 ]
 
 /**

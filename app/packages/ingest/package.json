@@ -18,6 +18,7 @@
     "build-data-cottbus": "tsx src/build-data-cottbus.ts",
     "build-data-schwerin": "tsx src/build-data-schwerin.ts",
     "build-data-graz": "tsx src/build-data-graz.ts",
+    "build-data-salzburg": "tsx src/build-data-salzburg.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

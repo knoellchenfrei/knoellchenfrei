@@ -72,6 +72,7 @@ import {
   parseGrazMaxStayProse,
   parseGrazSchedule,
 } from '../src/graz.js'
+import { SalzburgParseError, parseSalzburgMaxStay, parseSalzburgRule } from '../src/salzburg.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -229,6 +230,15 @@ describe('Zeitparser unter Beschuss', () => {
   it('Schwerin wirft nur SchwerinParseError und liefert nur gültige Fenster', () => {
     fuzz(20260916, 120, SchwerinParseError, (input) => {
       expectValidWindows(parseSchwerinSchedule(input), input)
+  // Salzburg liefert zwei Fensterlisten — kassiert und nur Scheibe —, und
+  // beide müssen die Invariante halten.
+    })
+  })
+
+  it('Salzburg wirft nur SalzburgParseError und liefert nur gültige Fenster', () => {
+    fuzz(2026, 200, SalzburgParseError, (input) => {
+      const rule = parseSalzburgRule(input)
+      expectValidWindows([...rule.windows, ...rule.discWindows], input)
     })
   })
 
@@ -365,6 +375,8 @@ describe('Höchstparkdauer unter Beschuss', () => {
         Number.isNaN(number) ? null : number,
         input.replace(/^\s*-?\d+/, '')
       )
+    fuzz(20260916, 120, SalzburgParseError, (input) => {
+      const minutes = parseSalzburgMaxStay(input)
       if (minutes === undefined) return
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
@@ -386,6 +398,8 @@ describe('Höchstparkdauer unter Beschuss', () => {
   })
 })
 
+})
+
 describe('Zeitbudget', () => {
   /**
    * Die Begrenzung der Eingabelänge ist das, was das Zurückverfolgen unmöglich
@@ -401,6 +415,7 @@ describe('Zeitbudget', () => {
       parseFrankfurtSchedule,
       parseMuenchenRule,
       parseFreiburgSchedule,
+      parseSalzburgRule,
       parseFee,
       parseHamburgFee,
       parseFrankfurtFee,

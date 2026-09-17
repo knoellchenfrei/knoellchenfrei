@@ -14,6 +14,8 @@
 > Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
+> **Salzburg**, die erste Stadt außerhalb Deutschlands:
+> [staedte-salzburg.md](staedte-salzburg.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 > [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu **Graz**,
 > die erste Stadt in Österreich: [staedte-graz.md](staedte-graz.md). Dieses Dokument

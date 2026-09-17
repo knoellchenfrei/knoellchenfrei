@@ -33,6 +33,7 @@ import type { RostockAutomatProperties, RostockZoneProperties } from '../src/ros
 import type { CottbusAutomatProperties, CottbusZoneProperties } from '../src/cottbus.js'
 import type { SchwerinAutomatProperties } from '../src/schwerin.js'
 import type { GrazZoneProperties } from '../src/graz.js'
+import { parseSalzburgMaxStay, parseSalzburgRule, type SalzburgZoneProperties } from '../src/salzburg.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -402,6 +403,43 @@ describe('Cottbuser Fixtures', () => {
       for (const field of ['wt', 'wt_bew_beginn', 'wt_bew_ende', 'woende', 'woen_bew_beginn', 'woen_bew_ende'] as const) {
         expect((automat[field] ?? '').trim(), `${automat.standort ?? '?'} ${field}`).not.toBe('')
       }
+    }
+  })
+})
+
+describe('Salzburger Fixture', () => {
+  interface Fixture {
+    zonen: (SalzburgZoneProperties & { gmlId: string })[]
+  }
+  const FIXTURE = read<Fixture>('sbg-kurzparkzonen-2026-09-16.json')
+
+  it('führt die Kurzparkzonen in genau diesen Typen', () => {
+    expectShape(FIXTURE.zonen as unknown as Record<string, unknown>[], {
+      gmlId: ['string'],
+      ID: ['number'],
+      NAME: ['string'],
+      ART: ['string'],
+      GEBUEHRENPFLICHT: ['string'],
+      MAXIMALE_PARKDAUER: ['string'],
+      GILT_VON: ['string'],
+      GILT_BIS: ['string'],
+      STATUS: ['string'],
+      // In allen 41 Zonen null — beobachtet ist kein anderer Typ.
+      STATUS_HINWEIS: ['null'],
+      KEIN_BEWOHNERPARKEN: ['string'],
+      // Fünf Zonen liegen in keiner Bewohnerparkzone; die Quelle schreibt
+      // dann `null`, nicht eine leere Zeichenkette.
+      GRUPPE: ['null', 'string'],
+      UNTERGRUPPE: ['null', 'string'],
+      DOWNLOAD_URL: ['string'],
+    })
+  })
+
+  // Beide Felder gehen in einen Parser, der `raw.length` liest.
+  it('liefert für jede Zone mindestens ein Fenster und eine Höchstparkdauer', () => {
+    for (const zone of FIXTURE.zonen) {
+      expect(parseSalzburgRule(zone.GEBUEHRENPFLICHT as string).windows.length, String(zone.ID)).toBeGreaterThan(0)
+      expect(parseSalzburgMaxStay(zone.MAXIMALE_PARKDAUER), String(zone.ID)).toBe(180)
     }
   })
 })
