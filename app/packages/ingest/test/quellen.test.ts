@@ -422,3 +422,32 @@ describe('cityFiles für Kassel', () => {
     expect(url.searchParams.get('sr')).toBe('4326')
   })
 })
+
+describe('cityFiles für Saarbrücken', () => {
+  // Kein Dienst, sondern vier statische GeoJSON-Dateien aus dem CKAN der
+  // Stadt, paarweise Fläche und Beschriftung — deshalb keine Abfrageparameter,
+  // aber je Datei eine Erwartungszahl, an der ein leerer Abruf auffällt.
+  it('holt die vier Dateien vom Portal der Stadt, jede mit Erwartungswert', () => {
+    const dateien = cityFiles('saarbruecken')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'zoneLabels', 'districts', 'districtLabels'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('opendata.saarbruecken.de')
+      expect(url.pathname).toMatch(/^\/dataset\/[0-9a-f-]{36}\/resource\/[0-9a-f-]{36}\/download\/[a-z_]+\.geojson$/)
+      expect(url.search, datei.key).toBe('')
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.map((d) => d.expectedFeatures)).toEqual([27, 30, 20, 20])
+    // Fläche und Beschriftung eines Datensatzes kommen aus demselben Datensatz.
+    const datensatz = (key: string): string =>
+      (dateien.find((d) => d.key === key)?.url ?? '').split('/resource/')[0] ?? ''
+    expect(datensatz('zones')).toBe(datensatz('zoneLabels'))
+    expect(datensatz('districts')).toBe(datensatz('districtLabels'))
+    expect(datensatz('zones')).not.toBe(datensatz('districts'))
+  })
+
+  it('kennt Saarbrücken auch in citySources — mit leerer WFS-Liste, ohne zu werfen', () => {
+    expect(citySources('saarbruecken')).toEqual([])
+  })
+})

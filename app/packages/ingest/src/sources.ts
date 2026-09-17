@@ -1017,6 +1017,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   kassel: [],
   // Kein WFS: Essen kommt vollständig über `cityFiles` (drei DKAN-Dateien).
   essen: [],
+  // Saarbrücken: vier GeoJSON-Dateien aus dem CKAN der Stadt, alle über `cityFiles`.
+  saarbruecken: [],
 }
 
 /**
@@ -1537,6 +1539,66 @@ const ESSEN_FILES: readonly FileSource[] = [
   { key: 'lowEmissionZone', url: `${ESSEN_OPENDATA}/Umweltzone_Essen_0.geojson`, file: 'umweltzone.json', expectedFeatures: 3 },
 ]
 
+/**
+ * Saarbrücken — Landeshauptstadt Saarbrücken über ihr Open-Data-Portal
+ * (`opendata.saarbruecken.de`, CKAN 2.11). Lizenz dort nur als `datenliz-de`
+ * ohne Variante, siehe `SAARBRUECKEN.licenceOpen` in `core/city.ts`.
+ *
+ * Kein Dienst, sondern **statische GeoJSON-Dateien** je Datensatz, immer
+ * paarweise: `<name>_fl.geojson` mit den Flächen (jedes Feature nur
+ * `{"ID": 0}`) und `<name>_txt(_pos).geojson` mit den Beschriftungspunkten
+ * aus dem CAD. Der Text steht also in einer anderen Datei als die Fläche,
+ * und `build-data-saarbruecken.ts` legt die Punkte in die Flächen. Alle
+ * Dateien in `[lon, lat]`, am 17. September 2026 nachgemessen (erster
+ * Stützpunkt `[7.0028, 49.2308]`); die Stadtteil-Dateien tragen eine dritte
+ * Koordinate `0.0`, die der Datenbau fallen lässt. Ein `crs`-Feld hat keine
+ * der Dateien.
+ *
+ * Die vier Dateien:
+ *
+ * - `parkzonen_fl.geojson` — 27 MultiPolygone, die Bewohnerparkzonen.
+ * - `parkzonen_txt_pos.geojson` — 30 Punkte, 27 mit `Text` (`A1` … `U`),
+ *   drei ohne, alle drei auf demselben Punkt.
+ * - `stadtteile_fl.geojson` / `stadtteile_txt.geojson` — die 20 Stadtteile
+ *   als Flächen und als Beschriftung (`11 Alt-Saarbrücken`). Die 57
+ *   **Distrikte** desselben Portals wären feiner, tragen aber nur eine
+ *   Nummer (`453`) und keinen Namen; für die Kopfzeile des Panels sind die
+ *   Stadtteile die richtige Ebene.
+ *
+ * Die Adressen enthalten die CKAN-Kennungen von Datensatz und Ressource;
+ * `package_show?id=parkzonen` nennt sie, falls sie sich ändern. Die
+ * `expectedFeatures` gelten, weil die Dateien GeoJSON-FeatureCollections
+ * sind — ein leerer oder halber Abruf fiele an der 95-%-Schwelle auf.
+ */
+const SAARBRUECKEN_CKAN = 'https://opendata.saarbruecken.de/dataset'
+
+const SAARBRUECKEN_FILES: readonly FileSource[] = [
+  {
+    key: 'zones',
+    url: `${SAARBRUECKEN_CKAN}/bc0c5b4c-986c-4e7e-92c7-70a150ef3bc3/resource/7ec001d8-f31a-4c6a-84c3-fafe0046ac0f/download/parkzonen_fl.geojson`,
+    file: 'zones.json',
+    expectedFeatures: 27,
+  },
+  {
+    key: 'zoneLabels',
+    url: `${SAARBRUECKEN_CKAN}/bc0c5b4c-986c-4e7e-92c7-70a150ef3bc3/resource/5d6793f3-fcf8-4e7d-8eae-87d531597918/download/parkzonen_txt_pos.geojson`,
+    file: 'zoneLabels.json',
+    expectedFeatures: 30,
+  },
+  {
+    key: 'districts',
+    url: `${SAARBRUECKEN_CKAN}/3f0e6878-d689-4a15-94d1-b00c5e0a0b08/resource/033f9637-fb26-428c-aaac-f01dc854d508/download/stadtteile_fl.geojson`,
+    file: 'districts.json',
+    expectedFeatures: 20,
+  },
+  {
+    key: 'districtLabels',
+    url: `${SAARBRUECKEN_CKAN}/3f0e6878-d689-4a15-94d1-b00c5e0a0b08/resource/98224953-8bee-4966-8e78-5f9a2c60b3ac/download/stadtteile_txt.geojson`,
+    file: 'districtLabels.json',
+    expectedFeatures: 20,
+  },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
@@ -1554,6 +1616,7 @@ const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   krakau: KRAKAU_FILES,
   kassel: KASSEL_FILES,
   essen: ESSEN_FILES,
+  saarbruecken: SAARBRUECKEN_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */

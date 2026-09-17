@@ -494,6 +494,24 @@ Land, dann die Stadt. Die Liste je Land mit Klasse und Lizenz steht im Kopf von
 >       die Karte legen, und „ungefähr" ist bei einer Gebührenpflicht die
 >       falsche Antwort.
 
+> **Saarbrücken seit dem 17. September** — die erste Stadt im Saarland und
+> die erste deutsche Stadt der **Klasse C**, Bericht in
+> [staedte-saarbruecken.md](staedte-saarbruecken.md): 27 Bewohnerparkzonen
+> aus dem Open-Data-Portal der Stadt, die Flächen ohne Attribut und die
+> Buchstaben als Beschriftungspunkte daneben, eins zu eins zugeordnet; jede
+> Zone mit `scheduleUnknown` — die App sagt „Zeiten unbekannt" und färbt
+> grau. Zwei Punkte bleiben:
+>
+> - [ ] **Die Lizenzvariante — du.** Das Portal nennt nur `datenliz-de`,
+>       ohne Zero/Namensnennung und ohne Verweis. Anfrage an
+>       `opendata@saarbruecken.de` (Ordnungsamt); mit der Antwort
+>       `licence`, `licenceUrl`, `licenceFamily` eintragen und `licenceOpen`
+>       entfernen, NOTICE und README nachziehen.
+> - [ ] **Zeiten und Tarif — nach Antwort des Ordnungsamts.** Die
+>       Gebührenordnung (seit 1. März 2026) regelt die Kurzparkzonen, nicht
+>       die Bewohnerparkzonen; ohne einen Datensatz der Parkscheinautomaten
+>       oder Kurzparkzonen bleibt Saarbrücken Klasse C.
+>
 > **Krakau seit dem 17. September** — die erste Stadt in Polen und die
 > erste der **Klasse C**, Bericht in [staedte-krakau.md](staedte-krakau.md):
 > 23 Sektoren des Obszar Płatnego Parkowania aus dem ArcGIS Online der

@@ -367,6 +367,20 @@ describe('cityAt', () => {
     expect(cityCountry(cityByKey('krakau'))).toBe('PL')
   })
 
+  // Saarbrücken ist die erste Stadt im Saarland. Der Rahmen kommt aus dem
+  // Umriss der 20 Stadtteile, nicht aus den 27 Zonen in Mitte und Dudweiler:
+  // Bübingen im Süden hat keine Parkzone und gehört dazu. Völklingen liegt im
+  // Rechteck — die Box ist ein Rechteck um eine Stadt von 23 × 17
+  // Kilometern —, Neunkirchen, Lebach und Saargemünd nicht.
+  it('löst den St. Johanner Markt nach Saarbrücken auf und reicht bis Bübingen', () => {
+    expect(cityAt(6.9965, 49.2335)?.key).toBe('saarbruecken')
+    expect(cityAt(7.0378, 49.1801)?.key).toBe('saarbruecken') // Bübingen
+    expect(cityAt(7.1794, 49.3467)).toBeUndefined() // Neunkirchen
+    expect(cityAt(6.9107, 49.4103)).toBeUndefined() // Lebach
+    expect(cityAt(7.0682, 49.1104)).toBeUndefined() // Sarreguemines
+    expect(cityCountry(cityByKey('saarbruecken'))).toBe('DE')
+  })
+
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
     for (const city of CITIES) {
       const { minLon, minLat, maxLon, maxLat } = city.reportBounds
@@ -607,7 +621,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen', 'saarbruecken'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {

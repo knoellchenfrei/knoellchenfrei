@@ -308,3 +308,48 @@ describe('Mecklenburg-Vorpommern', () => {
     expect(holidaysFor('MV', 2022).has('2022-03-08')).toBe(true)
   })
 })
+
+describe('Saarland', () => {
+  // § 2 Abs. 1 SFG: zwölf Tage, davon drei über die neun bundesweiten hinaus.
+  it('hat zwölf Feiertage: die neun bundesweiten plus Fronleichnam, Mariä Himmelfahrt und Allerheiligen', () => {
+    const sl = holidaysFor('SL', 2026)
+    expect(sl.has('2026-06-04')).toBe(true) // Fronleichnamstag
+    expect(sl.has('2026-08-15')).toBe(true) // Maria Himmelfahrtstag (15. August)
+    expect(sl.has('2026-11-01')).toBe(true) // Allerheiligentag (1. November)
+    expect(sl.size).toBe(12)
+  })
+
+  // Der Unterschied, der die Ländertabelle rechtfertigt: Nordrhein-Westfalen
+  // hat dieselben Tage bis auf den 15. August; Bayern hat ihn nur
+  // gemeindeweise (`City.holidays`) und dafür Heilige Drei Könige.
+  it('unterscheidet sich von Nordrhein-Westfalen genau um Mariä Himmelfahrt', () => {
+    const sl = holidaysFor('SL', 2026)
+    const nw = holidaysFor('NW', 2026)
+    expect([...sl].filter((date) => !nw.has(date))).toEqual(['2026-08-15'])
+    expect([...nw].filter((date) => !sl.has(date))).toEqual([])
+  })
+
+  it('tauscht mit Bayern Drei Könige gegen Mariä Himmelfahrt, landesweit statt gemeindeweise', () => {
+    const sl = holidaysFor('SL', 2026)
+    const by = holidaysFor('BY', 2026)
+    expect([...sl].filter((date) => !by.has(date))).toEqual(['2026-08-15'])
+    expect([...by].filter((date) => !sl.has(date))).toEqual(['2026-01-06'])
+    // München bekommt den 15. August über die Stadt, das Saarland über das Land.
+    expect(holidaysFor('BY', 2026, ['08-15']).has('2026-08-15')).toBe(true)
+  })
+
+  it('verwehrt dem Land, was seine Nachbarn haben und es nicht', () => {
+    const sl = holidaysFor('SL', 2026)
+    expect(sl.has('2026-01-06')).toBe(false) // Heilige Drei Könige (BW, BY)
+    expect(sl.has('2026-10-31')).toBe(false) // Reformationstag (HH, MV, BB)
+    expect(sl.has('2026-11-18')).toBe(false) // Buß- und Bettag, seit 1995 nur in Sachsen
+    expect(sl.has('2026-03-08')).toBe(false) // Frauentag (BE, MV)
+  })
+
+  it('hält den 15. August in jedem Jahr, auch an einem Dienstag, an dem NW kassiert', () => {
+    expect(new Date('2028-08-15T12:00:00Z').getUTCDay()).toBe(2)
+    expect(isHoliday('SL', berlinWallClock(Date.UTC(2028, 7, 15, 10)))).toBe(true)
+    expect(isHoliday('NW', berlinWallClock(Date.UTC(2028, 7, 15, 10)))).toBe(false)
+    expect(isHoliday('SL', berlinWallClock(Date.UTC(2026, 7, 15, 10)))).toBe(true)
+  })
+})

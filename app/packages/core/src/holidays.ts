@@ -34,6 +34,7 @@ export type Land =
   | 'BW'
   | 'MV'
   | 'BB'
+  | 'SL'
   | 'AT-W'
   | 'AT-ST'
   | 'AT-S'
@@ -420,6 +421,30 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   BW: { fixed: ['01-06', '11-01'], fromEaster: [60] }, // Drei Könige, Allerheiligen, Fronleichnam
   MV: { fixed: ['03-08', '10-31'], fromEaster: [] }, // Frauentag, Reformationstag
   BB: { fixed: ['10-31'], fromEaster: [] }, // Reformationstag; Oster- und Pfingstsonntag sind Sonntage
+  /**
+   * Saarland: **zwölf** gesetzliche Feiertage — die neun bundesweiten plus
+   * Fronleichnam, Mariä Himmelfahrt und Allerheiligen. § 2 Abs. 1 des
+   * Gesetzes über die Sonn- und Feiertage (Feiertagsgesetz – SFG) vom
+   * 18. Februar 1976 (ABl. S. 213), zuletzt geändert durch das Gesetz vom
+   * 13. Oktober 2015 (Amtsbl. I S. 790), wörtlich: „der Neujahrstag, der
+   * Karfreitag, der Ostermontag, der 1. Mai, der Tag Christi Himmelfahrt,
+   * der Pfingstmontag, der Fronleichnamstag, der Maria Himmelfahrtstag
+   * (15. August), der Tag der Deutschen Einheit (3. Oktober), der
+   * Allerheiligentag (1. November), der 1. Weihnachtstag (25. Dezember),
+   * der 2. Weihnachtstag (26. Dezember)". Das Saarland ist damit das einzige
+   * Land, in dem Mariä Himmelfahrt **landesweit** gilt — in Bayern hängt
+   * derselbe Tag gemeindeweise an `City.holidays`, hier gehört er in die
+   * Ländertabelle. Keine Drei Könige (anders als BY und BW), kein
+   * Reformationstag, kein Buß- und Bettag, keine gemeindeweise Regelung;
+   * Abs. 2 erlaubt dem Innenministerium nur, aus besonderem Anlass einmalig
+   * einen Werktag zum Feiertag zu erklären. Das Landesrechtsportal
+   * (`recht.saarland.de/bssl/document/jlr-FeiertGSL1976V6P2`) liefert an
+   * einen Abruf ohne JavaScript nur die Hülle „Bürgerservice Saarland";
+   * gelesen wurde der wortgleiche Abdruck im Rechtsportal der Evangelischen
+   * Kirche im Rheinland, <https://www.kirchenrecht-ekir.de/document/2954>,
+   * am 17. September 2026. Gilt für Saarbrücken.
+   */
+  SL: { fixed: ['08-15', '11-01'], fromEaster: [60] }, // Mariä Himmelfahrt, Allerheiligen, Fronleichnam
   // Österreich: alles Bundesrecht, siehe `NATIONWIDE`.
   'AT-W': { fixed: [], fromEaster: [] },
   'AT-ST': { fixed: [], fromEaster: [] },

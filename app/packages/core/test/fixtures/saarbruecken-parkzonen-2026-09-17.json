@@ -1,0 +1,730 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://opendata.saarbruecken.de/dataset/parkzonen (parkzonen_fl.geojson, parkzonen_txt_pos.geojson) und /dataset/stadtteile (stadtteile_txt.geojson)",
+  "hinweis": "Der ganze Sachdatenteil der drei Dateien, ohne Flaechengeometrie; die Beschriftungspunkte mit ihrer Koordinate. Reihenfolge wie in den Dateien.",
+  "anzahlFlaechen": 27,
+  "geometrieTypen": {
+    "MultiPolygon": 27
+  },
+  "ersterStuetzpunkt": [
+    7.002786,
+    49.230765
+  ],
+  "flaechen": [
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    },
+    {
+      "ID": 0
+    }
+  ],
+  "beschriftungen": [
+    {
+      "properties": {
+        "Text": "I2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0067723,
+        49.2306834
+      ]
+    },
+    {
+      "properties": {
+        "Text": "J",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9907626,
+        49.2309211
+      ]
+    },
+    {
+      "properties": {
+        "Text": null,
+        "Layer-Ezs": null,
+        "Text-Attr": null,
+        "Text-Rot": null,
+        "Text-Hoehe": null
+      },
+      "punkt": [
+        6.9830584,
+        49.2397548
+      ]
+    },
+    {
+      "properties": {
+        "Text": "B2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9924592,
+        49.2379866
+      ]
+    },
+    {
+      "properties": {
+        "Text": "I1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0113541,
+        49.2301337
+      ]
+    },
+    {
+      "properties": {
+        "Text": "B1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9906478,
+        49.2375052
+      ]
+    },
+    {
+      "properties": {
+        "Text": "H1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9968484,
+        49.2314042
+      ]
+    },
+    {
+      "properties": {
+        "Text": null,
+        "Layer-Ezs": null,
+        "Text-Attr": null,
+        "Text-Rot": null,
+        "Text-Hoehe": null
+      },
+      "punkt": [
+        6.9830584,
+        49.2397548
+      ]
+    },
+    {
+      "properties": {
+        "Text": "F2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9894916,
+        49.2341555
+      ]
+    },
+    {
+      "properties": {
+        "Text": null,
+        "Layer-Ezs": null,
+        "Text-Attr": null,
+        "Text-Rot": null,
+        "Text-Hoehe": null
+      },
+      "punkt": [
+        6.9830584,
+        49.2397548
+      ]
+    },
+    {
+      "properties": {
+        "Text": "F1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9852379,
+        49.2326689
+      ]
+    },
+    {
+      "properties": {
+        "Text": "E2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9981635,
+        49.2362326
+      ]
+    },
+    {
+      "properties": {
+        "Text": "D1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0015165,
+        49.2383457
+      ]
+    },
+    {
+      "properties": {
+        "Text": "A3",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9849257,
+        49.2410574
+      ]
+    },
+    {
+      "properties": {
+        "Text": "D2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0048687,
+        49.2391456
+      ]
+    },
+    {
+      "properties": {
+        "Text": "A2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9869397,
+        49.2388997
+      ]
+    },
+    {
+      "properties": {
+        "Text": "R",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9961783,
+        49.2279583
+      ]
+    },
+    {
+      "properties": {
+        "Text": "A1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9811164,
+        49.2404614
+      ]
+    },
+    {
+      "properties": {
+        "Text": "L1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.008058,
+        49.2268097
+      ]
+    },
+    {
+      "properties": {
+        "Text": "N1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9770327,
+        49.2328507
+      ]
+    },
+    {
+      "properties": {
+        "Text": "N3",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.978092,
+        49.2354306
+      ]
+    },
+    {
+      "properties": {
+        "Text": "C1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9956385,
+        49.2381231
+      ]
+    },
+    {
+      "properties": {
+        "Text": "F3",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9850101,
+        49.2352028
+      ]
+    },
+    {
+      "properties": {
+        "Text": "C2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9975704,
+        49.2404602
+      ]
+    },
+    {
+      "properties": {
+        "Text": "H2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9985063,
+        49.2333577
+      ]
+    },
+    {
+      "properties": {
+        "Text": "L2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0101298,
+        49.2284298
+      ]
+    },
+    {
+      "properties": {
+        "Text": "E1",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0024465,
+        49.2348919
+      ]
+    },
+    {
+      "properties": {
+        "Text": "L3",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0055333,
+        49.2290361
+      ]
+    },
+    {
+      "properties": {
+        "Text": "N2",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        6.9778291,
+        49.2343274
+      ]
+    },
+    {
+      "properties": {
+        "Text": "U",
+        "Layer-Ezs": "1495",
+        "Text-Attr": "1495",
+        "Text-Rot": "0",
+        "Text-Hoehe": "15"
+      },
+      "punkt": [
+        7.0365971,
+        49.2755027
+      ]
+    }
+  ],
+  "stadtteile": [
+    {
+      "properties": {
+        "PGIS_TXT": "48 Bübingen",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 357003.84,
+        "PGIS_H": 5449331.6
+      },
+      "punkt": [
+        7.0378254,
+        49.1801119
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "43 Bischmisheim",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 359470.468,
+        "PGIS_H": 5454070.046
+      },
+      "punkt": [
+        7.0699942,
+        49.2232814
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "14 Eschberg",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 356955.674,
+        "PGIS_H": 5455494.175
+      },
+      "punkt": [
+        7.0349697,
+        49.2355022
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "34 Scheidt",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 358520.753,
+        "PGIS_H": 5456589.849
+      },
+      "punkt": [
+        7.0560697,
+        49.245716
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "23 Altenkessel",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 348009.502,
+        "PGIS_H": 5458824.011
+      },
+      "punkt": [
+        6.9108943,
+        49.2632797
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "12 Malstatt",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 352306.468,
+        "PGIS_H": 5459514.848
+      },
+      "punkt": [
+        6.9696615,
+        49.2705426
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "21 Gersweiler",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 348071.638,
+        "PGIS_H": 5455118.135
+      },
+      "punkt": [
+        6.9131528,
+        49.2299821
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "45 Brebach-Fechingen",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 358371.151,
+        "PGIS_H": 5451529.194
+      },
+      "punkt": [
+        7.0558018,
+        49.2001857
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "44 Ensheim",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 361778.626,
+        "PGIS_H": 5452878.162
+      },
+      "punkt": [
+        7.102086,
+        49.2130911
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "24 Burbach",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 349932.078,
+        "PGIS_H": 5458235.872
+      },
+      "punkt": [
+        6.9375224,
+        49.2584674
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "22 Klarenthal",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 344026.126,
+        "PGIS_H": 5454658.476
+      },
+      "punkt": [
+        6.8578037,
+        49.2248333
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "47 Güdingen",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 355499.991,
+        "PGIS_H": 5451438.372
+      },
+      "punkt": [
+        7.0164454,
+        49.1986992
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "11 Alt-Saarbrücken",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 350880.22,
+        "PGIS_H": 5454385.331
+      },
+      "punkt": [
+        6.951977,
+        49.2240848
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "31 Dudweiler",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 356816.352,
+        "PGIS_H": 5459446.719
+      },
+      "punkt": [
+        7.0316441,
+        49.2710026
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "42 Schafbrücke",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 357500.902,
+        "PGIS_H": 5454410.718
+      },
+      "punkt": [
+        7.04284,
+        49.225889
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "32 Jägersfreude",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 354039.94,
+        "PGIS_H": 5457924.952
+      },
+      "punkt": [
+        6.9940558,
+        49.2566661
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "13 St.Johann",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 355080.351,
+        "PGIS_H": 5455988.353
+      },
+      "punkt": [
+        7.0090456,
+        49.2395038
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "33 Herrensohr",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 354566.601,
+        "PGIS_H": 5460175.79
+      },
+      "punkt": [
+        7.0004712,
+        49.2770259
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "46 Eschringen",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 360732.489,
+        "PGIS_H": 5450386.4
+      },
+      "punkt": [
+        7.0885938,
+        49.1904526
+      ]
+    },
+    {
+      "properties": {
+        "PGIS_TXT": "16 St. Arnual",
+        "PGIS_ANG": 0.0,
+        "PGIS_R": 354054.597,
+        "PGIS_H": 5453082.248
+      },
+      "punkt": [
+        6.9960197,
+        49.213135
+      ]
+    }
+  ]
+}
