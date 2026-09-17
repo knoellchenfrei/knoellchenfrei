@@ -286,6 +286,32 @@ describe('die Wiener Quellen', () => {
   })
 })
 
+/**
+ * Hildesheim ist wieder ein WFS — zwei MapServer-Dienste, einer je Ebene —
+ * und liefert im GeoJSON `[lon, lat]`, obwohl die Recherche für das GML
+ * derselben Ebene `[lat, lon]` sah. Geprüft wird die Konfiguration, an der
+ * der Datenbau hängt: Wer die Achsen „nach Hamburg" dreht, schickt die
+ * Altstadt in den Tschad.
+ */
+describe('die Hildesheimer Quellen', () => {
+  it('fragen beide Ebenen als JSON in Grad und in lon,lat, je Ebene ein eigener Dienstpfad', () => {
+    const quellen = citySources('hildesheim')
+    expect(quellen.map((q) => q.key)).toEqual(['zones', 'districts'])
+    for (const quelle of quellen) {
+      const url = new URL(wfsUrl(quelle))
+      expect(url.hostname).toBe('gdi.stadt-hildesheim.de')
+      expect(url.pathname).toMatch(/^\/interface\/wfs-ms\/[A-Za-z]+$/)
+      expect(url.searchParams.get('srsName')).toBe('urn:ogc:def:crs:EPSG::4326')
+      expect(url.searchParams.get('outputFormat')).toBe('application/json')
+      expect(quelle.typeName).toBe(`ms:${url.pathname.split('/').pop() ?? ''}`)
+      expect(quelle.axisOrder).toBe('lon,lat')
+      expect(quelle.encoding).toBeUndefined()
+    }
+    expect(quellen.map((q) => q.expectedFeatures)).toEqual([7, 14])
+    expect(cityFiles('hildesheim')).toEqual([])
+  })
+})
+
 describe('nprFiles', () => {
   it('holt für jede niederländische Stadt alle acht Tabellen mit Gemeindecode, Limit und Ordnung', () => {
     for (const [stadt, code] of Object.entries(NPR_AREA_MANAGERS)) {

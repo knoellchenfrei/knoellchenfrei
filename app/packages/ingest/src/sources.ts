@@ -980,6 +980,67 @@ function pdokWijken(gemeentecode: string, expectedFeatures: number): Source {
   }
 }
 
+/**
+ * Hildesheim — Geoportal der Stadt Hildesheim, MapServer-WFS 2.0.0, Lizenz
+ * laut Nutzungsbedingungen DL-DE/BY-2.0 mit einem Vorbehalt gegen
+ * kommerzielle Nutzung (deshalb `unklar`, siehe `HILDESHEIM` in
+ * `core/city.ts`). Zwei Ebenen, je ein eigener Dienstpfad
+ * (`/interface/wfs-ms/<Ebene>`, ein Typname je Dienst), beide am
+ * 17. September 2026 gemessen: `numberMatched` 7 und 14.
+ *
+ * **Ausgabeformat `application/json`** — der Dienst kennt daneben
+ * `application/vnd.geo+json`, beide liefern dasselbe GeoJSON. **Und die
+ * Achsen sind Berlins, nicht Hamburgs:** Mit `srsName=urn:ogc:def:crs:EPSG::4326`
+ * antwortet das GeoJSON `[9.9521, 52.1463]`, also `[lon, lat]`. Das
+ * widerspricht der Recherche vom 16. September, die für dieselbe Ebene
+ * `[lat, lon]` notierte — die Messung dort war WFS 1.1.0 mit **GML**, und
+ * MapServer dreht im GML die Achsen, im GeoJSON nicht. Weil `wfsUrl` immer
+ * 2.0.0 und JSON anfragt, steht hier `lon,lat`; `assertInHildesheim` im
+ * Datenbau misst es trotzdem nach. Die Falle daneben: **Ohne** `srsName`
+ * antwortet der Dienst in seinem `DefaultCRS` EPSG:25832 —
+ * `[565150.07, 5777739.93]`, mit `crs` im Kopf, ohne Fehler.
+ *
+ * Die **Ortschaften** sind die 14 Ortschaften der Stadt (Stadtmitte,
+ * Nordstadt, Sorsum, Himmelsthür …), mit `Name` und `Name_lang`; der Datenbau
+ * nimmt `Name_lang`, weil `Name` bei zwei Flächen abgeschnitten oder
+ * vertippt ist (`Neuhof/HildesheimerWald/Marien`, `Bavenstadt`). Ihre Hülle
+ * ist der Rahmen in `core/city.ts`.
+ *
+ * Bewusst NICHT abgerufen: die Ebene `Stadtgrenze` des Viewers (nur über
+ * `/interface/geojson/<uuid>` in EPSG:25832 erreichbar, kein WFS-Pfad, und
+ * die Ortschaften decken dieselbe Fläche), `Schwerbehindertenparkplätze`
+ * (nur als WMS/Mapproxy-Kachel im Viewer, kein Vektordienst gefunden),
+ * `Park and Ride` (Viewer-Ebene, kein `wfs-ms`-Pfad geraten — Raten hat
+ * hier dreimal 404 gebracht: `Stadtgrenze`, `Ortsteile`, `Stadtteile`).
+ */
+const HILDESHEIM_WFS = 'https://gdi.stadt-hildesheim.de/interface/wfs-ms'
+
+const HILDESHEIM_DEFAULTS = {
+  outputFormat: 'application/json',
+  axisOrder: 'lon,lat',
+} as const
+
+const HILDESHEIM_SOURCES: readonly Source[] = [
+  // Die einzigen Flächen: sieben Bewohnerparkzonen A bis G, vier Felder,
+  // keine Zeiten, kein Betrag.
+  {
+    key: 'zones',
+    service: `${HILDESHEIM_WFS}/Bewohnerparkzonen`,
+    typeName: 'ms:Bewohnerparkzonen',
+    expectedFeatures: 7,
+    ...HILDESHEIM_DEFAULTS,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile: Kartenkontext, Name im Panel und
+  // der Rahmen der Stadt.
+  {
+    key: 'districts',
+    service: `${HILDESHEIM_WFS}/Ortschaften`,
+    typeName: 'ms:Ortschaften',
+    expectedFeatures: 14,
+    ...HILDESHEIM_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -1017,6 +1078,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   kassel: [],
   // Kein WFS: Essen kommt vollständig über `cityFiles` (drei DKAN-Dateien).
   essen: [],
+  hildesheim: HILDESHEIM_SOURCES,
 }
 
 /**
