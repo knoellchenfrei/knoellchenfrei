@@ -869,6 +869,10 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "151": "151",
     "152": "152",
   },
+  "zuerich": {
+    "Innenstadt": "Innenstadt",
+    "Oerlikon": "Oerlikon",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -887,6 +891,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "graz": 23,
   "salzburg": 38,
   "innsbruck": 20,
+  "zuerich": 2,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

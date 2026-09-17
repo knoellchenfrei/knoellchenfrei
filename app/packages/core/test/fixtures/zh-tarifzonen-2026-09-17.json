@@ -1,0 +1,41 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://www.ogd.stadt-zuerich.ch/wfs/geoportal/Gebietseinteilung_Parkierungsgebuehren?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=tarifzonen&SRSNAME=EPSG:4326&OUTPUTFORMAT=application/vnd.geo+json",
+  "anzahl": 2,
+  "zonen": [
+    {
+      "bedienungszeiten": "Montag - Samstag, 9:00 - 20:00 Uhr",
+      "geometrie_gdo": null,
+      "objectid": 1,
+      "tarifzone": "Hochtarifzone",
+      "zone_bezeichnung": "Innenstadt und Oerlikon"
+    },
+    {
+      "bedienungszeiten": "Montag - Samstag, 9:00 - 20:00 Uhr",
+      "geometrie_gdo": null,
+      "objectid": 2,
+      "tarifzone": "Hochtarifzone",
+      "zone_bezeichnung": "Innenstadt und Oerlikon"
+    }
+  ],
+  "geometrie": [
+    {
+      "objectid": 1,
+      "typ": "Polygon",
+      "stuetzpunkte": 95,
+      "ersterPunkt": [
+        8.548263,
+        47.378576
+      ]
+    },
+    {
+      "objectid": 2,
+      "typ": "Polygon",
+      "stuetzpunkte": 43,
+      "ersterPunkt": [
+        8.54821,
+        47.410455
+      ]
+    }
+  ]
+}

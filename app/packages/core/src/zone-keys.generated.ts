@@ -874,6 +874,10 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "151",
     "152",
   ],
+  "zuerich": [
+    "Innenstadt",
+    "Oerlikon",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

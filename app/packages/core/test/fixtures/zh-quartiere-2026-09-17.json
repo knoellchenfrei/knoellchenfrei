@@ -1,0 +1,313 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://www.ogd.stadt-zuerich.ch/wfs/geoportal/Statistische_Quartiere?…&TYPENAME=adm_statistische_quartiere_v",
+  "anzahl": 34,
+  "quartiere": [
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 3",
+      "knr": 3,
+      "objectid": 1,
+      "objid": "1",
+      "qname": "Alt-Wiedikon",
+      "qnr": 31
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 7",
+      "knr": 7,
+      "objectid": 2,
+      "objid": "10",
+      "qname": "Witikon",
+      "qnr": 74
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 4",
+      "knr": 4,
+      "objectid": 3,
+      "objid": "11",
+      "qname": "Langstrasse",
+      "qnr": 42
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 5",
+      "knr": 5,
+      "objectid": 4,
+      "objid": "12",
+      "qname": "Escher Wyss",
+      "qnr": 52
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 2",
+      "knr": 2,
+      "objectid": 5,
+      "objid": "13",
+      "qname": "Enge",
+      "qnr": 24
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 8",
+      "knr": 8,
+      "objectid": 6,
+      "objid": "14",
+      "qname": "Weinegg",
+      "qnr": 83
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 8",
+      "knr": 8,
+      "objectid": 9,
+      "objid": "17",
+      "qname": "Seefeld",
+      "qnr": 81
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 2",
+      "knr": 2,
+      "objectid": 7,
+      "objid": "15",
+      "qname": "Leimbach",
+      "qnr": 23
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 2",
+      "knr": 2,
+      "objectid": 8,
+      "objid": "16",
+      "qname": "Wollishofen",
+      "qnr": 21
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 8",
+      "knr": 8,
+      "objectid": 10,
+      "objid": "18",
+      "qname": "Mühlebach",
+      "qnr": 82
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 6",
+      "knr": 6,
+      "objectid": 11,
+      "objid": "19",
+      "qname": "Oberstrass",
+      "qnr": 63
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 12",
+      "knr": 12,
+      "objectid": 12,
+      "objid": "2",
+      "qname": "Schwamendingen-Mitte",
+      "qnr": 122
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 7",
+      "knr": 7,
+      "objectid": 13,
+      "objid": "20",
+      "qname": "Fluntern",
+      "qnr": 71
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 1",
+      "knr": 1,
+      "objectid": 14,
+      "objid": "21",
+      "qname": "Rathaus",
+      "qnr": 11
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 7",
+      "knr": 7,
+      "objectid": 15,
+      "objid": "22",
+      "qname": "Hottingen",
+      "qnr": 72
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 1",
+      "knr": 1,
+      "objectid": 18,
+      "objid": "25",
+      "qname": "City",
+      "qnr": 14
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 9",
+      "knr": 9,
+      "objectid": 16,
+      "objid": "23",
+      "qname": "Albisrieden",
+      "qnr": 91
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 3",
+      "knr": 3,
+      "objectid": 17,
+      "objid": "24",
+      "qname": "Sihlfeld",
+      "qnr": 34
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 11",
+      "knr": 11,
+      "objectid": 19,
+      "objid": "26",
+      "qname": "Affoltern",
+      "qnr": 111
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 11",
+      "knr": 11,
+      "objectid": 20,
+      "objid": "27",
+      "qname": "Oerlikon",
+      "qnr": 115
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 10",
+      "knr": 10,
+      "objectid": 21,
+      "objid": "28",
+      "qname": "Höngg",
+      "qnr": 101
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 10",
+      "knr": 10,
+      "objectid": 22,
+      "objid": "29",
+      "qname": "Wipkingen",
+      "qnr": 102
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 12",
+      "knr": 12,
+      "objectid": 23,
+      "objid": "3",
+      "qname": "Hirzenbach",
+      "qnr": 123
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 6",
+      "knr": 6,
+      "objectid": 24,
+      "objid": "30",
+      "qname": "Unterstrass",
+      "qnr": 61
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 1",
+      "knr": 1,
+      "objectid": 25,
+      "objid": "31",
+      "qname": "Lindenhof",
+      "qnr": 13
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 7",
+      "knr": 7,
+      "objectid": 26,
+      "objid": "32",
+      "qname": "Hirslanden",
+      "qnr": 73
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 5",
+      "knr": 5,
+      "objectid": 27,
+      "objid": "33",
+      "qname": "Gewerbeschule",
+      "qnr": 51
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 4",
+      "knr": 4,
+      "objectid": 28,
+      "objid": "34",
+      "qname": "Werd",
+      "qnr": 41
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 9",
+      "knr": 9,
+      "objectid": 29,
+      "objid": "4",
+      "qname": "Altstetten",
+      "qnr": 92
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 4",
+      "knr": 4,
+      "objectid": 34,
+      "objid": "9",
+      "qname": "Hard",
+      "qnr": 44
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 1",
+      "knr": 1,
+      "objectid": 30,
+      "objid": "5",
+      "qname": "Hochschulen",
+      "qnr": 12
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 3",
+      "knr": 3,
+      "objectid": 31,
+      "objid": "6",
+      "qname": "Friesenberg",
+      "qnr": 33
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 11",
+      "knr": 11,
+      "objectid": 32,
+      "objid": "7",
+      "qname": "Seebach",
+      "qnr": 119
+    },
+    {
+      "geometrie_gdo": null,
+      "kname": "Kreis 12",
+      "knr": 12,
+      "objectid": 33,
+      "objid": "8",
+      "qname": "Saatlen",
+      "qnr": 121
+    }
+  ]
+}

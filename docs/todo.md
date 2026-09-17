@@ -521,6 +521,13 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > 200, `exceededTransferLimit`). Offen: die Rückfrage an FB 32, warum der
 > Datensatz Betrag und Zeiten von 2014 führt, und ein Lizenzvermerk für die
 > Ortsteile — beides im Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: Zürich**, die erste Stadt in der Schweiz
+> und die erste in Franken ([staedte-zuerich.md](staedte-zuerich.md)): zwei
+> Hochtarifzonen mit Bedienungszeit aus dem Feed und Tarif aus dem Erlass
+> AS 551.330, gegengeprüft an den Parkuhren darin; Feiertagskalender `CH-ZH`
+> nach § 1 RLG. Offen: 70 Hochtarif-Parkuhren ohne Fläche (Enge, Seefeld),
+> der Niedertarif ohne Fläche, Feiertage an Parkuhren — im Bericht unter
+> „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

@@ -35,6 +35,12 @@ import type { CottbusAutomatProperties, CottbusZoneProperties } from '../src/cot
 import type { SchwerinAutomatProperties } from '../src/schwerin.js'
 import type { GrazZoneProperties } from '../src/graz.js'
 import { parseSalzburgMaxStay, parseSalzburgRule, type SalzburgZoneProperties } from '../src/salzburg.js'
+import type {
+  ZuerichMeterProperties,
+  ZuerichQuartierProperties,
+  ZuerichSpaceProperties,
+  ZuerichZoneProperties,
+} from '../src/zuerich.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -466,6 +472,90 @@ describe('Salzburger Fixture', () => {
       expect(parseSalzburgRule(zone.GEBUEHRENPFLICHT as string).windows.length, String(zone.ID)).toBeGreaterThan(0)
       expect(parseSalzburgMaxStay(zone.MAXIMALE_PARKDAUER), String(zone.ID)).toBe(180)
     }
+  })
+})
+
+describe('Zürcher Fixtures', () => {
+  const ZONES = read<{ zonen: ZuerichZoneProperties[] }>('zh-tarifzonen-2026-09-17.json').zonen
+  const METERS = read<{ parkuhren: ZuerichMeterProperties[] }>('zh-parkuhren-2026-09-17.json').parkuhren
+  const SPACES = read<{ parkfelder: ZuerichSpaceProperties[] }>('zh-parkfelder-2026-09-17.json').parkfelder
+  const QUARTIERE = read<{ quartiere: ZuerichQuartierProperties[] }>('zh-quartiere-2026-09-17.json').quartiere
+
+  it('führt die Tarifflächen in genau diesen fünf Feldern und Typen', () => {
+    expectShape(ZONES as unknown as Record<string, unknown>[], {
+      bedienungszeiten: ['string'],
+      // Ein Feld des Geodaten-Exports, an jeder Ebene dieses Servers, immer `null`.
+      geometrie_gdo: ['null'],
+      objectid: ['number'],
+      tarifzone: ['string'],
+      zone_bezeichnung: ['string'],
+    })
+  })
+
+  it('führt die Parkuhren in genau diesen Feldern und Typen — der Tarif ist eine Zeichenkette', () => {
+    expectShape(METERS as unknown as Record<string, unknown>[], {
+      davnr: ['string'],
+      // HTML mit einem Foto-Link ins Intranet — an 33 der 1.397 Parkuhren leer.
+      file_path: ['string', 'null'],
+      geometrie_gdo: ['null'],
+      geoserverhausnummerid: ['string', 'null'],
+      geoserverstrasseid: ['string'],
+      // LV95 als Zahl neben der WGS84-Geometrie — die Probe, dass der Dienst
+      // wirklich umgerechnet hat: 2'683'177 ist kein Längengrad.
+      hochwert: ['number'],
+      rechtswert: ['number'],
+      kategorie: ['string'],
+      objectid: ['number'],
+      parkierungzonename: ['string'],
+      parkierungzonenummer: ['number'],
+      tarif: ['string'],
+      typ: ['string'],
+      // Von der Fixture ergänzt: die Koordinate, damit `zuerich.test.ts` die
+      // Achsenreihenfolge misst.
+      punkt: ['array'],
+    })
+  })
+
+  it('führt die Parkfelder in genau diesen Feldern und Typen — die Parkdauer ist eine Zahl oder null', () => {
+    expectShape(SPACES as unknown as Record<string, unknown>[], {
+      art: ['string'],
+      bezeichnung: ['string', 'null'],
+      davnr: ['string', 'null'],
+      dienstabteilung: ['string'],
+      eigentum: ['string'],
+      // Als Zeichenkette `1`/`0`, nicht als Zahl und nicht als Wahrheitswert —
+      // der Datenbau vergleicht mit `'1'`.
+      gebpflicht: ['string'],
+      geometrie_gdo: ['null'],
+      inbetriebnahme: ['string'],
+      inprojekt: ['string'],
+      kategorie: ['string'],
+      objectid: ['number'],
+      orientierung: ['string'],
+      // Minuten als Zahl; `null` genau an den Feldern ohne Parkuhr.
+      parkdauer: ['number', 'null'],
+      parkfeldnummer: ['number', 'null'],
+      stand: ['string'],
+      zugang: ['string'],
+      punkt: ['array'],
+    })
+  })
+
+  it('führt die Quartiere in genau diesen sieben Feldern und Typen', () => {
+    expectShape(QUARTIERE as unknown as Record<string, unknown>[], {
+      geometrie_gdo: ['null'],
+      kname: ['string'],
+      knr: ['number'],
+      objectid: ['number'],
+      objid: ['string'],
+      qname: ['string'],
+      qnr: ['number'],
+    })
+  })
+
+  it('lässt weder Bedienungszeit noch Tarifzeile leer', () => {
+    for (const zone of ZONES) expect((zone.bedienungszeiten ?? '').trim()).not.toBe('')
+    for (const meter of METERS) expect((meter.tarif ?? '').trim(), String(meter.objectid)).not.toBe('')
   })
 })
 
