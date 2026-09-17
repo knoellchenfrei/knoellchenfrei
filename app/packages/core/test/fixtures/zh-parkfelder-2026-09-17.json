@@ -1,0 +1,845 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://www.ogd.stadt-zuerich.ch/wfs/geoportal/oeffentlich_zugaengliche_Parkplaetze_DAV?…&TYPENAME=oeff_strassenparkierung_dav_p",
+  "anzahl": 13272,
+  "arten": [
+    {
+      "text": "Standard",
+      "anzahl": 8410
+    },
+    {
+      "text": "Blaue Zone",
+      "anzahl": 3187
+    },
+    {
+      "text": "Parkscheibe",
+      "anzahl": 610
+    },
+    {
+      "text": "Güterumschlag",
+      "anzahl": 379
+    },
+    {
+      "text": "Taxi",
+      "anzahl": 291
+    },
+    {
+      "text": "Invalid",
+      "anzahl": 268
+    },
+    {
+      "text": "Polizei",
+      "anzahl": 60
+    },
+    {
+      "text": "Car",
+      "anzahl": 42
+    },
+    {
+      "text": "Elektro",
+      "anzahl": 13
+    },
+    {
+      "text": "Güter / Taxi",
+      "anzahl": 6
+    },
+    {
+      "text": "Diverse",
+      "anzahl": 6
+    }
+  ],
+  "gebpflicht": [
+    {
+      "text": "1",
+      "anzahl": 8443
+    },
+    {
+      "text": "0",
+      "anzahl": 4829
+    }
+  ],
+  "kategorien": [
+    {
+      "text": "OPU",
+      "anzahl": 4829
+    },
+    {
+      "text": "SPU",
+      "anzahl": 4767
+    },
+    {
+      "text": "ZPU",
+      "anzahl": 3676
+    }
+  ],
+  "parkdauer": [
+    {
+      "wert": null,
+      "anzahl": 4829
+    },
+    {
+      "wert": 120,
+      "anzahl": 4090
+    },
+    {
+      "wert": 360,
+      "anzahl": 1157
+    },
+    {
+      "wert": 240,
+      "anzahl": 1030
+    },
+    {
+      "wert": 60,
+      "anzahl": 747
+    },
+    {
+      "wert": 900,
+      "anzahl": 502
+    },
+    {
+      "wert": 30,
+      "anzahl": 323
+    },
+    {
+      "wert": 480,
+      "anzahl": 288
+    },
+    {
+      "wert": 180,
+      "anzahl": 204
+    },
+    {
+      "wert": 2880,
+      "anzahl": 102
+    }
+  ],
+  "parkfelder": [
+    {
+      "art": "Taxi",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2009-12-10",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 1,
+      "orientierung": "LPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.538563,
+        47.370688
+      ]
+    },
+    {
+      "art": "Invalid",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2009-12-10",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 8,
+      "orientierung": "QPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.54115,
+        47.375467
+      ]
+    },
+    {
+      "art": "Polizei",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2009-12-10",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 10,
+      "orientierung": "LPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.540993,
+        47.375397
+      ]
+    },
+    {
+      "art": "Güterumschlag",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2009-12-16",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 78,
+      "orientierung": "SCHPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.519485,
+        47.362586
+      ]
+    },
+    {
+      "art": "Blaue Zone",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2010-02-25",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 80,
+      "orientierung": "QPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.576382,
+        47.384353
+      ]
+    },
+    {
+      "art": "Parkscheibe",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2010-04-23",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 918,
+      "orientierung": "SCHPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.568335,
+        47.374939
+      ]
+    },
+    {
+      "art": "Car",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2010-04-27",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 964,
+      "orientierung": "LPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.539457,
+        47.365602
+      ]
+    },
+    {
+      "art": "Güter / Taxi",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2021-01-04",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 3640,
+      "orientierung": "LPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.535188,
+        47.373225
+      ]
+    },
+    {
+      "art": "Diverse",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2023-03-07",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 4023,
+      "orientierung": "QPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.515911,
+        47.37994
+      ]
+    },
+    {
+      "art": "Elektro",
+      "bezeichnung": null,
+      "davnr": null,
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "0",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2023-04-12",
+      "inprojekt": "False",
+      "kategorie": "OPU",
+      "objectid": 4045,
+      "orientierung": "QPU",
+      "parkdauer": null,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.496155,
+        47.403568
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Kappelergasse Nr. 1",
+      "davnr": "1.183",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-25",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 4830,
+      "orientierung": "SCHPU",
+      "parkdauer": 30,
+      "parkfeldnummer": 23,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.541566,
+        47.369062
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Auf der Mauer",
+      "davnr": "1.005",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-25",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 4903,
+      "orientierung": "LPU",
+      "parkdauer": 120,
+      "parkfeldnummer": 3,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.545064,
+        47.378267
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Wettingerwies",
+      "davnr": "1.561",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-25",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 4865,
+      "orientierung": "LPU",
+      "parkdauer": 60,
+      "parkfeldnummer": 2,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.549254,
+        47.369123
+      ]
+    },
+    {
+      "art": "Car",
+      "bezeichnung": "Bahnhofquai Nr. 5, Car-Parkplatz",
+      "davnr": "1.013",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-25",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 5286,
+      "orientierung": "LPU",
+      "parkdauer": 120,
+      "parkfeldnummer": 2,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.541803,
+        47.375726
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Bleulerstrasse, bei Klinik, Sportplätze",
+      "davnr": "8.022",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-26",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 5892,
+      "orientierung": "LPU",
+      "parkdauer": 900,
+      "parkfeldnummer": 3,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.571275,
+        47.347961
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Bellerivestrasse, Zollikerrampe",
+      "davnr": "8.013",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-26",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 5922,
+      "orientierung": "LPU",
+      "parkdauer": 480,
+      "parkfeldnummer": 1,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.562749,
+        47.347741
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Zürichbergstrasse Nr. 231 -235 / Zoo",
+      "davnr": "7.548",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-02",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 6430,
+      "orientierung": "QPU",
+      "parkdauer": 360,
+      "parkfeldnummer": 1,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.575281,
+        47.384157
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Eidmattstrasse Nr. 55 - 59",
+      "davnr": "7.081",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-02",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 6656,
+      "orientierung": "LPU",
+      "parkdauer": 180,
+      "parkfeldnummer": 1,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.561861,
+        47.365657
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Zehntenhausstrasse",
+      "davnr": "11.322",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-02",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 7165,
+      "orientierung": "LPU",
+      "parkdauer": 240,
+      "parkfeldnummer": 7,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.508301,
+        47.423662
+      ]
+    },
+    {
+      "art": "Car",
+      "bezeichnung": "Hafen Enge/Mythenquai Car/Autobusse",
+      "davnr": "2.236",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-08",
+      "inprojekt": "False",
+      "kategorie": "SPU",
+      "objectid": 7563,
+      "orientierung": "SCHPU",
+      "parkdauer": 900,
+      "parkfeldnummer": 1,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.535797,
+        47.361004
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Talacker Nr. 35 - 41",
+      "davnr": "100",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-25",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 9597,
+      "orientierung": "LPU",
+      "parkdauer": 120,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.534935,
+        47.372037
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Bellerivestrasse unter Zollikerrampe (SBB-Areal)",
+      "davnr": "68",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-08-26",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 9642,
+      "orientierung": "SCHPU",
+      "parkdauer": 480,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.564254,
+        47.346927
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Im Rehsprung",
+      "davnr": "80",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-02",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 9676,
+      "orientierung": "QPU",
+      "parkdauer": 900,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.517794,
+        47.401168
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Katzenbachstrasse",
+      "davnr": "15",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-02",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 9728,
+      "orientierung": "QPU",
+      "parkdauer": 240,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.549222,
+        47.422288
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Freigutstrasse Nr. 2 - 14",
+      "davnr": "32",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-08",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 10247,
+      "orientierung": "LPU",
+      "parkdauer": 180,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.531983,
+        47.367545
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Grütlistrasse Nr. 36 - 44",
+      "davnr": "55",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2022-09-08",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 10346,
+      "orientierung": "LPU",
+      "parkdauer": 360,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.531154,
+        47.361742
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Forellenweg",
+      "davnr": "1",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2023-04-12",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 11058,
+      "orientierung": "SCHPU",
+      "parkdauer": 2880,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.539051,
+        47.338937
+      ]
+    },
+    {
+      "art": "Elektro",
+      "bezeichnung": "Forellenweg",
+      "davnr": "1",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2023-04-12",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 11157,
+      "orientierung": "LPU",
+      "parkdauer": 2880,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.538759,
+        47.338535
+      ]
+    },
+    {
+      "art": "Standard",
+      "bezeichnung": "Baumackerstrasse Nr. 35",
+      "davnr": "107",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2023-04-25",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 11160,
+      "orientierung": "QPU",
+      "parkdauer": 30,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.543699,
+        47.40908
+      ]
+    },
+    {
+      "art": "Elektro",
+      "bezeichnung": "Hirschengraben/Obergericht",
+      "davnr": "10",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2025-05-07",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 11343,
+      "orientierung": "LPU",
+      "parkdauer": 120,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.54702,
+        47.371258
+      ]
+    },
+    {
+      "art": "Elektro",
+      "bezeichnung": "Niedertarif 15h Mo-So 8-22 Uhr",
+      "davnr": "DAV.PU.0207",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2026-02-12",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 11874,
+      "orientierung": "QPU",
+      "parkdauer": 900,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.525531,
+        47.351771
+      ]
+    },
+    {
+      "art": "Car",
+      "bezeichnung": "Niedertarif 4h Mo-So 8-19 Uhr",
+      "davnr": "DAV.PU.0811",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2026-02-12",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 12199,
+      "orientierung": "LPU",
+      "parkdauer": 240,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.554246,
+        47.353417
+      ]
+    },
+    {
+      "art": "Elektro",
+      "bezeichnung": "Zöllystrasse",
+      "davnr": "139",
+      "dienstabteilung": "DAV",
+      "eigentum": "öffentlich",
+      "gebpflicht": "1",
+      "geometrie_gdo": null,
+      "inbetriebnahme": "2026-02-13",
+      "inprojekt": "False",
+      "kategorie": "ZPU",
+      "objectid": 12203,
+      "orientierung": "QPU",
+      "parkdauer": 240,
+      "parkfeldnummer": null,
+      "stand": "2026-09-17",
+      "zugang": "öffentlich",
+      "punkt": [
+        8.52323,
+        47.390881
+      ]
+    }
+  ]
+}

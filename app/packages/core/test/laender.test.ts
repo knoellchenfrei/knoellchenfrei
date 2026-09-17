@@ -15,6 +15,64 @@ describe('countryOf', () => {
     expect(countryOf('BW')).toBe('DE')
     expect(countryOf('AT-W')).toBe('AT')
     expect(countryOf('AT-T')).toBe('AT')
+    expect(countryOf('CH-ZH')).toBe('CH')
+  })
+})
+
+/**
+ * Der Zürcher Kalender — der erste Schweizer, und der erste, der Feiertage
+ * aus einem **kantonalen** Gesetz nimmt: § 1 Abs. 1 lit. b RLG (LS 822.4),
+ * neun Tage, der 1. August davon national. Was die Aufteilung verhindert:
+ * Aus der deutschen Bundesliste hätte Zürich den 3. Oktober frei und den
+ * 1. August nicht; aus dem Gefühl hätte es den Berchtoldstag, der im Gesetz
+ * nicht steht.
+ */
+describe('der Zürcher Kalender', () => {
+  it('zählt neun Tage nach § 1 Abs. 1 lit. b RLG', () => {
+    const zuerich = holidaysFor('CH-ZH', 2026)
+    for (const tag of [
+      '2026-01-01', // Neujahrstag
+      '2026-04-03', // Karfreitag
+      '2026-04-06', // Ostermontag
+      '2026-05-01', // 1. Mai
+      '2026-05-14', // Auffahrtstag
+      '2026-05-25', // Pfingstmontag
+      '2026-08-01', // Bundesfeiertag, Art. 110 Abs. 3 BV
+      '2026-12-25', // Weihnachtstag
+      '2026-12-26', // Stephanstag
+    ]) {
+      expect(zuerich.has(tag), tag).toBe(true)
+    }
+    expect(zuerich.size).toBe(9)
+  })
+
+  // Berchtoldstag, Sechseläuten (dritter Montag im April) und Knabenschiessen
+  // (zweiter Montag im September) sind Zürcher Bräuche, keine Ruhetage des
+  // Gesetzes — und die deutschen und österreichischen Tage fehlen ebenso.
+  it('kennt weder Berchtoldstag noch Sechseläuten noch die Tage der Nachbarn', () => {
+    const zuerich = holidaysFor('CH-ZH', 2026)
+    expect(zuerich.has('2026-01-02')).toBe(false) // Berchtoldstag
+    expect(zuerich.has('2026-04-20')).toBe(false) // Sechseläuten
+    expect(zuerich.has('2026-09-14')).toBe(false) // Knabenschiessen
+    expect(zuerich.has('2026-06-04')).toBe(false) // Fronleichnam
+    expect(zuerich.has('2026-08-15')).toBe(false) // Mariä Himmelfahrt
+    expect(zuerich.has('2026-10-03')).toBe(false) // Tag der Deutschen Einheit
+    expect(zuerich.has('2026-10-26')).toBe(false) // österreichischer Nationalfeiertag
+    expect(zuerich.has('2026-11-01')).toBe(false) // Allerheiligen
+  })
+
+  it('unterscheidet sich von Berlin um genau drei Tage', () => {
+    const be = holidaysFor('BE', 2026)
+    const zh = holidaysFor('CH-ZH', 2026)
+    expect([...be].filter((date) => !zh.has(date)).sort()).toEqual(['2026-03-08', '2026-10-03'])
+    expect([...zh].filter((date) => !be.has(date))).toEqual(['2026-08-01'])
+  })
+
+  it('erkennt den 1. August aus einer Ortszeit-Ablesung — in Zürich, nicht in Berlin', () => {
+    // Samstag, 1. August 2026, 11:00 Mitteleuropäischer Sommerzeit.
+    const clock = berlinWallClock(Date.UTC(2026, 7, 1, 9, 0))
+    expect(isHoliday('CH-ZH', clock)).toBe(true)
+    expect(isHoliday('BE', clock)).toBe(false)
   })
 })
 

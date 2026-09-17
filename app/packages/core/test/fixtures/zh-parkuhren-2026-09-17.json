@@ -1,0 +1,778 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://www.ogd.stadt-zuerich.ch/wfs/geoportal/oeffentlich_zugaengliche_Parkplaetze_DAV?…&TYPENAME=oeff_strassenparkierung_spuzpu",
+  "anzahl": 1397,
+  "typen": [
+    {
+      "text": "SPU",
+      "anzahl": 1094
+    },
+    {
+      "text": "ZPU",
+      "anzahl": 303
+    }
+  ],
+  "tarife": [
+    {
+      "text": "HOCH 2h Mo-Sa 09:00-20:00",
+      "anzahl": 533
+    },
+    {
+      "text": "NIEDER 2h Mo-Sa 09:00-20:00",
+      "anzahl": 287
+    },
+    {
+      "text": "NIEDER 1h Mo-Sa 09:00-20:00",
+      "anzahl": 177
+    },
+    {
+      "text": "Zoo ganze Woche",
+      "anzahl": 66
+    },
+    {
+      "text": "Saisonal Baeder",
+      "anzahl": 45
+    },
+    {
+      "text": "NIEDER 0.5h Mo-Sa 09:00-20:00",
+      "anzahl": 39
+    },
+    {
+      "text": "Adlisbergstrasse (Zoo)",
+      "anzahl": 36
+    },
+    {
+      "text": "HOCH 0.5h Mo-Sa 09:00-20:00",
+      "anzahl": 34
+    },
+    {
+      "text": "HOCH 3h Mo-Sa 09:00-20:00",
+      "anzahl": 27
+    },
+    {
+      "text": "NIEDER 3h Mo-Sa 09:00-20:00",
+      "anzahl": 22
+    },
+    {
+      "text": "Kreis 5 Spezial 4h",
+      "anzahl": 19
+    },
+    {
+      "text": "NIEDER 15h Mo-Sa 09:00-20:00",
+      "anzahl": 18
+    },
+    {
+      "text": "NIEDER 6h Mo-Sa 09:00-20:00",
+      "anzahl": 18
+    },
+    {
+      "text": "NIEDER 4h Mo-So 08:00-19:00",
+      "anzahl": 13
+    },
+    {
+      "text": "NIEDER 6h Mo-So 00:00-24:00",
+      "anzahl": 10
+    },
+    {
+      "text": "HOCH 2h Mo-So 08:00-21:00",
+      "anzahl": 9
+    },
+    {
+      "text": "Kreis 5 Spezial 2h",
+      "anzahl": 7
+    },
+    {
+      "text": "NIEDER 8h Mo-Sa 09:00-20:00",
+      "anzahl": 7
+    },
+    {
+      "text": "Hafendamm Enge",
+      "anzahl": 4
+    },
+    {
+      "text": "Theater 11",
+      "anzahl": 4
+    },
+    {
+      "text": "NIEDER 2h Mo-So 08:00-19:00",
+      "anzahl": 3
+    },
+    {
+      "text": "NIEDER 48h Mo-So 00:00-24:00",
+      "anzahl": 2
+    },
+    {
+      "text": "NIEDER 4h Mo-So 00:00-24:00",
+      "anzahl": 2
+    },
+    {
+      "text": "NIEDER 6h Mo-So 09:00-20:00",
+      "anzahl": 2
+    },
+    {
+      "text": "HOCH 15h Mo-Sa 09:00-20:00",
+      "anzahl": 2
+    },
+    {
+      "text": "HOCH 0.5h Mo-So 00:00-24:00",
+      "anzahl": 2
+    },
+    {
+      "text": "NIEDER 15h Mo-So 08:00-19:00",
+      "anzahl": 2
+    },
+    {
+      "text": "NIEDER 6h Mo-So 08:00-22:00",
+      "anzahl": 2
+    },
+    {
+      "text": "NIEDER 1h Mo-So 00:00-24:00",
+      "anzahl": 1
+    },
+    {
+      "text": "NIEDER 2h Mo-So 08:00-18:00",
+      "anzahl": 1
+    },
+    {
+      "text": "NIEDER 8h Mo-So 08:00-19:00",
+      "anzahl": 1
+    },
+    {
+      "text": "Balgrist spezial",
+      "anzahl": 1
+    },
+    {
+      "text": "NIEDER 15h Mo-So 08:00-22:00",
+      "anzahl": 1
+    }
+  ],
+  "parkuhren": [
+    {
+      "davnr": "1",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/4CCEE408-E947-4CDC-B331-004A30C43E7B.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/4CCEE408-E947-4CDC-B331-004A30C43E7B.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "555",
+      "hochwert": 1243681.2420780424,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1,
+      "parkierungzonename": "Forellenweg",
+      "parkierungzonenummer": 1,
+      "rechtswert": 2683177.1475913622,
+      "tarif": "NIEDER 48h Mo-So 00:00-24:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.539234,
+        47.338744
+      ]
+    },
+    {
+      "davnr": "1.001",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/E7796BF1-166E-4074-A072-519EC7EDDB1E.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/E7796BF1-166E-4074-A072-519EC7EDDB1E.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1027416",
+      "geoserverstrasseid": "112",
+      "hochwert": 1247893.3457041178,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 3,
+      "parkierungzonename": "Auf der Mauer",
+      "parkierungzonenummer": 1001,
+      "rechtswert": 2683556.396691953,
+      "tarif": "HOCH 2h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.545037,
+        47.376578
+      ]
+    },
+    {
+      "davnr": "1.013",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/266BD0FA-01DB-4C6D-864C-D8ADD8775A96.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/266BD0FA-01DB-4C6D-864C-D8ADD8775A96.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "148",
+      "hochwert": 1247799.679119767,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 13,
+      "parkierungzonename": "Bahnhofquai Nr. 5, Car-Parkplatz",
+      "parkierungzonenummer": 1013,
+      "rechtswert": 2683311.437731139,
+      "tarif": "HOCH 2h Mo-So 08:00-21:00",
+      "typ": "SPU",
+      "punkt": [
+        8.541776,
+        47.375766
+      ]
+    },
+    {
+      "davnr": "1.047",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/0569B262-6D2F-43BD-BA24-0A90EFA14D38.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/0569B262-6D2F-43BD-BA24-0A90EFA14D38.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1026567",
+      "geoserverstrasseid": "260",
+      "hochwert": 1246906.8963300034,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 30,
+      "parkierungzonename": "Börsenstrasse Nr.  21",
+      "parkierungzonenummer": 1047,
+      "rechtswert": 2683153.627987249,
+      "tarif": "HOCH 0.5h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.539521,
+        47.367757
+      ]
+    },
+    {
+      "davnr": "1.311",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/030FC598-3D03-4736-A25E-100237701AE7.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/030FC598-3D03-4736-A25E-100237701AE7.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1558",
+      "hochwert": 1247071.244844857,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 110,
+      "parkierungzonename": "Promenadengasse",
+      "parkierungzonenummer": 1311,
+      "rechtswert": 2683856.1026752847,
+      "tarif": "NIEDER 2h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.548851,
+        47.369146
+      ]
+    },
+    {
+      "davnr": "1.561",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/A8AB757A-FB2B-47B4-8465-99D138048127.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/A8AB757A-FB2B-47B4-8465-99D138048127.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1027537",
+      "geoserverstrasseid": "2181",
+      "hochwert": 1247068.5776042081,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 161,
+      "parkierungzonename": "Wettingerwies",
+      "parkierungzonenummer": 1561,
+      "rechtswert": 2683889.400057787,
+      "tarif": "NIEDER 1h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.549291,
+        47.369118
+      ]
+    },
+    {
+      "davnr": "10.141",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/FC0BC69A-48B5-4D55-9342-8D13BC805369.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/FC0BC69A-48B5-4D55-9342-8D13BC805369.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1018330",
+      "geoserverstrasseid": "2207",
+      "hochwert": 1249664.9868869907,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 196,
+      "parkierungzonename": "Röschibachstrasse Seite Post 30 Min",
+      "parkierungzonenummer": 10141,
+      "rechtswert": 2681961.5138131557,
+      "tarif": "NIEDER 0.5h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.524246,
+        47.392711
+      ]
+    },
+    {
+      "davnr": "10.151",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/1E358462-789D-4C85-AFB8-B5566E071E7D.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/1E358462-789D-4C85-AFB8-B5566E071E7D.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "2018",
+      "hochwert": 1250423.701783115,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 200,
+      "parkierungzonename": "Emil-Klöti-Strasse",
+      "parkierungzonenummer": 10151,
+      "rechtswert": 2681702.849708879,
+      "tarif": "NIEDER 2h Mo-So 08:00-19:00",
+      "typ": "SPU",
+      "punkt": [
+        8.520959,
+        47.399567
+      ]
+    },
+    {
+      "davnr": "10.192",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/366255C9-28FD-49F5-828E-2D9E9EE564FF.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/366255C9-28FD-49F5-828E-2D9E9EE564FF.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1039467",
+      "geoserverstrasseid": "1003",
+      "hochwert": 1250975.8980965645,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 207,
+      "parkierungzonename": "Imbisbühlstrasse Nr. 80",
+      "parkierungzonenummer": 10192,
+      "rechtswert": 2679243.4640204273,
+      "tarif": "NIEDER 3h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.48848,
+        47.404833
+      ]
+    },
+    {
+      "davnr": "11.223",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/95444F71-63BD-42D8-A78E-30EFAD21BB9E.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/95444F71-63BD-42D8-A78E-30EFAD21BB9E.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1722",
+      "hochwert": 1251925.0503147924,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 282,
+      "parkierungzonename": "Schaffhauserstrasse, unter der Brücke",
+      "parkierungzonenummer": 11223,
+      "rechtswert": 2683606.207943336,
+      "tarif": "NIEDER 1h Mo-So 00:00-24:00",
+      "typ": "SPU",
+      "punkt": [
+        8.54645,
+        47.41283
+      ]
+    },
+    {
+      "davnr": "11.321",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/F7B8F370-DE30-4FA1-AAD0-9E1067F5366C.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/F7B8F370-DE30-4FA1-AAD0-9E1067F5366C.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "2237",
+      "hochwert": 1253063.326088717,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 308,
+      "parkierungzonename": "Zehntenhausstrasse",
+      "parkierungzonenummer": 11321,
+      "rechtswert": 2680708.3716775603,
+      "tarif": "NIEDER 4h Mo-So 08:00-19:00",
+      "typ": "SPU",
+      "punkt": [
+        8.508263,
+        47.423428
+      ]
+    },
+    {
+      "davnr": "113",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/0903570A-7F04-49E1-98B1-DB21935BB4E9.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/0903570A-7F04-49E1-98B1-DB21935BB4E9.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "556",
+      "hochwert": 1248716.806702539,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 315,
+      "parkierungzonename": "Forrenweidstrasse / Zoo",
+      "parkierungzonenummer": 113,
+      "rechtswert": 2685756.634737927,
+      "tarif": "Zoo ganze Woche",
+      "typ": "ZPU",
+      "punkt": [
+        8.574325,
+        47.383701
+      ]
+    },
+    {
+      "davnr": "12.081",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/A6FD9424-3204-4CD8-9D17-C288B25A225A.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/A6FD9424-3204-4CD8-9D17-C288B25A225A.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1499",
+      "hochwert": 1252388.7895593944,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 330,
+      "parkierungzonename": "Opfikonstrasse",
+      "parkierungzonenummer": 12081,
+      "rechtswert": 2685284.026972163,
+      "tarif": "NIEDER 4h Mo-So 00:00-24:00",
+      "typ": "SPU",
+      "punkt": [
+        8.568768,
+        47.416785
+      ]
+    },
+    {
+      "davnr": "124",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/5F1DF5F2-ED3D-4E02-A3E8-EA53242ED0E1.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/5F1DF5F2-ED3D-4E02-A3E8-EA53242ED0E1.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1038314",
+      "geoserverstrasseid": "1265",
+      "hochwert": 1249253.0614752907,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 335,
+      "parkierungzonename": "Limmatstrasse Nr. 266 - 291a",
+      "parkierungzonenummer": 124,
+      "rechtswert": 2682041.4958137833,
+      "tarif": "Kreis 5 Spezial 2h",
+      "typ": "ZPU",
+      "punkt": [
+        8.525229,
+        47.388997
+      ]
+    },
+    {
+      "davnr": "14",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/0BB6D7A8-D64C-4AD7-B5C8-B9E2CB2DD4A3.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/0BB6D7A8-D64C-4AD7-B5C8-B9E2CB2DD4A3.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "62",
+      "hochwert": 1252987.2150261947,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 355,
+      "parkierungzonename": "Katzenbachstrasse",
+      "parkierungzonenummer": 14,
+      "rechtswert": 2683786.2162683248,
+      "tarif": "Saisonal Baeder",
+      "typ": "ZPU",
+      "punkt": [
+        8.549034,
+        47.422359
+      ]
+    },
+    {
+      "davnr": "135",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/92A8B260-D354-4CF6-BDDC-6FC79A1EC900.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/92A8B260-D354-4CF6-BDDC-6FC79A1EC900.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "235",
+      "hochwert": 1246980.4476540694,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 346,
+      "parkierungzonename": "Triemliplatz",
+      "parkierungzonenummer": 135,
+      "rechtswert": 2679882.127479117,
+      "tarif": "NIEDER 15h Mo-Sa 09:00-20:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.496227,
+        47.368823
+      ]
+    },
+    {
+      "davnr": "139",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/AEE77D3A-0C7E-47A4-A423-1EA3B3A21EF4.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/AEE77D3A-0C7E-47A4-A423-1EA3B3A21EF4.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "498",
+      "hochwert": 1249459.7429867855,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 348,
+      "parkierungzonename": "Zöllystrasse",
+      "parkierungzonenummer": 139,
+      "rechtswert": 2681885.010131473,
+      "tarif": "Kreis 5 Spezial 4h",
+      "typ": "ZPU",
+      "punkt": [
+        8.523195,
+        47.390875
+      ]
+    },
+    {
+      "davnr": "146",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/CFE478FE-2B44-433C-826A-73A11CB27681.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/CFE478FE-2B44-433C-826A-73A11CB27681.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1082",
+      "hochwert": 1246942.5715910248,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 370,
+      "parkierungzonename": "Katzenschwanzstrasse",
+      "parkierungzonenummer": 146,
+      "rechtswert": 2687811.363382456,
+      "tarif": "NIEDER 6h Mo-So 09:00-20:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.601185,
+        47.367474
+      ]
+    },
+    {
+      "davnr": "164",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/827A3E38-3E23-40A6-BAAE-067D2D052A9E.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/827A3E38-3E23-40A6-BAAE-067D2D052A9E.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "644",
+      "hochwert": 1246364.4406662725,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 383,
+      "parkierungzonename": "General-Guisan-Quai",
+      "parkierungzonenummer": 164,
+      "rechtswert": 2682817.7216123063,
+      "tarif": "HOCH 15h Mo-Sa 09:00-20:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.534974,
+        47.362921
+      ]
+    },
+    {
+      "davnr": "2",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/5A22BC1E-732F-4E78-92C6-89F594AF898D.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/5A22BC1E-732F-4E78-92C6-89F594AF898D.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1425",
+      "hochwert": 1246034.979503681,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 410,
+      "parkierungzonename": "Hafen Enge/Mythenquai",
+      "parkierungzonenummer": 2,
+      "rechtswert": 2682877.3673294573,
+      "tarif": "Hafendamm Enge",
+      "typ": "ZPU",
+      "punkt": [
+        8.535703,
+        47.35995
+      ]
+    },
+    {
+      "davnr": "2.194",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/DB259762-6136-425F-9900-BF404E87402E.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/DB259762-6136-425F-9900-BF404E87402E.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1041348",
+      "geoserverstrasseid": "734",
+      "hochwert": 1246389.2511584682,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 463,
+      "parkierungzonename": "Grütlistrasse Nr. 36 - 44",
+      "parkierungzonenummer": 55,
+      "rechtswert": 2682487.535753147,
+      "tarif": "NIEDER 6h Mo-Sa 09:00-20:00",
+      "typ": "SPU",
+      "punkt": [
+        8.530608,
+        47.363185
+      ]
+    },
+    {
+      "davnr": "2.351",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/1495DDA0-F1E9-463E-84A0-9E9313934E1C.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/1495DDA0-F1E9-463E-84A0-9E9313934E1C.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1832",
+      "hochwert": 1246521.535816619,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 507,
+      "parkierungzonename": "Tessinerplatz bei Bhf. Enge",
+      "parkierungzonenummer": 2351,
+      "rechtswert": 2682531.3553008595,
+      "tarif": "HOCH 0.5h Mo-So 00:00-24:00",
+      "typ": "SPU",
+      "punkt": [
+        8.531213,
+        47.36437
+      ]
+    },
+    {
+      "davnr": "30",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/2555B0F5-93E7-44B0-9A64-EA2C9917010F.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/2555B0F5-93E7-44B0-9A64-EA2C9917010F.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1041555",
+      "geoserverstrasseid": "360",
+      "hochwert": 1246710.0049166658,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 651,
+      "parkierungzonename": "Claridenstrasse Nr. 5, ggü Kongresshaus",
+      "parkierungzonenummer": 30,
+      "rechtswert": 2683077.4612500006,
+      "tarif": "HOCH 3h Mo-Sa 09:00-20:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.538476,
+        47.365996
+      ]
+    },
+    {
+      "davnr": "38",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/281738C7-832A-42D5-8F1F-D571C3BA72CC.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/281738C7-832A-42D5-8F1F-D571C3BA72CC.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "2099",
+      "hochwert": 1249837.6193462193,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 657,
+      "parkierungzonename": "Vulkanstrasse Nr. 130 - 200",
+      "parkierungzonenummer": 38,
+      "rechtswert": 2678497.1672772686,
+      "tarif": "NIEDER 6h Mo-So 00:00-24:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.478394,
+        47.394686
+      ]
+    },
+    {
+      "davnr": "68",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/3105E027-E788-436A-A150-27A3629583F4.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/3105E027-E788-436A-A150-27A3629583F4.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1056240",
+      "geoserverstrasseid": "188",
+      "hochwert": 1244620.1987753883,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1023,
+      "parkierungzonename": "Bellerivestrasse unter Zollikerrampe (SBB-Areal)",
+      "parkierungzonenummer": 68,
+      "rechtswert": 2685053.6057347674,
+      "tarif": "NIEDER 8h Mo-Sa 09:00-20:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.564238,
+        47.34695
+      ]
+    },
+    {
+      "davnr": "69",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/6A6813E8-1611-436D-BD9A-483F537CC31A.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/6A6813E8-1611-436D-BD9A-483F537CC31A.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1050677",
+      "geoserverstrasseid": "29",
+      "hochwert": 1247882.049850136,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1024,
+      "parkierungzonename": "Friedhof Sihlfeld",
+      "parkierungzonenummer": 69,
+      "rechtswert": 2680675.0336287525,
+      "tarif": "NIEDER 2h Mo-So 08:00-18:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.506886,
+        47.376835
+      ]
+    },
+    {
+      "davnr": "7.176",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/1D7D743A-A910-4F3D-AACC-D7FC5BB6F386.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/1D7D743A-A910-4F3D-AACC-D7FC5BB6F386.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1057694",
+      "geoserverstrasseid": "856",
+      "hochwert": 1246977.8346007604,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1062,
+      "parkierungzonename": "Heuelstrasse",
+      "parkierungzonenummer": 7176,
+      "rechtswert": 2685272.6962927757,
+      "tarif": "NIEDER 8h Mo-So 08:00-19:00",
+      "typ": "SPU",
+      "punkt": [
+        8.567586,
+        47.368124
+      ]
+    },
+    {
+      "davnr": "8.001",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/57345A3E-CED6-4BCF-859C-2EAEE217EA6B.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/57345A3E-CED6-4BCF-859C-2EAEE217EA6B.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1022220",
+      "geoserverstrasseid": "153",
+      "hochwert": 1245444.9387340175,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1174,
+      "parkierungzonename": "Balgriststrasse",
+      "parkierungzonenummer": 8001,
+      "rechtswert": 2685919.0502383094,
+      "tarif": "Balgrist spezial",
+      "typ": "SPU",
+      "punkt": [
+        8.575848,
+        47.354255
+      ]
+    },
+    {
+      "davnr": "90",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/ED8C22AD-1A92-4169-92F9-0873A11D2A1D.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/ED8C22AD-1A92-4169-92F9-0873A11D2A1D.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1024098",
+      "geoserverstrasseid": "9",
+      "hochwert": 1247880.4316471939,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1329,
+      "parkierungzonename": "Adlisbergstrasse",
+      "parkierungzonenummer": 90,
+      "rechtswert": 2686015.9074915634,
+      "tarif": "Adlisbergstrasse (Zoo)",
+      "typ": "ZPU",
+      "punkt": [
+        8.577598,
+        47.376145
+      ]
+    },
+    {
+      "davnr": "DAV.PU.0124",
+      "file_path": null,
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "1358",
+      "hochwert": 1250255.6563769649,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1370,
+      "parkierungzonename": "Niedertarif 15h Mo-So 8-19 Uhr",
+      "parkierungzonenummer": 52,
+      "rechtswert": 2679734.5598157328,
+      "tarif": "NIEDER 15h Mo-So 08:00-19:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.494857,
+        47.398296
+      ]
+    },
+    {
+      "davnr": "DAV.PU.0207",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/BF1F9EAB-EDB9-40EF-B822-3EE7E3C26EA2.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/BF1F9EAB-EDB9-40EF-B822-3EE7E3C26EA2.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "41",
+      "hochwert": 1245123.518156082,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1374,
+      "parkierungzonename": "Niedertarif 15h Mo-So 8-22 Uhr",
+      "parkierungzonenummer": 53,
+      "rechtswert": 2682101.2387525295,
+      "tarif": "NIEDER 15h Mo-So 08:00-22:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.525263,
+        47.35185
+      ]
+    },
+    {
+      "davnr": "DAV.PU.0208",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/88F466A0-B179-4616-8FD8-0BEF056481DC.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/88F466A0-B179-4616-8FD8-0BEF056481DC.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": "1044032",
+      "geoserverstrasseid": "41",
+      "hochwert": 1245075.3728430439,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1375,
+      "parkierungzonename": "Niedertarif 6h Mo-So 8-22 Uhr",
+      "parkierungzonenummer": 40,
+      "rechtswert": 2682149.3465289557,
+      "tarif": "NIEDER 6h Mo-So 08:00-22:00",
+      "typ": "ZPU",
+      "punkt": [
+        8.525891,
+        47.351411
+      ]
+    },
+    {
+      "davnr": "DAV.PU.0542",
+      "file_path": "<a href=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/439CA9A9-7513-498C-B2FF-656DB9A6F19D.jpg\"><img src=\"https://gdi.intra.stzh.ch/dav_dokumente/Fotos/Parkuhren/439CA9A9-7513-498C-B2FF-656DB9A6F19D.jpg\" class=\"dav_bilder\"></img></a>",
+      "geometrie_gdo": null,
+      "geoserverhausnummerid": null,
+      "geoserverstrasseid": "400",
+      "hochwert": 1251639.2616211504,
+      "kategorie": "SPU_UND_ZPU",
+      "objectid": 1386,
+      "parkierungzonename": "PP Theater 11",
+      "parkierungzonenummer": 18,
+      "rechtswert": 2683847.678403289,
+      "tarif": "Theater 11",
+      "typ": "ZPU",
+      "punkt": [
+        8.549596,
+        47.410229
+      ]
+    }
+  ]
+}

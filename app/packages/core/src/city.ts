@@ -742,6 +742,61 @@ export const ROSTOCK: City = {
   },
 }
 
+/**
+ * Zürich — die erste Stadt ausserhalb Deutschlands und Österreichs, die erste
+ * in Franken, die zweite unter **CC0**.
+ *
+ * Der Rahmen ist gemessen, nicht geschätzt, und stammt aus den **34
+ * Statistischen Quartieren** (`adm_statistische_quartiere_v`, abgerufen am
+ * 17. September 2026): Sie umschliessen 8,446892–8,627209 / 47,319034–47,43514
+ * — dieselbe Hülle wie die zwölf Stadtkreise —, nach aussen gerundet steht
+ * das unten. Die zwei Hochtarifflächen reichen nur 8,518–8,552 / 47,364–47,414;
+ * wer den Rahmen daraus nähme, wiese jede Meldung aus Altstetten, Höngg oder
+ * Witikon ab, obwohl dort Parkuhren stehen (Niedertarif, Art. 5).
+ *
+ * Der Mittelpunkt liegt zwischen den beiden Flächen — Innenstadt (Schwerpunkt
+ * 8,534 / 47,377) und Zentrum Oerlikon (8,547 / 47,410), vier Kilometer
+ * auseinander. Zoom 12 wie in Rostock, aus demselben Grund: Bei 13 wäre vom
+ * Hauptbahnhof aus Oerlikon nicht mehr im Bild, und dort stehen 58 der 553
+ * Parkuhren in den Flächen.
+ */
+export const ZUERICH: City = {
+  key: 'zuerich',
+  name: 'Zürich',
+  land: 'CH-ZH',
+  center: [8.54, 47.389],
+  zoom: 12,
+  reportBounds: { minLon: 8.44, minLat: 47.31, maxLon: 8.63, maxLat: 47.44 },
+  sessionBounds: { minLon: 8.2, minLat: 47.15, maxLon: 8.9, maxLat: 47.6 },
+  heatGrid: { id: 'zuerich', originLon: 8.44, originLat: 47.31, latitude: 47.38 },
+  attribution: {
+    // CC0 verlangt keine Nennung; der Quellenvermerk steht trotzdem, so wie
+    // die Stadt ihn empfiehlt. Wörtlich aus den Nutzungsbestimmungen im
+    // geocat.ch-Metadatensatz `809a40eb-32a5-4873-aac9-fa9776c0a687`
+    // („öffentlich zugängliche Parkplätze DAV", abgerufen am 17. September
+    // 2026): „Diese Geodaten stehen unter der international gültigen
+    // Creative-Commons-Zero-Lizenz (CC-0). […] Eine Quellenangabe (CC-BY)
+    // wird empfohlen: Sie lautet: „Quelle: Stadt Zürich"." Der Katalog
+    // `data.stadt-zuerich.ch` führt alle vier Datensätze mit
+    // `license_id: cc-zero`, Autor „Dienstabteilung Verkehr,
+    // Sicherheitsdepartement" bzw. „Statistik Stadt Zürich".
+    source: 'Quelle: Stadt Zürich — Dienstabteilung Verkehr, Open Data Zürich (data.stadt-zuerich.ch)',
+    // Die Adresse, die der Datenbau wirklich abruft: der WFS mit den zwei
+    // Tarifflächen. Parkuhren und Parkfelder liegen daneben unter
+    // `/wfs/geoportal/oeffentlich_zugaengliche_Parkplaetze_DAV`.
+    datasetUrl: 'https://www.ogd.stadt-zuerich.ch/wfs/geoportal/Gebietseinteilung_Parkierungsgebuehren',
+    licence: 'Creative Commons Zero 1.0 Universell (CC0 1.0)',
+    licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/deed.de',
+    attributionRequired: false,
+    licenceFamily: 'cc0',
+  },
+  // Bewusst ohne `towedVehicles`: Auf stadt-zuerich.ch fand sich am
+  // 17. September keine Seite, die eine Auskunftsstelle für abgeschleppte
+  // Fahrzeuge mit Namen und Nummer nennt — die Parkieren-Seiten verlinken
+  // nur Bewilligungen, Parkhäuser und Parkplätze. Fehlt das Feld, zeigt die
+  // Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -753,6 +808,7 @@ export const CITIES: readonly City[] = [
   FREIBURG,
   ROSTOCK,
   COTTBUS,
+  ZUERICH,
 ]
 
 

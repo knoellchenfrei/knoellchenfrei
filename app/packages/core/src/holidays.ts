@@ -38,6 +38,7 @@ export type Land =
   | 'AT-ST'
   | 'AT-S'
   | 'AT-T'
+  | 'CH-ZH'
   | 'NL-UT'
   | 'NL-ZH'
   | 'NL-GR'
@@ -328,6 +329,32 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Evangelischen Kirche Berlin-Brandenburg-schlesische Oberlausitz,
  *   <https://www.kirchenrecht-ekbo.de/document/16>, abgerufen am
  *   16. September 2026. Gilt für Cottbus.
+ * - **CH-ZH** — Der Kanton Zürich hat **neun** öffentliche Ruhetage, die
+ *   auf einen Werktag fallen können. § 1 Abs. 1 des Ruhetags- und
+ *   Ladenöffnungsgesetzes vom 26. Juni 2000 (RLG, LS 822.4), wörtlich:
+ *   „Öffentliche Ruhetage sind: a. Sonntage, b. Neujahrstag, Karfreitag,
+ *   Ostermontag, 1. Mai, Auffahrtstag, Pfingstmontag, 1. August,
+ *   Weihnachtstag und Stephanstag (26. Dezember)." Abs. 3: „Die in Abs. 1
+ *   lit. b genannten öffentlichen Ruhetage werden im Sinne des
+ *   Arbeitsgesetzes den Sonntagen gleichgestellt." Der 1. August steht
+ *   schon in `NATIONWIDE.CH` und deshalb hier nicht noch einmal. Was
+ *   **bewusst fehlt**, obwohl Zürich es feiert: der **Berchtoldstag**
+ *   (2. Januar) — er steht nicht im Gesetz; er ist ein Tag, an dem
+ *   Betriebe und Verwaltung schliessen, aber kein öffentlicher Ruhetag,
+ *   und die Parkuhren der Stadt gelten „Montag bis Samstag" ohne eine
+ *   Ausnahme dafür. **Sechseläuten** (dritter Montag im April) und
+ *   **Knabenschiessen** (zweiter Montag im September) sind in der Stadt
+ *   Zürich freie **Nachmittage**, ebenfalls ohne Grundlage im RLG — halbe
+ *   Tage kann diese Tabelle ohnehin nicht ausdrücken, und ob die Parkuhren
+ *   an diesen Nachmittagen aussetzen, sagt keine Quelle; also bleiben sie
+ *   weg. Abs. 2 nennt „hohe Feiertage" (Karfreitag, Ostersonntag,
+ *   Pfingstsonntag, Eidgenössischer Bettag, Weihnachtstag) — das ist eine
+ *   Stufe *innerhalb* der Ruhetage, kein zusätzlicher freier Tag; der
+ *   Bettag ist ein Sonntag. Gelesen am 17. September 2026 als PDF aus der
+ *   Loseblattsammlung (`notes.zh.ch/appl/zhlex_r.nsf/…/822.4_26.6.00_45.pdf`,
+ *   Nachtrag 045, in Kraft seit dem 1. Mai 2004), verlinkt von
+ *   <https://www.zh.ch/de/politik-staat/gesetze-beschluesse/gesetzessammlung/zhlex-ls/erlass-822_4-2000_06_26-2004_05_01-045.html>.
+ *   Gilt für Zürich.
  */
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
@@ -343,6 +370,10 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   'AT-ST': { fixed: [], fromEaster: [] },
   'AT-S': { fixed: [], fromEaster: [] },
   'AT-T': { fixed: [], fromEaster: [] },
+  // Zürich: § 1 Abs. 1 lit. b RLG — Neujahr, 1. Mai, Weihnachten, Stephanstag
+  // fest; Karfreitag, Ostermontag, Auffahrt, Pfingstmontag österlich. Der
+  // 1. August liegt national darunter. Kein Berchtoldstag, siehe oben.
+  'CH-ZH': { fixed: ['01-01', '05-01', '12-25', '12-26'], fromEaster: [-2, 1, 39, 50] },
   // Niederlande: keine Provinzfeiertage; alles national, siehe `NATIONWIDE`.
   'NL-UT': { fixed: [], fromEaster: [] },
   'NL-ZH': { fixed: [], fromEaster: [] },
