@@ -317,6 +317,10 @@ describe('cityAt', () => {
     expect(cityAt(9.4797, 51.3127)).toBeUndefined()
     // Und dasselbe für Bayern: Augsburg ist nicht München.
     expect(cityAt(10.8978, 48.3705)).toBeUndefined()
+    // Und für Tirol: Hall liegt zehn Kilometer östlich von Innsbruck und
+    // draussen; Innsbruck selbst ist die erste Stadt südlich der Grenze.
+    expect(cityAt(11.5086, 47.2814)).toBeUndefined()
+    expect(cityAt(11.3934, 47.2685)?.key).toBe('innsbruck')
   })
 
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
@@ -487,8 +491,15 @@ describe('die Lizenzangaben jeder Stadt', () => {
   it('setzt licenceFamily passend zu Lizenztext und Namensnennung', () => {
     for (const city of CITIES) {
       const { licence, licenceUrl, licenceFamily, attributionRequired } = city.attribution
-      const erwartet = /creativecommons\.org\/licenses\/by\//.test(licenceUrl)
-        ? 'cc-by'
+      // Innsbruck nennt keine CC-Lizenz wörtlich, sondern eine eigene
+      // Nutzungsbedingung „vergleichbar mit CC BY 4.0" — mit denselben zwei
+      // Auflagen, an denen die Oberfläche hängt (Nennung in vorgeschriebener
+      // Form, Hinweis auf fehlende Gewähr). Die Seite ist der Beleg, nicht
+      // creativecommons.org; deshalb steht sie hier ausdrücklich.
+      const erwartet =
+        /creativecommons\.org\/licenses\/by\//.test(licenceUrl) ||
+        licenceUrl === 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed'
+          ? 'cc-by'
         : /creativecommons\.org\/publicdomain\/zero/.test(licenceUrl)
           ? 'cc0'
           : /dl-de\/zero/.test(licenceUrl)
@@ -538,7 +549,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // das Feld, und die App zeigt den Abschnitt nicht — eine Nummer aus zweiter
   // Hand wäre schlechter als keine. Die Liste ist ausdrücklich, damit ein
   // vergessenes Feld bei einer neuen Stadt weiter auffällt.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {

@@ -471,6 +471,31 @@ dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
 **vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
 angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 
+> **Innsbruck seit dem 16. September** — die erste Stadt außerhalb
+> Deutschlands, Bericht in [staedte-innsbruck.md](staedte-innsbruck.md).
+> 21 Parkzonen aus dem ArcGIS Online der Stadt, alles in einem Freitextfeld;
+> Lizenz belegt über die Nutzungsbedingung des geoHub („vergleichbar mit
+> CC BY 4.0"). Zwei Punkte bleiben, und beide haben ein Datum:
+>
+> - [ ] **Die Stadt informieren — du.** Die Nutzungsbedingung verlangt von
+>       jedem, der die Daten „für ihre öffentlichen Anwendungen / Dienste"
+>       nutzt, eine Mitteilung an `post.vermessung-gis@innsbruck.gv.at`, wo
+>       die Anwendung zu finden ist und wofür. Eine E-Mail vor dem Öffnen
+>       des Riegels; bis dahin ist der Testbetrieb nicht öffentlich.
+> - [ ] **Neue Parkabgabeverordnung ab 2. November 2026 — ich.** Beschlossen
+>       am 16. Juli 2026 (Pressemitteilung
+>       „Innsbruck stellt die Parkraumbewirtschaftung neu auf"): Mo–Fr 8–21
+>       Uhr und Sa 8–18 Uhr in allen Kurzparkzonen und Parkstraßen, drei
+>       neue Parkstraßen (Arzl, Olympisches Dorf, Kranebitten), Tageskarte
+>       dort 9 €, Kurzparkzonentarife unverändert. Der Feed trägt heute den
+>       alten Stand; ob die Stadt ihn zum Stichtag nachzieht, ist offen.
+>       **Am 2. November `fetch-data` laufen lassen und die sieben
+>       `INFO`-Werte neu zählen** — bleibt der Feed alt, sagt die App ab
+>       8 Uhr „frei", wo kassiert wird, und Innsbruck gehört bis zur
+>       Klärung aus `CITIES` genommen. Der Parser kennt die neuen Zeiten
+>       schon (`8-21`, `8-18` sind gewöhnliche Stundenspannen); die drei
+>       neuen Zonen kommen mit dem Feed.
+
 > **Angeschaltet am 9. September, auf Anweisung des Betreibers: Köln,
 > Düsseldorf und Karlsruhe.** Der vorbereitete Zweig hatte keine gemeinsame
 > Basis mehr mit `main` (Neuanfang der Historie nach dem Passwort-Fund) und

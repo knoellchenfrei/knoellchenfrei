@@ -73,6 +73,13 @@ import {
   parseGrazSchedule,
 } from '../src/graz.js'
 import { SalzburgParseError, parseSalzburgMaxStay, parseSalzburgRule } from '../src/salzburg.js'
+import {
+  InnsbruckParseError,
+  parseInnsbruckFee,
+  parseInnsbruckInfo,
+  parseInnsbruckMaxStay,
+  parseInnsbruckSchedule,
+} from '../src/innsbruck.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -275,6 +282,20 @@ describe('Zeitparser unter Beschuss', () => {
   it('Graz wirft nur GrazParseError und liefert nur gültige Fenster', () => {
     fuzz(20260916, 200, GrazParseError, (input) => {
       expectValidWindows(parseGrazSchedule(input), input)
+  // Innsbruck: Zeit und Gebühr stehen in einem Feld; beschossen werden der
+  // Zeitteil allein und das ganze Feld, weil der Schnitt am Komma selbst
+  // eine Stelle ist, an der etwas anderes als die eigene Klasse fliegen kann.
+    })
+  })
+
+  it('Innsbruck wirft nur InnsbruckParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 300, InnsbruckParseError, (input) => {
+      expectValidWindows(parseInnsbruckSchedule(input).windows, input)
+    })
+    fuzz(20260917, 300, InnsbruckParseError, (input) => {
+      const info = parseInnsbruckInfo(input)
+      expectValidWindows(info.windows, input)
+      expectValidFee(info.fee, input)
     })
   })
 })
@@ -349,6 +370,12 @@ describe('Gebührenparser unter Beschuss', () => {
       for (const ticket of tariff.tickets) expect(ticket.cents, input).toBeGreaterThan(0)
     })
   })
+
+  it('Innsbruck wirft nur InnsbruckParseError und beziffert nie eine Null', () => {
+    fuzz(20260918, 300, InnsbruckParseError, (input) => {
+      expectValidFee(parseInnsbruckFee(input), input)
+    })
+  })
 })
 
 describe('Höchstparkdauer unter Beschuss', () => {
@@ -395,6 +422,13 @@ describe('Höchstparkdauer unter Beschuss', () => {
         expect(minutes).toBeGreaterThan(0)
       })
     }
+    fuzz(20260919, 300, InnsbruckParseError, (input) => {
+      const minutes = parseInnsbruckMaxStay(input)
+      if (minutes === undefined) return
+      expect(Number.isInteger(minutes)).toBe(true)
+      expect(minutes).toBeGreaterThan(0)
+      expect(minutes).toBeLessThanOrEqual(1440)
+    })
   })
 })
 
@@ -428,6 +462,8 @@ describe('Zeitbudget', () => {
       parseSchwerinFee,
       parseGrazSchedule,
       parseGrazFee,
+      parseInnsbruckInfo,
+      parseInnsbruckMaxStay,
     ]
     const started = performance.now()
     for (const input of inputs) {

@@ -146,3 +146,19 @@ describe('arcgisQueryUrl', () => {
     expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
   })
 })
+
+describe('cityFiles für Innsbruck', () => {
+  it('fragt jede ArcGIS-Ebene Innsbrucks als GeoJSON in Grad und mit Erwartungswert', () => {
+    const dateien = cityFiles('innsbruck')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(url.pathname.endsWith('/query'), datei.key).toBe(true)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+  })
+})

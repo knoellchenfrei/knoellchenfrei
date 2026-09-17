@@ -846,6 +846,29 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "605": "bezirk:Maxglan",
     "641": "641",
   },
+  "innsbruck": {
+    "132": "bezirk:Hötting",
+    "133": "bezirk:Hötting West",
+    "134": "134",
+    "135": "bezirk:Amras",
+    "136": "136",
+    "137": "bezirk:Hötting West",
+    "138": "138",
+    "139": "139",
+    "140": "140",
+    "141": "141",
+    "142": "142",
+    "143": "143",
+    "144": "144",
+    "145": "145",
+    "146": "146",
+    "147": "147",
+    "148": "148",
+    "149": "149",
+    "150": "150",
+    "151": "151",
+    "152": "152",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -863,6 +886,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "schwerin": 10,
   "graz": 23,
   "salzburg": 38,
+  "innsbruck": 20,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */
