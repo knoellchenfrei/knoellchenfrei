@@ -645,6 +645,62 @@ Nicht ausgeliefert: Vergunninggebiete (`VERGUNP`, Fenster ohne Tarif),
 Bezoekersregelungen, Garagen, P+R, Amsterdam und Maastricht (Geometrie
 unvollständig). Vollständiger Bericht in
 [staedte-niederlande.md](staedte-niederlande.md).
+## Verwendet — Genf
+
+Abgerufen am 17. September 2026 vom **SITG** (Système d'information du
+territoire à Genève, Etat de Genève) über `vector.sitg.ge.ch`, ArcGIS REST —
+kein WFS, sondern `query?where=1%3D1&outFields=*&f=geojson&outSR=4326`, in
+`sources.ts` als `GENF_FILES` geführt. Die erste Stadt in der Schweiz und die
+erste der **Klasse C**: Die Quelle nennt Zonengrenzen, aber weder Zeiten noch
+Beträge. Vier Ebenen aus **einem** Server:
+
+| Ebene | Dienst | Umfang |
+| --- | --- | --- |
+| Macaron-Zonen | `OTC_MACARON/MapServer/0` | 53 Polygone im ganzen Kanton, davon **17** (`A`–`Q`) in der Ville de Genève ausgeliefert |
+| Stellplatzreihen | `OTC_STATIONNEMENT_V_PUBLIQUE/MapServer/0` | **13.236** Linien, seitenweise geholt (`maxRecordCount` 4.000); 6.213 in den 17 Zonen |
+| Behindertenparkplätze | `OTC_PLACE_HANDICAPE/MapServer/0` | 599 Punkte, 297 in der Ville, als POI |
+| Quartiere | `VDG_QUARTIER_VILLE/MapServer/0` | 8 Quartiere der Ville, Kartenkontext, Ortsangabe und Filter |
+
+**Lizenz: [Conditions d'utilisation des données du Portail SITG](https://sitg.ge.ch/ressources/conditions-utilisation-donnees), Stufe „A – Accès libre (Open Data)".**
+Jedes ArcGIS-Online-Item der vier Ebenen (`sitg.maps.arcgis.com`) trägt
+`licenseInfo: "Accès libre"` und `accessInformation: "© 2026 SITG"`. Die
+Stufe wörtlich: „Vous pouvez utiliser ce jeu de données à des fins privées.
+Vous pouvez utiliser ce jeu de données à des fins commerciales. Vous devez
+obligatoirement indiquer la source (ex : « Données SITG », date/fréquence
+d'extraction) et, le cas échéant, les traitements effectués sur le jeu de
+données." Die vollständigen Bedingungen (Fassung vom 19. Mai 2026, PDF unter
+`media.sitg.ge.ch`) geben die Daten in Ziffer 4.4.1 „en l'état et telles que
+disponibles, sans garantie d'aucune sorte". Familie `cc-by`, aus demselben
+Grund wie Innsbruck: Nennung in vorgeschriebener Form, Hinweis auf fehlende
+Gewähr. Details in [staedte-genf.md](staedte-genf.md).
+
+Vier Dinge, die man erst im Feed sieht:
+
+- **Weder Zeiten noch Beträge.** Die Zone hat einen Buchstaben, einen Sektor
+  und ein Datum der Inbetriebnahme (1997 bis 2005). Jede Zone trägt
+  `scheduleUnknown`, `fee: unknown`, `meta.absent` führt `schedule` und
+  `fee`. Was gilt — Parkuhren der Fondation des Parkings, Blaue Zone mit
+  Parkscheibe —, steht auf `geneve.ch`, nicht in einem Datensatz.
+- **Die Stellplatzreihen tragen die Art:** `Gratuit 60 min` (5.114 Reihen,
+  die Blaue Zone), `Payant 90 min` (818), `Gratuit illimité`, `Cases 2
+  roues`, `Vélos`, `Gratuit jaune` … 28 Werte und dreimal null, alle gezählt
+  in [staedte-genf.md](staedte-genf.md). Daraus kommen je Zone Platzzahl
+  und Höchstdauern; die Reihe gehört zu der Zone, in der ihr Mittelpunkt
+  liegt.
+- **Der Kanton ist nicht die Stadt.** 35 der 53 Zonen liegen in Carouge,
+  Lancy, Vernier, Meyrin, Versoix und 17 weiteren Gemeinden, eine hat keinen
+  Buchstaben. Der Datenbau behält, was in einem der acht Quartiere liegt,
+  und nennt den Rest im Log.
+- **Ohne `outSR=4326` antwortet der Dienst in EPSG:2056** (Schweizer
+  Landeskoordinaten, Meter um 2.500.000 / 1.120.000); der WFS desselben
+  Servers liefert mit `urn:ogc:def:crs:EPSG::4326` GML in `[lat, lon]`.
+  `assertDegrees` im Datenbau hält, dass Grade kommen.
+
+Nicht abgerufen: `OTC_PARKING` (534 Parkhäuser und -plätze — keine
+`PoiKind`), `AGGLO_STATION_AUTOPARTAGE` (Carsharing, ungeprüft),
+`OCS_SECTEURS_STATISTIQUES` (61 Sektoren des Kantons) und `CAD_COMMUNE`
+(48 Polygone, nur für den Rahmen gemessen). Eine Umweltzone gibt es in Genf
+nicht.
 
 ## Geprüft und nicht verfügbar
 

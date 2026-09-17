@@ -2060,6 +2060,25 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "C34": "C34",
     "M1": "M1",
   },
+  "genf": {
+    "A": "A",
+    "B": "B",
+    "C": "C",
+    "D": "D",
+    "E": "E",
+    "F": "F",
+    "G": "G",
+    "H": "H",
+    "I": "I",
+    "J": "J",
+    "K": "K",
+    "L": "L",
+    "M": "M",
+    "N": "N",
+    "O": "O",
+    "P": "P",
+    "Q": "Q",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2086,6 +2105,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "groningen": 35,
   "nijmegen": 20,
   "eindhoven": 13,
+  "genf": 17,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

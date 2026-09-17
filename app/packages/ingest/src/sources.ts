@@ -1006,6 +1006,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   groningen: [pdokWijken('0014', 20)],
   nijmegen: [pdokWijken('0268', 9)],
   eindhoven: [pdokWijken('0772', 20)],
+  // Kein WFS: Genf kommt vollständig über `cityFiles`, aus demselben Grund.
+  genf: [],
 }
 
 /**
@@ -1050,6 +1052,14 @@ export interface FileSource {
    * `features`.
    */
   paginate?: { pageSize: number }
+  /**
+   * Die Ebene ist größer als `maxRecordCount`, und `fetch.ts` holt sie
+   * seitenweise (`resultOffset`), bis der Dienst `exceededTransferLimit`
+   * nicht mehr setzt. Genfs 13.236 Parkierungslinien bei einem Deckel von
+   * 4.000 sind der erste Fall. Ohne die Marke wäre die dritte Seite kein
+   * Fehler, sondern eine kleinere Stadt.
+   */
+  paged?: true
 }
 
 const KOELN_FILES: readonly FileSource[] = [
@@ -1284,6 +1294,53 @@ export const NPR_AREA_MANAGERS: Readonly<Record<string, string>> = {
   eindhoven: '772',
 }
 
+/**
+ * Genf — Etat de Genève über das SITG, Conditions d'utilisation des données
+ * du Portail SITG, Stufe „A – Accès libre (Open Data)".
+ *
+ * Kein WFS, obwohl es einen gäbe (`…/arcgis/services/OTC_MACARON/MapServer/WFSServer`):
+ * Der WFS antwortet auf `urn:ogc:def:crs:EPSG::4326` mit GML in `[lat, lon]`
+ * und ohne `srsName` in EPSG:2056 (Schweizer Landeskoordinaten, Meter um
+ * 2.500.000 / 1.120.000); der REST-Dienst liefert mit `f=geojson&outSR=4326`
+ * GeoJSON in `[lon, lat]`, am 17. September 2026 nachgemessen (erster
+ * Stützpunkt `[6.1326, 46.2252]`) und in `build-data-genf.ts` mit
+ * `assertDegrees` gehalten. Alle vier Ebenen liegen auf **einem** Server;
+ * die Katalogeinträge (ArcGIS Online `sitg.maps.arcgis.com`, je Ebene ein
+ * Item für MapServer, FeatureServer, WFS und WMS) tragen alle
+ * `licenseInfo: "Accès libre"` und `accessInformation: "© 2026 SITG"`.
+ *
+ * Die 53 Macaron-Zonen decken den ganzen Kanton; der Datenbau behält die 17
+ * der Ville de Genève (Begründung an `GENF` in `core/city.ts`). Die
+ * Parkierungslinien sind die einzige Sachauskunft — Art und Platzzahl je
+ * Stellplatzreihe —, und sie sind mehr als `maxRecordCount` (4.000):
+ * `paged` lässt `fetch.ts` seitenweise holen.
+ *
+ * Bewusst NICHT abgerufen: `OTC_PARKING` (534 Parkhäuser und -plätze, keine
+ * `PoiKind`), `AGGLO_STATION_AUTOPARTAGE` (Carsharing, ungeprüft),
+ * `OCS_SECTEURS_STATISTIQUES` (61 Sektoren des Kantons — für den Kanton die
+ * richtigen Bezirke, für die Ville sind es die acht Quartiere) und
+ * `CAD_COMMUNE` (48 Polygone; nur für den Rahmen gemessen, nicht ausgeliefert).
+ */
+const GENF_SITG = 'https://vector.sitg.ge.ch/arcgis/rest/services'
+
+const GENF_FILES: readonly FileSource[] = [
+  { key: 'zones', url: arcgisQueryUrl(`${GENF_SITG}/OTC_MACARON/MapServer/0`), file: 'zones.json', expectedFeatures: 53 },
+  {
+    key: 'lines',
+    url: arcgisQueryUrl(`${GENF_SITG}/OTC_STATIONNEMENT_V_PUBLIQUE/MapServer/0`),
+    file: 'lines.json',
+    // Täglich nachgeführt; die Recherche vom Vortag zählte 12.731, der Abruf
+    // vom 17. September 13.236. Die Messlatte ist der Abruf.
+    expectedFeatures: 13236,
+    paged: true,
+  },
+  { key: 'accessible', url: arcgisQueryUrl(`${GENF_SITG}/OTC_PLACE_HANDICAPE/MapServer/0`), file: 'accessible.json', expectedFeatures: 599 },
+  // Die acht Quartiere der Ville de Genève („découpage … validé en 2013"):
+  // Kartenkontext, Ortsangabe im Panel und der Filter, der die Ville vom
+  // Kanton trennt.
+  { key: 'districts', url: arcgisQueryUrl(`${GENF_SITG}/VDG_QUARTIER_VILLE/MapServer/0`), file: 'districts.json', expectedFeatures: 8 },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
@@ -1296,6 +1353,7 @@ const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   groningen: nprFiles('14', [235, 74, 342, 82, 1076, 104, 39, 22]),
   nijmegen: nprFiles('268', [89, 58, 168, 66, 1364, 108, 48, 74]),
   eindhoven: nprFiles('772', [328, 328, 372, 101, 990, 261, 44, 44]),
+  genf: GENF_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */

@@ -39,6 +39,7 @@ export type Land =
   | 'AT-S'
   | 'AT-T'
   | 'CH-ZH'
+  | 'CH-GE'
   | 'NL-UT'
   | 'NL-ZH'
   | 'NL-GR'
@@ -152,6 +153,20 @@ export function koningsdag(year: number): string {
   const date = new Date(Date.UTC(year, 3, 27))
   if (date.getUTCDay() === 0) date.setUTCDate(26)
   return dateKey(date)
+}
+
+/**
+ * Jeûne genevois: „le jeudi qui suit le premier dimanche du mois de
+ * septembre" — so die Anmerkung (a) zu Art. 1 Abs. 1 Bst. g der Genfer Loi
+ * sur les jours fériés (LJF, rs/GE J 1 45), die auf die loi additionnelle
+ * vom 10. Mai 1844 verweist. Fällt der 1. September auf einen Sonntag, ist
+ * er selbst der erste Sonntag, und der Feiertag ist schon der 5. — so 2024.
+ * Weder fest noch österlich, deshalb eine eigene Regel wie Koningsdag.
+ */
+export function jeuneGenevois(year: number): string {
+  const first = new Date(Date.UTC(year, 8, 1))
+  const firstSunday = 1 + ((7 - first.getUTCDay()) % 7)
+  return dateKey(new Date(Date.UTC(year, 8, firstSunday + 4)))
 }
 
 const NATIONWIDE: Record<Country, RegionalHolidays> = {
@@ -391,6 +406,26 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   // fest; Karfreitag, Ostermontag, Auffahrt, Pfingstmontag österlich. Der
   // 1. August liegt national darunter. Kein Berchtoldstag, siehe oben.
   'CH-ZH': { fixed: ['01-01', '05-01', '12-25', '12-26'], fromEaster: [-2, 1, 39, 50] },
+  /**
+   * Genf: Art. 1 Abs. 1 der Loi sur les jours fériés (LJF) vom 3. November
+   * 1951, rs/GE J 1 45, in der Fassung seit dem 1. Januar 1991, wörtlich:
+   * „Sont déclarés fériés les jours suivants : a) 1er Janvier, b) Vendredi
+   * saint, c) Lundi de Pâques, d) Ascension, e) Lundi de Pentecôte, f) 1er
+   * Août, g) Jeûne genevois, h) Noël, i) 31 Décembre, anniversaire de la
+   * restauration de la République." Neun Tage; der 1. August steht schon in
+   * `NATIONWIDE.CH`, die Menge nimmt ihn nur einmal. Was Genf **nicht** hat
+   * und ein deutscher Kalender mitbrächte: den 1. Mai, den 26. Dezember,
+   * Fronleichnam, Allerheiligen. Abs. 2 (Ersatztag am Montag, wenn ein
+   * Feiertag auf einen Sonntag fällt) gilt nur für Betriebe außerhalb des
+   * Bundesarbeitsgesetzes und ist kein Feiertag für die Straße. Quelle:
+   * <https://silgeneve.ch/legis/data/rsg_j1_45.htm>, abgerufen am
+   * 17. September 2026. Gilt für Genf.
+   */
+  'CH-GE': {
+    fixed: ['01-01', '12-25', '12-31'],
+    fromEaster: [-2, 1, 39, 50], // Vendredi saint, Lundi de Pâques, Ascension, Lundi de Pentecôte
+    custom: [jeuneGenevois],
+  },
   // Niederlande: keine Provinzfeiertage; alles national, siehe `NATIONWIDE`.
   'NL-UT': { fixed: [], fromEaster: [] },
   'NL-ZH': { fixed: [], fromEaster: [] },

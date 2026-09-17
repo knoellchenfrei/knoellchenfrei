@@ -1284,6 +1284,90 @@ export const EINDHOVEN: City = {
   // antwortete mit 404, und eine Suche blieb aus — ohne gelesene Seite keine Nummer.
 }
 
+/**
+ * Genf — die erste Stadt in der Schweiz und die erste der **Klasse C**: Die
+ * Quelle nennt Zonengrenzen, aber weder Zeiten noch Beträge. Jede Zone trägt
+ * `scheduleUnknown`, die App sagt „Zeiten unbekannt" und färbt grau; der
+ * Tarif (Parkuhren der Fondation des Parkings, Blaue Zone mit Parkscheibe)
+ * steht in `docs/staedte-genf.md` als das, was fehlt.
+ *
+ * Die Stadt ist die **Ville de Genève**, nicht der Kanton. Der Datensatz
+ * `OTC_MACARON` führt 53 Macaron-Zonen im ganzen Kanton — 17 mit Buchstaben
+ * `A`–`Q` in der Ville de Genève, 36 mit Nummern in Carouge, Lancy, Vernier,
+ * Meyrin, Versoix und 20 weiteren Gemeinden. Ausgeliefert werden die 17: Der
+ * Datenbau nimmt, was in einem der acht Quartiere der Ville liegt, und zählt
+ * den Rest im Log. Wer den Kanton will, ändert Rahmen, Bezirke und Filter —
+ * `docs/staedte-genf.md`, „Was offen bleibt".
+ *
+ * Die Box ist gemessen, nicht geschätzt: Die vier Sektionen der Gemeinde
+ * Genève aus `CAD_COMMUNE` (`NO_COM_FEDERAL` 6621: Cité, Plainpalais,
+ * Eaux-Vives, Petit-Saconnex; 13.522 Stützpunkte, abgerufen am
+ * 17. September 2026) messen 6,1102–6,1758 / 46,1778–46,2319, die acht
+ * Quartiere aus `VDG_QUARTIER_VILLE` auf vier Stellen dasselbe. Nach außen
+ * gerundet steht das unten. Die 17 Zonen reichen nur 6,1102–6,1758 /
+ * 46,1840–46,2274 — die Box aus ihnen zu nehmen, wiese die Rue de Lausanne
+ * am Seeufer und das Bois de la Bâtie ab. Nach Süden endet die Ville an der
+ * Arve gegen Carouge; Carouge selbst liegt bei 46,181° Nord noch in der Box,
+ * weil die Box ein Rechteck ist und die Gemeindegrenze keines. Eine Meldung
+ * von dort wird angenommen; die Karte zeigt dort nur keine Zone.
+ *
+ * Der Mittelpunkt ist der Pont du Mont-Blanc; der Zoom ist 13 und damit
+ * enger als jede andere Stadt: 0,066° Länge sind ein Drittel von Frankfurts
+ * 0,40° bei 12, und bei 13 füllen die acht Quartiere ein Handy-Display.
+ */
+export const GENF: City = {
+  key: 'genf',
+  name: 'Genf',
+  land: 'CH-GE',
+  center: [6.1478, 46.2071],
+  zoom: 13,
+  reportBounds: { minLon: 6.1, minLat: 46.17, maxLon: 6.18, maxLat: 46.24 },
+  sessionBounds: { minLon: 5.95, minLat: 46.05, maxLon: 6.35, maxLat: 46.4 },
+  heatGrid: { id: 'genf', originLon: 6.1, originLat: 46.17, latitude: 46.2 },
+  attribution: {
+    /**
+     * Die Nennung in der Form, die die Nutzungsbedingungen des SITG
+     * vorschreiben: „Vous devez obligatoirement indiquer la source (ex :
+     * « Données SITG », date/fréquence d'extraction)". Das Datum des Abrufs
+     * steht in `meta.json` (`geprueftAm`) und in der Quellenzeile der App.
+     * Die Behörde dahinter ist der Etat de Genève; das SITG ist der Verbund,
+     * der die Daten herausgibt.
+     */
+    source: 'Données SITG — Système d\'information du territoire à Genève (Etat de Genève)',
+    // Die Adresse, die der Datenbau wirklich abruft — die Ebene, nicht das Portal.
+    datasetUrl: 'https://vector.sitg.ge.ch/arcgis/rest/services/OTC_MACARON/MapServer/0',
+    /**
+     * Keine Creative-Commons-Lizenz, sondern die Stufe „A – Accès libre
+     * (Open Data)" der Conditions d'utilisation des données du Portail SITG
+     * (Version vom 19. Mai 2026, Ziffer 4.1): frei für private und
+     * kommerzielle Nutzung, Quellenangabe Pflicht, Daten „en l'état …
+     * sans garantie d'aucune sorte" (Ziffer 4.4.1). Jedes der vier
+     * ArcGIS-Items zu `OTC_MACARON` trägt `licenseInfo: "Accès libre"`.
+     * Die Familie ist `cc-by`, weil die beiden Auflagen, an denen die
+     * Oberfläche hängt, dieselben sind wie bei Innsbruck: Nennung in
+     * vorgeschriebener Form und der Hinweis auf die fehlende Gewähr.
+     */
+    licence: 'Conditions d\'utilisation des données du Portail SITG, niveau „A – Accès libre (Open Data)"',
+    licenceUrl: 'https://sitg.ge.ch/ressources/conditions-utilisation-donnees',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+  // Belegt auf der Seite des Kantons (Démarches → Véhicules → Fourrière des
+  // véhicules, Stand 21. März 2025): Die kantonale Fourrière liegt in
+  // Satigny, nicht in der Stadt, und die Seite sagt selbst, dass zuerst die
+  // Polizei weiß, wohin ein Fahrzeug gebracht wurde.
+  towedVehicles: {
+    authority: 'Secteur de la fourrière des véhicules (SCEM-DSL-SAMP), République et canton de Genève',
+    url: 'https://www.ge.ch/fourriere-vehicules',
+    phone: '+41 22 427 90 30',
+    checkedOn: '2026-09',
+    note:
+      'Zuerst die Polizei fragen, wo das Fahrzeug steht. Die Fourrière in ' +
+      'Satigny (5A, Rue de la Bergère) ist Mo–Fr 8–12 und 13:30–16 Uhr ' +
+      'offen, nur mit Online-Termin.',
+  },
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1307,6 +1391,7 @@ export const CITIES: readonly City[] = [
   GRONINGEN,
   NIJMEGEN,
   EINDHOVEN,
+  GENF,
 ]
 
 /**

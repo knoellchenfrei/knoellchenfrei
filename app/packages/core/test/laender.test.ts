@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { berlinWallClock } from '../src/berlin-time.js'
-import { countryOf, holidaysFor, isHoliday } from '../src/holidays.js'
+import { countryOf, holidaysFor, isHoliday, jeuneGenevois } from '../src/holidays.js'
 import { chargeableAt, currencyOf, estimateCost, isChargeable, type ParkingZone } from '../src/tariff.js'
 
 /**
@@ -222,5 +222,73 @@ describe('die Kalender der Nachbarländer', () => {
     expect(countryOf('NL-ZH')).toBe('NL')
     expect(countryOf('FR-67')).toBe('FR')
     expect(countryOf('PL-MA')).toBe('PL')
+  })
+})
+
+describe('der Genfer Kalender', () => {
+  // Art. 1 Abs. 1 der Loi sur les jours fériés (rs/GE J 1 45): neun Tage,
+  // der Bund darunter kennt nur den 1. August, und der steht schon in der
+  // Genfer Liste — die Menge zählt ihn einmal.
+  it('zählt neun Tage nach Art. 1 LJF für 2026', () => {
+    const genf = holidaysFor('CH-GE', 2026)
+    for (const tag of [
+      '2026-01-01', // 1er Janvier
+      '2026-04-03', // Vendredi saint
+      '2026-04-06', // Lundi de Pâques
+      '2026-05-14', // Ascension
+      '2026-05-25', // Lundi de Pentecôte
+      '2026-08-01', // Fête nationale
+      '2026-09-10', // Jeûne genevois
+      '2026-12-25', // Noël
+      '2026-12-31', // Restauration de la République
+    ]) {
+      expect(genf.has(tag), tag).toBe(true)
+    }
+    expect(genf.size).toBe(9)
+  })
+
+  it('und für 2027, mit Ostern am 28. März', () => {
+    const genf = holidaysFor('CH-GE', 2027)
+    for (const tag of [
+      '2027-01-01',
+      '2027-03-26', // Vendredi saint
+      '2027-03-29', // Lundi de Pâques
+      '2027-05-06', // Ascension
+      '2027-05-17', // Lundi de Pentecôte
+      '2027-08-01',
+      '2027-09-09', // Jeûne genevois
+      '2027-12-25',
+      '2027-12-31',
+    ]) {
+      expect(genf.has(tag), tag).toBe(true)
+    }
+    expect(genf.size).toBe(9)
+  })
+
+  // „le jeudi qui suit le premier dimanche du mois de septembre" — und wenn
+  // der 1. September selbst ein Sonntag ist, zählt er als erster: 2024 war
+  // der Jeûne genevois deshalb schon am 5.
+  it('legt den Jeûne genevois auf den Donnerstag nach dem ersten Septembersonntag', () => {
+    expect(jeuneGenevois(2024)).toBe('2024-09-05')
+    expect(jeuneGenevois(2025)).toBe('2025-09-11')
+    expect(jeuneGenevois(2026)).toBe('2026-09-10')
+    expect(jeuneGenevois(2027)).toBe('2027-09-09')
+    expect(jeuneGenevois(2028)).toBe('2028-09-07')
+    for (const year of [2024, 2025, 2026, 2027, 2028, 2030]) {
+      expect(new Date(`${jeuneGenevois(year)}T00:00:00Z`).getUTCDay(), String(year)).toBe(4)
+    }
+    expect(isHoliday('CH-GE', berlinWallClock(Date.UTC(2026, 8, 10, 10)))).toBe(true)
+  })
+
+  // Was ein deutscher Kalender mitbrächte und Genf nicht hat — an jedem
+  // dieser Tage laufen die Genfer Parkuhren.
+  it('hat weder den 1. Mai noch Stephanstag noch Fronleichnam noch den 3. Oktober', () => {
+    const genf = holidaysFor('CH-GE', 2026)
+    expect(genf.has('2026-05-01')).toBe(false)
+    expect(genf.has('2026-12-26')).toBe(false)
+    expect(genf.has('2026-06-04')).toBe(false) // Fronleichnam
+    expect(genf.has('2026-10-03')).toBe(false)
+    expect(genf.has('2026-11-01')).toBe(false)
+    expect(countryOf('CH-GE')).toBe('CH')
   })
 })
