@@ -528,6 +528,13 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > nach § 1 RLG. Offen: 70 Hochtarif-Parkuhren ohne Fläche (Enge, Seefeld),
 > der Niedertarif ohne Fläche, Feiertage an Parkuhren — im Bericht unter
 > „Was offen bleibt".
+> **Angeschlossen am 17. September: Kassel**, die erste Stadt der Klasse C
+> ([staedte-kassel.md](staedte-kassel.md)): 29 Bewohnerparkbezirke nur als
+> Grenzen, `scheduleUnknown` an jeder Zone, Abruf per `identify`, weil die
+> Ebene über `query` keine Geometrie herausgibt. Offen: die Lizenz (Anfrage
+> an vermgeo@kassel.de, ob die DL-DE/BY 2.0 der übrigen Ebenen auch hier
+> gilt) und Zeiten und Tarif, die nirgends maschinenlesbar stehen — im
+> Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

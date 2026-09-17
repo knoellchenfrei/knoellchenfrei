@@ -560,6 +560,49 @@ Punkte, Güterumschlag), `geo_behindertenparkplaetze` (Stand 2017),
 `geo_stadtkreise` (die Quartiere tragen den Kreis). Keine Umweltzone (die
 Schweiz kennt keine), keine POI. `meta.json` führt alles unter `absent`.
 
+## Verwendet — Kassel
+
+Abgerufen am 17. September 2026 von der **Stadt Kassel, Vermessung und
+Geoinformation** über `geoportal.kassel.de`, ArcGIS Enterprise 11.5 — kein
+WFS (der Dienst hat keinen), sondern der REST-Kartendienst. Zwei Ebenen aus
+zwei Diensten:
+
+| Ebene | Dienst / Ebene | Abruf | Umfang |
+| --- | --- | --- | --- |
+| Bewohnerparkbezirke | `Service_Daten/Verkehr_Mobilitaet/MapServer/27` | **`identify`** über den Gemeindeumriss, `sr=4326`, `f=json` | 29 Polygone, ein Feld `Name` — sonst nichts |
+| Ortsbezirke (Stadtteile) | `Service_Daten/Politik_Verwaltung/MapServer/0` | `query?where=1%3D1&outFields=*&f=geojson&outSR=4326` | 24 Flächen (23 Ortsbezirke, Dönchelandschaft) |
+
+**Lizenz: für die Bezirke nicht ausgewiesen.** Die Ebene führt
+`copyrightText: ""`, der Dienst „Stadt Kassel, Vermessung und
+Geoinformation", sein ArcGIS-Online-Eintrag `licenseInfo: null`; einen eigenen
+Katalogeintrag hat die Ebene nicht. Die **Ortsbezirke** dagegen tragen im
+Eintrag der Stadt wörtlich „Open Data Datenlizenz Deutschland Namensnennung
+2.0 "Stadt Kassel, Vermessung und Geoinformation, 2025"" — wie ein Dutzend
+weitere Ebenen derselben Stadt. Die App trägt deshalb
+`licenceFamily: 'unklar'` und zeigt den Banner; die Frage an das Amt steht in
+[staedte-kassel.md](staedte-kassel.md).
+
+Drei Dinge, die man erst im Dienst sieht:
+
+- **`query` liefert keine Geometrie.** Die Feldliste der Ebene 27 führt kein
+  Geometriefeld; `query` antwortet in jedem Format mit `geometry: null` bei
+  vollständigen Sachdaten — 2.489 Bytes für 29 Bezirke, kein Fehler. Die
+  Geometrie gibt nur `identify` heraus, als Esri-Ringe mit Sachdaten als
+  Zeichenketten; `esriRingsToPolygons` in `core` macht GeoJSON daraus.
+- **Keine Zeiten, kein Betrag — die erste Stadt der Klasse C.** Was gilt,
+  steht in der Parkgebührenordnung (§ 2 Zentrum, § 3 Zentrum II Bad
+  Wilhelmshöhe, § 6 Zone II, je mit Straßenliste) und am Schild. Jede Zone
+  trägt `scheduleUnknown`, `meta.absent` nennt `schedule` und `fee`.
+- **Die Legende ist kein Sachdatum.** Der Renderer der Ebene färbt 28 Namen
+  als „Parkgebührenzone II" und `Zentrum` eigens — ein Hinweis, welche
+  Staffel gälte, mehr nicht; die Stadt setzt die erweiterte Zone seit dem
+  1. Mai 2026 „schrittweise" um.
+
+Nicht abgerufen: Ebene 8 „Parken" (zwölf Parkhäuser, keine Automaten), Ebene
+9 „Park + Ride", Ebene 10 „Behindertenparkplätze", die E-Ladesäulen (Ebenen
+19/21) — sie wären der nächste Schritt für `poi.geojson`. Keine Umweltzone
+(Kassel hat keine). `meta.json` führt alles unter `absent`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
