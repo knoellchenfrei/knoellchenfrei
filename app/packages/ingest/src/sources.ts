@@ -660,6 +660,74 @@ const ROSTOCK_SOURCES: readonly Source[] = [
  */
 const COTTBUS_SOURCES: readonly Source[] = []
 
+/**
+ * Wien — Stadt Wien, Open Government Data, CC BY 4.0.
+ *
+ * Zahlen und Typnamen sind am 17. September 2026 mit `resultType=hits` gegen
+ * den Dienst selbst geprüft, nicht aus Metadaten übernommen — und einmal
+ * abweichend von der Recherche vom Vortag: 796 Streifen statt 795.
+ *
+ * **Ein GeoServer für alles.** `data.wien.gv.at/daten/geo` führt im
+ * Arbeitsbereich `ogdwien` mehrere hundert Typen; die drei hier sind die
+ * Kurzparkzonen-Flächen (je Bezirk, flächendeckend), die
+ * Geschäftsstraßen-Streifen (Linien mit eigener Regelung) und die
+ * Bezirksgrenzen. `GetCapabilities` ist 371 KB und nennt `ows:Fees`
+ * = `creativecommons.org/licenses/by/3.0/at/deed.de` und
+ * `ows:AccessConstraints` = `data.wien.gv.at/nutzungsbedingungen`, wo CC BY
+ * **4.0** steht — die Stadt-Konstante nimmt die strengere Lesart.
+ *
+ * **Ausgabeformat `application/json`**, Achsen `[lon, lat]`: Mit
+ * `srsName=urn:ogc:def:crs:EPSG::4326` antwortet der Dienst im JSON
+ * `[16.3424, 48.2457]` und trägt `crs.name = urn:ogc:def:crs:EPSG::4326`
+ * dazu. Gemessen, nicht geraten — und die Falle daneben ist eine andere als
+ * in Hamburg: **Ohne** `srsName` antwortet derselbe Dienst in EPSG:31256
+ * (MGI / Gauß-Krüger M34, `[759.8, 345262.9]`, Meter um einen Nullpunkt bei
+ * Wien) — plausible Zahlen, keine Grade, auf der Karte nur „leer".
+ * `assertDegrees` im Datenbau misst deshalb nach. Das GML desselben Dienstes
+ * liefert `[lat, lon]` (Recherche vom 16. September); es wird nicht benutzt.
+ *
+ * Bewusst NICHT abgerufen: `PARKENGELTUNGOGD` (238 Geltungsbereiche) und
+ * `PARKENBERECHTOGD` (24 Berechtigungszonen) — beide tragen den Vermerk
+ * `TEXT_RECHT: "…haben keine Rechtsgültigkeit"` und beantworten die Frage
+ * nach dem Parkpickerl, nicht die nach der Gebühr; `PARKENANRAINEROGD`
+ * (1.356 Anrainerparkplätze) und `PARKENAUTOMATOGD` (206 Punkte — das sind
+ * **Verkaufsstellen** der Wiener Linien, Wien hat keine Parkscheinautomaten
+ * am Straßenrand). Details in `docs/staedte-wien.md`.
+ */
+const WIEN_WFS = 'https://data.wien.gv.at/daten/geo'
+
+const WIEN_DEFAULTS = {
+  outputFormat: 'application/json',
+  axisOrder: 'lon,lat',
+} as const
+
+const WIEN_SOURCES: readonly Source[] = [
+  // Die flächendeckenden Kurzparkzonen, je Bezirk ein oder mehrere Stücke.
+  {
+    key: 'zones',
+    service: WIEN_WFS,
+    typeName: 'ogdwien:KURZPARKZONEOGD',
+    expectedFeatures: 81,
+    ...WIEN_DEFAULTS,
+  },
+  // Die Geschäftsstraßen: Linien, deren Regelung die Fläche überstimmt.
+  {
+    key: 'strips',
+    service: WIEN_WFS,
+    typeName: 'ogdwien:KURZPARKSTREIFENOGD',
+    expectedFeatures: 796,
+    ...WIEN_DEFAULTS,
+  },
+  // Die 23 Bezirke: Kartenkontext, Name der Zone und der Rahmen der Stadt.
+  {
+    key: 'districts',
+    service: WIEN_WFS,
+    typeName: 'ogdwien:BEZIRKSGRENZEOGD',
+    expectedFeatures: 23,
+    ...WIEN_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -671,6 +739,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   freiburg: FREIBURG_SOURCES,
   rostock: ROSTOCK_SOURCES,
   cottbus: COTTBUS_SOURCES,
+  wien: WIEN_SOURCES,
 }
 
 /**

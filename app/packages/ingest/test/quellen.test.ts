@@ -28,6 +28,26 @@ describe('wfsUrl', () => {
   })
 })
 
+/**
+ * Wien holt drei Ebenen von **einer** Adresse; der Dienst antwortet auf
+ * `application/json` in `[lon, lat]` und **ohne** `srsName` in EPSG:31256.
+ * Die Achsenreihenfolge steht in der Konfiguration, nie in einer Heuristik.
+ */
+describe('die Wiener Quellen', () => {
+  it('fragen alle drei Ebenen desselben GeoServers als JSON in lon,lat', () => {
+    const quellen = citySources('wien')
+    expect(quellen.map((q) => q.key)).toEqual(['zones', 'strips', 'districts'])
+    for (const quelle of quellen) {
+      expect(quelle.service).toBe('https://data.wien.gv.at/daten/geo')
+      expect(quelle.typeName).toMatch(/^ogdwien:[A-Z]+OGD$/)
+      expect(quelle.outputFormat).toBe('application/json')
+      expect(quelle.axisOrder).toBe('lon,lat')
+      expect(quelle.expectedFeatures).toBeGreaterThan(0)
+    }
+    expect(quellen.map((q) => q.expectedFeatures)).toEqual([81, 796, 23])
+  })
+})
+
 describe('toGeoJsonAxes', () => {
   const polygon = [
     [
@@ -86,13 +106,14 @@ describe('cityFiles', () => {
 
   it('gibt für Städte, die alles aus WFS bekommen, eine leere Liste', () => {
     expect(cityFiles('berlin')).toEqual([])
+    expect(cityFiles('wien')).toEqual([])
     expect(cityFiles('bielefeld')).toEqual([])
     expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
   })
 
   // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
   it('lässt keine Stadt ohne eine einzige Quelle', () => {
-    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus']) {
+    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'wien']) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
   })
