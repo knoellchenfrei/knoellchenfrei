@@ -42,6 +42,7 @@ export type Land =
   | 'CH-ZH'
   | 'CH-GE'
   | 'CH-BE'
+  | 'CH-SG'
   | 'NL-UT'
   | 'NL-ZH'
   | 'NL-GR'
@@ -411,6 +412,25 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Nachtrag 045, in Kraft seit dem 1. Mai 2004), verlinkt von
  *   <https://www.zh.ch/de/politik-staat/gesetze-beschluesse/gesetzessammlung/zhlex-ls/erlass-822_4-2000_06_26-2004_05_01-045.html>.
  *   Gilt für Zürich.
+ * - **CH-SG** — Der Kanton St. Gallen zählt seine Ruhetage in Art. 2 Abs. 1
+ *   des Gesetzes über Ruhetag und Ladenöffnung (RLG, sGS 552.1, vom
+ *   29. Juni 2004, in Vollzug seit dem 1. Juli 2004, aktuelle Fassung seit
+ *   dem 22. Januar 2008) auf, wörtlich: „Die öffentlichen Ruhetage sind:
+ *   a) der Sonntag; b) die Feiertage Neujahr, Karfreitag, Ostermontag,
+ *   Auffahrt, Pfingstmontag, Bundesfeiertag, Allerheiligen, Weihnachtstag
+ *   und Stefanstag." Neun Tage; der Bundesfeiertag steht schon in
+ *   `NATIONWIDE.CH`, bleiben **acht** kantonale. Anders als Bern **kein
+ *   Berchtoldstag**, anders als Zürich **kein 1. Mai** — beide stehen im
+ *   Gesetz nicht, und dafür **Allerheiligen**, das keiner der beiden hat.
+ *   Art. 3 nennt „hohe Feiertage" (Karfreitag, Ostersonntag, Pfingstsonntag,
+ *   Eidgenössischer Bettag, Weihnachtstag) — eine Stufe innerhalb der
+ *   Ruhetage, kein zusätzlicher Tag; der Bettag ist ein Sonntag. Die
+ *   Abkürzung RLG trägt auch Zürichs Gesetz (LS 822.4); es sind zwei
+ *   verschiedene Erlasse. Gelesen am 17. September 2026 über die
+ *   Schnittstelle des Portals (`gesetzessammlung.sg.ch/api/de/texts_of_law/552.1`,
+ *   Version 228, die Weboberfläche liefert nur eine JavaScript-Hülle),
+ *   kanonisch <https://www.gesetzessammlung.sg.ch/app/de/texts_of_law/552.1>.
+ *   Gilt für St. Gallen.
  */
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag
@@ -478,6 +498,10 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
   // Ostermontag, Auffahrt, Pfingstmontag, Weihnachten, Stephanstag — der
   // 1. August liegt in `NATIONWIDE.CH`. Beleg im Kommentar oben.
   'CH-BE': { fixed: ['01-01', '01-02', '12-25', '12-26'], fromEaster: [-2, 1, 39, 50] },
+  // Kanton St. Gallen, Art. 2 Abs. 1 lit. b RLG (sGS 552.1): Neujahr,
+  // Allerheiligen, Weihnachtstag, Stefanstag fest; Karfreitag, Ostermontag,
+  // Auffahrt, Pfingstmontag österlich. Kein 2. Januar, kein 1. Mai. Beleg oben.
+  'CH-SG': { fixed: ['01-01', '11-01', '12-25', '12-26'], fromEaster: [-2, 1, 39, 50] },
   // Niederlande: keine Provinzfeiertage; alles national, siehe `NATIONWIDE`.
   'NL-UT': { fixed: [], fromEaster: [] },
   'NL-ZH': { fixed: [], fromEaster: [] },

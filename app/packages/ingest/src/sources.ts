@@ -1012,6 +1012,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   bern: [],
   // Straßburg: drei Opendatasoft-Exporte, alle über `cityFiles`.
   strasbourg: [],
+  // St. Gallen ebenso: zwei GeoJSON-Exporte des Opendatasoft-Portals, über `cityFiles`.
+  stgallen: [],
   // Krakau ebenso: drei ArcGIS-Ebenen, alle über `cityFiles`.
   krakau: [],
   // Kein WFS: Kassel kommt vollständig über `cityFiles` — ein `identify`
@@ -1651,6 +1653,40 @@ const STRASBOURG_FILES: readonly FileSource[] = [
   { key: 'residents', url: odsExportUrl(STRASBOURG_ODS, 'stationnement_residant'), file: 'residents.json', expectedFeatures: 15 },
 ]
 
+/**
+ * St. Gallen — Stadt St.Gallen, Rauminformationszentrum (RIZ), über das
+ * Open-Data-Portal der Stadt `daten.stadt.sg.ch` (Opendatasoft), CC BY 4.0.
+ *
+ * Kein WFS und kein ArcGIS, sondern der **GeoJSON-Export** des Portals
+ * (`…/datasets/<id>/exports/geojson`). Er liefert ohne `limit` alle Zeilen
+ * (am 17. September 2026 nachgemessen: 3.232 von 3.232), `limit=-1` steht
+ * trotzdem da, weil die Opendatasoft-Doku es als „alles" definiert und ein
+ * künftiger Vorgabewert sonst still kürzen könnte. Die Antwort ist immer
+ * WGS84 in `[lon, lat]` (erster Stützpunkt `[9.3027, 47.4043]`); der
+ * Datenbau misst mit `assertDegrees` trotzdem nach. Die Sachfelder tragen
+ * zusätzlich `geo_point_2d` als Objekt `{lon, lat}` — den Schwerpunkt, kein
+ * GeoJSON.
+ *
+ * Zwei Ebenen:
+ *
+ * - `ppv-parkflaeche` — 3.232 Parkfeld-Polygone mit `markierungsart`,
+ *   `zutrittsart`, `anzahl_pp`. Keine Zeiten, keine Beträge, kein Sektor.
+ *   Stand der Daten 2023-07-05 (`data_processed`); die Metadaten wurden
+ *   zuletzt 2026-02-23 angefasst.
+ * - `wohnviertel` — die 31 statistischen Quartiere mit Kreis und
+ *   Quartiergruppe, für Kartenkontext, Ortsangabe im Panel und den Rahmen.
+ *
+ * Nicht im Portal: die EBZ-Sektoren (nur als Ebene `ebz` im Stadtplan
+ * `map.stadt.sg.ch`, ohne erreichbaren Dienst dahinter) und eine
+ * Gemeindegrenze — der Rahmen kommt aus dem Umriss der 31 Quartiere.
+ */
+const STGALLEN_ODS = 'https://daten.stadt.sg.ch/api/explore/v2.1/catalog/datasets'
+
+const STGALLEN_FILES: readonly FileSource[] = [
+  { key: 'zones', url: `${STGALLEN_ODS}/ppv-parkflaeche/exports/geojson?limit=-1`, file: 'zones.json', expectedFeatures: 3232 },
+  { key: 'districts', url: `${STGALLEN_ODS}/wohnviertel/exports/geojson?limit=-1`, file: 'districts.json', expectedFeatures: 31 },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   strasbourg: STRASBOURG_FILES,
   koeln: KOELN_FILES,
@@ -1670,6 +1706,7 @@ const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   kassel: KASSEL_FILES,
   essen: ESSEN_FILES,
   saarbruecken: SAARBRUECKEN_FILES,
+  stgallen: STGALLEN_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */

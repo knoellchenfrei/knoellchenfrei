@@ -1788,6 +1788,84 @@ export const STRASBOURG: City = {
   },
 }
 
+/**
+ * St. Gallen — die vierte Stadt in der Schweiz und die erste, deren Quelle
+ * **keine Zonen kennt, nur Parkfelder**: 3.232 Polygone mit einer
+ * Markierungsart, davon 1.871 der Erweiterten Blauen Zone und 781 weiss
+ * markierte mit Parkuhr. Zeiten, Beträge und der EBZ-Sektor stehen in keinem
+ * offenen Datensatz — Klasse C, jede Reihe trägt `scheduleUnknown`, die App
+ * sagt „Zeiten unbekannt" und färbt grau. Was die Stadt auf ihrer Seite
+ * sagt (Bewilligungspflicht 8–19 Uhr, Parkscheibe tagsüber), steht als Zitat
+ * in `docs/staedte-stgallen.md`, nicht in den Daten.
+ *
+ * Der Rahmen kommt aus dem Umriss der **31 statistischen Quartiere**
+ * (`wohnviertel`, abgerufen am 17. September 2026): 9,291516–9,435247 /
+ * 47,395155–47,453073. swisstopos `swissBOUNDARIES3D` nennt für die
+ * politische Gemeinde 3203 (Stand 2026) auf sechs Stellen dieselben vier
+ * Zahlen — die Quartiere decken die ganze Gemeinde. Nach aussen gerundet
+ * steht das unten. Die Parkebene wäre die falsche Quelle: Sie reicht nur von
+ * 9,294 bis 9,427 und lässt Winkeln-Süd und den Osten von Neudorf leer.
+ * Gossau, Herisau, Wittenbach und Rorschach liegen ausserhalb der Box.
+ *
+ * Der Mittelpunkt ist der Marktplatz. Zoom **12**: Die Parkfelder liegen in
+ * einem Band von 0,13° × 0,05°, und bei Zoom 12 zeigt ein 400 Pixel breites
+ * Telefon rund 0,137° Länge — die ganze Stadt auf einmal, wie Bern.
+ *
+ * `zoneSnapMetres: 20` — gemessen, nicht gewählt: Die Reihen der EBZ sind im
+ * Median 27 m² gross und 1,6 m breit (Fläche und Umfang aus dem Abzug,
+ * Rechteck angenommen), schmaler als Karlsruhes 4,8 m. Eine Ortung auf 10
+ * bis 20 m trifft so eine Reihe fast nie; Karlsruhes Radius gilt aus
+ * demselben Grund.
+ *
+ * `land: 'CH-SG'`: Art. 2 Abs. 1 RLG (sGS 552.1), siehe `holidays.ts`.
+ * Kein Berchtoldstag, kein 1. Mai, dafür Allerheiligen; `laender.test.ts`
+ * hält alle drei fest. `holidays` fehlt mit Absicht — das RLG kennt keine
+ * gemeindeweise Regelung.
+ *
+ * Kein `towedVehicles`: Die Seiten der Stadtpolizei nennen am
+ * 17. September 2026 keine Auskunftsstelle für abgeschleppte Fahrzeuge mit
+ * Namen und Nummer; `OHNE_BELEG` in `city.test.ts`.
+ */
+export const STGALLEN: City = {
+  key: 'stgallen',
+  name: 'St. Gallen',
+  land: 'CH-SG',
+  center: [9.3761, 47.4247],
+  zoom: 12,
+  reportBounds: { minLon: 9.29, minLat: 47.39, maxLon: 9.44, maxLat: 47.46 },
+  sessionBounds: { minLon: 9.1, minLat: 47.25, maxLon: 9.65, maxLat: 47.6 },
+  heatGrid: { id: 'stgallen', originLon: 9.29, originLat: 47.39, latitude: 47.42 },
+  zoneSnapMetres: 20,
+  attribution: {
+    /**
+     * Wörtlich `publisher` und `creator` des Metadatensatzes
+     * („Rauminformationszentrum (RIZ) Stadt St.Gallen"), dazu das Portal,
+     * über das die Daten kommen. CC BY 4.0 § 3 a) 1) A) verlangt die Nennung
+     * des Urhebers „in any reasonable manner"; einen vorgeschriebenen Wortlaut
+     * nennt weder der Datensatz noch das Portal.
+     */
+    source: 'Stadt St.Gallen, Rauminformationszentrum (RIZ) — Open Data Stadt St.Gallen (daten.stadt.sg.ch)',
+    // Die Adresse, die der Datenbau wirklich abruft — der Export, nicht die Portalseite.
+    datasetUrl: 'https://daten.stadt.sg.ch/api/explore/v2.1/catalog/datasets/ppv-parkflaeche/exports/geojson',
+    /**
+     * Der Datensatz nennt `license: "CC BY"` mit
+     * `license_url: https://creativecommons.org/licenses/by/4.0/` und in den
+     * DCAT-AP-CH-Feldern `rights:
+     * NonCommercialAllowed-CommercialAllowed-ReferenceRequired` — die
+     * opendata.swiss-Stufe „Freie Nutzung. Quellenangabe ist Pflicht". Die
+     * Nutzungsbedingungen des Portals sagen dasselbe: „Für die meisten Daten
+     * gilt die «Freie Nutzung mit Quellenangabe». Das heisst, die Daten dürfen
+     * sowohl für nicht kommerzielle als auch kommerzielle Zwecke genutzt
+     * werden, sofern die Quelle angegeben wird." Beide Ebenen (Parkfelder
+     * und Quartiere) tragen dieselbe Lizenz.
+     */
+    licence: 'Creative Commons Namensnennung 4.0 International (CC BY 4.0)',
+    licenceUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1818,6 +1896,7 @@ export const CITIES: readonly City[] = [
   ESSEN,
   SAARBRUECKEN,
   STRASBOURG,
+  STGALLEN,
 ]
 
 /**

@@ -228,7 +228,8 @@ describe('cityFiles', () => {
 
   // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
   it('lässt keine Stadt ohne eine einzige Quelle', () => {
-    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'zuerich', 'essen']) {
+    // Über CITIES statt einer Handliste: Eine neue Stadt gehört automatisch dazu.
+    for (const stadt of CITIES.map((city) => city.key)) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
   })
@@ -258,6 +259,25 @@ describe('arcgisQueryUrl', () => {
   it('kennt für Städte ohne Dateien eine leere Liste, ohne zu werfen', () => {
     expect(cityFiles('berlin')).toEqual([])
     expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
+  })
+})
+
+describe('cityFiles für St. Gallen', () => {
+  // Kein WFS, kein ArcGIS: der GeoJSON-Export des Opendatasoft-Portals, mit
+  // `limit=-1`, damit ein künftiger Vorgabewert nie still kürzt.
+  it('holt Parkfelder und Quartiere als Export mit Messlatte', () => {
+    const dateien = cityFiles('stgallen')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('daten.stadt.sg.ch')
+      expect(url.pathname).toMatch(/^\/api\/explore\/v2\.1\/catalog\/datasets\/[a-z-]+\/exports\/geojson$/)
+      expect(url.searchParams.get('limit'), datei.key).toBe('-1')
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.map((d) => d.expectedFeatures)).toEqual([3232, 31])
+    expect(citySources('stgallen')).toEqual([])
   })
 })
 

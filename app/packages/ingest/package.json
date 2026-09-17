@@ -30,6 +30,7 @@
     "build-data-essen": "tsx src/build-data-essen.ts",
     "build-data-saarbruecken": "tsx src/build-data-saarbruecken.ts",
     "build-data-strasbourg": "tsx src/build-data-strasbourg.ts",
+    "build-data-stgallen": "tsx src/build-data-stgallen.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

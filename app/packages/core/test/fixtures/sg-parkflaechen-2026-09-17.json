@@ -1,0 +1,215 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://daten.stadt.sg.ch/api/explore/v2.1/catalog/datasets/ppv-parkflaeche/exports/geojson?limit=-1",
+  "hinweis": "Auszug des Sachdatenteils, ohne Geometrie: je Markierungsart die erste Zeile des Exports und jede Zeile ohne Platzzahl; zeile ist der Index im Export.",
+  "anzahl": 3232,
+  "geometrieTypen": {
+    "Polygon": 3232
+  },
+  "ersterStuetzpunkt": [
+    9.302686616,
+    47.4042848673
+  ],
+  "markierungsarten": {
+    "Erweiterte Blaue Zone": 1871,
+    "Weiss (bewirtschaftet)": 781,
+    "Kundenparkplatz": 205,
+    "Invalidenparkplatz": 114,
+    "Güterumschlag": 85,
+    "Unterirdisch, Garage": 56,
+    "Weisse Zone (nicht bewirtschaftet)": 33,
+    "unbekannt": 26,
+    "Ohne Markierung": 21,
+    "Taxistandplatz": 17,
+    "Hotelhalt": 13,
+    "Carparkplatz": 10
+  },
+  "plaetzeJeArt": {
+    "Erweiterte Blaue Zone": 6263,
+    "Weiss (bewirtschaftet)": 2959,
+    "Kundenparkplatz": 2263,
+    "Invalidenparkplatz": 242,
+    "Güterumschlag": 171,
+    "Unterirdisch, Garage": 7064,
+    "Weisse Zone (nicht bewirtschaftet)": 97,
+    "unbekannt": 80,
+    "Ohne Markierung": 28,
+    "Taxistandplatz": 60,
+    "Hotelhalt": 53,
+    "Carparkplatz": 22
+  },
+  "ohnePlatzzahl": 3,
+  "platzzahlNull": 2,
+  "flaechen": [
+    {
+      "zeile": 0,
+      "geo_point_2d": {
+        "lon": 9.30265560619528,
+        "lat": 47.40424402221574
+      },
+      "markierungsart": "Weiss (bewirtschaftet)",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 2
+    },
+    {
+      "zeile": 1,
+      "geo_point_2d": {
+        "lon": 9.40264018768481,
+        "lat": 47.43326211552067
+      },
+      "markierungsart": "Erweiterte Blaue Zone",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 4
+    },
+    {
+      "zeile": 2,
+      "geo_point_2d": {
+        "lon": 9.374647858847968,
+        "lat": 47.42653411796869
+      },
+      "markierungsart": "Hotelhalt",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 1
+    },
+    {
+      "zeile": 5,
+      "geo_point_2d": {
+        "lon": 9.372433440213657,
+        "lat": 47.42589481050167
+      },
+      "markierungsart": "Güterumschlag",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 2
+    },
+    {
+      "zeile": 12,
+      "geo_point_2d": {
+        "lon": 9.370349053366345,
+        "lat": 47.42201744477507
+      },
+      "markierungsart": "Unterirdisch, Garage",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 260
+    },
+    {
+      "zeile": 21,
+      "geo_point_2d": {
+        "lon": 9.370524895200788,
+        "lat": 47.42362698902287
+      },
+      "markierungsart": "Taxistandplatz",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 6
+    },
+    {
+      "zeile": 22,
+      "geo_point_2d": {
+        "lon": 9.394179865678822,
+        "lat": 47.432100185719946
+      },
+      "markierungsart": "Kundenparkplatz",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 20
+    },
+    {
+      "zeile": 24,
+      "geo_point_2d": {
+        "lon": 9.386695896465046,
+        "lat": 47.41737846561012
+      },
+      "markierungsart": "Weisse Zone (nicht bewirtschaftet)",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 1
+    },
+    {
+      "zeile": 61,
+      "geo_point_2d": {
+        "lon": 9.372815861277413,
+        "lat": 47.42470173313123
+      },
+      "markierungsart": "Invalidenparkplatz",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 1
+    },
+    {
+      "zeile": 91,
+      "geo_point_2d": {
+        "lon": 9.405933133411766,
+        "lat": 47.447996943326984
+      },
+      "markierungsart": "unbekannt",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 4
+    },
+    {
+      "zeile": 350,
+      "geo_point_2d": {
+        "lon": 9.38569648639102,
+        "lat": 47.432684232708375
+      },
+      "markierungsart": "Kundenparkplatz",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": null
+    },
+    {
+      "zeile": 355,
+      "geo_point_2d": {
+        "lon": 9.332789436176236,
+        "lat": 47.403958009147836
+      },
+      "markierungsart": "Ohne Markierung",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 1
+    },
+    {
+      "zeile": 568,
+      "geo_point_2d": {
+        "lon": 9.376098077948054,
+        "lat": 47.42273249533521
+      },
+      "markierungsart": "Carparkplatz",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 1
+    },
+    {
+      "zeile": 1412,
+      "geo_point_2d": {
+        "lon": 9.345390241932716,
+        "lat": 47.40846865760714
+      },
+      "markierungsart": "unbekannt",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": null
+    },
+    {
+      "zeile": 1931,
+      "geo_point_2d": {
+        "lon": 9.363794025004713,
+        "lat": 47.41167830235598
+      },
+      "markierungsart": "Erweiterte Blaue Zone",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": null
+    },
+    {
+      "zeile": 2009,
+      "geo_point_2d": {
+        "lon": 9.381034624544096,
+        "lat": 47.42370998894461
+      },
+      "markierungsart": "Erweiterte Blaue Zone",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 0
+    },
+    {
+      "zeile": 2062,
+      "geo_point_2d": {
+        "lon": 9.375499508079821,
+        "lat": 47.42826291233337
+      },
+      "markierungsart": "Unterirdisch, Garage",
+      "zutrittsart": "öffentlich",
+      "anzahl_pp": 0
+    }
+  ]
+}

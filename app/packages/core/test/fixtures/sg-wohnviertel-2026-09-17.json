@@ -1,0 +1,321 @@
+{
+  "abgerufenAm": "2026-09-17",
+  "quelle": "https://daten.stadt.sg.ch/api/explore/v2.1/catalog/datasets/wohnviertel/exports/geojson?limit=-1",
+  "hinweis": "Alle 31 Sachdatenzeilen, ohne Geometrie, in der Reihenfolge des Exports.",
+  "anzahl": 31,
+  "geometrieTypen": {
+    "Polygon": 31
+  },
+  "quartiere": [
+    {
+      "geo_point_2d": {
+        "lon": 9.419527683051056,
+        "lat": 47.44127794131749
+      },
+      "nummer": 307.0,
+      "kreis": "Osten",
+      "quartiergr": "Neudorf",
+      "statistisc": "Achslen-Wilen"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.377268778893695,
+        "lat": 47.4148866837884
+      },
+      "nummer": 204.0,
+      "kreis": "Centrum",
+      "quartiergr": "St.Georgen",
+      "statistisc": "St.Georgen-Bernegg"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.421823906913803,
+        "lat": 47.418118002925155
+      },
+      "nummer": 305.0,
+      "kreis": "Osten",
+      "quartiergr": "Notkersegg",
+      "statistisc": "Kurzegg-Rank"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.39248516250213,
+        "lat": 47.440579031692394
+      },
+      "nummer": 302.0,
+      "kreis": "Osten",
+      "quartiergr": "Langgass-Heiligkreuz",
+      "statistisc": "Langgass-Heiligkreuz"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.401509314174412,
+        "lat": 47.423622371475
+      },
+      "nummer": 304.0,
+      "kreis": "Osten",
+      "quartiergr": "Notkersegg",
+      "statistisc": "Notkersegg"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.385272365585038,
+        "lat": 47.423973399238186
+      },
+      "nummer": 208.0,
+      "kreis": "Centrum",
+      "quartiergr": "Linsenbühl-Dreilinden",
+      "statistisc": "Linsenbühl-Dreilinden"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.364281209852505,
+        "lat": 47.42236314286388
+      },
+      "nummer": 202.0,
+      "kreis": "Centrum",
+      "quartiergr": "Rosenberg",
+      "statistisc": "Rosenberg-Kreubleiche"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.31375951405936,
+        "lat": 47.405118100467725
+      },
+      "nummer": 106.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Chräzeren"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.376442650046648,
+        "lat": 47.424895390418534
+      },
+      "nummer": 206.0,
+      "kreis": "Centrum",
+      "quartiergr": "Innenstadt",
+      "statistisc": "Altstadt"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.303446941949225,
+        "lat": 47.409992926370116
+      },
+      "nummer": 102.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Breitfeld-Gründenmoos"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.365121403431786,
+        "lat": 47.41049970918256
+      },
+      "nummer": 203.0,
+      "kreis": "Centrum",
+      "quartiergr": "Riethüsli",
+      "statistisc": "Riethüsli"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.352880576776721,
+        "lat": 47.42385489591837
+      },
+      "nummer": 113.0,
+      "kreis": "Westen",
+      "quartiergr": "Lachen",
+      "statistisc": "Vonwil-Lachen-Schoren"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.40794672981609,
+        "lat": 47.445505830750356
+      },
+      "nummer": 308.0,
+      "kreis": "Osten",
+      "quartiergr": "Neudorf",
+      "statistisc": "Stephanshorn-Zil-Kesselhalden"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.365564733693233,
+        "lat": 47.43572896493153
+      },
+      "nummer": 201.0,
+      "kreis": "Centrum",
+      "quartiergr": "Rosenberg",
+      "statistisc": "Hölzli-Joosrüti"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.394454615665977,
+        "lat": 47.41694212078138
+      },
+      "nummer": 209.0,
+      "kreis": "Centrum",
+      "quartiergr": "St.Georgen",
+      "statistisc": "St.Georgen-Bach"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.342852887971146,
+        "lat": 47.414973274892844
+      },
+      "nummer": 112.0,
+      "kreis": "Westen",
+      "quartiergr": "Bruggen",
+      "statistisc": "Moos-Waldacker-Lerchenfeld"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.329127833707489,
+        "lat": 47.41020301750962
+      },
+      "nummer": 109.0,
+      "kreis": "Westen",
+      "quartiergr": "Bruggen",
+      "statistisc": "Bruggen-Zürcherstrasse"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.332095034762094,
+        "lat": 47.40347224124379
+      },
+      "nummer": 110.0,
+      "kreis": "Westen",
+      "quartiergr": "Bruggen",
+      "statistisc": "Boppartshof-Hinterberg"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.34800586968734,
+        "lat": 47.407775924788105
+      },
+      "nummer": 111.0,
+      "kreis": "Westen",
+      "quartiergr": "Bruggen",
+      "statistisc": "Haggen-Oberstrasse-Langweid"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.397102013250862,
+        "lat": 47.43180545423914
+      },
+      "nummer": 303.0,
+      "kreis": "Osten",
+      "quartiergr": "St.Fiden",
+      "statistisc": "St.Fiden-Krontal"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.379776120501234,
+        "lat": 47.430851474978425
+      },
+      "nummer": 207.0,
+      "kreis": "Centrum",
+      "quartiergr": "St.Jakob",
+      "statistisc": "St.Jakob"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.315297312563432,
+        "lat": 47.41169906068609
+      },
+      "nummer": 107.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Altenwegen"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.30184516530011,
+        "lat": 47.41663379025604
+      },
+      "nummer": 101.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Hafnersberg"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.299592896714982,
+        "lat": 47.39984712207282
+      },
+      "nummer": 104.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Winkeln Süd"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.400493482482673,
+        "lat": 47.40813615676788
+      },
+      "nummer": 210.0,
+      "kreis": "Centrum",
+      "quartiergr": "St.Georgen",
+      "statistisc": "Stuelegg-Rüti"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.378198036002273,
+        "lat": 47.44343440330589
+      },
+      "nummer": 301.0,
+      "kreis": "Osten",
+      "quartiergr": "Rotmonten",
+      "statistisc": "Rotmonten"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.313572737090757,
+        "lat": 47.40018688443861
+      },
+      "nummer": 105.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Gübsensee"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.370688000614628,
+        "lat": 47.421910295275474
+      },
+      "nummer": 205.0,
+      "kreis": "Centrum",
+      "quartiergr": "Innenstadt",
+      "statistisc": "St.Leonhard-Ost"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.299615158246024,
+        "lat": 47.405660378242224
+      },
+      "nummer": 103.0,
+      "kreis": "Westen",
+      "quartiergr": "Winkeln",
+      "statistisc": "Winkeln Nord-Industrie"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.421919381395126,
+        "lat": 47.4308380498057
+      },
+      "nummer": 306.0,
+      "kreis": "Osten",
+      "quartiergr": "Notkersegg",
+      "statistisc": "Hub-Schaugentobel"
+    },
+    {
+      "geo_point_2d": {
+        "lon": 9.330739680232274,
+        "lat": 47.41743074593706
+      },
+      "nummer": 108.0,
+      "kreis": "Westen",
+      "quartiergr": "Bruggen",
+      "statistisc": "Sittertobel"
+    }
+  ]
+}

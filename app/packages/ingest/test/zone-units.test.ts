@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import { CITIES } from '@knoellchenfrei/core'
 
-import { buildZoneUnits, renderCoreFile, UNIT_MIN_AREA_M2 } from '../src/zone-units.js'
+import { buildZoneUnits, renderCoreFile, ROW_MAX_AREA_M2, UNIT_MIN_AREA_M2 } from '../src/zone-units.js'
 
 /**
  * Die erzeugten Einheiten-Dateien gegen die ausgelieferten Daten — beide
@@ -44,6 +44,25 @@ describe('die Einheiten der Langzeitmuster', () => {
     // Hamburg: die kleinen Flächen ohne Nummer gehen in ihren Stadtteil, mit Bezirkspolygon.
     expect(output.shapes.hamburg!.some((s) => s.kind === 'bezirk')).toBe(true)
     expect(UNIT_MIN_AREA_M2).toBe(20_000)
+  })
+
+  // St. Gallen: 1.871 Reihen von 27 m² unter einem Schlüssel — zusammen
+  // 6,8 ha, und die Summe allein hätte ein „Gebiet" mit 29 Punkten ergeben,
+  // in dem nie eine Meldung liegt. Reihen bleiben Reihen: Fangradius, unter
+  // dem Zonenschlüssel, als Raster von Kästchen statt 13.482 Stützpunkten.
+  it('hält St. Gallens Reihen unter ihrem Schlüssel als Reihen, gerastert', () => {
+    expect(output.units.stgallen).toEqual({ EBZ: 'EBZ', Parkuhr: 'Parkuhr' })
+    const shapes = output.shapes.stgallen!
+    expect(shapes.map((s) => [s.unit, s.kind])).toEqual([
+      ['EBZ', 'reihen'],
+      ['Parkuhr', 'reihen'],
+    ])
+    for (const shape of shapes) {
+      expect(shape.polygons.length).toBeGreaterThan(100)
+      expect(shape.polygons.length).toBeLessThan(600)
+      for (const polygon of shape.polygons) expect(polygon[0]).toHaveLength(5)
+    }
+    expect(ROW_MAX_AREA_M2).toBe(500)
   })
 
   it('bleibt im Worker-Bündel klein und lässt keine Einheit ohne Geometrie', () => {

@@ -18,7 +18,8 @@
 > ([staedte-wien.md](staedte-wien.md)). Schweiz: Bern
 > ([staedte-bern.md](staedte-bern.md)), Zürich
 > ([staedte-zuerich.md](staedte-zuerich.md)), Genf
-> ([staedte-genf.md](staedte-genf.md)). Niederlande: Utrecht, Den Haag,
+> ([staedte-genf.md](staedte-genf.md)), St. Gallen
+> ([staedte-stgallen.md](staedte-stgallen.md)). Niederlande: Utrecht, Den Haag,
 > Rotterdam, Groningen, Nijmegen, Eindhoven aus einer Quelle, ein Bericht
 > ([staedte-niederlande.md](staedte-niederlande.md)). Frankreich: Strasbourg
 > ([staedte-strasbourg.md](staedte-strasbourg.md)). Polen: Krakau
@@ -28,7 +29,7 @@
 > Hamburg, Frankfurt, Freiburg, Cottbus, Rostock, Schwerin, Graz, Innsbruck,
 > die Niederlande, Strasbourg). **B** liefert Grenzen und Zeiten, der Tarif kommt aus der
 > Verordnung der Stadt (München, Salzburg, Wien, Zürich). **C** liefert nur
-> Grenzen — die Zonen stehen grau mit „Zeiten unbekannt" (Bern, Genf, Krakau,
+> Grenzen — die Zonen stehen grau mit „Zeiten unbekannt" (Bern, Genf, St. Gallen, Krakau,
 > Kassel, Essen, Saarbrücken). Wo die Lizenz nicht ausgewiesen ist (Graz, Krakau,
 > Kassel, Saarbrücken),
 > zeigt die App einen Hinweis über der Karte; die Anfragen an die Städte stehen
@@ -237,6 +238,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Zürich** | 2 Hochtarifzonen als WFS 1.1.0 (QGIS Server), dazu 1.397 Parkuhren mit Tarifzeile und 13.272 Parkfelder | **nirgends im Feed** — aus dem Erlass AS 551.330, in Franken, gestaffelt | je Fläche, eine Schreibweise; je Parkuhr 33 | CC0 1.0 | **geprüft**, [eigener Bericht](staedte-zuerich.md) |
 | **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |
 | **Genf** | 53 Macaron-Zonen (17 in der Ville de Genève) und 13.236 Stellplatzreihen als ArcGIS REST des SITG | **nirgends** — weder im Feed noch an den Reihen | **nirgends** — Klasse C, jede Zone trägt `scheduleUnknown`; die Reihen nennen nur Art und Höchstdauer (`Payant 90 min`, `Gratuit 60 min`, 28 Werte) | SITG-Stufe „A – Accès libre (Open Data)", Quellenangabe Pflicht | **geprüft**, angeschlossen am 17. September — [staedte-genf.md](staedte-genf.md) |
+| **St. Gallen** | 3.232 Parkfeld-Polygone als GeoJSON-Export des Opendatasoft-Portals, 31 statistische Quartiere — **keine Zonen-Ebene**; die 17 EBZ-Sektoren nur im Stadtplan | **nirgends** — die Stadtseite nennt nur Bewilligungspreise, keinen Parkuhrtarif | **nirgends** — die Stadtseite sagt Mo–Sa 8–19 Uhr Bewilligungspflicht; jede Reihe `scheduleUnknown` | CC BY 4.0, „Freie Nutzung mit Quellenangabe" | **geprüft**, angeschlossen am 17. September als Klasse C — [staedte-stgallen.md](staedte-stgallen.md) |
 | **Kassel** | 29 Bewohnerparkbezirke als ArcGIS-`identify` (die Ebene gibt über `query` keine Geometrie heraus), 24 Ortsbezirke | **nirgends** — nur in der Parkgebührenordnung, je Gebührenzone und Straßenliste | **nirgends** — nur am Schild; jede Zone `scheduleUnknown` | **nicht ausgewiesen** (Ortsbezirke DL-DE/BY 2.0) — siehe [staedte-kassel.md](staedte-kassel.md) | **geprüft**, Klasse C |
 | **Essen** | 9 Bewohnerparkbereiche als GeoJSON-Datei (DKAN, Stand 2022), dazu 50 Stadtteile und Umweltzone | **nirgends** — die sechs Parkzonen der Stadtseite gibt es nicht als Geometrie | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-essen.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
