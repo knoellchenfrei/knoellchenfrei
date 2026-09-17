@@ -897,6 +897,9 @@ const BY_CITY: Record<string, readonly Source[]> = {
   // `fetch-data` „Keine Quellen", obwohl es zwei Dateien gibt.
   innsbruck: [],
   zuerich: ZUERICH_SOURCES,
+  // Kein WFS: Kassel kommt vollständig über `cityFiles` — ein `identify`
+  // und eine `query` gegen das Geoportal der Stadt.
+  kassel: [],
 }
 
 /**
@@ -1099,12 +1102,83 @@ const ZUERICH_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Kassel — Stadt Kassel, Vermessung und Geoinformation, über das Geoportal
+ * der Stadt (ArcGIS Enterprise 11.5). Lizenz für die Bezirke offen, siehe
+ * `KASSEL` in `core/city.ts`.
+ *
+ * **`query` liefert bei der Ebene „Bewohnerparkbezirke" keine Geometrie.**
+ * Am 17. September 2026 nachgemessen: Die Feldliste der Ebene 27 führt kein
+ * Geometriefeld, und `query?where=1%3D1&outFields=*&returnGeometry=true`
+ * antwortet in jedem Format (`geojson`, `json`, `pbf`) mit vollständigen
+ * Sachdaten und `geometry: null` — 2.489 Bytes für 29 Bezirke, kein
+ * Fehler, kein Hinweis. Die Geometrie gibt der Dienst über **`identify`**
+ * heraus: ein Rechteck über die ganze Stadt, `tolerance=0`, `sr=4326`, und
+ * die Antwort trägt alle 29 Ringe in Grad (`[9.4459, 51.3155]`). Das
+ * Rechteck ist `KASSEL.reportBounds` — der Gemeindeumriss —, und
+ * `quellen.test.ts` hält beide gleich. Ohne `mapExtent` und `imageDisplay`
+ * antwortet `identify` mit einem Fehler; die Werte sind Pflicht und ohne
+ * Bedeutung bei Toleranz null. Kein `expectedFeatures`: Die Antwort ist
+ * Esri-JSON (`results[]`), keine FeatureCollection — die Zählung macht
+ * `build-data-kassel.ts`.
+ *
+ * Die **Ortsbezirke** liegen in einem zweiten Kartendienst
+ * (`Politik_Verwaltung`, Ebene 0) und antworten auf `query` wie üblich mit
+ * GeoJSON in `[lon, lat]`; ihr Katalogeintrag nennt die Datenlizenz
+ * Deutschland Namensnennung 2.0. 24 Flächen: 23 Ortsbezirke und die
+ * ortsbezirksfreie Dönchelandschaft.
+ */
+const KASSEL_ARCGIS = 'https://geoportal.kassel.de/arcgis/rest/services/Service_Daten'
+
+/**
+ * Ein `identify` über ein Rechteck in Grad — der Weg zur Geometrie, wenn
+ * `query` sie verweigert. Das Rechteck ist Eingabe und Ausgabe zugleich
+ * (`sr=4326`), `layers=all:<ebene>` fragt genau eine Ebene.
+ */
+export function arcgisIdentifyUrl(
+  service: string,
+  layer: number,
+  box: { minLon: number; minLat: number; maxLon: number; maxLat: number }
+): string {
+  const envelope = `${box.minLon},${box.minLat},${box.maxLon},${box.maxLat}`
+  const params = new URLSearchParams({
+    geometry: envelope,
+    geometryType: 'esriGeometryEnvelope',
+    sr: '4326',
+    layers: `all:${layer}`,
+    tolerance: '0',
+    mapExtent: envelope,
+    imageDisplay: '800,600,96',
+    returnGeometry: 'true',
+    f: 'json',
+  })
+  return `${service}/identify?${params}`
+}
+
+/** Der Gemeindeumriss aus `KASSEL.reportBounds` — hier abgeschrieben, weil diese Datei nichts aus `core` liest. */
+const KASSEL_BOX = { minLon: 9.35, minLat: 51.26, maxLon: 9.58, maxLat: 51.37 }
+
+const KASSEL_FILES: readonly FileSource[] = [
+  {
+    key: 'bezirke',
+    url: arcgisIdentifyUrl(`${KASSEL_ARCGIS}/Verkehr_Mobilitaet/MapServer`, 27, KASSEL_BOX),
+    file: 'bezirke.json',
+  },
+  {
+    key: 'districts',
+    url: arcgisQueryUrl(`${KASSEL_ARCGIS}/Politik_Verwaltung/MapServer/0`),
+    file: 'districts.json',
+    expectedFeatures: 24,
+  },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
   graz: GRAZ_FILES,
   innsbruck: INNSBRUCK_FILES,
   zuerich: ZUERICH_FILES,
+  kassel: KASSEL_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
