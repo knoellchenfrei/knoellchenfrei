@@ -65,6 +65,13 @@ import {
   parseSchwerinMaxStay,
   parseSchwerinSchedule,
 } from '../src/schwerin.js'
+import {
+  GrazParseError,
+  parseGrazFee,
+  parseGrazMaxStay,
+  parseGrazMaxStayProse,
+  parseGrazSchedule,
+} from '../src/graz.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -254,6 +261,12 @@ describe('Zeitparser unter Beschuss', () => {
       parseCottbusTime(input)
     })
   })
+
+  it('Graz wirft nur GrazParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 200, GrazParseError, (input) => {
+      expectValidWindows(parseGrazSchedule(input), input)
+    })
+  })
 })
 
 describe('Gebührenparser unter Beschuss', () => {
@@ -318,6 +331,14 @@ describe('Gebührenparser unter Beschuss', () => {
       expectValidFee(parseSchwerinFee(input), input)
     })
   })
+
+  it('Graz wirft nur GrazParseError, und seine Tickets sind nie null', () => {
+    fuzz(20260917, 120, GrazParseError, (input) => {
+      const tariff = parseGrazFee(input)
+      expectValidFee(tariff.fee, input)
+      for (const ticket of tariff.tickets) expect(ticket.cents, input).toBeGreaterThan(0)
+    })
+  })
 })
 
 describe('Höchstparkdauer unter Beschuss', () => {
@@ -354,6 +375,14 @@ describe('Höchstparkdauer unter Beschuss', () => {
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
     })
+    for (const parse of [parseGrazMaxStay, parseGrazMaxStayProse]) {
+      fuzz(20260918, 120, GrazParseError, (input) => {
+        const minutes = parse(input)
+        if (minutes === undefined) return
+        expect(Number.isInteger(minutes)).toBe(true)
+        expect(minutes).toBeGreaterThan(0)
+      })
+    }
   })
 })
 
@@ -382,6 +411,8 @@ describe('Zeitbudget', () => {
       parseCottbusFee,
       parseSchwerinSchedule,
       parseSchwerinFee,
+      parseGrazSchedule,
+      parseGrazFee,
     ]
     const started = performance.now()
     for (const input of inputs) {

@@ -15,6 +15,9 @@
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
+> [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu **Graz**,
+> die erste Stadt in Österreich: [staedte-graz.md](staedte-graz.md). Dieses Dokument
+> hieß einmal „Zweite Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.
@@ -197,6 +200,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Hamburg** | 146 Bewohnerparkgebiete als WFS | je Gebiet, als „3,50 € je Stunde" | je Gebiet, zehn Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
 | **München** | 82 Parkraummanagementgebiete und 13.714 Straßenseiten als WFS | **nirgends** — nur in der Gebührenordnung | je Straßenseite, als Fließtext, 291 Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
 | **Freiburg im Breisgau** | 37 Gebührenzonen-Flächen und 538 Parkscheinautomaten als WFS | je Fläche, als „1,80 €" (sechs P+R-Flächen nur Tagespauschale) | je Fläche, sieben Schreibweisen; je Automat siebzehn | DL-DE/**Namensnennung** 2.0 | **geprüft**, angeschlossen — [staedte-freiburg.md](staedte-freiburg.md) |
+| **Graz** | 90 + 75 Flächen der Blauen und Grünen Zone als ArcGIS-GeoJSON | je Fläche, als „Mindestgebühr (halbe Stunde): € 1,30 …" | je Fläche, drei Schreibweisen | **nicht ausgewiesen** — siehe [staedte-graz.md](staedte-graz.md) | **geprüft** |
 | **Frankfurt / Rhein-Main** | Regionalverband stellt Karten und Geodaten als WFS bereit | offen | offen | als Open Data ausgewiesen | **Hinweis** |
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
