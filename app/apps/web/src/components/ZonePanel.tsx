@@ -356,6 +356,18 @@ export function ZonePanel({
         </p>
       )}
 
+      {/*
+        Der Betrag steht nicht in jeder Stadt im Feed: Wien, Salzburg und
+        Zürich tragen ihn aus der Verordnung, mit Fundstelle in rawFee. Ohne
+        diese Zeile sähe ein Betrag aus der Verordnung aus wie einer aus dem
+        Datensatz — und genau die Herkunft ist der Unterschied.
+      */}
+      {!unknown && properties.rawFee !== '' && (
+        <p className="hours">
+          Tarif laut Quelle: <code>{properties.rawFee}</code>
+        </p>
+      )}
+
       {uncertain && (
         <p className="warn warn--loud">
           Heute ist ein Adventssamstag. In dieser Zone gilt dann{' '}

@@ -88,7 +88,19 @@ describe('ZonePanel', () => {
     expect(screen.queryByText('Noch bis')).toBeNull()
     expect(screen.queryByText(/Keine Gebühr heißt nicht/)).toBeNull()
     expect(screen.queryByText(/Zeiten laut Quelle/)).toBeNull()
+    expect(screen.queryByText(/Tarif laut Quelle/)).toBeNull()
     expect(screen.getByText(/keine Zeiten und keinen Tarif/)).toBeTruthy()
+  })
+
+  it('nennt den Tarif wörtlich laut Quelle — samt Fundstelle, wenn er aus einer Verordnung stammt', () => {
+    zeichne(
+      eigenschaften({
+        fee: { kind: 'exact', centsPerHour: 220 },
+        rawFee: 'laut Verordnung: 1,10 € je halbe Stunde (nicht im Datensatz)',
+      }),
+    )
+    expect(screen.getByText(/Tarif laut Quelle/)).toBeTruthy()
+    expect(screen.getByText(/laut Verordnung: 1,10 € je halbe Stunde/)).toBeTruthy()
   })
 
   it('nennt einen Franken-Tarif in Franken', () => {
