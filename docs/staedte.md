@@ -19,7 +19,8 @@
 > Rotterdam, Groningen, Nijmegen, Eindhoven aus einer Quelle, ein Bericht:
 > [staedte-niederlande.md](staedte-niederlande.md).
 > Am selben Tag Kassel, die erste Stadt, deren Quelle nur Grenzen nennt:
-> [staedte-kassel.md](staedte-kassel.md).
+> [staedte-kassel.md](staedte-kassel.md). Und **St. Gallen**, die erste, deren
+> Quelle nicht einmal Zonen kennt, nur Parkfelder: [staedte-stgallen.md](staedte-stgallen.md).
 > Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
@@ -236,6 +237,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |
 | **Genf** | 53 Macaron-Zonen (17 in der Ville de Genève) und 13.236 Stellplatzreihen als ArcGIS REST des SITG | **nirgends** — weder im Feed noch an den Reihen | **nirgends** — Klasse C, jede Zone trägt `scheduleUnknown`; die Reihen nennen nur Art und Höchstdauer (`Payant 90 min`, `Gratuit 60 min`, 28 Werte) | SITG-Stufe „A – Accès libre (Open Data)", Quellenangabe Pflicht | **geprüft**, angeschlossen am 17. September — [staedte-genf.md](staedte-genf.md) |
 | **Kassel** | 29 Bewohnerparkbezirke als ArcGIS-`identify` (die Ebene gibt über `query` keine Geometrie heraus), 24 Ortsbezirke | **nirgends** — nur in der Parkgebührenordnung, je Gebührenzone und Straßenliste | **nirgends** — nur am Schild; jede Zone `scheduleUnknown` | **nicht ausgewiesen** (Ortsbezirke DL-DE/BY 2.0) — siehe [staedte-kassel.md](staedte-kassel.md) | **geprüft**, Klasse C |
+| **St. Gallen** | 3.232 Parkfeld-Polygone als GeoJSON-Export des Opendatasoft-Portals, 31 statistische Quartiere — **keine Zonen-Ebene**; die 17 EBZ-Sektoren nur im Stadtplan | **nirgends** — die Stadtseite nennt nur Bewilligungspreise, keinen Parkuhrtarif | **nirgends** — die Stadtseite sagt Mo–Sa 8–19 Uhr Bewilligungspflicht; jede Reihe `scheduleUnknown` | CC BY 4.0, „Freie Nutzung mit Quellenangabe" | **geprüft**, angeschlossen am 17. September als Klasse C — [staedte-stgallen.md](staedte-stgallen.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

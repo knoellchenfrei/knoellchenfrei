@@ -848,6 +848,49 @@ Nicht abgerufen: Ebene 8 „Parken" (zwölf Parkhäuser, keine Automaten), Ebene
 19/21) — sie wären der nächste Schritt für `poi.geojson`. Keine Umweltzone
 (Kassel hat keine). `meta.json` führt alles unter `absent`.
 
+## Verwendet — St. Gallen
+
+Abgerufen am 17. September 2026 von der **Stadt St.Gallen** über ihr
+Open-Data-Portal `daten.stadt.sg.ch` (Opendatasoft) — die vierte Stadt in
+der Schweiz und die erste, deren Quelle **keine Zonen kennt**: nur
+Parkfelder mit einer Markierungsart. Kein WFS, kein ArcGIS, sondern der
+GeoJSON-Export `…/datasets/<id>/exports/geojson?limit=-1`; zwei Ebenen, in
+`sources.ts` als `STGALLEN_FILES`:
+
+| Ebene | Datensatz | Umfang |
+| --- | --- | --- |
+| Parkplätze und Parkflächen | `ppv-parkflaeche` | 3.232 Polygone, je eine Stellplatzreihe (Median 27 m², 1,6 m breit) mit `markierungsart` (12 Werte), `zutrittsart`, `anzahl_pp`; 1.871 „Erweiterte Blaue Zone" und 781 „Weiss (bewirtschaftet)" werden Zonenstücke, 114 Invalidenparkplätze POI, der Rest bleibt draussen |
+| Wohnviertel | `wohnviertel` | 31 statistische Quartiere in 14 Quartiergruppen und 3 Stadtkreisen, als Kartenkontext, Ortsangabe im Panel und für den Rahmen |
+
+**Lizenz: [Creative Commons Namensnennung 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)**
+— der Datensatz nennt `license: "CC BY"` mit dieser Adresse und in den
+DCAT-AP-CH-Feldern `rights: "NonCommercialAllowed-CommercialAllowed-ReferenceRequired"`
+(die opendata.swiss-Stufe „Freie Nutzung. Quellenangabe ist Pflicht"). Die
+[Nutzungsbedingungen des Portals](https://daten.stadt.sg.ch/terms/terms-and-conditions/)
+sagen wörtlich: „Für die meisten Daten gilt die «Freie Nutzung mit
+Quellenangabe». Das heisst, die Daten dürfen sowohl für nicht kommerzielle
+als auch kommerzielle Zwecke genutzt werden, sofern die Quelle angegeben
+wird." — und: „Wir übernehmen keine Haftung für Richtigkeit, Aktualität und
+Vollständigkeit". Die App nennt als Quelle `publisher` und `creator` des
+Metadatensatzes („Stadt St.Gallen, Rauminformationszentrum (RIZ)") samt
+Portal und den Zeitstand (`meta.geprueftAm`).
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Weder Zeiten noch Beträge noch Sektoren.** Die Stadt führt 17
+  Bewilligungssektoren der Erweiterten Blauen Zone, aber nur im Stadtplan;
+  im Portal steht nichts davon. Jede Reihe trägt `scheduleUnknown: true`,
+  `meta.absent` führt `schedule` und `fee`; die Bewilligungszeiten der
+  Stadtseite (Mo–Sa 8–19 Uhr) stehen als Zitat in
+  [staedte-stgallen.md](staedte-stgallen.md), nicht in den Daten.
+- **Die Zone entsteht aus der Markierungsart.** `EBZ` und `Parkuhr` sind die
+  zwei Schlüssel; jede der 2.652 Reihen bleibt ein eigenes Stück, damit Klick
+  und Ortung die richtige treffen (`zoneSnapMetres: 20`, die Reihen sind
+  1,6 m breit). Die Geometrie ist auf sechs Stellen gerundet, weil die
+  fünfte aus einer solchen Reihe einen Strich macht.
+- **Der Datenstand ist 2023-07-05** (`data_processed`), ohne
+  Aktualisierungsfrequenz; die Metadaten wurden zuletzt 2026-02-23 angefasst.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

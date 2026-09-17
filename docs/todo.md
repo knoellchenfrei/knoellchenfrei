@@ -617,6 +617,15 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > an vermgeo@kassel.de, ob die DL-DE/BY 2.0 der übrigen Ebenen auch hier
 > gilt) und Zeiten und Tarif, die nirgends maschinenlesbar stehen — im
 > Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: St. Gallen**, Klasse C und die erste
+> Stadt, deren Quelle keine Zonen kennt ([staedte-stgallen.md](staedte-stgallen.md)):
+> 3.232 Parkfelder mit Markierungsart aus dem Opendatasoft-Portal (CC BY 4.0),
+> 2.652 davon als Stücke der zwei Zonen `EBZ` und `Parkuhr`, jede mit
+> `scheduleUnknown`; Kanton `CH-SG` nach Art. 2 RLG (sGS 552.1). Neu dabei:
+> `isRows` in `zone-units.ts`, weil tausend Reihen unter einem Schlüssel
+> sonst ein „Gebiet" mit 29 Punkten ergäben. Offen: die 17 EBZ-Sektoren
+> (nur im Stadtplan), Zeiten und Tarif als Stadtregel, der Datenstand von
+> 2023 — im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig
