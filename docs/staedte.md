@@ -29,6 +29,9 @@
 > [staedte-innsbruck.md](staedte-innsbruck.md). Seit dem 17. September
 > **Krakau**, die erste Stadt in Polen und die erste der Klasse C — nur
 > Zonengrenzen, keine Zeiten: [staedte-krakau.md](staedte-krakau.md).
+> Seit dem 17. September **Straßburg**, die erste Stadt in Frankreich —
+> Staffeltarif am Feature, Zeiten aus der Datensatzbeschreibung:
+> [staedte-strasbourg.md](staedte-strasbourg.md).
 > Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 > Seit dem 17. September **Genf**, die erste Stadt in der Schweiz und die
@@ -233,6 +236,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Zürich** | 2 Hochtarifzonen als WFS 1.1.0 (QGIS Server), dazu 1.397 Parkuhren mit Tarifzeile und 13.272 Parkfelder | **nirgends im Feed** — aus dem Erlass AS 551.330, in Franken, gestaffelt | je Fläche, eine Schreibweise; je Parkuhr 33 | CC0 1.0 | **geprüft**, [eigener Bericht](staedte-zuerich.md) |
 | **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |
 | **Genf** | 53 Macaron-Zonen (17 in der Ville de Genève) und 13.236 Stellplatzreihen als ArcGIS REST des SITG | **nirgends** — weder im Feed noch an den Reihen | **nirgends** — Klasse C, jede Zone trägt `scheduleUnknown`; die Reihen nennen nur Art und Höchstdauer (`Payant 90 min`, `Gratuit 60 min`, 28 Werte) | SITG-Stufe „A – Accès libre (Open Data)", Quellenangabe Pflicht | **geprüft**, angeschlossen am 17. September — [staedte-genf.md](staedte-genf.md) |
+| **Straßburg** | 19 Tarifzonen (rouge/orange/vert) als Opendatasoft-Export der Ville de Strasbourg, 10 Quartiere, 15 Bewohnerzonen zur Gegenprobe | je Zone als **Staffel** `1h = 3.5€ / 2h = 8€ / … / 3h = 17€`, drei Schreibweisen | **nur in der Datensatzbeschreibung** — Mo–Sa 9–19 Uhr, Sonn- und Feiertage frei; als Konstante mit Fundstelle | Licence Ouverte (Etalab) **1.0**, Nennung Pflicht | **geprüft**, angeschlossen am 17. September als erste Stadt in Frankreich — [staedte-strasbourg.md](staedte-strasbourg.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

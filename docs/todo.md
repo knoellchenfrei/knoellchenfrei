@@ -500,6 +500,30 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 >       baut der tägliche Datenbau sie mit; die Zahl in `sources.ts`
 >       (`expectedFeatures: 23`) wächst dann und will nachgezogen werden.
 
+> **Straßburg seit dem 17. September** — die erste Stadt in Frankreich,
+> Bericht in [staedte-strasbourg.md](staedte-strasbourg.md): 19 Tarifzonen
+> rouge/orange/vert aus dem Opendatasoft-Portal der Ville de Strasbourg,
+> Staffeltarif am Feature, Zeiten aus der Datensatzbeschreibung (Mo–Sa
+> 9–19 Uhr), Kalender `FR-67`. Drei Punkte bleiben:
+>
+> - [ ] **Die Zeiten von der Stadt bestätigen lassen — du.** Sie stehen
+>       nur in der Beschreibung des Datensatzes und auf der Seite
+>       `stationnement-visiteur`, nicht in einem Feld. Eine Rückfrage an
+>       das Open-Data-Team der Eurométropole (über das Kontaktformular des
+>       Portals), ob die Zeiten ins Schema kommen — dann liest der Parser
+>       sie, statt sie zu wissen.
+> - [ ] **Eine Staffel im Modell — ich.** `Fee` kennt nur Satz und Spanne;
+>       die Spanne 1,00–7,00 €/h der Zone orange ist ehrlich, aber breit:
+>       Zwei Stunden kosten dort 3,50 €, die App sagt 2–14 €. Eine Staffel
+>       (`steps: [{ minutes, cents }]`) träfe den Betrag; sie würde auch
+>       Paris, Toulouse und das NPR bedienen. Bis dahin nennt das Panel die
+>       Staffel wörtlich als Zusatzregel.
+> - [ ] **Die ZFE-m der Eurométropole — offen.** `zfe_emprise` (7
+>       Polygone, Licence Ouverte v2.0) ist eine Crit'Air-Zone für alle 33
+>       Gemeinden; die App kennt nur die deutsche Umweltzone mit grüner
+>       Plakette. Erst wenn die Oberfläche eine zweite Sorte erklären kann,
+>       kommt die Ebene als `umweltzone.geojson`.
+
 > **Innsbruck seit dem 16. September** — die erste Stadt außerhalb
 > Deutschlands, Bericht in [staedte-innsbruck.md](staedte-innsbruck.md).
 > 21 Parkzonen aus dem ArcGIS Online der Stadt, alles in einem Freitextfeld;

@@ -806,6 +806,48 @@ Podstrefa, darunter 20 mit zwei Podstrefen und Warntext),
 `Parkomaty_Ewidencja/1` (Parkautomaten der ZDMK-Karte), `Tereny_newralgiczne_OPP/1`
 (eine Warnfläche an der ul. Wrocławska) — alle ohne Zeiten und Tarif.
 
+## Verwendet — Straßburg
+
+Abgerufen am 17. September 2026 von der **Ville de Strasbourg** über das
+Opendatasoft-Portal der Ville et Eurométropole (`data.strasbourg.eu`) — kein
+WFS, sondern `/api/explore/v2.1/catalog/datasets/<id>/exports/geojson`, die
+ganze Ebene in einer Antwort, WGS84 als `[lon, lat]`. Drei Ebenen:
+
+| Ebene | Datensatz | Umfang |
+| --- | --- | --- |
+| Tarifzonen | `stationnement-payant` („Zones de stationnement payant", Ville de Strasbourg) | **19** Polygone, `couleur` rouge 5 / orange 7 / vert 7, `tarif` als kumulierte Staffel in genau drei Schreibweisen, `numero_zone_resident`, `date_maj` durchweg `2026-09-03`; Katalog `modified` 2026-09-07 — **die Flächen** |
+| Quartiere | `strasbourg-10-quartiers` („Découpage de la ville de Strasbourg en 10 quartiers", Eurométropole, Stand 7. Dezember 2018) | 10 Polygone, `id_quart10`, `nom` — Kartenkontext und Ortsangabe im Panel |
+| Bewohnerzonen | `stationnement_residant` („Zones de stationnement résidant", Ville de Strasbourg, Licence Ouverte v2.0, Stand 11. August 2026) | 15 Polygone, `numero_zone_resident` als **Text** — nur zur Gegenprobe: Jede Tarifzone nennt eine, die es gibt |
+
+**Lizenz: Licence Ouverte (Etalab), Fassung 1.0.** Das Feld `license` des
+Tarifzonen-Datensatzes lautet „Licence Ouverte (Etalab)", `license_url`
+zeigt auf das PDF von 2014 (Dokument vom 17. Oktober 2011); andere
+Datensätze desselben Portals tragen ausdrücklich „Licence Ouverte v2.0
+(Etalab)", und data.gouv.fr führt den geernteten Eintrag mit dem Schlüssel
+`fr-lo`. Beide Fassungen verlangen die Nennung von Quelle und Stand; Details
+und der Wortlaut in [staedte-strasbourg.md](staedte-strasbourg.md).
+
+Was der Feed **nicht** sagt, und woher es stattdessen kommt:
+
+- **Keine Zeiten in einem Feld.** Die Datensatzbeschreibung sagt: „Le
+  stationnement est payant du lundi au samedi de 9h00 à 19h00 et gratuit les
+  dimanches et les jours fériés." — dieselbe Regel wie auf der Seite der
+  Stadt (`strasbourg.eu/stationnement-visiteur`, Tarife zum 1. September
+  2026). Sie steht als Konstante `STRASBOURG_HOURS` in `core/strasbourg.ts`
+  und in `rawHours` jeder Zone mit dem Hinweis „nicht am Feature".
+- **Der Tarif ist eine Staffel, kein Stundensatz.** Rouge 3,50 € für eine
+  Stunde, 8 € für zwei, 17 € für drei; die letzte Stufe jeder Staffel ist
+  der ermäßigte Forfait post-stationnement. `Fee` bekommt die Spanne der
+  nachgerechneten Stundenkosten (rouge 3,50–9,00 €/h), die Staffel steht
+  wörtlich als Zusatzregel im Panel, die letzte Stufe ist die
+  Höchstparkdauer (3/4/5 h).
+
+Nicht abgerufen: `vo_st_stationmnt_vehi` (26.851 Stellplatzreihen der
+Eurométropole mit `occupation` payant/gratuit/…, ohne Tarif und Zeit),
+`zfe_emprise` (die ZFE-m — eine Crit'Air-Zone, keine deutsche Umweltzone),
+`limites_de_communes` (33 Gemeinden, Licence Ouverte v2.0 — nur für den
+Rahmen gemessen: Ville de Strasbourg 7,6880–7,8361 / 48,4919–48,6462).
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
