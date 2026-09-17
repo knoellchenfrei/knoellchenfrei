@@ -1460,3 +1460,52 @@ test.describe('Standort beim Melden und beim Gehen', () => {
       .toBeGreaterThan(20)
   })
 })
+
+/**
+ * Seit dem 16. September: Städte ausserhalb Deutschlands, und der Betreiber
+ * wollte den Wechsel über eine Grenze **bewusst** — erst das Land, dann die
+ * Stadt. Dazu der Banner für eine Stadt, deren Datenlizenz nicht ausgewiesen
+ * ist (Graz), und die Erklärung dazu in den Einstellungen.
+ */
+test.describe('Länder', () => {
+  test('zeigt die Städte eines Landes erst nach der Landeswahl', async ({ page }) => {
+    await ready(page)
+    const sheet = await openSettings(page)
+    const laender = sheet.getByRole('group', { name: 'Land' })
+    await expect(laender).toBeVisible()
+    await expect(laender.getByRole('button', { name: 'Deutschland' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(sheet.getByRole('button', { name: 'Graz' })).toHaveCount(0)
+    await expect(sheet.getByRole('button', { name: 'Hamburg' })).toBeVisible()
+
+    await laender.getByRole('button', { name: 'Österreich' }).click()
+    await expect(sheet.getByRole('button', { name: 'Graz' })).toBeVisible()
+    await expect(sheet.getByRole('button', { name: 'Hamburg' })).toHaveCount(0)
+  })
+
+  test('nennt in Graz die offene Lizenzfrage über der Karte und in den Einstellungen', async ({ page }) => {
+    await ready(page)
+    let sheet = await openSettings(page)
+    await sheet.getByRole('group', { name: 'Land' }).getByRole('button', { name: 'Österreich' }).click()
+    await sheet.getByRole('button', { name: 'Graz' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+
+    const banner = page.locator('.licence-hint')
+    await expect(banner).toBeVisible()
+    await expect(banner).toContainText('Lizenz ungeklärt')
+    // Der Banner gehört zur Kopfzeile: Er darf nichts verdecken, also muss
+    // die gemessene Kopfhöhe ihn mitzählen.
+    const kopf = await page.locator('.topbar').boundingBox()
+    const hinweis = await banner.boundingBox()
+    expect(hinweis!.y + hinweis!.height).toBeLessThanOrEqual(kopf!.y + kopf!.height + 1)
+
+    sheet = await openSettings(page)
+    await expect(sheet).toContainText('Lizenz ungeklärt')
+    await expect(sheet.getByRole('group', { name: 'Land' }).getByRole('button', { name: 'Österreich' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  test('zeigt in Berlin keinen Lizenzbanner', async ({ page }) => {
+    await ready(page)
+    await expect(page.locator('.licence-hint')).toHaveCount(0)
+  })
+})
