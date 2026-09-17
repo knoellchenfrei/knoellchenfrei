@@ -11,6 +11,13 @@ export interface ZoneProperties {
   unmodelledRules: string[]
   sourceDefect: string | null
   /**
+   * `false`, wenn die Quelle an gesetzlichen Feiertagen kassiert — siehe
+   * `ParkingZone.freeOnHolidays`. Kam mit den Niederlanden: Utrecht und Den
+   * Haag führen im NPR keinen Feiertag, dort gilt an Koningsdag der Montag.
+   * Fehlt das Feld, sind Feiertage frei, wie in jeder deutschen Stadt.
+   */
+  freeOnHolidays?: boolean
+  /**
    * Die Quelle nennt keine Zeiten (Klasse C: nur Zonengrenzen). Dann ist
    * `windows` leer, und die Zone ist weder frei noch gebührenpflichtig,
    * sondern „Zeiten unbekannt" — siehe `ParkingZone.scheduleUnknown`.

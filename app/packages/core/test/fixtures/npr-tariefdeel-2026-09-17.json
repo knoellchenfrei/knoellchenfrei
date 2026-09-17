@@ -1,0 +1,200 @@
+[
+ {
+  "areamanagerid": "344",
+  "farecalculationcode": "TAR03",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.08900000",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR01",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "1.07000000",
+  "stepsizefarepart": "10",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR04",
+  "startdatefarepart": "20140101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.00000000",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR05",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "30",
+  "amountfarepart": "0.20000000",
+  "stepsizefarepart": "30",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR05",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "30",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.56000000",
+  "stepsizefarepart": "15",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.20000000"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "PROG2",
+  "startdatefarepart": "20260401",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "120",
+  "amountfarepart": "0.01666667",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "PROG2",
+  "startdatefarepart": "20260401",
+  "startdurationfarepart": "120",
+  "enddurationfarepart": "180",
+  "amountfarepart": "0.04583333",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "2.00000040"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "PROG2",
+  "startdatefarepart": "20260401",
+  "startdurationfarepart": "180",
+  "enddurationfarepart": "240",
+  "amountfarepart": "0.08250000",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "4.75000020"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "PROG2",
+  "startdatefarepart": "20260401",
+  "startdurationfarepart": "240",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.11916667",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "9.70000020"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "400",
+  "startdatefarepart": "20240101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.10000000",
+  "stepsizefarepart": "60",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "14",
+  "farecalculationcode": "TAR09",
+  "startdatefarepart": "20250101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "90",
+  "amountfarepart": "0.00555600",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "14",
+  "farecalculationcode": "TAR09",
+  "startdatefarepart": "20250101",
+  "startdurationfarepart": "90",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.04500000",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.50004000"
+ },
+ {
+  "areamanagerid": "268",
+  "farecalculationcode": "TAR05",
+  "startdatefarepart": "20240901",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "1.00000000",
+  "stepsizefarepart": "180",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "772",
+  "farecalculationcode": "TAR01",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "1",
+  "amountfarepart": "0.30000000",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "772",
+  "farecalculationcode": "TAR01",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "1",
+  "enddurationfarepart": "60",
+  "amountfarepart": "0.07627119",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.30000000"
+ },
+ {
+  "areamanagerid": "772",
+  "farecalculationcode": "TAR01",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "60",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.07500000",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "4.80000021"
+ },
+ {
+  "areamanagerid": "772",
+  "farecalculationcode": "TAR06",
+  "startdatefarepart": "20260101",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "22.75000000",
+  "stepsizefarepart": "900",
+  "enddatefarepart": "29991231",
+  "amountcumulative": "0.00000000"
+ },
+ {
+  "areamanagerid": "344",
+  "farecalculationcode": "TAR03",
+  "startdatefarepart": "20111118",
+  "startdurationfarepart": "0",
+  "enddurationfarepart": "999999",
+  "amountfarepart": "0.03816667",
+  "stepsizefarepart": "1",
+  "enddatefarepart": "20120101",
+  "amountcumulative": "0.00000000"
+ }
+]

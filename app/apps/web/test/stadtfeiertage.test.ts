@@ -66,4 +66,14 @@ describe('toParkingZone trägt die Stadt in die Zone', () => {
     expect((await zone('berlin', { maxStay: '4h' })).maxStayMinutes).toBe(240)
     expect((await zone('berlin')).maxStayMinutes).toBeUndefined()
   })
+
+  // Utrecht führt im NPR keinen Feiertag: An Koningsdag (Montag, 27. April
+  // 2026) gilt der Montag. Ohne das Feld hätte die App dort „frei" gesagt.
+  it('Utrecht kassiert an Koningsdag, wenn die Quelle es sagt — und nur dann', async () => {
+    const koningsdag = Date.parse('2026-04-27T10:30:00+02:00')
+    expect(chargeableAt(await zone('utrecht', { freeOnHolidays: false }), koningsdag).chargeable).toBe(true)
+    expect(chargeableAt(await zone('utrecht'), koningsdag).chargeable).toBe(false)
+    expect((await zone('utrecht')).freeOnHolidays).toBeUndefined()
+    expect((await zone('utrecht', { freeOnHolidays: true })).freeOnHolidays).toBeUndefined()
+  })
 })

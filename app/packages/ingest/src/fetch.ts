@@ -106,6 +106,22 @@ const dateien = cityFiles(CITY_KEY)
 for (const datei of dateien) {
   process.stdout.write(`${datei.key} (Datei) … `)
   try {
+    if (datei.paginate !== undefined) {
+      const zeilen = await holeSeiten(datei.url, datei.paginate.pageSize)
+      const erwartet = datei.expectedFeatures ?? 0
+      if (zeilen.length < Math.floor(erwartet * 0.95)) {
+        throw new Error(
+          `nur ${zeilen.length} statt ${erwartet} Zeilen — das ist ein Rückgang, und beim NPR sinkt eine ` +
+            'Zeilenzahl nie, weil alte Fassungen stehen bleiben. Von Hand nachsehen, bevor die Zahl in sources.ts angepasst wird.'
+        )
+      }
+      writeFileSync(join(RAW, datei.file), JSON.stringify(zeilen))
+      const abweichung = zeilen.length - erwartet
+      console.log(
+        `${zeilen.length} Zeilen${abweichung === 0 ? '' : ` (${abweichung > 0 ? '+' : ''}${abweichung} gegenüber sources.ts — Zahl dort nachziehen)`}`
+      )
+      continue
+    }
     const response = await fetch(datei.url, { signal: AbortSignal.timeout(180_000) })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const body = await response.text()
@@ -119,6 +135,30 @@ for (const datei of dateien) {
   } catch (error) {
     failed += 1
     console.log(`FAILED: ${(error as Error).message}`)
+  }
+}
+
+/**
+ * Eine Socrata-Tabelle seitenweise, bis eine Seite kürzer ist als die
+ * Seitengröße.
+ *
+ * Socrata liefert ohne `$limit` 1.000 Zeilen und mit `$limit` höchstens
+ * 50.000 — beides ohne Hinweis, dass etwas fehlt. Die Adresse in `sources.ts`
+ * trägt `$limit` und `$order=:id`; hier kommt nur `$offset` dazu. Eine
+ * Antwort, die kein JSON-Array ist (Socrata meldet Fehler als Objekt mit
+ * `error: true`, Status 400), bricht ab. Eine leere Tabelle ist erlaubt —
+ * Den Haag führt keine SPECIALE DAG —, deshalb gilt die Längenprüfung der
+ * anderen Dateien hier nicht; gezählt wird gegen `expectedFeatures`.
+ */
+async function holeSeiten(url: string, pageSize: number): Promise<unknown[]> {
+  const zeilen: unknown[] = []
+  for (let offset = 0; ; offset += pageSize) {
+    const response = await fetch(`${url}&$offset=${offset}`, { signal: AbortSignal.timeout(180_000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status} bei $offset=${offset}`)
+    const seite = JSON.parse(await response.text()) as unknown
+    if (!Array.isArray(seite)) throw new Error(`Socrata antwortet bei $offset=${offset} nicht mit einem Array`)
+    zeilen.push(...seite)
+    if (seite.length < pageSize) return zeilen
   }
 }
 

@@ -1,0 +1,93 @@
+[
+ {
+  "areamanagerid": "344",
+  "farecalculationcode": "TAR03",
+  "farecalculationdesc": "kortparkeertarief gebied 3",
+  "startdatefare": "20111118",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR01",
+  "farecalculationdesc": "6,42 per uur, te betalen in stappen van 10 min, hoogtarief",
+  "startdatefare": "20130101",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR04",
+  "farecalculationdesc": "Nultarief",
+  "startdatefare": "20130101",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "599",
+  "farecalculationcode": "TAR05",
+  "farecalculationdesc": "Stop en Shop: eerste 30min 0,20, daarna laagtarief",
+  "startdatefare": "20150330",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "PROG2",
+  "farecalculationdesc": "Progressief Tarief 2",
+  "startdatefare": "20260401",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "518",
+  "farecalculationcode": "400",
+  "farecalculationdesc": "E0,10 per 60 minuten stapgrootte 60 minuten groen-gele zone",
+  "startdatefare": "20160810",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0",
+  "periodnametariff": "E0,10 per 60 minuten stapgrootte 60 minuten"
+ },
+ {
+  "areamanagerid": "14",
+  "farecalculationcode": "TAR09",
+  "farecalculationdesc": "Eerste 90 minuten 0,50, daarna 2,70 per uur",
+  "startdatefare": "20250101",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "14",
+  "farecalculationcode": "TAR06",
+  "farecalculationdesc": "Gratis",
+  "startdatefare": "20150701",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "268",
+  "farecalculationcode": "TAR05",
+  "farecalculationdesc": "1,00  per 3 uur",
+  "startdatefare": "20141022",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0"
+ },
+ {
+  "areamanagerid": "772",
+  "farecalculationcode": "TAR01",
+  "farecalculationdesc": "A1: 0,30 starttarief, 4,50 per uur (2026)",
+  "startdatefare": "20131023",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0",
+  "periodnametariff": "A1"
+ },
+ {
+  "areamanagerid": "772",
+  "farecalculationcode": "TAR06",
+  "farecalculationdesc": "B4: 22,55 per dag (2026)",
+  "startdatefare": "20131023",
+  "enddatefare": "29991231",
+  "vatpercentage": "0.0",
+  "periodnametariff": "B4"
+ }
+]

@@ -742,6 +742,144 @@ export const ROSTOCK: City = {
   },
 }
 
+/**
+ * Die Niederlande — sechs Städte aus **einer** Quelle, dem Nationaal Parkeer
+ * Register (NPR) der RDW. Die Stadt ist dort nur ein `areamanagerid`
+ * (CBS-Gemeindecode, siehe `NPR_AREA_MANAGERS` in `ingest/sources.ts`), und
+ * der Datenbau ist für alle sechs derselbe (`build-data-npr.ts`).
+ *
+ * Was für alle sechs gilt: Rahmen aus der Gemeindegrenze (PDOK „Bestuurlijke
+ * Gebieden", `Gemeentegebied`, `bbox` gemessen am 17. September 2026),
+ * Stadtteile aus den CBS-Wijken über PDOK (CC0), Lizenz CC0 laut dem
+ * Metadatenfeld `Licentie: Creative Commons 0 (CC0)` jeder der acht
+ * Tabellen auf opendata.rdw.nl — das Feld `attribution` ist dort leer, der
+ * Quellenvermerk unten ist unsere Formulierung, keine Vorgabe. Die
+ * Feiertage liegen in der Quelle (SPECIALE DAG); `holidays` bleibt leer,
+ * weil keine der sechs Gemeinden einen festen Tag frei gibt, den der
+ * Kalender nicht kennt — Rotterdam führt den 5. Mai, aber als „wie
+ * Sonntag", und das ist in den Zentrumszonen ein Zahltag.
+ */
+const NPR_ATTRIBUTION = (datasetUrl: string): Attribution => ({
+  source: 'RDW — Nationaal Parkeer Register (NPR), Open Data Parkeren, opendata.rdw.nl',
+  datasetUrl,
+  licence: 'Creative Commons Zero 1.0 Universell (CC0 1.0)',
+  licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+  attributionRequired: false,
+  licenceFamily: 'cc0',
+})
+
+const NPR_GEBIED = 'https://opendata.rdw.nl/resource/adw6-9hsg.json'
+
+export const UTRECHT: City = {
+  key: 'utrecht',
+  name: 'Utrecht',
+  land: 'NL-UT',
+  center: [5.1214, 52.0907],
+  zoom: 12,
+  // Gemeentegebied-bbox: 4.9701, 52.0263 – 5.1952, 52.1421
+  reportBounds: { minLon: 4.97, minLat: 52.02, maxLon: 5.2, maxLat: 52.15 },
+  sessionBounds: { minLon: 4.7, minLat: 51.85, maxLon: 5.45, maxLat: 52.3 },
+  heatGrid: { id: 'utrecht', originLon: 4.97, originLat: 52.02, latitude: 52.09 },
+  attribution: NPR_ATTRIBUTION(`${NPR_GEBIED}?$where=areamanagerid='344'`),
+  // Belegt auf utrecht.nl, „Wegslepen auto" (gelesen am 17. September 2026):
+  // „Bergings Combinatie Utrecht (BCU) … Elektronweg 24, 3542 AC UTRECHT …
+  // 030 - 241 5060 (keuze 1)". Kein Datum auf der Seite; Preise dort
+  // „per 2026".
+  towedVehicles: {
+    authority: 'Bergings Combinatie Utrecht (BCU), Elektronweg 24',
+    url: 'https://www.utrecht.nl/wonen-en-leven/parkeren/parkeren-bezoeker/op-straat-parkeren/wegslepen-auto',
+    phone: '030 241 5060',
+    checkedOn: '2026-09',
+    note: 'Depot der Gemeinde Utrecht; Ausweis und Zulassungsbescheinigung mitbringen.',
+  },
+}
+
+export const DENHAAG: City = {
+  key: 'denhaag',
+  name: 'Den Haag',
+  land: 'NL-ZH',
+  center: [4.3007, 52.0705],
+  zoom: 12,
+  // Gemeentegebied-bbox: 4.1850, 52.0148 – 4.4225, 52.1350. Die Südkante
+  // bleibt bei 52,01, weil Rotterdams Rahmen bei 52,00 endet — die beiden
+  // Gemeinden grenzen bei Hoek van Holland fast aneinander.
+  reportBounds: { minLon: 4.18, minLat: 52.01, maxLon: 4.43, maxLat: 52.14 },
+  sessionBounds: { minLon: 3.9, minLat: 51.9, maxLon: 4.7, maxLat: 52.3 },
+  heatGrid: { id: 'denhaag', originLon: 4.18, originLat: 52.01, latitude: 52.07 },
+  attribution: NPR_ATTRIBUTION(`${NPR_GEBIED}?$where=areamanagerid='518'`),
+  // Bewusst ohne `towedVehicles`: denhaag.nl antwortet aus dieser Umgebung
+  // mit 403 (Bot-Schutz), und ohne gelesene Seite steht hier keine Nummer.
+}
+
+export const ROTTERDAM: City = {
+  key: 'rotterdam',
+  name: 'Rotterdam',
+  land: 'NL-ZH',
+  center: [4.4777, 51.9244],
+  zoom: 11.5,
+  // Gemeentegebied-bbox: 3.9407, 51.8421 – 4.6018, 52.0045. Die Nordkante
+  // ist auf 52,00 geschnitten, damit sie Den Haag nicht berührt; die
+  // 500 Meter Dünen nördlich von Hoek van Holland haben keine Parkzone.
+  reportBounds: { minLon: 3.94, minLat: 51.84, maxLon: 4.61, maxLat: 52.0 },
+  sessionBounds: { minLon: 3.7, minLat: 51.7, maxLon: 4.9, maxLat: 52.1 },
+  heatGrid: { id: 'rotterdam', originLon: 3.94, originLat: 51.84, latitude: 51.92 },
+  attribution: NPR_ATTRIBUTION(`${NPR_GEBIED}?$where=areamanagerid='599'`),
+  // Belegt auf rotterdam.nl, „Uw voertuig is weggesleept" (gelesen am
+  // 17. September 2026): „Bel dan met de gemeente Rotterdam via telefoon
+  // 14 010" und „Vreugdenhil Berging B.V. Aploniastraat 20, 3084 CC
+  // Rotterdam Telefoon: 015 251 13 51". Kein Datum auf der Seite.
+  towedVehicles: {
+    authority: 'Vreugdenhil Berging B.V., Aploniastraat 20 (Auskunft laut Gemeinde Rotterdam)',
+    url: 'https://www.rotterdam.nl/uw-voertuig-is-weggesleept',
+    phone: '015 251 13 51',
+    checkedOn: '2026-09',
+    note: 'Die Gemeinde selbst ist unter 14 010 erreichbar.',
+  },
+}
+
+export const GRONINGEN: City = {
+  key: 'groningen',
+  name: 'Groningen',
+  land: 'NL-GR',
+  center: [6.5665, 53.2194],
+  zoom: 12,
+  // Gemeentegebied-bbox: 6.4627, 53.1062 – 6.7725, 53.3130
+  reportBounds: { minLon: 6.46, minLat: 53.1, maxLon: 6.78, maxLat: 53.32 },
+  sessionBounds: { minLon: 6.2, minLat: 52.95, maxLon: 7.05, maxLat: 53.45 },
+  heatGrid: { id: 'groningen', originLon: 6.46, originLat: 53.1, latitude: 53.22 },
+  attribution: NPR_ATTRIBUTION(`${NPR_GEBIED}?$where=areamanagerid='14'`),
+  // Bewusst ohne `towedVehicles`: gemeente.groningen.nl antwortet mit 403.
+}
+
+export const NIJMEGEN: City = {
+  key: 'nijmegen',
+  name: 'Nijmegen',
+  land: 'NL-GE',
+  center: [5.8622, 51.8426],
+  zoom: 12,
+  // Gemeentegebied-bbox: 5.7576, 51.7906 – 5.9083, 51.8946
+  reportBounds: { minLon: 5.75, minLat: 51.79, maxLon: 5.91, maxLat: 51.9 },
+  sessionBounds: { minLon: 5.55, minLat: 51.65, maxLon: 6.1, maxLat: 52.0 },
+  heatGrid: { id: 'nijmegen', originLon: 5.75, originLat: 51.79, latitude: 51.84 },
+  attribution: NPR_ATTRIBUTION(`${NPR_GEBIED}?$where=areamanagerid='268'`),
+  // Bewusst ohne `towedVehicles`: nijmegen.nl antwortet mit 403.
+}
+
+export const EINDHOVEN: City = {
+  key: 'eindhoven',
+  name: 'Eindhoven',
+  land: 'NL-NB',
+  center: [5.4697, 51.4416],
+  zoom: 12,
+  // Gemeentegebied-bbox: 5.3567, 51.4000 – 5.5489, 51.4971
+  reportBounds: { minLon: 5.35, minLat: 51.39, maxLon: 5.55, maxLat: 51.5 },
+  sessionBounds: { minLon: 5.15, minLat: 51.25, maxLon: 5.75, maxLat: 51.65 },
+  heatGrid: { id: 'eindhoven', originLon: 5.35, originLat: 51.39, latitude: 51.44 },
+  attribution: NPR_ATTRIBUTION(`${NPR_GEBIED}?$where=areamanagerid='772'`),
+  // Bewusst ohne `towedVehicles`: Die geratene Adresse auf eindhoven.nl
+  // antwortete mit 404, und eine Suche blieb aus — ohne gelesene Seite keine Nummer.
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -753,6 +891,12 @@ export const CITIES: readonly City[] = [
   FREIBURG,
   ROSTOCK,
   COTTBUS,
+  UTRECHT,
+  DENHAAG,
+  ROTTERDAM,
+  GRONINGEN,
+  NIJMEGEN,
+  EINDHOVEN,
 ]
 
 

@@ -296,6 +296,108 @@ describe('Münchner Fixture', () => {
   })
 })
 
+/**
+ * Das NPR liefert über Socrata **jedes** Feld als Zeichenkette — auch die als
+ * `number` deklarierten (`"starttimetimeframe": "900"`). Der Parser rechnet
+ * damit; eine Zahl an dieser Stelle wäre eine Änderung des Dienstes. Fehlende
+ * Felder fehlen (`absent`), statt `null` zu sein: `enddatearea` in GEOMETRIE,
+ * `farecalculationcode` und `minparkinginterruption` in TIJDVAK.
+ */
+describe('NPR-Fixtures', () => {
+  const rows = (name: string): Record<string, unknown>[] => read<Record<string, unknown>[]>(`npr-${name}-2026-09-17.json`)
+
+  it('führt die Zeitfenster in genau diesen zwölf Feldern, alle als Zeichenkette', () => {
+    const tijdvak = rows('tijdvak')
+    expect(tijdvak.length).toBe(32)
+    expectShape(tijdvak, {
+      areamanagerid: ['string'],
+      regulationid: ['string'],
+      daytimeframe: ['string'],
+      starttimetimeframe: ['string'],
+      endtimetimeframe: ['string'],
+      claimrightpossible: ['string'],
+      farecalculationcode: ['string', 'absent'],
+      maxdurationright: ['string'],
+      minparkinginterruption: ['string', 'absent'],
+      resetdurationtimeframe: ['string'],
+      startdatetimeframe: ['string'],
+      enddatetimeframe: ['string'],
+    })
+  })
+
+  it('führt die Tarifteile mit Betrag, Schrittweite und Dauer als Zeichenkette', () => {
+    expectShape(rows('tariefdeel'), {
+      areamanagerid: ['string'],
+      farecalculationcode: ['string'],
+      startdurationfarepart: ['string'],
+      enddurationfarepart: ['string'],
+      amountfarepart: ['string'],
+      stepsizefarepart: ['string'],
+      amountcumulative: ['string'],
+      startdatefarepart: ['string'],
+      enddatefarepart: ['string'],
+    })
+  })
+
+  it('führt die übrigen Tabellen in ihren Feldern', () => {
+    expectShape(rows('gebied'), {
+      areamanagerid: ['string'],
+      areaid: ['string'],
+      areadesc: ['string'],
+      startdatearea: ['string'],
+      enddatearea: ['string'],
+    })
+    expectShape(rows('geometrie'), {
+      areamanagerid: ['string'],
+      areaid: ['string'],
+      areageometryastext: ['string'],
+      startdatearea: ['string'],
+      enddatearea: ['string', 'absent'],
+    })
+    expectShape(rows('gebiedregeling'), {
+      areamanagerid: ['string'],
+      areaid: ['string'],
+      regulationid: ['string'],
+      usageid: ['string'],
+      startdatearearegulation: ['string'],
+      enddatearearegulation: ['string'],
+    })
+    expectShape(rows('regeling'), {
+      areamanagerid: ['string'],
+      regulationid: ['string'],
+      regulationdesc: ['string'],
+      regulationtype: ['string'],
+      startdateregulation: ['string'],
+      enddateregulation: ['string'],
+    })
+    expectShape(rows('tariefberekening'), {
+      areamanagerid: ['string'],
+      farecalculationcode: ['string'],
+      farecalculationdesc: ['string'],
+      periodnametariff: ['string', 'absent'],
+      vatpercentage: ['string'],
+      startdatefare: ['string'],
+      enddatefare: ['string'],
+    })
+    expectShape(rows('specialedag'), {
+      areamanagerid: ['string'],
+      datespecialday: ['string'],
+      namespecialday: ['string'],
+    })
+  })
+
+  it('schreibt jedes Datum in einer der drei Formen und jede Zeit als Ziffern', () => {
+    const datum = /^(\d{8}|\d{14}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3})$/
+    for (const row of rows('tijdvak')) {
+      expect(row['startdatetimeframe']).toMatch(/^\d{14}$/)
+      expect(row['starttimetimeframe']).toMatch(/^\d{1,4}$/)
+    }
+    for (const row of rows('geometrie')) expect(row['startdatearea']).toMatch(datum)
+    for (const row of rows('gebied')) expect(row['startdatearea']).toMatch(/^\d{8}$/)
+    for (const row of rows('specialedag')) expect(row['datespecialday']).toMatch(/^\d{8}$/)
+  })
+})
+
 describe('Cottbuser Fixtures', () => {
   const AUTOMATS = read<{ automaten: CottbusAutomatProperties[] }>(
     'cottbus-parkscheinautomaten-2026-09-16.json'

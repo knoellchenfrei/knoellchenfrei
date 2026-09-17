@@ -29,6 +29,9 @@ export function toParkingZone(properties: ZoneProperties): ParkingZone {
     windows: properties.windows,
     ...(maxStay === undefined ? {} : { maxStayMinutes: maxStay }),
     unmodelledRules: properties.unmodelledRules,
+    // Nur die Verneinung reist mit: `true` ist die Vorgabe in `isFreeDay`,
+    // und ein Feld, das nur „wie immer" sagt, braucht keinen Platz im GeoJSON.
+    ...(properties.freeOnHolidays === false ? { freeOnHolidays: false } : {}),
     ...(properties.scheduleUnknown === true ? { scheduleUnknown: true as const } : {}),
   }
 }
