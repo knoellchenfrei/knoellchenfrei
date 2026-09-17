@@ -2173,6 +2173,10 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "WT1",
     "Zentrum",
   ],
+  "stgallen": [
+    "EBZ",
+    "Parkuhr",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

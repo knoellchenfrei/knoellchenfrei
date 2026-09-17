@@ -54,6 +54,25 @@ interface Feature {
   geometry?: { type?: string; coordinates?: unknown } | null
 }
 
+/**
+ * Ob die Stücke eines Schlüssels Stellplatzreihen sind statt Gebiete: kein
+ * Stück erreicht 2 ha, und die Hälfte liegt unter 500 m². Bis St. Gallen gab
+ * es den Fall nicht — dort tragen 1.871 Reihen von im Median 27 m² denselben
+ * Schlüssel `EBZ`, zusammen 6,8 ha. Die Summe hätte daraus ein „Gebiet"
+ * gemacht, dessen Geometrie die 8-m-Vereinfachung auf 29 Punkte zusammenschob:
+ * eine Einheit, in der keine Meldung je gelegen hätte. Reihen bleiben Reihen,
+ * auch zu Tausenden, und werden wie Karlsruhes über den Fangradius getroffen —
+ * nur unter dem Zonenschlüssel statt dem Bezirk, weil sie über 27 Quartiere
+ * verteilt sind und die Einheit je Schlüssel genau eine ist.
+ */
+export const ROW_MAX_AREA_M2 = 500
+
+function isRows(polygons: readonly PolygonRings[]): boolean {
+  const areas = polygons.map((polygon) => areaSquareMetres([polygon])).sort((a, b) => a - b)
+  const median = areas[Math.floor(areas.length / 2)] ?? 0
+  return areas.length >= 10 && median < ROW_MAX_AREA_M2 && (areas.at(-1) ?? 0) < UNIT_MIN_AREA_M2
+}
+
 function polygonsOf(feature: Feature): PolygonRings[] {
   const geometry = feature.geometry
   if (geometry === null || geometry === undefined) return []
@@ -66,6 +85,49 @@ function simplified(polygons: readonly PolygonRings[], tolerance = TOLERANCE_DEG
   const result = simplifyGeometry({ type: 'MultiPolygon', coordinates: polygons }, tolerance, 5)
   if (result === null) return []
   return result.type === 'MultiPolygon' ? (result.coordinates as PolygonRings[]) : [result.coordinates as PolygonRings]
+}
+
+/**
+ * Tausende Reihen als ein Raster von Kästchen — für den Fangradius reicht das.
+ *
+ * St. Gallens 1.871 EBZ-Reihen haben 13.482 Stützpunkte; ungekürzt sprengten
+ * sie mit den 4.838 der Parkuhr-Reihen das Worker-Bündel (1,26 MB statt
+ * unter 1 MB). Der Worker fragt für Reihen nur „liegt eine in 300 m?", und
+ * dafür ist ein Kästchen von 0,002° (rund 150 × 220 m) um alle Reihen einer
+ * Rasterzelle genau genug: Der Fehler bleibt unter 150 m, das Ergebnis
+ * dieselbe Einheit. Karlsruhes Reihen bleiben ungekürzt — sie gehen in den
+ * Bezirk und sind zu wenige, um zu stören.
+ */
+const ROW_CELL_DEG = 0.002
+
+function rasterised(polygons: readonly PolygonRings[]): PolygonRings[] {
+  const cells = new Map<string, BoundingBox>()
+  for (const polygon of polygons) {
+    const b = boundsOf([polygon])
+    const cell = `${Math.floor(b.minLon / ROW_CELL_DEG)}:${Math.floor(b.minLat / ROW_CELL_DEG)}`
+    const seen = cells.get(cell)
+    cells.set(
+      cell,
+      seen === undefined
+        ? { ...b }
+        : {
+            minLon: Math.min(seen.minLon, b.minLon),
+            minLat: Math.min(seen.minLat, b.minLat),
+            maxLon: Math.max(seen.maxLon, b.maxLon),
+            maxLat: Math.max(seen.maxLat, b.maxLat),
+          }
+    )
+  }
+  const r = (v: number): number => Math.round(v * 1e5) / 1e5
+  return [...cells.values()].map((b) => [
+    [
+      [r(b.minLon), r(b.minLat)],
+      [r(b.maxLon), r(b.minLat)],
+      [r(b.maxLon), r(b.maxLat)],
+      [r(b.minLon), r(b.maxLat)],
+      [r(b.minLon), r(b.minLat)],
+    ],
+  ])
 }
 
 const box = (polygons: readonly PolygonRings[]): [number, number, number, number] => {
@@ -103,7 +165,11 @@ export function buildZoneUnits(dataDir: string): ZoneUnitsOutput {
     for (const [key, entry] of [...byKey.entries()].sort(([a], [b]) => a.localeCompare(b))) {
       if (areaSquareMetres(entry.polygons) >= UNIT_MIN_AREA_M2) {
         cityUnits[key] = key
-        cityShapes.push({ unit: key, kind: 'zone', bounds: box(entry.polygons), polygons: simplified(entry.polygons) })
+        if (isRows(entry.polygons)) {
+          cityShapes.push({ unit: key, kind: 'reihen', bounds: box(entry.polygons), polygons: rasterised(entry.polygons) })
+        } else {
+          cityShapes.push({ unit: key, kind: 'zone', bounds: box(entry.polygons), polygons: simplified(entry.polygons) })
+        }
       } else {
         const unit = `bezirk:${entry.district}`
         cityUnits[key] = unit

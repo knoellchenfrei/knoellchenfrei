@@ -27,6 +27,7 @@
     "build-data-bern": "tsx src/build-data-bern.ts",
     "build-data-krakau": "tsx src/build-data-krakau.ts",
     "build-data-kassel": "tsx src/build-data-kassel.ts",
+    "build-data-stgallen": "tsx src/build-data-stgallen.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

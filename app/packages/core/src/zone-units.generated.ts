@@ -2168,6 +2168,10 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "WT1": "WT1",
     "Zentrum": "Zentrum",
   },
+  "stgallen": {
+    "EBZ": "EBZ",
+    "Parkuhr": "Parkuhr",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2198,6 +2202,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "genf": 17,
   "krakau": 23,
   "kassel": 29,
+  "stgallen": 2,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */
