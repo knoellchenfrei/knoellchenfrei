@@ -40,6 +40,7 @@ export type Land =
   | 'AT-T'
   | 'CH-ZH'
   | 'CH-GE'
+  | 'CH-BE'
   | 'NL-UT'
   | 'NL-ZH'
   | 'NL-GR'
@@ -343,6 +344,28 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Evangelischen Kirche Berlin-Brandenburg-schlesische Oberlausitz,
  *   <https://www.kirchenrecht-ekbo.de/document/16>, abgerufen am
  *   16. September 2026. Gilt für Cottbus.
+ * - **CH-BE** — Der Kanton Bern zählt seine Feiertage in Art. 2 des
+ *   Gesetzes über die Ruhe an öffentlichen Feiertagen (FRG, BSG 555.1, vom
+ *   1. Dezember 1996, Stand 1. April 2021) auf, wörtlich: „Öffentliche
+ *   Feiertage sind a die Sonntage, b die hohen Festtage, nämlich Karfreitag,
+ *   Ostern, Auffahrt, Pfingsten, Eidgenössischer Dank-, Buss- und Bettag und
+ *   Weihnachten, c die übrigen öffentlichen Feiertage, nämlich der
+ *   Neujahrstag, der 2. Januar, der Ostermontag, der Pfingstmontag, der
+ *   Bundesfeiertag und der 26. Dezember." Ostern, Pfingsten und der Bettag
+ *   (dritter Sonntag im September) sind Sonntage und fehlen deshalb in der
+ *   Tabelle; der Bundesfeiertag liegt in `NATIONWIDE.CH`. Bleiben **acht**
+ *   kantonale Tage — Neujahr, Berchtoldstag (2. Januar), Karfreitag,
+ *   Ostermontag, Auffahrt, Pfingstmontag, Weihnachten, Stephanstag —, mit
+ *   dem 1. August neun. Kein Fronleichnam, kein Allerheiligen, keine Drei
+ *   Könige: Art. 12 FRG erlaubte sie allein der Gemeinde Vellerat, und die
+ *   gehört seit 1996 zum Kanton Jura. **Nicht** das Gesetz über Handel und
+ *   Gewerbe (HGG, BSG 930.1), das man zuerst vermutet: Dessen Art. 11 regelt
+ *   nur die Ladenöffnung „an öffentlichen Feiertagen" und setzt den Begriff
+ *   voraus; in keiner seiner vier Fassungen seit 2014 steht eine Liste.
+ *   Gelesen als PDF über die Schnittstelle des Portals
+ *   (`belex.sites.be.ch/api/de/texts_of_law/555.1`, Version 2234) am
+ *   17. September 2026; die Weboberfläche selbst liefert an einen Abruf nur
+ *   eine JavaScript-Hülle. Gilt für Bern.
  *   den **Internationalen Frauentag** (8. März, seit 2023) und den
  *   **Reformationstag** (31. Oktober). Damit ist es das einzige Land, das
  *   Berlins Frauentag *und* Hamburgs Reformationstag hat — und der Grund,
@@ -426,6 +449,10 @@ const REGIONAL: Record<Land, RegionalHolidays> = {
     fromEaster: [-2, 1, 39, 50], // Vendredi saint, Lundi de Pâques, Ascension, Lundi de Pentecôte
     custom: [jeuneGenevois],
   },
+  // Kanton Bern, Art. 2 FRG (BSG 555.1): Neujahr, 2. Januar, Karfreitag,
+  // Ostermontag, Auffahrt, Pfingstmontag, Weihnachten, Stephanstag — der
+  // 1. August liegt in `NATIONWIDE.CH`. Beleg im Kommentar oben.
+  'CH-BE': { fixed: ['01-01', '01-02', '12-25', '12-26'], fromEaster: [-2, 1, 39, 50] },
   // Niederlande: keine Provinzfeiertage; alles national, siehe `NATIONWIDE`.
   'NL-UT': { fixed: [], fromEaster: [] },
   'NL-ZH': { fixed: [], fromEaster: [] },

@@ -23,6 +23,8 @@
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
 > **Salzburg**, die erste Stadt außerhalb Deutschlands:
 > [staedte-salzburg.md](staedte-salzburg.md). Dieses Dokument hieß einmal „Zweite
+> **Bern**, seit dem 17. September die erste Stadt in der Schweiz und die erste
+> der Klasse C — Zonen ohne Zeiten und Beträge: [staedte-bern.md](staedte-bern.md).
 > **Innsbruck**, die erste Stadt außerhalb Deutschlands:
 > [staedte-innsbruck.md](staedte-innsbruck.md). Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
@@ -222,6 +224,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Niederlande: Utrecht, Den Haag, Rotterdam, Groningen, Nijmegen, Eindhoven** | Nationaal Parkeer Register (RDW), acht Socrata-Tabellen, Gebiete als WKT | je Fenster als Staffel (Betrag je Schrittweite) | je Regelung und Tagestyp, als `900`/`2100` — Feiertage in der Quelle | CC0 | **geprüft**, [ein Bericht für alle sechs](staedte-niederlande.md) |
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
+| **Bern** | 42 Parkkartenzonen-Flächen als ArcGIS-MapServer (Geoportal der Stadt), 34 davon mit Namen | **nirgends** — nur im Gebührenreglement der Stadt (3.30 Fr./h auf weissen Feldern) | **nirgends** — nur `Auch Sonntags` bei vier Flächen | Nutzungsbedingungen der Stadt, „Freie Nutzung. Quellenangabe ist Pflicht." | **geprüft**, angeschlossen am 17. September als Klasse C („Zeiten unbekannt") — [staedte-bern.md](staedte-bern.md) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
 | **Zürich** | 2 Hochtarifzonen als WFS 1.1.0 (QGIS Server), dazu 1.397 Parkuhren mit Tarifzeile und 13.272 Parkfelder | **nirgends im Feed** — aus dem Erlass AS 551.330, in Franken, gestaffelt | je Fläche, eine Schreibweise; je Parkuhr 33 | CC0 1.0 | **geprüft**, [eigener Bericht](staedte-zuerich.md) |
 | **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |

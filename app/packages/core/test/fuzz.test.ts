@@ -98,6 +98,13 @@ import {
   parseNprWkt,
 } from '../src/npr.js'
 import { GenfParseError, genfMaxStayCode, genfStreetLabel, genfZoneKey, parseGenfTypeStationnement } from '../src/genf.js'
+import {
+  BernParseError,
+  bernZoneNameFromPlz,
+  parseBernFieldType,
+  parseBernInfo,
+  parseBernZoneName,
+} from '../src/bern.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -585,6 +592,32 @@ describe('Genfer Stellplatzarten unter Beschuss', () => {
       const key = genfZoneKey({ ZONE_MACARON: input })
       expect(key, input).toMatch(/^[A-Z0-9]{1,4}$/)
       expect(genfStreetLabel(input).length, input).toBeLessThanOrEqual(input.length + 1)
+/**
+ * Bern hat keinen Zeit- und keinen Gebührenparser — der Feed nennt beides
+ * nicht. Beschossen werden die Feldparser, aus denen Schlüssel, Art und
+ * Regel einer Zone entstehen: Ein Schlüssel aus Unfug wäre eine Zone, die es
+ * nicht gibt, und stünde in `zone-keys.generated.ts` als gültige Ausprägung.
+ */
+    })
+  })
+})
+
+describe('Berner Feldparser unter Beschuss', () => {
+  it('Bern wirft nur BernParseError und liefert nur Zonennamen, zwei Arten und einen Hinweis', () => {
+    fuzz(20260917, 120, BernParseError, (input) => {
+      expect(parseBernZoneName(input), input).toMatch(/^\d{4}(\/[1-9]\d?)?$/)
+    })
+    fuzz(20260918, 120, BernParseError, (input) => {
+      expect(['blau', 'weiss'], input).toContain(parseBernFieldType(input))
+    })
+    fuzz(20260919, 120, BernParseError, (input) => {
+      expect([null, 'Auch Sonntags'], input).toContain(parseBernInfo(input))
+    })
+    fuzz(20260920, 120, BernParseError, (input) => {
+      expect(bernZoneNameFromPlz(input, 'kein Zusatz'), input).toMatch(/^\d{4}$/)
+    })
+    fuzz(20260921, 120, BernParseError, (input) => {
+      expect(bernZoneNameFromPlz('3006', input), input).toMatch(/^3006(\/[1-9]\d?)?$/)
     })
   })
 })
@@ -628,6 +661,8 @@ describe('Zeitbudget', () => {
       (input) => parseNprWkt(`POLYGON ((${input}))`),
       parseGenfTypeStationnement,
       (input) => genfZoneKey({ ZONE_MACARON: input }),
+      parseBernZoneName,
+      parseBernInfo,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

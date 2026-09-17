@@ -270,3 +270,22 @@ describe('cityFiles für Genf', () => {
     expect(citySources('genf')).toEqual([])
   })
 })
+
+describe('cityFiles für Bern', () => {
+  it('fragt jede MapServer-Ebene Berns als GeoJSON in Grad und mit Erwartungswert', () => {
+    const dateien = cityFiles('bern')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'districts', 'stadtteile'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('map.bern.ch')
+      expect(url.pathname).toMatch(/\/MapServer\/\d+\/query$/)
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.map((d) => d.expectedFeatures)).toEqual([42, 32, 6])
+    expect(citySources('bern')).toEqual([])
+  })
+})

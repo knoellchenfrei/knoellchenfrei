@@ -340,6 +340,11 @@ describe('cityAt', () => {
     expect(cityAt(6.6328, 46.5197)).toBeUndefined() // Lausanne
     expect(cityAt(6.1478, 46.2071)?.key).toBe('genf')
     expect(cityCountry(GENF)).toBe('CH')
+    // Und für die Schweiz: Thun und Fribourg liegen je 25 km von Bern und
+    // draussen; der Zytglogge ist Bern.
+    expect(cityAt(7.628, 46.758)).toBeUndefined() // Thun
+    expect(cityAt(7.1612, 46.8065)).toBeUndefined() // Fribourg
+    expect(cityAt(7.4477, 46.948)?.key).toBe('bern')
   })
 
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
@@ -507,21 +512,28 @@ describe('die Lizenzangaben jeder Stadt', () => {
   // verlangt den Hinweis auf den Gewährleistungsausschluss, die Datenlizenz
   // Deutschland nicht. Sie muss zum Lizenztext passen — sonst zeigt die
   // Oberfläche eine Auflage, die es nicht gibt, oder verschweigt eine.
+  const NUTZUNGSBEDINGUNGEN_WIE_CC_BY = new Set([
+    // Innsbruck: „vergleichbar mit CC BY 4.0", Namensnennung „Datenquelle: Stadt Innsbruck".
+    'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed',
+    // Genf: Conditions d'utilisation SITG, Stufe „A – Accès libre", Quellenangabe
+    // « Données SITG », „sans garantie d'aucune sorte" (Ziffer 4.4.1).
+    'https://sitg.ge.ch/ressources/conditions-utilisation-donnees',
+    // Bern: Nutzungsbedingungen Version 1.0 — „Freie Nutzung. Quellenangabe ist
+    // Pflicht." laut Geodatenkatalog, „keine Gewähr" laut Ziffer 7.
+    'https://map.bern.ch/geoportal/data/Nutzungsbedingungen_Geodaten_Stadt-Bern_1.0.pdf',
+  ])
+
   it('setzt licenceFamily passend zu Lizenztext und Namensnennung', () => {
     for (const city of CITIES) {
       const { licence, licenceUrl, licenceFamily, attributionRequired } = city.attribution
-      // Innsbruck nennt keine CC-Lizenz wörtlich, sondern eine eigene
-      // Nutzungsbedingung „vergleichbar mit CC BY 4.0" — mit denselben zwei
-      // Auflagen, an denen die Oberfläche hängt (Nennung in vorgeschriebener
-      // Form, Hinweis auf fehlende Gewähr). Die Seite ist der Beleg, nicht
-      // creativecommons.org; deshalb steht sie hier ausdrücklich.
-      // Genf ebenso: Die Conditions d'utilisation des Portail SITG, Stufe
-      // „A – Accès libre", verlangen die Quellenangabe (« Données SITG »)
-      // und geben die Daten „sans garantie d'aucune sorte" (Ziffer 4.4.1).
+      // Drei Städte nennen keine CC-Lizenz wörtlich, sondern eigene
+      // Nutzungsbedingungen mit denselben zwei Auflagen, an denen die
+      // Oberfläche hängt (Nennung in vorgeschriebener Form, Hinweis auf
+      // fehlende Gewähr). Die Seite ist der Beleg, nicht creativecommons.org;
+      // deshalb steht sie hier ausdrücklich — je Stadt eine Zeile.
       const erwartet =
         /creativecommons\.org\/licenses\/by\//.test(licenceUrl) ||
-        licenceUrl === 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed' ||
-        licenceUrl === 'https://sitg.ge.ch/ressources/conditions-utilisation-donnees'
+        NUTZUNGSBEDINGUNGEN_WIE_CC_BY.has(licenceUrl)
           ? 'cc-by'
         : /creativecommons\.org\/publicdomain\/zero/.test(licenceUrl)
           ? 'cc0'
@@ -575,7 +587,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {

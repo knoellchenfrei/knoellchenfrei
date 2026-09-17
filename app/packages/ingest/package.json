@@ -24,6 +24,7 @@
     "build-data-wien": "tsx src/build-data-wien.ts",
     "build-data-npr": "tsx src/build-data-npr.ts",
     "build-data-genf": "tsx src/build-data-genf.ts",
+    "build-data-bern": "tsx src/build-data-bern.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

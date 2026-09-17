@@ -29,6 +29,7 @@ import type {
 } from '../src/frankfurt.js'
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import { GenfParseError, parseGenfTypeStationnement, type GenfLineProperties, type GenfZoneProperties } from '../src/genf.js'
+import { isBernZoneUnattributed, type BernZoneProperties } from '../src/bern.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
 import type { RostockAutomatProperties, RostockZoneProperties } from '../src/rostock.js'
@@ -254,6 +255,54 @@ describe('Innsbrucker Fixture', () => {
     for (const row of ROWS) {
       expect((row.BEZEICH ?? '').trim().length, String(row.FID)).toBeGreaterThan(0)
       expect((row.INFO ?? '').trim().length, String(row.FID)).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('Berner Fixture', () => {
+  const ROWS = read<{ zonen: BernZoneProperties[] }>('bern-parkkartenzonen-2026-09-17.json').zonen
+
+  // Vierzehn Felder, und bis auf drei kann jedes `null` sein: Acht der 42
+  // Flächen tragen keine einzige Sachangabe. `Bemerkung` ist in allen 42
+  // Zeilen `null` — das Interface lässt `string` zu, beobachtet ist keiner.
+  it('führt genau diese vierzehn Felder in genau diesen Typen', () => {
+    expectShape(ROWS as unknown as Record<string, unknown>[], {
+      Objectid: ['number'],
+      PKZ_name: ['string', 'null'],
+      Parkfeld_typ: ['number', 'null'],
+      Parkfeld_typ_beschrieb: ['string', 'null'],
+      PLZ: ['number', 'null'],
+      PLZ_beschrieb: ['string', 'null'],
+      PLZ_zusatz: ['number', 'null'],
+      PLZ_zusatz_beschrieb: ['string', 'null'],
+      Bemerkung: ['null'],
+      Info: ['number', 'null'],
+      Info_beschrieb: ['string', 'null'],
+      Letzte_Aenderung: ['number'],
+      'Shape.STArea()': ['number'],
+      'Shape.STLength()': ['number'],
+    })
+  })
+
+  // `PLZ` ist ein **Code** der Wertetabelle (1005), nicht die Postleitzahl —
+  // die steht als Text in `PLZ_beschrieb` (`3006`). Wer die Zahl nähme,
+  // bekäme 34 Zonen mit vierstelligen Nummern, die alle falsch wären.
+  it('führt die Postleitzahl im Beschrieb, nicht im Zahlenfeld', () => {
+    for (const row of ROWS) {
+      if (row.PLZ_beschrieb === null || row.PLZ_beschrieb === undefined) continue
+      expect(row.PLZ_beschrieb).toMatch(/^\d{4}$/)
+      expect(row.PLZ).not.toBe(Number(row.PLZ_beschrieb))
+    }
+  })
+
+  it('lässt bei genau acht Flächen alle Sachfelder leer, und sonst keines', () => {
+    expect(ROWS.filter((row) => isBernZoneUnattributed(row))).toHaveLength(8)
+    for (const row of ROWS) {
+      if (isBernZoneUnattributed(row)) continue
+      expect(row.PKZ_name, String(row.Objectid)).toBeTruthy()
+      expect(row.Parkfeld_typ_beschrieb, String(row.Objectid)).toBeTruthy()
+      expect(row.PLZ_beschrieb, String(row.Objectid)).toBeTruthy()
+      expect(row.PLZ_zusatz_beschrieb, String(row.Objectid)).toBeTruthy()
     }
   })
 })

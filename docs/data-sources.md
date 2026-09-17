@@ -701,6 +701,62 @@ Nicht abgerufen: `OTC_PARKING` (534 Parkhäuser und -plätze — keine
 `OCS_SECTEURS_STATISTIQUES` (61 Sektoren des Kantons) und `CAD_COMMUNE`
 (48 Polygone, nur für den Rahmen gemessen). Eine Umweltzone gibt es in Genf
 nicht.
+## Verwendet — Bern
+
+Abgerufen am 17. September 2026 von der **Stadt Bern** über ihren
+ArcGIS-Server `map.bern.ch` — die erste Stadt in der Schweiz und die erste
+der **Klasse C**: Die Quelle nennt Zonengrenzen, aber weder Zeiten noch
+Beträge. Kein WFS (der Dienst hat einen, `…/MapServer/WFSServer`, aber die
+REST-Abfrage `query?where=1%3D1&outFields=*&f=geojson&outSR=4326` liefert
+GeoJSON direkt); drei Ebenen aus drei Diensten, in `sources.ts` als
+`BERN_FILES`:
+
+| Ebene | Dienst / Ebene | Umfang |
+| --- | --- | --- |
+| Parkkartenzonen | `Geoportal/Parkkartenzonen/MapServer/1` („Parkkartenzone_Umrandung") | 42 Polygone, davon 34 mit Namen für 31 Zonen; 8 ohne jede Sachangabe werden ausgelassen |
+| Statistische Bezirke | `Geoportal/Statistische_Bezirke/MapServer/0` | 32 Bezirke, „eine offizielle Stadteinteilung", als Kartenkontext und Ortsangabe |
+| Stadtteile | `Geoportal/Stadtteile/MapServer/0` | 6 Stadtteile, nur damit jeder Bezirk seinen Stadtteil nennt |
+
+**Lizenz: [Nutzungsbedingungen betreffend Geodaten der Stadt Bern, Version 1.0](https://map.bern.ch/geoportal/data/Nutzungsbedingungen_Geodaten_Stadt-Bern_1.0.pdf)**
+(Januar 2020, Geoinformation Stadt Bern). Wörtlich, Ziffer 3: „Die Geodaten
+dürfen grundsätzlich von jedermann kostenlos genutzt werden. […] Es wird ein
+nicht ausschliessliches Nutzungsrecht gewährt." Ziffer 5: „Auf sämtlichen
+Publikationen ist die Quellenangabe "Geodaten Stadt Bern" anzugeben (Art. 22,
+Abs. 1, Bst. c, Kantonale Geoinformationsverordnung vom 11. November 2015;
+KGeoIV; BSG 215.341.2)." Ziffer 6 A: „Öffentlich zugängliche Geodaten dürfen
+mit gut sichtbarem Quellenhinweis beliebig reproduziert werden." Ziffer 7:
+„Die Stadt leistet für die Richtigkeit, Genauigkeit, Aktualität,
+Zuverlässigkeit und Vollständigkeit der Geodaten keine Gewähr." Dass alle
+drei Ebenen **öffentlich zugängliche** Geodaten sind (Stufe A — für Stufe B
+verböte Ziffer 6 B die Weitergabe), sagt der Geodatenkatalog der Stadt
+(`map.bern.ch/geoportal/rest/api/GeoDataSet/read_produkt.php?name=Parkkartenzonen&status=4`):
+`zugangsberechtigungsstufe: "A: öffentlich zugänglich"`, `nutzungsbedingungen:
+"Freie Nutzung. Quellenangabe ist Pflicht."`, `quellenangabe: "Geodaten Stadt
+Bern"`. Die App führt die Familie `cc-by` — Nennung in vorgeschriebener Form
+und Hinweis auf die fehlende Gewähr — und nennt den Zeitstand
+(`meta.geprueftAm`), wie Ziffer 10 es empfiehlt.
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Kein Zeit- und kein Gebührenfeld.** Der Datensatz ist der „Basisdatensatz
+  für die Parkkartenbewirtschaftung" — er sagt, wo eine Anwohner-Parkkarte
+  gilt. Jede Zone trägt `scheduleUnknown: true`, `meta.absent` führt
+  `schedule` und `fee`; die App sagt „Zeiten unbekannt" und färbt grau. Die
+  einzige Zeitaussage ist `Info_beschrieb: Auch Sonntags` bei vier Flächen —
+  sie steht wörtlich in `unmodelledRules`. Blaue Zone und Parkuhr-Tarif
+  (3.30 Fr./h seit der Abstimmung vom 18. Juni 2023) stehen als Zitat in
+  [staedte-bern.md](staedte-bern.md), nicht in den Daten.
+- **Acht der 42 Flächen tragen keine einzige Sachangabe**, fünf davon
+  innerhalb benannter Zonen. Sie werden ausgelassen und im Log genannt.
+- **Ohne `outSR=4326` antwortet der Dienst in LV95** (`wkid` 2056, Meter um
+  2.600.000 / 1.200.000) — dieselbe Falle wie Frankfurts UTM; der Datenbau
+  misst mit `assertDegrees` nach.
+
+Nicht abgerufen: `Geoportal/Parkplaetze_oeffentlich` mit den Parkfeldern
+(455 gebührenpflichtige, 3.002 blaue und 469 + 81 weisse Felder als
+Polygone) — die Ebenen tragen ebenfalls weder Zeiten noch Beträge, nur Art,
+Zahl und Status der Felder; sie wären der nächste Schritt, sobald die App
+Stellplatzreihen ohne Tarif sinnvoll zeigen kann.
 
 ## Geprüft und nicht verfügbar
 

@@ -512,6 +512,27 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 >       steht im Bericht unter „Was offen bleibt".
 > - [ ] **Kachelarchiv für Genf — ich.** `build-tiles.sh` liest die Städte
 >       aus `core`; der nächste Lauf legt `genf.pmtiles` an.
+> **Bern seit dem 17. September** — die erste Stadt in der Schweiz und die
+> erste der Klasse C, Bericht in [staedte-bern.md](staedte-bern.md). 42
+> Parkkartenzonen-Flächen aus dem Geoportal der Stadt, ohne Zeiten und ohne
+> Beträge: Die App sagt „Zeiten unbekannt" statt „frei". Lizenz belegt über
+> die Nutzungsbedingungen der Stadt und den Geodatenkatalog (Stufe A, „Freie
+> Nutzung. Quellenangabe ist Pflicht."). Zwei Punkte bleiben:
+>
+> - [ ] **Blaue Zone und Parkuhr-Tarif als Zeiten — ich, nach Entscheidung.**
+>       Die Signalisationsverordnung des Bundes (SSV, SR 741.21, Art. 48)
+>       regelt die Blaue Zone stadtweit gleich; der Tarif steht im
+>       Gebührenreglement der Stadt (3.30 Fr./h, Abstimmung vom 18. Juni
+>       2023). Beides liesse sich als Stadtregel eintragen — aber es wäre
+>       eine Aussage über das Recht, nicht über die Daten, und für die vier
+>       weissen Flächen falsch. Fedlex und `stadtrecht.bern.ch` liefern aus
+>       dieser Umgebung nur JavaScript-Hüllen; die Wortlaute sind noch nicht
+>       gelesen.
+> - [ ] **Der Verein informiert die Stadt nicht, muss aber nennen.** Ziffer 6
+>       der Nutzungsbedingungen verlangt, dass Empfänger weitergegebener
+>       Daten „über die Nutzungsbedingungen zu orientieren" sind — der
+>       Lizenzhinweis in der App und `NOTICE` tun das; beim Öffnen des
+>       Riegels noch einmal lesen.
 
 > **Angeschaltet am 9. September, auf Anweisung des Betreibers: Köln,
 > Düsseldorf und Karlsruhe.** Der vorbereitete Zweig hatte keine gemeinsame
