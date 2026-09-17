@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
+import { GenfParseError, parseGenfTypeStationnement, type GenfLineProperties, type GenfZoneProperties } from '../src/genf.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
 import type { RostockAutomatProperties, RostockZoneProperties } from '../src/rostock.js'
@@ -179,6 +180,50 @@ describe('Hamburger Fixture', () => {
 
   it('führt `geplant_aktiv` nur als ganze Zahl', () => {
     for (const row of ROWS) expect(Number.isInteger(row.geplant_aktiv)).toBe(true)
+  })
+})
+
+describe('Genfer Fixtures', () => {
+  const ZONES = read<{ zonen: GenfZoneProperties[] }>('genf-macaron-2026-09-17.json').zonen
+  const LINES = read<{ linien: GenfLineProperties[] }>('genf-stationnement-2026-09-17.json').linien
+
+  // Sechs Felder, und zwei davon dürfen null sein: `ZONE_MACARON` bei der
+  // einen Zone ohne Buchstaben (FID 52), `MISE_EN_SERVICE` bei derselben.
+  // Die Feldnamen tragen den Tabellenpfad des Dienstes mit Punkt —
+  // `SITG_ADM.OTC_MACARON.FID` ist ein Name, kein Pfad.
+  it('führt die Macaron-Zonen in genau diesen Typen', () => {
+    expectShape(ZONES as unknown as Record<string, unknown>[], {
+      ZONE_MACARON: ['string', 'null'],
+      NOM_SECTEUR: ['string'],
+      MISE_EN_SERVICE: ['number', 'null'],
+      'SITG_ADM.OTC_MACARON.FID': ['number'],
+      'SHAPE.AREA': ['number'],
+      'SHAPE.LEN': ['number'],
+    })
+  })
+
+  // Je Art eine Zeile, dazu eine ohne Platzzahl und eine mit Bügeln — damit
+  // steht jeder Typ, den die 13.236 Linien zeigen, auch in der Fixture.
+  it('führt die Stellplatzreihen in genau diesen Typen', () => {
+    expectShape(LINES as unknown as Record<string, unknown>[], {
+      OBJECTID: ['number'],
+      NOM_RUES: ['string', 'null'],
+      TYPE_STATIONNEMENT: ['string', 'null'],
+      NOMBRE_PLACES: ['number', 'null'],
+      'SHAPE.LEN': ['number'],
+      TYPE_SUPPORT: ['string', 'null'],
+      NOMBRE_ARCEAUX: ['number', 'null'],
+    })
+  })
+
+  it('liest jede Stellplatzart oder wirft die eigene Klasse', () => {
+    for (const line of LINES) {
+      try {
+        parseGenfTypeStationnement(line.TYPE_STATIONNEMENT)
+      } catch (error) {
+        expect(error, String(line.OBJECTID)).toBeInstanceOf(GenfParseError)
+      }
+    }
   })
 })
 

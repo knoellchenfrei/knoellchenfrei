@@ -10,6 +10,7 @@ import {
   cityAt,
   cityByKey,
   FRANKFURT,
+  GENF,
   GRAZ,
   HAMBURG,
   MUENCHEN,
@@ -25,6 +26,7 @@ describe('cityByKey', () => {
     expect(cityByKey('frankfurt')).toBe(FRANKFURT)
     expect(cityByKey('muenchen')).toBe(MUENCHEN)
     expect(cityByKey('cottbus')).toBe(COTTBUS)
+    expect(cityByKey('genf')).toBe(GENF)
   })
 
   // Der Rückfall auf Berlin ist genau der Fehler, den diese Funktion nicht
@@ -321,6 +323,13 @@ describe('cityAt', () => {
     // draussen; Innsbruck selbst ist die erste Stadt südlich der Grenze.
     expect(cityAt(11.5086, 47.2814)).toBeUndefined()
     expect(cityAt(11.3934, 47.2685)?.key).toBe('innsbruck')
+    // Und für die Schweiz: Genf ist die Ville, nicht der Kanton. Der
+    // Meyrin liegt hinter dem Flughafen, Lausanne am anderen Ende des Sees —
+    // beide draussen; der Pont du Mont-Blanc drin.
+    expect(cityAt(6.0794, 46.2334)).toBeUndefined() // Meyrin, Cité
+    expect(cityAt(6.6328, 46.5197)).toBeUndefined() // Lausanne
+    expect(cityAt(6.1478, 46.2071)?.key).toBe('genf')
+    expect(cityCountry(GENF)).toBe('CH')
   })
 
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
@@ -496,9 +505,13 @@ describe('die Lizenzangaben jeder Stadt', () => {
       // Auflagen, an denen die Oberfläche hängt (Nennung in vorgeschriebener
       // Form, Hinweis auf fehlende Gewähr). Die Seite ist der Beleg, nicht
       // creativecommons.org; deshalb steht sie hier ausdrücklich.
+      // Genf ebenso: Die Conditions d'utilisation des Portail SITG, Stufe
+      // „A – Accès libre", verlangen die Quellenangabe (« Données SITG »)
+      // und geben die Daten „sans garantie d'aucune sorte" (Ziffer 4.4.1).
       const erwartet =
         /creativecommons\.org\/licenses\/by\//.test(licenceUrl) ||
-        licenceUrl === 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed'
+        licenceUrl === 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed' ||
+        licenceUrl === 'https://sitg.ge.ch/ressources/conditions-utilisation-donnees'
           ? 'cc-by'
         : /creativecommons\.org\/publicdomain\/zero/.test(licenceUrl)
           ? 'cc0'

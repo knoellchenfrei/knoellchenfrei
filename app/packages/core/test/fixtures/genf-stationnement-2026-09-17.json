@@ -1,0 +1,317 @@
+{
+ "abgerufenAm": "2026-09-17",
+ "quelle": "https://vector.sitg.ge.ch/arcgis/rest/services/OTC_STATIONNEMENT_V_PUBLIQUE/MapServer/0/query?where=1%3D1&outFields=*&f=geojson&outSR=4326 (seitenweise, resultOffset/resultRecordCount=4000)",
+ "anzahl": 13236,
+ "typen": {
+  "Gratuit 60 min": 5114,
+  "Cases 2 roues": 2604,
+  "Vélos": 1441,
+  "Gratuit jaune": 930,
+  "Payant 90 min": 818,
+  "Gratuit 240 min": 737,
+  "Gratuit illimité": 443,
+  "Gratuit 180 min": 339,
+  "Stationnement interdit": 294,
+  "Gratuit 30 min": 96,
+  "Payant illimité": 66,
+  "Payant 30 min": 47,
+  "Gratuit 15 heures": 44,
+  "Gratuit jaune spécial": 37,
+  "Police": 35,
+  "Autre": 32,
+  "Cars": 29,
+  "Electrique": 22,
+  "Gratuit 120 min": 16,
+  "Payant 15 heures": 15,
+  "Vélo cargo": 14,
+  "Payant 60 min": 13,
+  "Ambulance": 10,
+  "Mobility": 9,
+  "Payant 120 min": 9,
+  "Moto": 9,
+  "Habitant / nuit": 8,
+  "null": 3,
+  "Gratuit 8 heures": 2
+ },
+ "linien": [
+  {
+   "OBJECTID": 1,
+   "NOM_RUES": "Rue du Comte-GÉRAUD",
+   "TYPE_STATIONNEMENT": "Gratuit 60 min",
+   "NOMBRE_PLACES": 6,
+   "SHAPE.LEN": 15.000094944032899,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 14,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Gratuit jaune",
+   "NOMBRE_PLACES": 2,
+   "SHAPE.LEN": 10.0474421705228,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 15,
+   "NOM_RUES": "Avenue Gaspard-VALLETTE",
+   "TYPE_STATIONNEMENT": "Cases 2 roues",
+   "NOMBRE_PLACES": 5,
+   "SHAPE.LEN": 4.94767281153473,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 19,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Autre",
+   "NOMBRE_PLACES": 2,
+   "SHAPE.LEN": 5.00046865903587,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 21,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Stationnement interdit",
+   "NOMBRE_PLACES": 1,
+   "SHAPE.LEN": 6.996031534715339,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 25,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Payant 90 min",
+   "NOMBRE_PLACES": 3,
+   "SHAPE.LEN": 17.0999325685805,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 29,
+   "NOM_RUES": "Chemin de Chaumont",
+   "TYPE_STATIONNEMENT": "Gratuit 180 min",
+   "NOMBRE_PLACES": 13,
+   "SHAPE.LEN": 32.1404845977779,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 31,
+   "NOM_RUES": "Chemin de Chaumont",
+   "TYPE_STATIONNEMENT": "Gratuit 240 min",
+   "NOMBRE_PLACES": 20,
+   "SHAPE.LEN": 99.0251995577893,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 34,
+   "NOM_RUES": "Chemin de Sous-le-Clos",
+   "TYPE_STATIONNEMENT": "Mobility",
+   "NOMBRE_PLACES": 1,
+   "SHAPE.LEN": 2.2013092944881696,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 163,
+   "NOM_RUES": "Voie-des-Traz",
+   "TYPE_STATIONNEMENT": "Payant illimité",
+   "NOMBRE_PLACES": 3,
+   "SHAPE.LEN": 16.273249692055998,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 176,
+   "NOM_RUES": "Chemin des Deux-Communes",
+   "TYPE_STATIONNEMENT": "Police",
+   "NOMBRE_PLACES": 2,
+   "SHAPE.LEN": 5.00020932061849,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 188,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Gratuit illimité",
+   "NOMBRE_PLACES": 4,
+   "SHAPE.LEN": 18.365967474924897,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 189,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Payant 60 min",
+   "NOMBRE_PLACES": 5,
+   "SHAPE.LEN": 16.176746380221196,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 230,
+   "NOM_RUES": "Avenue Edouard-BAUD",
+   "TYPE_STATIONNEMENT": "Gratuit jaune spécial",
+   "NOMBRE_PLACES": 1,
+   "SHAPE.LEN": 7.00009482578629,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 265,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Ambulance",
+   "NOMBRE_PLACES": 1,
+   "SHAPE.LEN": 6.447192990751869,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 300,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Payant 30 min",
+   "NOMBRE_PLACES": 2,
+   "SHAPE.LEN": 10.4243604662348,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 458,
+   "NOM_RUES": "Rue du Grand-Bay",
+   "TYPE_STATIONNEMENT": "Gratuit 30 min",
+   "NOMBRE_PLACES": 3,
+   "SHAPE.LEN": 7.44153867489782,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 581,
+   "NOM_RUES": "Chemin de Poussy",
+   "TYPE_STATIONNEMENT": "Vélos",
+   "NOMBRE_PLACES": 3,
+   "SHAPE.LEN": 3.5999481565711497,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 600,
+   "NOM_RUES": "Route des Chevaliers-de-Malte",
+   "TYPE_STATIONNEMENT": "Electrique",
+   "NOMBRE_PLACES": 2,
+   "SHAPE.LEN": 4.52587093275979,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 624,
+   "NOM_RUES": "Rue BLAVIGNAC",
+   "TYPE_STATIONNEMENT": "Gratuit 120 min",
+   "NOMBRE_PLACES": 19,
+   "SHAPE.LEN": 54.5689504649851,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 744,
+   "NOM_RUES": "Rue Jacques-GROSSELIN",
+   "TYPE_STATIONNEMENT": "Cars",
+   "NOMBRE_PLACES": 1,
+   "SHAPE.LEN": 12.7962883216189,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 1876,
+   "NOM_RUES": "Chemin de Carabot",
+   "TYPE_STATIONNEMENT": "Payant 120 min",
+   "NOMBRE_PLACES": 10,
+   "SHAPE.LEN": 25.0219862307132,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 2972,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Habitant / nuit",
+   "NOMBRE_PLACES": 7,
+   "SHAPE.LEN": 31.958660868378097,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 3407,
+   "NOM_RUES": "Route de Suisse",
+   "TYPE_STATIONNEMENT": "Gratuit 15 heures",
+   "NOMBRE_PLACES": 11,
+   "SHAPE.LEN": 56.7753454874472,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 3912,
+   "NOM_RUES": "Chemin Isaac-MACHARD",
+   "TYPE_STATIONNEMENT": "Payant 15 heures",
+   "NOMBRE_PLACES": 9,
+   "SHAPE.LEN": 45.0002469442113,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 8408,
+   "NOM_RUES": "Rue du Prince",
+   "TYPE_STATIONNEMENT": "Vélo cargo",
+   "NOMBRE_PLACES": 5,
+   "SHAPE.LEN": 4.99999808099963,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 8891,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": null,
+   "NOMBRE_PLACES": 1,
+   "SHAPE.LEN": 4.82295552540141,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 12254,
+   "NOM_RUES": "Chemin de la Gandole",
+   "TYPE_STATIONNEMENT": "Gratuit 8 heures",
+   "NOMBRE_PLACES": 31,
+   "SHAPE.LEN": 83.7617408631172,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 12589,
+   "NOM_RUES": null,
+   "TYPE_STATIONNEMENT": "Moto",
+   "NOMBRE_PLACES": 10,
+   "SHAPE.LEN": 7.66417604834336,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 11565,
+   "NOM_RUES": "Route d'Hermance",
+   "TYPE_STATIONNEMENT": "Cases 2 roues",
+   "NOMBRE_PLACES": null,
+   "SHAPE.LEN": 3.09131906635339,
+   "TYPE_SUPPORT": null,
+   "NOMBRE_ARCEAUX": null
+  },
+  {
+   "OBJECTID": 11852,
+   "NOM_RUES": "Avenue BLANC",
+   "TYPE_STATIONNEMENT": "Cases 2 roues",
+   "NOMBRE_PLACES": 8,
+   "SHAPE.LEN": 15.0037542888438,
+   "TYPE_SUPPORT": "Arceau",
+   "NOMBRE_ARCEAUX": 2
+  }
+ ]
+}
