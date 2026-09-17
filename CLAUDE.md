@@ -1007,6 +1007,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 | --- | --- |
 | [docs/neue-sitzung.md](docs/neue-sitzung.md) | Womit eine frische Sitzung anfängt |
 | [docs/todo.md](docs/todo.md) | Die Handover-Liste: was offen ist, und wer es tun kann |
+| [docs/release-notes.md](docs/release-notes.md) | Was sich für Nutzer geändert hat, je Datum — nur das Sichtbare |
 | [docs/ideen.md](docs/ideen.md) | Was gebaut werden könnte und noch niemand aufgeschrieben hat — nichts davon entschieden |
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Getroffene Entscheidungen mit Begründung und Quellen |
 | [docs/hosting.md](docs/hosting.md) | Cloudflare, Worker, D1, Telegram, PMTiles — mit Befehlen |

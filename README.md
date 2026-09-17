@@ -19,6 +19,8 @@ installierbar, ohne Server.
 
 ![Übersicht über Berlin mit Parkzonen, Umweltzone und Ladepunkten](docs/images/overview.png)
 
+Was sich zuletzt geändert hat: [docs/release-notes.md](docs/release-notes.md).
+
 ## Was sie kann
 
 | | |
