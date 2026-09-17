@@ -1027,6 +1027,84 @@ export const INNSBRUCK: City = {
   },
 }
 
+/**
+ * Bern — die erste Stadt in der Schweiz und die erste der **Klasse C**: Die
+ * Quelle nennt Zonengrenzen, aber weder Zeiten noch Beträge. Jede der 42
+ * Parkkartenzonen trägt `scheduleUnknown`, die App sagt „Zeiten unbekannt"
+ * und färbt grau, statt „frei" zu behaupten; Blaue Zone und Parkuhr-Tarif
+ * stehen als Zitat in `docs/staedte-bern.md`, nicht in den Daten.
+ *
+ * Der Rahmen kommt aus der **Gemeindegrenze** der amtlichen Vermessung
+ * (`Amtliche_Vermessung_Kontur/MapServer/78`, ein Linienzug von 54 km,
+ * `Lineattr_beschrieb: Rechtskräftig`, abgerufen am 17. September 2026):
+ * 7,2943–7,4956 / 46,9190–46,9902 — nach außen gerundet steht das unten.
+ * Die 32 statistischen Bezirke haben auf sechs Stellen denselben Rahmen. Die
+ * Parkebene wäre die falsche Quelle: Die Zonen reichen nur von 7,373 bis
+ * 7,484, und Bümpliz-Oberbottigen im Westen hat keine einzige. Die Box ist
+ * grob — Köniz und Ostermundigen liegen mit darin, wie Leverkusen in Kölns
+ * Box; solange keine zweite Stadt daneben liegt, entscheidet sie nur „Bern
+ * oder nichts".
+ *
+ * Der Mittelpunkt ist der Zytglogge. Zoom **12**: Die Zonen liegen in einem
+ * Band von 0,11° × 0,05°, und bei Zoom 12 zeigt ein 400 Pixel breites
+ * Telefon rund 0,137° Länge — alle 42 auf einmal; bei 13 wären es zwei
+ * Drittel.
+ *
+ * `land: 'CH-BE'`: Art. 2 des Gesetzes über die Ruhe an öffentlichen
+ * Feiertagen (FRG, BSG 555.1), siehe `holidays.ts`. Der 1. Mai ist im Kanton
+ * Bern **kein** Feiertag, der 2. Januar einer; `laender.test.ts` hält beides
+ * fest. `holidays` fehlt mit Absicht — das FRG kennt keine gemeindeweise
+ * Regelung mehr, seit Vellerat zum Kanton Jura gehört.
+ *
+ * Kein `towedVehicles`: Eine amtliche Seite der Stadt oder der Kantonspolizei
+ * mit Stelle und Nummer für abgeschleppte Fahrzeuge liess sich am
+ * 17. September 2026 nicht belegen; `OHNE_BELEG` in `city.test.ts`.
+ */
+export const BERN: City = {
+  key: 'bern',
+  name: 'Bern',
+  land: 'CH-BE',
+  center: [7.4477, 46.948],
+  zoom: 12,
+  reportBounds: { minLon: 7.29, minLat: 46.91, maxLon: 7.5, maxLat: 47.0 },
+  sessionBounds: { minLon: 7.1, minLat: 46.75, maxLon: 7.7, maxLat: 47.15 },
+  heatGrid: { id: 'bern', originLon: 7.29, originLat: 46.91, latitude: 46.95 },
+  attribution: {
+    /**
+     * Wörtlich die vorgeschriebene Form aus Ziffer 5 der Nutzungsbedingungen
+     * („Auf sämtlichen Publikationen ist die Quellenangabe "Geodaten Stadt
+     * Bern" anzugeben", Art. 22 Abs. 1 Bst. c KGeoIV) — und dasselbe Wort
+     * steht als `copyrightText` am Dienst und als `quellenangabe` im
+     * Geodatenkatalog.
+     */
+    source: 'Geodaten Stadt Bern',
+    // Die Adresse, die der Datenbau wirklich abruft — die Ebene, nicht der Dienst.
+    datasetUrl: 'https://map.bern.ch/arcgis/rest/services/Geoportal/Parkkartenzonen/MapServer/1',
+    /**
+     * Keine der bekannten Lizenzen, sondern die Nutzungsbedingungen der
+     * Stadt (Version 1.0, Januar 2020): „Die Geodaten dürfen grundsätzlich
+     * von jedermann kostenlos genutzt werden", öffentlich zugängliche Daten
+     * „uneingeschränkt", Reproduktion „mit gut sichtbarem Quellenhinweis
+     * beliebig", „keine Gewähr" für Richtigkeit und Aktualität. Der
+     * Geodatenkatalog führt die Parkkartenzonen als „A: öffentlich
+     * zugänglich" mit „Freie Nutzung. Quellenangabe ist Pflicht." — das ist
+     * die Stufe, für die die Bedingungen die Weitergabe erlauben; für Stufe B
+     * wäre sie verboten (Ziffer 6). Die Familie ist `cc-by`, weil die zwei
+     * Auflagen, an denen die Oberfläche hängt, dieselben sind: Nennung in
+     * vorgeschriebener Form und der Hinweis auf die fehlende Gewähr. Was CC
+     * BY nicht kennt und hier dazukommt, steht in `docs/staedte-bern.md`:
+     * Wer die Daten weitergibt, orientiert die Empfänger über die
+     * Bedingungen (Ziffer 6), und der Zeitstand soll genannt werden
+     * (Ziffer 10) — `meta.geprueftAm` tut das.
+     */
+    licence:
+      'Nutzungsbedingungen betreffend Geodaten der Stadt Bern, Version 1.0 — „Freie Nutzung. Quellenangabe ist Pflicht."',
+    licenceUrl: 'https://map.bern.ch/geoportal/data/Nutzungsbedingungen_Geodaten_Stadt-Bern_1.0.pdf',
+    attributionRequired: true,
+    licenceFamily: 'cc-by',
+  },
+}
+
 
 export const CITIES: readonly City[] = [
   BERLIN,
@@ -1043,6 +1121,7 @@ export const CITIES: readonly City[] = [
   GRAZ,
   SALZBURG,
   INNSBRUCK,
+  BERN,
 ]
 
 /**

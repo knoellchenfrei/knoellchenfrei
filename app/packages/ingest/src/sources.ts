@@ -856,6 +856,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   // steht trotzdem hier, damit `citySources` die Stadt kennt — sonst wirft
   // `fetch-data` „Keine Quellen", obwohl es zwei Dateien gibt.
   innsbruck: [],
+  // Ebenso Bern: drei Ebenen eines ArcGIS-MapServers, alle über `cityFiles`.
+  bern: [],
 }
 
 /**
@@ -999,11 +1001,45 @@ const INNSBRUCK_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Bern — Stadt Bern, Geoinformation, über ihren ArcGIS-Server `map.bern.ch`
+ * (Nutzungsbedingungen betreffend Geodaten der Stadt Bern, Version 1.0).
+ *
+ * Kein WFS, sondern ein ArcGIS **MapServer** — `arcgisQueryUrl` passt
+ * trotzdem, die `query`-Schnittstelle ist dieselbe wie beim FeatureServer.
+ * Der Dienst liegt intern in LV95 (`wkid` 2056, Meter um 2.600.000 /
+ * 1.200.000); `outSR=4326` ist deshalb Pflicht, und `build-data-bern.ts`
+ * misst mit `assertDegrees` nach. Am 17. September 2026 nachgemessen: erster
+ * Stützpunkt `[7.3955, 46.9471]`, `[lon, lat]`.
+ *
+ * Drei Ebenen aus drei Diensten desselben Servers:
+ *
+ * - `Parkkartenzonen/MapServer/1` — „Parkkartenzone_Umrandung", 42 Polygone.
+ *   Ebene 2 („Flaechenfuellung") führt dieselben 42 mit denselben Feldern;
+ *   sie ist nur die Darstellung.
+ * - `Statistische_Bezirke/MapServer/0` — die 32 statistischen Bezirke, laut
+ *   Dienst „eine offizielle Stadteinteilung". Die 6 Stadtteile wären zu grob
+ *   für die Kopfzeile des Panels, die 114 gebräuchlichen Quartiere zu fein.
+ * - `Stadtteile/MapServer/0` — die 6 Stadtteile, nur damit jeder Bezirk
+ *   seinen Stadtteil nennen kann (`Stadtteil_fid`), wie Hamburgs `bezirk`.
+ *
+ * `maxRecordCount` ist 1000; bei 42, 32 und 6 Merkmalen bleibt
+ * `exceededTransferLimit` aus, geprüft wird es trotzdem.
+ */
+const BERN_ARCGIS = 'https://map.bern.ch/arcgis/rest/services/Geoportal'
+
+const BERN_FILES: readonly FileSource[] = [
+  { key: 'zones', url: arcgisQueryUrl(`${BERN_ARCGIS}/Parkkartenzonen/MapServer/1`), file: 'zones.json', expectedFeatures: 42 },
+  { key: 'districts', url: arcgisQueryUrl(`${BERN_ARCGIS}/Statistische_Bezirke/MapServer/0`), file: 'districts.json', expectedFeatures: 32 },
+  { key: 'stadtteile', url: arcgisQueryUrl(`${BERN_ARCGIS}/Stadtteile/MapServer/0`), file: 'stadtteile.json', expectedFeatures: 6 },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
   graz: GRAZ_FILES,
   innsbruck: INNSBRUCK_FILES,
+  bern: BERN_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */

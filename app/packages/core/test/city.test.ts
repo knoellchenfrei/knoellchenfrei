@@ -321,6 +321,11 @@ describe('cityAt', () => {
     // draussen; Innsbruck selbst ist die erste Stadt südlich der Grenze.
     expect(cityAt(11.5086, 47.2814)).toBeUndefined()
     expect(cityAt(11.3934, 47.2685)?.key).toBe('innsbruck')
+    // Und für die Schweiz: Thun und Fribourg liegen je 25 km von Bern und
+    // draussen; der Zytglogge ist Bern.
+    expect(cityAt(7.628, 46.758)).toBeUndefined() // Thun
+    expect(cityAt(7.1612, 46.8065)).toBeUndefined() // Fribourg
+    expect(cityAt(7.4477, 46.948)?.key).toBe('bern')
   })
 
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
@@ -496,9 +501,13 @@ describe('die Lizenzangaben jeder Stadt', () => {
       // Auflagen, an denen die Oberfläche hängt (Nennung in vorgeschriebener
       // Form, Hinweis auf fehlende Gewähr). Die Seite ist der Beleg, nicht
       // creativecommons.org; deshalb steht sie hier ausdrücklich.
+      // Bern ebenso: Die Nutzungsbedingungen der Stadt (Version 1.0) sind
+      // der Beleg — „Freie Nutzung. Quellenangabe ist Pflicht." laut
+      // Geodatenkatalog, „keine Gewähr" laut Ziffer 7 der Bedingungen.
       const erwartet =
         /creativecommons\.org\/licenses\/by\//.test(licenceUrl) ||
-        licenceUrl === 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed'
+        licenceUrl === 'https://geohub-1-magibk.hub.arcgis.com/pages/nutzungsbed' ||
+        licenceUrl === 'https://map.bern.ch/geoportal/data/Nutzungsbedingungen_Geodaten_Stadt-Bern_1.0.pdf'
           ? 'cc-by'
         : /creativecommons\.org\/publicdomain\/zero/.test(licenceUrl)
           ? 'cc0'
@@ -549,7 +558,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // das Feld, und die App zeigt den Abschnitt nicht — eine Nummer aus zweiter
   // Hand wäre schlechter als keine. Die Liste ist ausdrücklich, damit ein
   // vergessenes Feld bei einer neuen Stadt weiter auffällt.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'bern'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {

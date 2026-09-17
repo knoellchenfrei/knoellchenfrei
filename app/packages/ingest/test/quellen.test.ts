@@ -114,7 +114,7 @@ describe('cityFiles', () => {
 
   // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
   it('lässt keine Stadt ohne eine einzige Quelle', () => {
-    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus']) {
+    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'bern']) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
   })
@@ -144,6 +144,31 @@ describe('arcgisQueryUrl', () => {
   it('kennt für Städte ohne Dateien eine leere Liste, ohne zu werfen', () => {
     expect(cityFiles('berlin')).toEqual([])
     expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
+  })
+})
+
+/**
+ * Bern ist der erste ArcGIS-**MapServer** (Innsbruck, Graz und Cottbus sind
+ * FeatureServer). Die `query`-Schnittstelle ist dieselbe; dass die drei
+ * Ebenen sie in Grad und als GeoJSON fragen, steht hier — der Dienst liegt
+ * in LV95, und ohne `outSR` kämen Meter.
+ */
+describe('cityFiles für Bern', () => {
+  it('fragt jede MapServer-Ebene Berns als GeoJSON in Grad und mit Erwartungswert', () => {
+    const dateien = cityFiles('bern')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'districts', 'stadtteile'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('map.bern.ch')
+      expect(url.pathname).toMatch(/\/MapServer\/\d+\/query$/)
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.map((d) => d.expectedFeatures)).toEqual([42, 32, 6])
+    expect(citySources('bern')).toEqual([])
   })
 })
 

@@ -80,6 +80,13 @@ import {
   parseInnsbruckMaxStay,
   parseInnsbruckSchedule,
 } from '../src/innsbruck.js'
+import {
+  BernParseError,
+  bernZoneNameFromPlz,
+  parseBernFieldType,
+  parseBernInfo,
+  parseBernZoneName,
+} from '../src/bern.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -434,6 +441,32 @@ describe('Höchstparkdauer unter Beschuss', () => {
 
 })
 
+/**
+ * Bern hat keinen Zeit- und keinen Gebührenparser — der Feed nennt beides
+ * nicht. Beschossen werden die Feldparser, aus denen Schlüssel, Art und
+ * Regel einer Zone entstehen: Ein Schlüssel aus Unfug wäre eine Zone, die es
+ * nicht gibt, und stünde in `zone-keys.generated.ts` als gültige Ausprägung.
+ */
+describe('Berner Feldparser unter Beschuss', () => {
+  it('Bern wirft nur BernParseError und liefert nur Zonennamen, zwei Arten und einen Hinweis', () => {
+    fuzz(20260917, 120, BernParseError, (input) => {
+      expect(parseBernZoneName(input), input).toMatch(/^\d{4}(\/[1-9]\d?)?$/)
+    })
+    fuzz(20260918, 120, BernParseError, (input) => {
+      expect(['blau', 'weiss'], input).toContain(parseBernFieldType(input))
+    })
+    fuzz(20260919, 120, BernParseError, (input) => {
+      expect([null, 'Auch Sonntags'], input).toContain(parseBernInfo(input))
+    })
+    fuzz(20260920, 120, BernParseError, (input) => {
+      expect(bernZoneNameFromPlz(input, 'kein Zusatz'), input).toMatch(/^\d{4}$/)
+    })
+    fuzz(20260921, 120, BernParseError, (input) => {
+      expect(bernZoneNameFromPlz('3006', input), input).toMatch(/^3006(\/[1-9]\d?)?$/)
+    })
+  })
+})
+
 describe('Zeitbudget', () => {
   /**
    * Die Begrenzung der Eingabelänge ist das, was das Zurückverfolgen unmöglich
@@ -464,6 +497,8 @@ describe('Zeitbudget', () => {
       parseGrazFee,
       parseInnsbruckInfo,
       parseInnsbruckMaxStay,
+      parseBernZoneName,
+      parseBernInfo,
     ]
     const started = performance.now()
     for (const input of inputs) {
