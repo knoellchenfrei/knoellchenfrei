@@ -84,6 +84,30 @@ describe('cityFiles', () => {
     expect(citySources('cottbus')).toEqual([])
   })
 
+  /**
+   * Zürichs QGIS Server antwortet auf `wfsUrl` (2.0.0, URN-Form, JSON) mit
+   * HTTP 500 — deshalb vier fertige 1.1.0-Adressen mit `SRSNAME=EPSG:4326`.
+   * Geprüft wird genau das, was den 500 auslöste, damit niemand die
+   * Adressen „vereinheitlicht" und den Abruf still verliert.
+   */
+  it('holt Zürich als WFS 1.1.0 mit EPSG:4326 in Kurzform und GeoJSON, mit Messlatte je Ebene', () => {
+    const dateien = cityFiles('zuerich')
+    expect(dateien.map((datei) => datei.key)).toEqual(['zones', 'meters', 'spaces', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname).toBe('www.ogd.stadt-zuerich.ch')
+      expect(url.pathname).toMatch(/^\/wfs\/geoportal\/[A-Za-z_]+$/)
+      expect(url.searchParams.get('VERSION')).toBe('1.1.0')
+      expect(url.searchParams.get('REQUEST')).toBe('GetFeature')
+      expect(url.searchParams.get('SRSNAME')).toBe('EPSG:4326')
+      expect(url.searchParams.get('OUTPUTFORMAT')).toBe('application/vnd.geo+json')
+      expect(url.searchParams.get('TYPENAME')?.length ?? 0).toBeGreaterThan(0)
+      expect(datei.expectedFeatures).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(citySources('zuerich')).toEqual([])
+  })
+
   it('gibt für Städte, die alles aus WFS bekommen, eine leere Liste', () => {
     expect(cityFiles('berlin')).toEqual([])
     expect(cityFiles('bielefeld')).toEqual([])
@@ -92,7 +116,7 @@ describe('cityFiles', () => {
 
   // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
   it('lässt keine Stadt ohne eine einzige Quelle', () => {
-    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus']) {
+    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'zuerich']) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
   })

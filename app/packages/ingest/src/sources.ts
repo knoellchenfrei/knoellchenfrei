@@ -660,6 +660,47 @@ const ROSTOCK_SOURCES: readonly Source[] = [
  */
 const COTTBUS_SOURCES: readonly Source[] = []
 
+/**
+ * Zürich — Stadt Zürich, CC0 1.0.
+ *
+ * **Ein WFS, der `wfsUrl` nicht verträgt.** `www.ogd.stadt-zuerich.ch` ist
+ * ein QGIS Server mit WFS **1.1.0** (`GetCapabilities` nennt 1.1.0 und
+ * 1.0.0, kein 2.0.0). Gemessen am 17. September 2026: Mit
+ * `srsName=urn:ogc:def:crs:EPSG::4326` **und** einem JSON-Ausgabeformat
+ * antwortet er mit **HTTP 500 und einer HTML-Fehlerseite** der Stadt; mit
+ * `srsName=EPSG:4326` kommt GeoJSON in `[lon, lat]`, und zwar byteweise
+ * dasselbe wie ganz ohne `srsName`. Das Ausgabeformat heisst
+ * `application/vnd.geo+json` (auch `geojson` geht); `application/json`
+ * gibt es in den Capabilities nicht. Im GML dreht der Dienst mit der
+ * URN-Form sehr wohl auf `[lat, lon]` (`lowerCorner 47.364 8.518`) — deshalb
+ * bleibt die Reihenfolge eine Aussage über **diese** Abfrage, und
+ * `assertDegrees` plus ein Rahmen-Test im Datenbau messen sie nach.
+ * Weil `wfsUrl` für alle Städte 2.0.0 und die URN-Form setzt, steht Zürich
+ * hier mit einer leeren WFS-Liste und vier fertigen Adressen in
+ * `ZUERICH_FILES` — dieselbe Form wie Cottbus' ArcGIS-Abfragen, und
+ * `fetch.ts` zählt die Features an `expectedFeatures` genauso.
+ *
+ * Gefunden über den CKAN-Katalog der Stadt
+ * (`data.stadt-zuerich.ch/api/3/action/package_search?q=park`, 79 Treffer),
+ * nicht durch Raten. Vier Datensätze, alle `license_id: cc-zero`:
+ * `geo_gebietseinteilung_parkierungsgebuehren` (2 Flächen, Stand
+ * 15.03.2024), `geo_oeffentlich_zugaengliche_parkplaetze_dav` (fünf Ebenen,
+ * **täglich** nachgeführt — davon die Parkuhren und die Parkfelder),
+ * `geo_statistische_quartiere` (34).
+ *
+ * Bewusst NICHT abgerufen: `geo_oeffentlich_zugaengliche_strassenparkplaetze_ogd`
+ * (`view_pp_ogd`, 46.282 Punkte) — das ist der Datensatz der Recherche vom
+ * Vormittag, aber „Datenstand per Ende 2021 und werden nicht mehr
+ * aktualisiert" steht in seiner Beschreibung; die DAV-Ebene sagt dasselbe
+ * mit Stand von heute. Ebenso die drei übrigen DAV-Ebenen: `…_dav_l` (5.943
+ * Abschnitte der Blauen Zone als Linie), `…_opu_mit_l_p` (6.056 Punkte
+ * derselben Abschnitte) und `…_gueterumschlag_p` (1.168) — die Blaue Zone
+ * ist Parkscheibe mit Anwohnerkarte, und was dort gilt, steht in keinem
+ * Feld. `geo_behindertenparkplaetze` (Stand 2017) und `geo_stadtkreise`
+ * (die Quartiere tragen den Kreis als Feld mit).
+ */
+const ZUERICH_SOURCES: readonly Source[] = []
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -671,6 +712,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   freiburg: FREIBURG_SOURCES,
   rostock: ROSTOCK_SOURCES,
   cottbus: COTTBUS_SOURCES,
+  zuerich: ZUERICH_SOURCES,
 }
 
 /**
@@ -727,9 +769,69 @@ const COTTBUS_FILES: readonly FileSource[] = [
   },
 ]
 
+const ZUERICH_WFS = 'https://www.ogd.stadt-zuerich.ch/wfs/geoportal'
+
+/**
+ * Eine WFS-1.1.0-Abfrage, wie der QGIS Server sie annimmt — siehe den
+ * Kommentar über `ZUERICH_SOURCES`, warum nicht `wfsUrl`. `+` im
+ * Ausgabeformat ist kodiert, sonst läse der Server ein Leerzeichen.
+ */
+function zuerichQuery(service: string, typeName: string): string {
+  const params = new URLSearchParams({
+    SERVICE: 'WFS',
+    VERSION: '1.1.0',
+    REQUEST: 'GetFeature',
+    TYPENAME: typeName,
+    SRSNAME: 'EPSG:4326',
+    OUTPUTFORMAT: 'application/vnd.geo+json',
+  })
+  return `${ZUERICH_WFS}/${service}?${params}`
+}
+
+const ZUERICH_DAV = 'oeffentlich_zugaengliche_Parkplaetze_DAV'
+
+const ZUERICH_FILES: readonly FileSource[] = [
+  // Die einzigen Flächen im Feed: zwei Hochtarifzonen mit Bedienungszeit.
+  {
+    key: 'zones',
+    url: zuerichQuery('Gebietseinteilung_Parkierungsgebuehren', 'tarifzonen'),
+    file: 'zones.json',
+    expectedFeatures: 2,
+  },
+  // Die Gegenprobe zur Fläche und die Höchstparkdauer: 1.397 Sammel- und
+  // Zentralparkuhren, jede mit `tarif` wie `HOCH 2h Mo-Sa 09:00-20:00`.
+  {
+    key: 'meters',
+    url: zuerichQuery(ZUERICH_DAV, 'oeff_strassenparkierung_spuzpu'),
+    file: 'meters.json',
+    expectedFeatures: 1397,
+  },
+  // Die Stellplätze: 13.272 gebühren- oder bewilligungspflichtige Parkfelder
+  // als Punkt, 7 MB — die grösste Datei nach Münchens Strassenseiten. Sie
+  // zählt, wie viele Felder in einer Fläche kassieren, und auf wie vielen
+  // welche Höchstparkdauer gilt.
+  {
+    key: 'spaces',
+    url: zuerichQuery(ZUERICH_DAV, 'oeff_strassenparkierung_dav_p'),
+    file: 'spaces.json',
+    expectedFeatures: 13272,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile: Kartenkontext, und der Rahmen der
+  // Stadt für `reportBounds`. 34 Statistische Quartiere, jedes mit `qname`
+  // und dem Kreis in `kname`; die zwölf Kreise allein wären zu grob, um
+  // „Seefeld" von „Mühlebach" zu unterscheiden.
+  {
+    key: 'districts',
+    url: zuerichQuery('Statistische_Quartiere', 'adm_statistische_quartiere_v'),
+    file: 'districts.json',
+    expectedFeatures: 34,
+  },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
+  zuerich: ZUERICH_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
