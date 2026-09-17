@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { CITIES } from '@knoellchenfrei/core'
 
-import { cityFiles, citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { arcgisQueryUrl, cityFiles, citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in
@@ -117,5 +117,32 @@ describe('cityFiles', () => {
     for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus']) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('arcgisQueryUrl', () => {
+  it('fragt jede Datei-Quelle von Graz als GeoJSON in Grad und mit Messlatte', () => {
+    const dateien = cityFiles('graz')
+    expect(dateien.map((datei) => datei.key)).toEqual(['kurzparkzonen', 'parkzonen', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(url.pathname.endsWith('/query'), datei.key).toBe(true)
+      expect(datei.expectedFeatures ?? 0, datei.key).toBeGreaterThan(0)
+    }
+    expect(citySources('graz')).toEqual([])
+  })
+
+  it('hängt die Abfrage an eine Ebene, nicht an den Dienst', () => {
+    expect(arcgisQueryUrl('https://example.test/FeatureServer/3')).toBe(
+      'https://example.test/FeatureServer/3/query?where=1%3D1&outFields=*&f=geojson&outSR=4326',
+    )
+  })
+
+  it('kennt für Städte ohne Dateien eine leere Liste, ohne zu werfen', () => {
+    expect(cityFiles('berlin')).toEqual([])
+    expect(cityFiles('koeln').map((datei) => datei.key)).toEqual(['automats'])
   })
 })
