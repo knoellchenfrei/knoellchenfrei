@@ -34,6 +34,7 @@ import type { RostockAutomatProperties, RostockZoneProperties } from '../src/ros
 import type { CottbusAutomatProperties, CottbusZoneProperties } from '../src/cottbus.js'
 import type { SchwerinAutomatProperties } from '../src/schwerin.js'
 import type { GrazZoneProperties } from '../src/graz.js'
+import type { KasselIdentifyResult, KasselZoneAttributes } from '../src/kassel.js'
 import { parseSalzburgMaxStay, parseSalzburgRule, type SalzburgZoneProperties } from '../src/salzburg.js'
 import type {
   ZuerichMeterProperties,
@@ -744,5 +745,37 @@ describe('Geometrie-Fixture', () => {
       expect(ring.length).toBeGreaterThanOrEqual(4)
       expect(ring[0]).toEqual(ring[ring.length - 1])
     }
+  })
+})
+
+describe('Kasseler Fixtures', () => {
+  const BEZIRKE = read<KasselZoneAttributes[]>('kassel-bezirke-2026-09-17.json')
+  const VW7 = read<KasselIdentifyResult>('kassel-bezirk-vw7-2026-09-17.json')
+
+  // `identify` liefert die Sachdaten als Zeichenketten — auch die Nummer.
+  // Dieselbe Ebene antwortet über `query` mit `OBJECTID` als Zahl; wer die
+  // Fixture gegen `query` tauscht, sieht es hier zuerst.
+  it('führt genau die zwei Felder, beide als Zeichenkette', () => {
+    expectShape(BEZIRKE as unknown as Record<string, unknown>[], {
+      OBJECTID: ['string'],
+      Name: ['string'],
+    })
+    expect(BEZIRKE).toHaveLength(29)
+  })
+
+  it('führt ein identify-Ergebnis in genau diesen Feldern, die Geometrie als Ringe in Grad', () => {
+    expectShape([VW7 as unknown as Record<string, unknown>], {
+      layerId: ['number'],
+      layerName: ['string'],
+      value: ['string'],
+      displayFieldName: ['string'],
+      attributes: ['object'],
+      geometryType: ['string'],
+      geometry: ['object'],
+    })
+    expect(VW7.layerId).toBe(27)
+    expect(VW7.layerName).toBe('Bewohnerparkbezirke')
+    expect(VW7.geometryType).toBe('esriGeometryPolygon')
+    expect(VW7.geometry?.spatialReference?.wkid).toBe(4326)
   })
 })

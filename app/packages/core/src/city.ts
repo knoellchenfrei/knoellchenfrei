@@ -1083,6 +1083,80 @@ export const ZUERICH: City = {
   // Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
 }
 
+/**
+ * Kassel — die zweite Stadt in Hessen und die erste der **Klasse C**: Die
+ * Stadt veröffentlicht ihre 29 Bewohnerparkbezirke als Polygone mit genau
+ * einem Feld (`Name`) — keine Zeiten, keinen Betrag. Jede Zone trägt deshalb
+ * `scheduleUnknown`, und die App sagt „Zeiten unbekannt" statt „frei".
+ *
+ * Der Rahmen ist gemessen, nicht geschätzt, und stammt aus dem
+ * **Gemeindeumriss**: Ebene 8 „Gemeindegrenzen (Landkreis)" des Dienstes
+ * `Politik_Verwaltung` führt die Stadt Kassel als MultiPolygon aus zwei
+ * Teilen (abgerufen am 17. September 2026), 9,351023–9,570084 /
+ * 51,260381–51,369403; die 24 Ortsbezirke haben auf sechs Stellen dieselbe
+ * Hülle. Nach außen gerundet steht das unten. Die Bezirke selbst liegen nur
+ * zwischen 9,4289 und 9,5184 Länge — wer den Rahmen daraus nähme, wiese eine
+ * Meldung aus Harleshausen, Waldau oder Niederzwehren als „außerhalb" ab.
+ *
+ * Der Mittelpunkt ist die Mitte des Rahmens der 29 Bezirke (9,4289–9,5184 /
+ * 51,2974–51,3318), nicht der Königsplatz: Bad Wilhelmshöhe liegt fünf
+ * Kilometer westlich der Innenstadt, und bei Zoom 13 (Schwerins Wert, rund
+ * 0,22° × 0,08°) sind von hier aus alle 29 im Bild — die Bezirke spannen
+ * 0,09° × 0,03°; bei 12 wären sie ein Fleck.
+ *
+ * **Die Lizenz ist offen**, und zwar nur für die Bezirke: Der Kartendienst
+ * `Verkehr_Mobilitaet` trägt im ArcGIS-Online-Eintrag der Stadt
+ * (`244e07e4069d43b0b59251c1746ddb06`) und im geoHub-Eintrag der Website
+ * `licenseInfo: null`, an beiden Stellen nur `accessInformation: "Stadt
+ * Kassel, Vermessung und Geoinformation"` — ein Quellenvermerk, keine
+ * Freigabe. Die Ebene hat keinen eigenen Katalogeintrag, und der geoHub der
+ * Stadt hat seine Feeds abgeschaltet. Anders die **Ortsbezirke**: Ihr Eintrag
+ * (`b9456e1211c64c0eb5b6a85252d52a07`) nennt wörtlich „Open Data Datenlizenz
+ * Deutschland Namensnennung 2.0 "Stadt Kassel, Vermessung und
+ * Geoinformation, 2025"" — dieselbe Lizenz, die die Stadt für ein Dutzend
+ * anderer Ebenen ausweist. Ob sie auch für die Bewohnerparkbezirke gilt,
+ * kann nur das Amt sagen. Bis dahin: Familie `unklar`, Nennung wie bei der
+ * strengsten Lesart, und der Banner über der Karte.
+ */
+export const KASSEL: City = {
+  key: 'kassel',
+  name: 'Kassel',
+  land: 'HE',
+  center: [9.474, 51.315],
+  zoom: 13,
+  reportBounds: { minLon: 9.35, minLat: 51.26, maxLon: 9.58, maxLat: 51.37 },
+  sessionBounds: { minLon: 9.1, minLat: 51.05, maxLon: 9.85, maxLat: 51.6 },
+  heatGrid: { id: 'kassel', originLon: 9.35, originLat: 51.26, latitude: 51.31 },
+  attribution: {
+    // Wörtlich `accessInformation` des Dienstes und `copyrightText` des
+    // Kartendienstes; die Ortsbezirke nennen dieselbe Stelle mit Jahr.
+    source: 'Stadt Kassel, Vermessung und Geoinformation (geoportal.kassel.de)',
+    // Die Ebene, die der Datenbau wirklich liest — über `identify`, weil
+    // `query` bei dieser Ebene keine Geometrie herausgibt.
+    datasetUrl:
+      'https://geoportal.kassel.de/arcgis/rest/services/Service_Daten/Verkehr_Mobilitaet/MapServer/27',
+    licence: 'nicht ausgewiesen',
+    // Die Seite, auf der die Lizenz stehen müsste: der Eintrag des
+    // Kartendienstes im ArcGIS Online der Stadt.
+    licenceUrl: 'https://kassel-geoportal.maps.arcgis.com/home/item.html?id=244e07e4069d43b0b59251c1746ddb06',
+    attributionRequired: true,
+    licenceFamily: 'unklar',
+  },
+  licenceOpen:
+    'Der Kartendienst „Verkehr & Mobilität" des Geoportals Kassel nennt für die ' +
+    'Bewohnerparkbezirke keine Lizenz — nur „Stadt Kassel, Vermessung und Geoinformation". ' +
+    'Ob die Datenlizenz Deutschland Namensnennung 2.0, unter der die Stadt ihre Ortsbezirke ' +
+    'und ein Dutzend weitere Ebenen ausweist, auch für sie gilt, muss das Amt für Vermessung ' +
+    'und Geoinformation (Obere Königsstraße 8, 34117 Kassel, vermgeo@kassel.de) bestätigen. ' +
+    'Stand 17. September 2026.',
+  // Bewusst ohne `towedVehicles`: Auf kassel.de fand sich am 17. September
+  // keine Seite, die eine Auskunftsstelle für abgeschleppte Fahrzeuge mit
+  // Namen und Nummer nennt — die Suche nach „abgeschleppt" und „Abschleppen"
+  // liefert keinen Treffer, die Parkzonen-Seite nennt nur die Leitstelle des
+  // Ordnungsamts für Automatendefekte. Fehlt das Feld, zeigt die Oberfläche
+  // den Abschnitt nicht — kein Rückfall auf Berlin.
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1099,6 +1173,7 @@ export const CITIES: readonly City[] = [
   SALZBURG,
   INNSBRUCK,
   ZUERICH,
+  KASSEL,
 ]
 
 /**

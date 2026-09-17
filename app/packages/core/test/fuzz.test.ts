@@ -87,6 +87,7 @@ import {
   parseZuerichSchedule,
   parseZuerichTariffZone,
 } from '../src/zuerich.js'
+import { KasselParseError, parseKasselZoneName } from '../src/kassel.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -302,6 +303,17 @@ describe('Zeitparser unter Beschuss', () => {
     })
   })
 
+  // Kassel hat keinen Zeitparser — der Feed nennt keine Zeiten. Der eine
+  // Parser, den es gibt, liest den Zonennamen; er gehört trotzdem unter
+  // Beschuss, denn er sieht als erster den fremden Wert.
+  it('Kassel wirft nur KasselParseError und liefert nur die drei Namensformen', () => {
+    fuzz(20260917, 60, KasselParseError, (input) => {
+      const name = parseKasselZoneName(input)
+      expect(['quartier', 'nummer', 'zentrum']).toContain(name.kind)
+      expect(name.key).toBe(input.replace(/\s+/gu, ' ').trim())
+    })
+  })
+
   it('Graz wirft nur GrazParseError und liefert nur gültige Fenster', () => {
     fuzz(20260916, 200, GrazParseError, (input) => {
       expectValidWindows(parseGrazSchedule(input), input)
@@ -505,6 +517,7 @@ describe('Zeitbudget', () => {
       parseInnsbruckMaxStay,
       parseZuerichSchedule,
       parseZuerichMeterTariff,
+      parseKasselZoneName,
     ]
     const started = performance.now()
     for (const input of inputs) {
