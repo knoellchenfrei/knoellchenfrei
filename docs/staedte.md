@@ -12,7 +12,9 @@
 > [staedte-rostock.md](staedte-rostock.md). Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md), [staedte-cottbus.md](staedte-cottbus.md).
 > Seit dem 17. September Zürich, die erste Stadt in der Schweiz:
-> [staedte-zuerich.md](staedte-zuerich.md).
+> [staedte-zuerich.md](staedte-zuerich.md). Und seit demselben Tag **Essen**,
+> die erste Stadt der Klasse C — nur Zonengrenzen, „Zeiten unbekannt":
+> [staedte-essen.md](staedte-essen.md).
 > Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
@@ -215,6 +217,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
 | **Zürich** | 2 Hochtarifzonen als WFS 1.1.0 (QGIS Server), dazu 1.397 Parkuhren mit Tarifzeile und 13.272 Parkfelder | **nirgends im Feed** — aus dem Erlass AS 551.330, in Franken, gestaffelt | je Fläche, eine Schreibweise; je Parkuhr 33 | CC0 1.0 | **geprüft**, [eigener Bericht](staedte-zuerich.md) |
+| **Essen** | 9 Bewohnerparkbereiche als GeoJSON-Datei (DKAN, Stand 2022), dazu 50 Stadtteile und Umweltzone | **nirgends** — die sechs Parkzonen der Stadtseite gibt es nicht als Geometrie | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-essen.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
 Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen

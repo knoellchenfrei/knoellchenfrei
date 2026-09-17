@@ -293,6 +293,14 @@ Begründung wie in Köln und München: Wer sie aus den Parkflächen nähme, wies
 eine Meldung aus Garath oder Kalkum als „außerhalb" ab, obwohl dort
 bewirtschaftet werden kann und nur kein Bewohnerparkgebiet liegt.
 
+**Nachtrag vom 17. September 2026:** Die Nordkante steht seitdem bei
+**51,349** statt 51,37. Essens Stadtgrenze reicht bei Kettwig bis 51,3476
+herunter, Düsseldorfs bei Wittlaer bis 51,3525 hinauf — die Umrisse
+überlappen sich um 545 m in der Breite, und zwei Rahmen dürfen sich nicht
+schneiden. Düsseldorf verliert damit 390 m Rheinufer und Angerwiesen
+nördlich von Bockum und Angermund, ohne Parkzone; die Rechnung steht in
+[staedte-essen.md](staedte-essen.md) unter „Der Rahmen".
+
 ### Der Probelauf
 
 ```

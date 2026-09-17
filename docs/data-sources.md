@@ -560,6 +560,40 @@ Punkte, Güterumschlag), `geo_behindertenparkplaetze` (Stand 2017),
 `geo_stadtkreise` (die Quartiere tragen den Kreis). Keine Umweltzone (die
 Schweiz kennt keine), keine POI. `meta.json` führt alles unter `absent`.
 
+## Verwendet — Essen
+
+Abgerufen am 17. September 2026 von der **Stadt Essen** über das DKAN-Portal
+`opendata.essen.de` — drei fertige GeoJSON-Dateien, kein WFS (das
+Geodatenportal `geodaten.essen.de` ist aus dieser Umgebung nicht erreichbar).
+Gefunden über den Katalogexport `data.json` (110 Datensätze), nicht durch
+Raten.
+
+| Datei | Datensatz | Umfang | Verwendung in der App |
+| --- | --- | --- | --- |
+| `Bewohnerparkbereiche.geojson` | „Bewohnerparkbereiche Essen", FB 66 / FB 62, `modified` 2022-11-09 | 9 Polygone, `NameGebiet` — **keine Zeiten, kein Betrag** | Zonen, alle mit `scheduleUnknown` |
+| `Stadtteile_WGS84.geojson` | „Verwaltungsgrenzen der Stadt Essen", FB 12 / FB 62, `modified` 2024-07-02 | 50 Polygone, `STADTTEILE` | Kartenkontext, Stadtteil im Panel |
+| `Umweltzone_Essen_0.geojson` | „Umweltzone Essen", FB 62 / FB 59, `modified` 2024-07-02 | 3 Polygone | Umweltzonen-Umriss |
+
+**Lizenz: [Datenlizenz Deutschland Namensnennung 2.0](https://www.govdata.de/dl-de/by-2-0).**
+Wörtlich auf jeder Datensatzseite („Lizenz Datenlizenz Deutschland
+Namensnennung 2.0") und im Katalogexport als `license`. Der Quellenvermerk
+ist der Wortlaut der Datensatzbeschreibung: „FB 66 - Amt für Straßen und
+Verkehr / FB 62 - Amt für Geoinformation, Vermessung und Kataster".
+
+Die eine Sache, die man erst im Feed sieht: **Die neun Flächen sind nicht
+die Parkzonen.** Die Stadtseite „Parkzonen und Parkgebühren" nennt sechs
+Parkzonen mit Viertelstundenstaffeln, Deckeln und Zeiten — und sagt, dass
+„in Teilen der Bewohnerparkgebiete" gegen Gebühr geparkt werden kann. In
+welchen Teilen, steht nirgends. Die App zeigt deshalb die Grenze und sagt
+„Zeiten unbekannt" (Klasse C), statt einen Tarif zu raten. Die Tabelle der
+Stadtseite steht wörtlich in [staedte-essen.md](staedte-essen.md).
+
+Nicht abgerufen: `Stadtgrenze_WGS84.geojson` (nur zum Messen des Rahmens),
+`Stadtbezirke_WGS84.geojson` (9 Bezirke — die 50 Stadtteile verorten feiner),
+die Shape-Fassungen in ETRS89/UTM (EPSG 4647). Keine POI (der Katalog führt
+keine Behindertenparkplätze), keine Straßenabschnitte; `meta.json` führt sie
+unter `absent`, dazu `schedule` und `fee`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
