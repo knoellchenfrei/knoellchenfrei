@@ -514,6 +514,52 @@ Nicht im Feed: Behindertenparkplätze und Parkscheinautomaten führt der Hub nur
 als Karten, nicht als Ebenen mit Sachdaten; POI und Umweltzone (Innsbruck hat
 keine) fehlen, `meta.json` führt beides unter `absent`.
 
+## Verwendet — Zürich
+
+Abgerufen am 17. September 2026 von der **Stadt Zürich** über
+`www.ogd.stadt-zuerich.ch/wfs/geoportal/…` — ein **QGIS Server** mit WFS
+**1.1.0**, gefunden über den CKAN-Katalog `data.stadt-zuerich.ch`. Vier
+Ebenen aus drei Datensätzen:
+
+| Ebene | Dienst / Typname | Umfang |
+| --- | --- | --- |
+| Tarifzonen | `Gebietseinteilung_Parkierungsgebuehren` → `tarifzonen` | 2 Polygone, beide Hochtarif „Innenstadt und Oerlikon", `bedienungszeiten` |
+| Parkuhren | `oeffentlich_zugaengliche_Parkplaetze_DAV` → `oeff_strassenparkierung_spuzpu` | 1.397 Sammel- und Zentralparkuhren, `tarif` wie `HOCH 2h Mo-Sa 09:00-20:00` |
+| Parkfelder | dieselbe → `oeff_strassenparkierung_dav_p` | 13.272 gebühren- oder bewilligungspflichtige Parkfelder, `gebpflicht`, `parkdauer` |
+| Quartiere | `Statistische_Quartiere` → `adm_statistische_quartiere_v` | 34 Polygone mit `qname` und `kname` |
+
+**Lizenz: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/deed.de).**
+Alle Datensätze tragen im Katalog `license_id: cc-zero`; der
+geocat.ch-Metadatensatz der Parkplätze sagt wörtlich: „Diese Geodaten stehen
+unter der international gültigen Creative-Commons-Zero-Lizenz (CC-0). […] Eine
+Quellenangabe (CC-BY) wird empfohlen: Sie lautet: „Quelle: Stadt Zürich"."
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Kein Feld nennt einen Betrag.** Der Tarif kommt aus den Vorschriften über
+  die Parkierungs- und Parkuhrkontrollgebühren (AS 551.330, in Kraft seit dem
+  1. April 2017), in Franken und gestaffelt: 0,50 Fr. je 20 Minuten
+  Kontrollgebühr, ab der 31. Minute 0,50 Fr. je 10 Minuten in den ersten zwei
+  Stunden, danach 0,50 Fr. je Stunde — eine Stunde 3,00 Fr. Ausgeliefert als
+  Spanne der Grenzsätze 1,50–4,50 CHF/h, mit `currency: 'CHF'`. Begründung
+  in [staedte-zuerich.md](staedte-zuerich.md).
+- **Die URN-Form von `srsName` bricht den Dienst.** Mit
+  `srsName=urn:ogc:def:crs:EPSG::4326` und JSON antwortet der QGIS Server mit
+  **HTTP 500** und einer HTML-Seite; mit `SRSNAME=EPSG:4326` kommt GeoJSON in
+  `[lon, lat]`. Deshalb vier fertige Adressen in `ZUERICH_FILES` statt
+  `wfsUrl`.
+- **Der Niedertarif hat keine Fläche.** 844 der 1.397 Parkuhren stehen
+  ausserhalb beider Flächen, darunter 70 mit `HOCH` in der Enge und im
+  Seefeld — Strassen, die Art. 2 des Erlasses wörtlich zur Innenstadt zählt.
+  Für sie gibt es keine Fläche; sie fehlen mit Zählung.
+
+Nicht abgerufen: `Oeffentlich_zugaengliche_Strassenparkplaetze_OGD`
+(`view_pp_ogd`, 46.282 Punkte, „Datenstand per Ende 2021 und werden nicht
+mehr aktualisiert"), die drei übrigen DAV-Ebenen (Blaue Zone als Linien und
+Punkte, Güterumschlag), `geo_behindertenparkplaetze` (Stand 2017),
+`geo_stadtkreise` (die Quartiere tragen den Kreis). Keine Umweltzone (die
+Schweiz kennt keine), keine POI. `meta.json` führt alles unter `absent`.
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit
