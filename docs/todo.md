@@ -626,6 +626,15 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > die Rückfrage an FB 66 nach Parkzonen oder Automaten als Datensatz, der
 > Stand von 2022, `geodaten.essen.de` von einem anderen Rechner prüfen —
 > im Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: Gera**, die erste Stadt in Thüringen,
+> Klasse C ([staedte-gera.md](staedte-gera.md)): zehn Bewohnerparkzonen als
+> Flächen aus dem GeoServer-WFS des Geoportals, dazu 138 Straßenlinien in
+> derselben Ebene (gemessen: alle in oder höchstens 4,8 m neben ihrer
+> Fläche — kein Band nötig), 27 Ortsteile, 12 Behindertenparkplätze; `TH` im
+> Feiertagskalender mit Weltkindertag. Offen: die Lizenz (der WFS nennt
+> keine; Anfrage an das Zentrale GIS der Stadt), Zeiten und Tarif (nur in
+> der Parkgebührenordnung als PDF), der Wortlaut des ThürFtG (aus dieser
+> Umgebung nicht abrufbar) — im Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig
