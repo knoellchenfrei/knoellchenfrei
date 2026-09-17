@@ -1,47 +1,38 @@
 # Weitere Städte: was dafür an Daten da sein muss
 
-> **Stand 7. September 2026:** Angeschlossen sind **vier** Städte — Berlin,
-> Hamburg, Frankfurt am Main und München — und seit dem 9. September Köln,
-> Düsseldorf und Karlsruhe, seit dem 16. September Cottbus, je mit eigenem Bericht:
-> [staedte-koeln.md](staedte-koeln.md), [staedte-duesseldorf.md](staedte-duesseldorf.md),
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu
-> Freiburg im Breisgau: [staedte-freiburg.md](staedte-freiburg.md). Dieses
-> Dokument hieß einmal „Zweite Stadt"; die Frage, die es beantwortet, ist
-> dieselbe geblieben.
-> [staedte-karlsruhe.md](staedte-karlsruhe.md); seit dem 16. September Rostock,
-> [staedte-rostock.md](staedte-rostock.md). Dieses Dokument hieß einmal „Zweite
-> [staedte-karlsruhe.md](staedte-karlsruhe.md), [staedte-cottbus.md](staedte-cottbus.md).
-> Seit dem 17. September Zürich, die erste Stadt in der Schweiz:
-> [staedte-zuerich.md](staedte-zuerich.md).
-> Seit dem 17. September Wien, die erste Stadt außerhalb Deutschlands:
-> [staedte-wien.md](staedte-wien.md).
-> Seit dem 17. September die **Niederlande** als Land — Utrecht, Den Haag,
-> Rotterdam, Groningen, Nijmegen, Eindhoven aus einer Quelle, ein Bericht:
-> [staedte-niederlande.md](staedte-niederlande.md).
-> Am selben Tag Kassel, die erste Stadt, deren Quelle nur Grenzen nennt:
-> [staedte-kassel.md](staedte-kassel.md).
-> [staedte-zuerich.md](staedte-zuerich.md). Und seit demselben Tag **Essen**,
-> die erste Stadt der Klasse C — nur Zonengrenzen, „Zeiten unbekannt":
-> [staedte-essen.md](staedte-essen.md).
-> Dieses Dokument hieß einmal „Zweite
-> [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
-> Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
-> **Salzburg**, die erste Stadt außerhalb Deutschlands:
-> [staedte-salzburg.md](staedte-salzburg.md). Dieses Dokument hieß einmal „Zweite
-> **Bern**, seit dem 17. September die erste Stadt in der Schweiz und die erste
-> der Klasse C — Zonen ohne Zeiten und Beträge: [staedte-bern.md](staedte-bern.md).
-> **Innsbruck**, die erste Stadt außerhalb Deutschlands:
-> [staedte-innsbruck.md](staedte-innsbruck.md). Seit dem 17. September
-> **Krakau**, die erste Stadt in Polen und die erste der Klasse C — nur
-> Zonengrenzen, keine Zeiten: [staedte-krakau.md](staedte-krakau.md).
-> Dieses Dokument hieß einmal „Zweite
-> Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
-> Seit dem 17. September **Genf**, die erste Stadt in der Schweiz und die
-> erste der Klasse C — Zonengrenzen ohne Zeiten und Tarif:
-> [staedte-genf.md](staedte-genf.md).
-> [staedte-karlsruhe.md](staedte-karlsruhe.md). Seit dem 16. September dazu **Graz**,
-> die erste Stadt in Österreich: [staedte-graz.md](staedte-graz.md). Dieses Dokument
-> hieß einmal „Zweite Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
+> **Stand 17. September 2026: 27 Städte in sechs Ländern angeschlossen.**
+> Deutschland: Berlin, Hamburg, Frankfurt am Main, München (die ersten vier,
+> im Text unten), Köln ([staedte-koeln.md](staedte-koeln.md)), Düsseldorf
+> ([staedte-duesseldorf.md](staedte-duesseldorf.md)), Karlsruhe
+> ([staedte-karlsruhe.md](staedte-karlsruhe.md)), Freiburg im Breisgau
+> ([staedte-freiburg.md](staedte-freiburg.md)), Cottbus
+> ([staedte-cottbus.md](staedte-cottbus.md)), Rostock
+> ([staedte-rostock.md](staedte-rostock.md)), Schwerin
+> ([staedte-schwerin.md](staedte-schwerin.md)), Kassel
+> ([staedte-kassel.md](staedte-kassel.md)), Essen
+> ([staedte-essen.md](staedte-essen.md)). Österreich: Graz
+> ([staedte-graz.md](staedte-graz.md)), Salzburg
+> ([staedte-salzburg.md](staedte-salzburg.md)), Innsbruck
+> ([staedte-innsbruck.md](staedte-innsbruck.md)), Wien
+> ([staedte-wien.md](staedte-wien.md)). Schweiz: Bern
+> ([staedte-bern.md](staedte-bern.md)), Zürich
+> ([staedte-zuerich.md](staedte-zuerich.md)), Genf
+> ([staedte-genf.md](staedte-genf.md)). Niederlande: Utrecht, Den Haag,
+> Rotterdam, Groningen, Nijmegen, Eindhoven aus einer Quelle, ein Bericht
+> ([staedte-niederlande.md](staedte-niederlande.md)). Polen: Krakau
+> ([staedte-krakau.md](staedte-krakau.md)).
+>
+> Drei Klassen: **A** liefert Grenzen, Zeiten und Tarif aus dem Feed (Berlin,
+> Hamburg, Frankfurt, Freiburg, Cottbus, Rostock, Schwerin, Graz, Innsbruck,
+> die Niederlande). **B** liefert Grenzen und Zeiten, der Tarif kommt aus der
+> Verordnung der Stadt (München, Salzburg, Wien, Zürich). **C** liefert nur
+> Grenzen — die Zonen stehen grau mit „Zeiten unbekannt" (Bern, Genf, Krakau,
+> Kassel, Essen). Wo die Lizenz nicht ausgewiesen ist (Graz, Krakau, Kassel),
+> zeigt die App einen Hinweis über der Karte; die Anfragen an die Städte stehen
+> in [todo.md](todo.md).
+>
+> Dieses Dokument hieß einmal „Zweite Stadt"; die Frage, die es beantwortet,
+> ist dieselbe geblieben.
 
 Die Zonenlogik dieser App ist nicht Berlin-spezifisch — Tarifrechnung,
 Zeitfenster-Parser, Heatmap-Raster und Ruhetags-Hinweis funktionieren überall.
@@ -225,10 +216,13 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **München** | 82 Parkraummanagementgebiete und 13.714 Straßenseiten als WFS | **nirgends** — nur in der Gebührenordnung | je Straßenseite, als Fließtext, 291 Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** |
 | **Freiburg im Breisgau** | 37 Gebührenzonen-Flächen und 538 Parkscheinautomaten als WFS | je Fläche, als „1,80 €" (sechs P+R-Flächen nur Tagespauschale) | je Fläche, sieben Schreibweisen; je Automat siebzehn | DL-DE/**Namensnennung** 2.0 | **geprüft**, angeschlossen — [staedte-freiburg.md](staedte-freiburg.md) |
 | **Graz** | 90 + 75 Flächen der Blauen und Grünen Zone als ArcGIS-GeoJSON | je Fläche, als „Mindestgebühr (halbe Stunde): € 1,30 …" | je Fläche, drei Schreibweisen | **nicht ausgewiesen** — siehe [staedte-graz.md](staedte-graz.md) | **geprüft** |
-| **Frankfurt / Rhein-Main** | Regionalverband stellt Karten und Geodaten als WFS bereit | offen | offen | als Open Data ausgewiesen | **Hinweis** |
-| **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
-| **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
-| **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
+| **Frankfurt am Main** | 42 Bewohnerparken-Polygone (27 Zonen) und 921 Parkscheinautomaten als WFS | je Automat, als „2 €/h" | je Automat, ohne „Uhr" | DL-DE/**Namensnennung** 2.0 | **geprüft**, angeschlossen — Abschnitt unten |
+| **Dresden** | 15 Parkzonen-Polygone im Portal | nein | nein | keine ausgewiesen | **belegt**, Kandidat für Klasse C — [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md) |
+| **Köln** | 47 Bewohnerparkgebiete als WFS, Automaten als CSV von 2016 | **nirgends** — die CSV nennt keinen Betrag | je Gebiet, 46 Schreibweisen | DL-DE/Zero 2.0 | **geprüft**, angeschlossen — [staedte-koeln.md](staedte-koeln.md) |
+| **Düsseldorf** | 44 Bewohnerparkgebiete und 732 Automaten als WFS | **nirgends** — Zeiten ja, Betrag nein | je Automat, zwölf Schreibweisen | DL-DE/Zero 2.0 | **geprüft**, angeschlossen — [staedte-duesseldorf.md](staedte-duesseldorf.md) |
+| **Karlsruhe** | 279 Stellplatzreihen am Bordstein als WFS — keine Zonenflächen | je Reihe, sechs Schreibweisen | je Reihe, elf Schreibweisen | CC **BY 4.0** | **geprüft**, angeschlossen — [staedte-karlsruhe.md](staedte-karlsruhe.md) |
+| **Rostock** | 10 Bewohnerparkgebiete und 111 Automaten als WFS, 52 davon in einem Gebiet | je Automat | je Automat | CC0 1.0 | **geprüft**, angeschlossen — [staedte-rostock.md](staedte-rostock.md) |
+| **Salzburg** | 41 Kurzparkzonen als WFS | **nirgends** — stadtweit aus der Verordnung (ab 1. Jänner 2026) | je Zone | CC **BY 3.0 AT** (Katalog sagt BY-SA, siehe Bericht) | **geprüft**, angeschlossen — [staedte-salzburg.md](staedte-salzburg.md) |
 | **Niederlande: Utrecht, Den Haag, Rotterdam, Groningen, Nijmegen, Eindhoven** | Nationaal Parkeer Register (RDW), acht Socrata-Tabellen, Gebiete als WKT | je Fenster als Staffel (Betrag je Schrittweite) | je Regelung und Tagestyp, als `900`/`2100` — Feiertage in der Quelle | CC0 | **geprüft**, [ein Bericht für alle sechs](staedte-niederlande.md) |
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
@@ -242,12 +236,14 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Essen** | 9 Bewohnerparkbereiche als GeoJSON-Datei (DKAN, Stand 2022), dazu 50 Stadtteile und Umweltzone | **nirgends** — die sechs Parkzonen der Stadtseite gibt es nicht als Geometrie | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-essen.md) |
 | **alle übrigen** | über OSM, soweit die Community die Straßen erfasst hat | praktisch nie | teilweise | ODbL | **Weg B** |
 
-Nüchtern gelesen heißt die Tabelle: **Hamburg und München sind die einzigen
-beiden Kandidaten, für die ein konkreter Datensatz benannt ist.** Alles
-darunter ist ein Portal, in dem noch niemand nachgesehen hat. (Frankfurt hat
-sich seitdem als vierter Eintrag mit benanntem Datensatz erwiesen; die
-Rangliste stammt vom 6. September 2026 und ist von der ausführlichen Recherche
-in [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md) überholt.)
+Nüchtern gelesen heißt die Tabelle: **27 Städte tragen einen benannten,
+abgerufenen Datensatz**, und die Spalten Tarif und Zeiten trennen die drei
+Klassen aus dem Kopf dieser Datei. Was in keiner Zeile steht, hat entweder
+keinen Datensatz (Stuttgart, Leipzig, Bremen, Hannover und die übrigen aus
+[staedte-recherche-2026-09.md](staedte-recherche-2026-09.md), Abschnitt 3)
+oder nur ein PDF, aus dem sich keine Fläche zuverlässig auf die Karte legen
+lässt ([staedte-recherche-2026-09-16.md](staedte-recherche-2026-09-16.md),
+Klasse D).
 
 ## Empfehlung
 
