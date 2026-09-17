@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { EssenZoneProperties } from '../src/essen.js'
+import type { HildesheimZoneProperties } from '../src/hildesheim.js'
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import { GenfParseError, parseGenfTypeStationnement, type GenfLineProperties, type GenfZoneProperties } from '../src/genf.js'
 import { isBernZoneUnattributed, type BernZoneProperties } from '../src/bern.js'
@@ -1045,6 +1046,50 @@ describe('Essener Fixture', () => {
   it('zählt FID von 0 bis 8 durch und führt Id überall als 0', () => {
     expect(AREAS.map((area) => area.FID).sort((a, b) => (a ?? 0) - (b ?? 0))).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8])
     expect(AREAS.every((area) => area.Id === 0)).toBe(true)
+  })
+})
+
+describe('Hildesheimer Fixture', () => {
+  const ZONES = read<{ numberMatched: number; features: { properties: HildesheimZoneProperties }[] }>(
+    'hildesheim-zonen-2026-09-17.json'
+  )
+
+  /**
+   * Vier Felder, alle Zeichenketten — auch `ID`, das wie eine Zahl aussieht:
+   * MapServer reicht die Shapedatei so durch. Ein fünftes Feld wäre hier die
+   * wichtigste Nachricht, die dieser Test je bringen könnte — es hiesse, die
+   * Stadt hat Zeiten oder einen Betrag nachgeliefert, und
+   * `build-data-hildesheim.ts` müsste sie lesen.
+   */
+  it('führt die Zonen in genau diesen vier Feldern und Typen', () => {
+    expectShape(ZONES.features.map((feature) => feature.properties) as unknown as Record<string, unknown>[], {
+      _feature_id: ['string'],
+      ID: ['string'],
+      Zone: ['string'],
+      path: ['string'],
+    })
+    expect(ZONES.numberMatched).toBe(7)
+    expect(ZONES.features).toHaveLength(7)
+  })
+
+  it('nennt kein Feld für Zeiten, Betrag oder Höchstparkdauer', () => {
+    const fields = new Set(ZONES.features.flatMap((feature) => Object.keys(feature.properties)))
+    for (const field of fields) {
+      expect(field).not.toMatch(/zeit|gebuehr|gebühr|tarif|dauer|preis|euro/i)
+    }
+  })
+
+  // Der durchgereichte Pfad nennt die Ebene „Besucherparkzonen" — ein Name
+  // aus dem Dateisystem der Stadt, nicht aus dem Dienst. Er ist kein
+  // Schlüssel, aber er belegt, woher die Flächen kommen.
+  it('trägt in jedem Pfad die Shapedatei der jeweiligen Zone', () => {
+    for (const { properties } of ZONES.features) {
+      const letter = /^Zone ([A-G])$/.exec(properties.Zone ?? '')?.[1]
+      expect(letter, properties.Zone ?? '').toBeDefined()
+      expect(properties.path).toBe(
+        `I:/GDI-HI/WebGIS/Verkehr und Sicherheit/Input/Besucherparkzonen/Zone ${letter}_A.shp`
+      )
+    }
   })
 })
 
