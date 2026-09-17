@@ -153,30 +153,6 @@ for (const datei of dateien) {
     }
     writeFileSync(join(RAW, datei.file), body)
     console.log(`${body.length} Bytes${zaehlung}`)
-    // GeoJSON aus einem ArcGIS FeatureServer: Der Dienst schneidet bei
-    // `maxRecordCount` ab und antwortet trotzdem mit 200 — nur das Feld
-    // `exceededTransferLimit` sagt es. Dazu dieselbe Schwelle wie oben.
-    let notiz = ''
-    if (datei.expectedFeatures !== undefined) {
-      const parsed = JSON.parse(body) as { features?: unknown[]; exceededTransferLimit?: boolean }
-      if (parsed.exceededTransferLimit === true) {
-        throw new Error('exceededTransferLimit — der Dienst hat abgeschnitten, es braucht resultOffset')
-      }
-      const count = parsed.features?.length ?? 0
-      if (count < Math.floor(datei.expectedFeatures * 0.95)) {
-        throw new Error(
-          `nur ${count} statt ${datei.expectedFeatures} Features — von Hand nachsehen, ` +
-            'bevor die Zahl in sources.ts angepasst wird.'
-        )
-      }
-      const abweichung = count - datei.expectedFeatures
-      notiz =
-        abweichung === 0
-          ? `, ${count} features`
-          : `, ${count} features (${abweichung > 0 ? '+' : ''}${abweichung} gegenüber sources.ts — Zahl dort nachziehen)`
-    }
-    writeFileSync(join(RAW, datei.file), body)
-    console.log(`${body.length} Bytes${notiz}`)
   } catch (error) {
     failed += 1
     console.log(`FAILED: ${(error as Error).message}`)
