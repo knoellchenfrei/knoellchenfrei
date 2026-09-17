@@ -353,3 +353,53 @@ describe('Saarland', () => {
     expect(isHoliday('SL', berlinWallClock(Date.UTC(2026, 7, 15, 10)))).toBe(true)
   })
 })
+/**
+ * Thüringen: das einzige Land mit dem Weltkindertag (20. September, seit
+ * 2019), dazu der Reformationstag — § 2 Abs. 1 ThürFtG. Fronleichnam steht
+ * in § 2 Abs. 2 und gilt nur in Gemeinden, die die Landesregierung bestimmt
+ * (Eichsfeld und Umgebung), nicht in Gera — er gehört deshalb nicht in die
+ * Landestabelle, sondern an eine Stadt, die ihn hat. Der Wortlaut war aus
+ * dieser Umgebung nicht abrufbar (Belege in `holidays.ts`); dieser Block ist
+ * die Zahl, gegen die der Wortlaut zu prüfen ist.
+ */
+describe('Thüringen', () => {
+  it('hat elf Feiertage: die neun bundesweiten plus Weltkindertag und Reformationstag', () => {
+    const th = holidaysFor('TH', 2026)
+    expect(th.has('2026-09-20')).toBe(true) // Weltkindertag, seit 2019
+    expect(th.has('2026-10-31')).toBe(true) // Reformationstag
+    expect(th.size).toBe(11)
+  })
+
+  it('unterscheidet sich von Brandenburg um genau den Weltkindertag', () => {
+    const th = holidaysFor('TH', 2026)
+    const bb = holidaysFor('BB', 2026)
+    expect([...th].filter((date) => !bb.has(date))).toEqual(['2026-09-20'])
+    expect([...bb].filter((date) => !th.has(date))).toEqual([])
+  })
+
+  it('verwehrt dem Land, was seine Nachbarn haben und es nicht', () => {
+    const th = holidaysFor('TH', 2026)
+    expect(th.has('2026-06-04')).toBe(false) // Fronleichnam, nur gemeindeweise (§ 2 Abs. 2)
+    expect(th.has('2026-11-18')).toBe(false) // Buß- und Bettag, nur in Sachsen
+    expect(th.has('2026-03-08')).toBe(false) // Frauentag, nur BE und MV
+    expect(th.has('2026-11-01')).toBe(false) // Allerheiligen
+    expect(th.has('2026-01-06')).toBe(false) // Heilige Drei Könige
+  })
+
+  it('lässt Fronleichnam einer Eichsfeld-Gemeinde über extraFixed zu, ohne Gera zu berühren', () => {
+    // Was eine Stadt mit Fronleichnam täte: das Datum als Stadtfeiertag. Der
+    // Kalender rechnet Fronleichnam nicht beweglich für sie — `extraFixed`
+    // kennt nur feste Daten; wer eine solche Stadt anschliesst, braucht
+    // mehr als diesen Test.
+    expect(holidaysFor('TH', 2026, ['06-04']).has('2026-06-04')).toBe(true)
+    expect(holidaysFor('TH', 2026).has('2026-06-04')).toBe(false)
+  })
+
+  it('erkennt den Weltkindertag aus einer Ortszeit-Ablesung — in Gera, nicht in Cottbus', () => {
+    // Sonntag, 20. September 2026 — 2027 ein Montag: 11:00 Berliner Zeit.
+    const clock = berlinWallClock(Date.UTC(2027, 8, 20, 9, 0))
+    expect(isHoliday('TH', clock)).toBe(true)
+    expect(isHoliday('BB', clock)).toBe(false)
+  })
+})
+

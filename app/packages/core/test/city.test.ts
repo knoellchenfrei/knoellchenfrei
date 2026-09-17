@@ -20,6 +20,7 @@ import {
   cityByKey,
   FRANKFURT,
   GENF,
+  GERA,
   GRAZ,
   HAMBURG,
   KASSEL,
@@ -649,7 +650,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen', 'saarbruecken', 'stgallen'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'essen', 'saarbruecken', 'stgallen', 'gera'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
@@ -1026,3 +1027,63 @@ describe('Essen', () => {
     expect(ESSEN.heatGrid.originLat).toBe(ESSEN.reportBounds.minLat)
   })
 })
+
+/**
+ * Gera — die erste Stadt in Thüringen, Klasse C mit zehn Zonenflächen und
+ * 138 Straßenlinien in einer Ebene. Der Rahmen kommt aus der Stadtgrenze
+ * (15.220 ha), nicht aus der Parkebene: Die Zonen liegen alle in der
+ * Innenstadt, die Ortsteile Aga, Roben und Liebschwitz aber weit draussen
+ * und gehören dazu.
+ */
+describe('Gera', () => {
+  const MARKT: [number, number] = [12.0812, 50.8795]
+  const HAUPTBAHNHOF: [number, number] = [12.0723, 50.8815]
+  const LUSAN: [number, number] = [12.05, 50.85]
+  const AGA: [number, number] = [12.1, 50.955]
+
+  it('nimmt Markt, Hauptbahnhof, Lusan und Aga an', () => {
+    for (const point of [MARKT, HAUPTBAHNHOF, LUSAN, AGA]) {
+      expect(withinCity(GERA, ...point)).toBe(true)
+      expect(cityAt(...point)).toBe(GERA)
+    }
+  })
+
+  // Jena (Markt 11,5866 / 50,9277) liegt westlich, Zeitz (12,1364 / 51,0480)
+  // nördlich, Greiz (12,1997 / 50,6547) südlich des Rahmens. Bad Köstritz
+  // (12,0159 / 50,9291) dagegen liegt **im** Rahmen — ein achsenparalleles
+  // Rechteck um Gera kann das nicht ausschliessen, und wie in Köln gilt:
+  // Eine Meldung von dort wird angenommen und liegt in keiner Zone.
+  it('verschluckt Jena, Zeitz und Greiz nicht', () => {
+    expect(cityAt(11.5866, 50.9277)).toBeUndefined()
+    expect(cityAt(12.1364, 51.048)).toBeUndefined()
+    expect(cityAt(12.1997, 50.6547)).toBeUndefined()
+  })
+
+  it('führt die Lizenz als unklar, mit Nennung, Banner und der Stelle, die sie klären kann', () => {
+    expect(GERA.attribution.licenceFamily).toBe('unklar')
+    expect(GERA.attribution.attributionRequired).toBe(true)
+    expect(GERA.attribution.licence).toBe('nicht ausgewiesen')
+    expect(GERA.attribution.datasetUrl).toMatch(/^https:\/\/geoportal\.gera\.de\/geoserver\/gera\/wfs/)
+    expect(GERA.attribution.source).toContain('Stadtverwaltung Gera')
+    expect(GERA.licenceOpen).toContain('Zentrale GIS')
+    expect(GERA.licenceOpen).toMatch(/Stand \d+\. \w+ 20\d\d\./)
+  })
+
+  it('hängt am Thüringer Kalender, liegt in Deutschland und braucht keinen Stadtfeiertag', () => {
+    expect(GERA.land).toBe('TH')
+    expect(cityCountry(GERA)).toBe('DE')
+    // Fronleichnam gilt in Thüringen nur gemeindeweise und in Gera nicht.
+    expect(GERA.holidays).toBeUndefined()
+  })
+
+  it('braucht keinen Rückfall auf die nächste Fläche — die Zonen sind Quartiere', () => {
+    expect(GERA.zoneSnapMetres).toBeUndefined()
+  })
+
+  it('hat ein eigenes Raster mit Ursprung an der Südwestecke des Rahmens', () => {
+    expect(GERA.heatGrid.id).toBe('gera')
+    expect(GERA.heatGrid.originLon).toBe(GERA.reportBounds.minLon)
+    expect(GERA.heatGrid.originLat).toBe(GERA.reportBounds.minLat)
+  })
+})
+

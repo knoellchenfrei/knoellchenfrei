@@ -11,7 +11,8 @@
 > ([staedte-schwerin.md](staedte-schwerin.md)), Kassel
 > ([staedte-kassel.md](staedte-kassel.md)), Essen
 > ([staedte-essen.md](staedte-essen.md)), Saarbrücken
-> ([staedte-saarbruecken.md](staedte-saarbruecken.md)). Österreich: Graz
+> ([staedte-saarbruecken.md](staedte-saarbruecken.md)), Gera
+> ([staedte-gera.md](staedte-gera.md)). Österreich: Graz
 > ([staedte-graz.md](staedte-graz.md)), Salzburg
 > ([staedte-salzburg.md](staedte-salzburg.md)), Innsbruck
 > ([staedte-innsbruck.md](staedte-innsbruck.md)), Wien
@@ -30,8 +31,8 @@
 > die Niederlande, Strasbourg). **B** liefert Grenzen und Zeiten, der Tarif kommt aus der
 > Verordnung der Stadt (München, Salzburg, Wien, Zürich). **C** liefert nur
 > Grenzen — die Zonen stehen grau mit „Zeiten unbekannt" (Bern, Genf, St. Gallen, Krakau,
-> Kassel, Essen, Saarbrücken). Wo die Lizenz nicht ausgewiesen ist (Graz, Krakau,
-> Kassel, Saarbrücken),
+> Kassel, Essen, Saarbrücken, Gera). Wo die Lizenz nicht ausgewiesen ist (Graz,
+> Krakau, Kassel, Saarbrücken, Gera),
 > zeigt die App einen Hinweis über der Karte; die Anfragen an die Städte stehen
 > in [todo.md](todo.md).
 >
@@ -233,6 +234,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Bern** | 42 Parkkartenzonen-Flächen als ArcGIS-MapServer (Geoportal der Stadt), 34 davon mit Namen | **nirgends** — nur im Gebührenreglement der Stadt (3.30 Fr./h auf weissen Feldern) | **nirgends** — nur `Auch Sonntags` bei vier Flächen | Nutzungsbedingungen der Stadt, „Freie Nutzung. Quellenangabe ist Pflicht." | **geprüft**, angeschlossen am 17. September als Klasse C („Zeiten unbekannt") — [staedte-bern.md](staedte-bern.md) |
 | **Krakau** | 23 Sektoren des Obszar Płatnego Parkowania als ArcGIS-GeoJSON (ZTP), 18 Dzielnice | **nirgends** — nur in der Uchwała und beim ZDMK, in Złoty | **nirgends** — nur in der Uchwała; A täglich, B/C Mo–Sa, 9–22 Uhr | **nicht ausgewiesen** — siehe [staedte-krakau.md](staedte-krakau.md) | **geprüft**, angeschlossen am 17. September als erste Stadt der **Klasse C** (`scheduleUnknown`) |
 | **Saarbrücken** | 27 Bewohnerparkzonen als attributlose GeoJSON-Flächen (CKAN der Stadt), Buchstaben als 30 Beschriftungspunkte daneben, 20 Stadtteile | **nirgends** — nur in der Gebührenordnung der Stadt, und die regelt die Kurzparkzonen (0,90 € je halbe Stunde in Zone 1) | **nirgends** — nur in der Pressemeldung zur Gebührenordnung (Mo–Sa 8–20 Uhr, Kurzparkzonen) | Datenlizenz Deutschland, **Variante nicht ausgewiesen** — siehe [staedte-saarbruecken.md](staedte-saarbruecken.md) | **geprüft**, angeschlossen am 17. September als erste deutsche Stadt der **Klasse C** (`scheduleUnknown`) |
+| **Gera** | 10 Bewohnerparkzonen als Flächen und 138 Straßenlinien in **einer** WFS-Ebene (GeoServer, Geoportal der Stadt), 27 Ortsteile, 12 Behindertenparkplätze | **nirgends** — nur in der Parkgebührenordnung (PDF im Ortsrecht) | **nirgends** — Klasse C, jede Zone `scheduleUnknown` | **nicht ausgewiesen** — siehe [staedte-gera.md](staedte-gera.md) | **geprüft**, angeschlossen am 17. September als erste Stadt in Thüringen |
 | **Straßburg** | 19 Tarifzonen (rouge/orange/vert) als Opendatasoft-Export der Ville de Strasbourg, 10 Quartiere, 15 Bewohnerzonen zur Gegenprobe | je Zone als **Staffel** `1h = 3.5€ / 2h = 8€ / … / 3h = 17€`, drei Schreibweisen | **nur in der Datensatzbeschreibung** — Mo–Sa 9–19 Uhr, Sonn- und Feiertage frei; als Konstante mit Fundstelle | Licence Ouverte (Etalab) **1.0**, Nennung Pflicht | **geprüft**, angeschlossen am 17. September als erste Stadt in Frankreich — [staedte-strasbourg.md](staedte-strasbourg.md) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
 | **Zürich** | 2 Hochtarifzonen als WFS 1.1.0 (QGIS Server), dazu 1.397 Parkuhren mit Tarifzeile und 13.272 Parkfelder | **nirgends im Feed** — aus dem Erlass AS 551.330, in Franken, gestaffelt | je Fläche, eine Schreibweise; je Parkuhr 33 | CC0 1.0 | **geprüft**, [eigener Bericht](staedte-zuerich.md) |

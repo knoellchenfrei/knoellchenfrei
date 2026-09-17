@@ -2233,6 +2233,18 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "EBZ": "EBZ",
     "Parkuhr": "Parkuhr",
   },
+  "gera": {
+    "A": "A",
+    "B": "B",
+    "C": "C",
+    "C/G": "bezirk:Zentrum Nord",
+    "D": "D",
+    "E": "E",
+    "G": "G",
+    "H": "H",
+    "K": "K",
+    "L": "L",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2267,6 +2279,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "saarbruecken": 27,
   "strasbourg": 19,
   "stgallen": 2,
+  "gera": 10,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

@@ -68,6 +68,7 @@ const STADTNAMEN: Record<string, string> = {
   saarbruecken: 'Saarbrücken',
   strasbourg: 'Straßburg',
   stgallen: 'St. Gallen',
+  gera: 'Gera',
 }
 
 async function musterLaden(city: string): Promise<MusterStand | null> {

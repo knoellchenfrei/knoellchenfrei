@@ -1866,6 +1866,62 @@ export const STGALLEN: City = {
   },
 }
 
+/**
+ * Gera — die erste Stadt in Thüringen, Klasse C: zehn Bewohnerparkzonen
+ * (Buchstaben A bis L, eine geteilte Fläche C/G) als Flächen aus dem
+ * GeoServer-WFS des Geoportals der Stadt, ohne Zeiten und Betrag. Dazu
+ * 138 Straßenlinien in derselben Ebene, 27 Ortsteile und 12
+ * Behindertenparkplätze.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt **nicht** aus der
+ * Parkebene, sondern aus der Ebene `gera:geom_stadtgrenze_und_flaeche`
+ * (zwei Polygone: die Stadt mit 15.219,79 ha und eine 2 ha große Exklave bei
+ * 12,155/50,868): 11,9981–12,1695 / 50,7985–50,9766, nach außen auf zwei
+ * Stellen gerundet. Die 27 Ortsteile füllen exakt denselben Rahmen. Die zehn
+ * Zonenflächen liegen alle in einem Rechteck von 1,7 × 1,8 km um die
+ * Innenstadt (12,0732–12,0969 / 50,8692–50,8855); der Mittelpunkt ist dessen
+ * Mitte, und Zoom **13** wie in Kassel und Essen: Bei 12 wären die Zonen ein
+ * Fleck. Nachbarn mit eigener Konstante gibt es hier keine — Leipzig, Jena
+ * und Zwickau sind nicht angeschlossen —, die Überschneidungsprüfung in
+ * `city.test.ts` läuft trotzdem über jedes Paar.
+ *
+ * Kein `zoneSnapMetres`: Anders als Karlsruhes Stellplatzreihen sind die
+ * Flächen ganze Quartiere (0,9 bis 41,7 ha), eine Ortung trifft sie.
+ */
+export const GERA: City = {
+  key: 'gera',
+  name: 'Gera',
+  land: 'TH',
+  center: [12.085, 50.8774],
+  zoom: 13,
+  reportBounds: { minLon: 11.99, minLat: 50.79, maxLon: 12.17, maxLat: 50.98 },
+  sessionBounds: { minLon: 11.7, minLat: 50.55, maxLon: 12.45, maxLat: 51.2 },
+  heatGrid: { id: 'gera', originLon: 11.99, originLat: 50.79, latitude: 50.88 },
+  attribution: {
+    // `ows:ProviderName` des Dienstes, wörtlich; die Karte des Portals
+    // schreibt „Daten: © Stadt Gera".
+    source: 'Stadtverwaltung Gera, Zentrales GIS (geoportal.gera.de)',
+    // Der Dienst, den der Datenbau wirklich liest — GetCapabilities, weil dort
+    // die Lizenz stünde: `Fees: NONE`, `AccessConstraints: NONE`, kein Katalogeintrag.
+    datasetUrl: 'https://geoportal.gera.de/geoserver/gera/wfs?service=WFS&request=GetCapabilities',
+    licence: 'nicht ausgewiesen',
+    licenceUrl: 'https://geoportal.gera.de/geoserver/gera/wfs?service=WFS&request=GetCapabilities',
+    attributionRequired: true,
+    licenceFamily: 'unklar',
+  },
+  licenceOpen:
+    'Der WFS des Geoportals Gera nennt für die Anwohnerparkzonen keine Lizenz — nur ' +
+    '„Fees: NONE" und „AccessConstraints: NONE", das Open-Data-Portal der Stadt ' +
+    '(opendata.gera.de) ist leer, und das Impressum von gera.de behält sich alle Rechte vor. ' +
+    'Ob und unter welcher Lizenz die Daten weitergegeben werden dürfen, muss das Zentrale ' +
+    'GIS der Stadtverwaltung Gera (Kontakt laut GetCapabilities des Dienstes, ' +
+    'Telefon 0365 838-1224) bestätigen. Stand 17. September 2026.',
+  // Bewusst ohne `towedVehicles`: Am 17. September fand sich auf gera.de weder
+  // auf der Seite des Vollzugsdienstes noch beim Straßenverkehr eine
+  // Auskunftsstelle für abgeschleppte Fahrzeuge mit Namen und Nummer. Fehlt
+  // das Feld, zeigt die Oberfläche den Abschnitt nicht; kein Rückfall auf Berlin.
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1897,6 +1953,7 @@ export const CITIES: readonly City[] = [
   SAARBRUECKEN,
   STRASBOURG,
   STGALLEN,
+  GERA,
 ]
 
 /**

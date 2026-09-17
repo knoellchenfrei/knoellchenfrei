@@ -28,6 +28,7 @@ import type {
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
 import type { EssenZoneProperties } from '../src/essen.js'
+import type { GeraAccessibleProperties, GeraZoneProperties } from '../src/gera.js'
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import { GenfParseError, parseGenfTypeStationnement, type GenfLineProperties, type GenfZoneProperties } from '../src/genf.js'
 import { isBernZoneUnattributed, type BernZoneProperties } from '../src/bern.js'
@@ -1267,5 +1268,52 @@ describe('Saarbrücker Fixtures', () => {
       PGIS_R: ['number'],
       PGIS_H: ['number'],
     })
+  })
+})
+
+describe('Geraer Fixtures', () => {
+  const ZONES = read<{ features: { properties: GeraZoneProperties; geometry: { type: string } }[] }>(
+    'gera-anwohnerparken-2026-09-17.json'
+  ).features
+  const ACCESSIBLE = read<{ features: { properties: GeraAccessibleProperties }[] }>(
+    'gera-behindertenparkplaetze-2026-09-17.json'
+  ).features.map((feature) => feature.properties)
+
+  /**
+   * Sechs Felder, drei davon aus dem Kartensystem der Stadt, und keines sagt
+   * etwas über Zeiten oder Betrag: Klasse C. Ein siebtes Feld wäre die
+   * wichtigste Nachricht dieses Tests — es hiesse, die Stadt hat Zeiten
+   * nachgeliefert, und `build-data-gera.ts` müsste sie lesen.
+   */
+  it('führt Flächen und Linien in genau diesen sechs Feldern und Typen', () => {
+    expectShape(ZONES.map((feature) => feature.properties) as unknown as Record<string, unknown>[], {
+      mslink: ['number'],
+      infostring: ['string'],
+      entity: ['number'],
+      feature: ['number'],
+      mapid: ['number'],
+      anwohnerparkzone: ['string'],
+    })
+    // Zehn Flächen und sechs Linien — Fläche und Straße in einer Ebene.
+    expect(ZONES.filter((feature) => feature.geometry.type === 'Polygon')).toHaveLength(10)
+    expect(ZONES.filter((feature) => feature.geometry.type === 'LineString')).toHaveLength(6)
+  })
+
+  it('nennt kein Feld für Zeiten, Betrag oder Höchstparkdauer', () => {
+    for (const field of new Set(ZONES.flatMap((feature) => Object.keys(feature.properties)))) {
+      expect(field).not.toMatch(/zeit|gebuehr|gebühr|tarif|dauer|preis|euro/i)
+    }
+  })
+
+  it('führt die Behindertenparkplätze in genau diesen sechs Feldern', () => {
+    expectShape(ACCESSIBLE as unknown as Record<string, unknown>[], {
+      mslink: ['number'],
+      entity: ['number'],
+      feature: ['number'],
+      mapid: ['number'],
+      infostring: ['string'],
+      click_size: ['number'],
+    })
+    expect(ACCESSIBLE).toHaveLength(12)
   })
 })

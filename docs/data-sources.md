@@ -1013,6 +1013,45 @@ Drei Dinge, die man erst im Feed sieht:
   fünfte aus einer solchen Reihe einen Strich macht.
 - **Der Datenstand ist 2023-07-05** (`data_processed`), ohne
   Aktualisierungsfrequenz; die Metadaten wurden zuletzt 2026-02-23 angefasst.
+## Verwendet — Gera
+
+Abgerufen am 17. September 2026 von der **Stadtverwaltung Gera, Zentrales
+GIS** über den GeoServer-WFS 2.0.0 des Geoportals
+(`https://geoportal.gera.de/geoserver/gera/wfs`). Gefunden über
+`GetCapabilities` (rund 130 Typnamen, darunter drei zum Parken), nicht durch
+Raten. `outputFormat=application/json`, `srsName=urn:ogc:def:crs:EPSG::4326`,
+Antwort in `[lon, lat]`; **ohne** `srsName` kommt dieselbe Ebene
+stillschweigend in EPSG:25833 — der Frankfurt-Fall, `assertDegrees` im
+Datenbau misst nach.
+
+| Ebene | Umfang | Inhalt | Verwendung in der App |
+| --- | --- | --- | --- |
+| `gera:geom_portal_anwohnerparken` („Anwohnerparkzonen") | **148** Features: 10 `Polygon`, 138 `LineString` | `anwohnerparkzone` (`A` … `L`, einmal `C/G`), `infostring` (`L - Calvinstraße`), `mslink`, `entity`, `feature`, `mapid` — **keine Zeiten, kein Betrag** | die zehn Flächen als Zonen (`scheduleUnknown`), die Linien als Straßenliste im `note` |
+| `gera:geom_portal_ortsteile` | 27 Polygone | `ortsteil` | Kartenkontext, Ortsteil im Panel |
+| `gera:geom_portal_behindertenparkplaetze` | 12 Punkte | `infostring` (`Am Bärenweg (1 Platz)`) | POI `accessible`, 30 Plätze |
+
+**Lizenz: nicht ausgewiesen.** `GetCapabilities` von WFS und WMS nennen
+`Fees: NONE` und `AccessConstraints: NONE` und keinen Metadatenverweis; das
+CKAN-Portal `opendata.gera.de` führt null Datensätze; das Impressum von
+`gera.de` behält sich „Alle Rechte" vor. `licenceFamily: 'unklar'`, die App
+zeigt den Banner — [staedte-gera.md](staedte-gera.md).
+
+Die eine Sache, die man erst im Feed sieht: **Die Recherche hatte „148
+Linien" gelesen — es sind 138 Linien und 10 Flächen, je Zonenbuchstabe
+eine.** Nachgemessen liegen 128 der 138 Linien ganz in der Fläche ihres
+Buchstabens, keine weiter als 4,8 m davon entfernt; die Flächen sind die
+Zonen, ein Band um die Linien (wie Wiens Geschäftsstraßen) ist nicht nötig.
+Der Datenbau bricht ab, sobald eine Linie mehr als 12 m von ihrer Fläche
+wegläuft.
+
+Nur gemessen, nicht ausgeliefert: `gera:geom_stadtgrenze_und_flaeche` (zwei
+Polygone, 15.219,79 ha und eine 2-ha-Exklave) für den Rahmen in
+`core/city.ts`. Nicht genommen: `geom_portal_parken` und
+`geom_portal_parken_alles` (Parkhäuser, Busparkplätze, dieselben
+Behindertenparkplätze noch einmal), `geom_statistik_gemeindeteile` (72
+Gemeindeteile, feiner als die Ortsteile). Keine Umweltzone (Gera hat keine),
+keine Straßenabschnitte mit Regeln; `meta.json` führt `umweltzone` und
+`segments` unter `absent`, dazu `schedule` und `fee`.
 
 ## Geprüft und nicht verfügbar
 
