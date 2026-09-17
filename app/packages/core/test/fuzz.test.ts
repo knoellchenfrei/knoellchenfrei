@@ -105,6 +105,7 @@ import {
   parseBernInfo,
   parseBernZoneName,
 } from '../src/bern.js'
+import { KrakauParseError, parseKrakauPodstrefa, parseKrakauSince } from '../src/krakau.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -485,6 +486,29 @@ describe('Gebührenparser unter Beschuss', () => {
   })
 })
 
+// Krakau hat weder Zeit- noch Gebührenparser — der Feed nennt beides nicht.
+// Beschossen werden die zwei Leser, die er hat: der Podstrefa-Code und das
+// Datum der Erweiterung. Beide dürfen nur ihre eigene Klasse werfen und nur
+// Gültiges liefern.
+describe('die Krakauer Leser unter Beschuss', () => {
+  it('Podstrefa: nur KrakauParseError, und nur A–D mit oder ohne n', () => {
+    fuzz(20260920, 300, KrakauParseError, (input) => {
+      const { podstrefa, planned } = parseKrakauPodstrefa(input)
+      expect(['A', 'B', 'C', 'D'], input).toContain(podstrefa)
+      expect(typeof planned).toBe('boolean')
+    })
+  })
+
+  it('Datum: nur KrakauParseError, und nur ein Kalendertag als ISO-Datum', () => {
+    fuzz(20260921, 300, KrakauParseError, (input) => {
+      const iso = parseKrakauSince(input)
+      expect(iso, input).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+      const date = new Date(`${iso}T00:00:00Z`)
+      expect(date.toISOString().slice(0, 10), input).toBe(iso)
+    })
+  })
+})
+
 describe('Höchstparkdauer unter Beschuss', () => {
   // `undefined` heisst „keine Begrenzung“, `0` hiesse „Parken verboten“ — der
   // Unterschied ist der ganze Punkt dieser beiden Funktionen.
@@ -663,6 +687,8 @@ describe('Zeitbudget', () => {
       (input) => genfZoneKey({ ZONE_MACARON: input }),
       parseBernZoneName,
       parseBernInfo,
+      parseKrakauPodstrefa,
+      parseKrakauSince,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

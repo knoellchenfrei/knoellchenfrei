@@ -26,7 +26,10 @@
 > **Bern**, seit dem 17. September die erste Stadt in der Schweiz und die erste
 > der Klasse C — Zonen ohne Zeiten und Beträge: [staedte-bern.md](staedte-bern.md).
 > **Innsbruck**, die erste Stadt außerhalb Deutschlands:
-> [staedte-innsbruck.md](staedte-innsbruck.md). Dieses Dokument hieß einmal „Zweite
+> [staedte-innsbruck.md](staedte-innsbruck.md). Seit dem 17. September
+> **Krakau**, die erste Stadt in Polen und die erste der Klasse C — nur
+> Zonengrenzen, keine Zeiten: [staedte-krakau.md](staedte-krakau.md).
+> Dieses Dokument hieß einmal „Zweite
 > Stadt"; die Frage, die es beantwortet, ist dieselbe geblieben.
 > Seit dem 17. September **Genf**, die erste Stadt in der Schweiz und die
 > erste der Klasse C — Zonengrenzen ohne Zeiten und Tarif:
@@ -225,6 +228,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
 | **Bern** | 42 Parkkartenzonen-Flächen als ArcGIS-MapServer (Geoportal der Stadt), 34 davon mit Namen | **nirgends** — nur im Gebührenreglement der Stadt (3.30 Fr./h auf weissen Feldern) | **nirgends** — nur `Auch Sonntags` bei vier Flächen | Nutzungsbedingungen der Stadt, „Freie Nutzung. Quellenangabe ist Pflicht." | **geprüft**, angeschlossen am 17. September als Klasse C („Zeiten unbekannt") — [staedte-bern.md](staedte-bern.md) |
+| **Krakau** | 23 Sektoren des Obszar Płatnego Parkowania als ArcGIS-GeoJSON (ZTP), 18 Dzielnice | **nirgends** — nur in der Uchwała und beim ZDMK, in Złoty | **nirgends** — nur in der Uchwała; A täglich, B/C Mo–Sa, 9–22 Uhr | **nicht ausgewiesen** — siehe [staedte-krakau.md](staedte-krakau.md) | **geprüft**, angeschlossen am 17. September als erste Stadt der **Klasse C** (`scheduleUnknown`) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |
 | **Zürich** | 2 Hochtarifzonen als WFS 1.1.0 (QGIS Server), dazu 1.397 Parkuhren mit Tarifzeile und 13.272 Parkfelder | **nirgends im Feed** — aus dem Erlass AS 551.330, in Franken, gestaffelt | je Fläche, eine Schreibweise; je Parkuhr 33 | CC0 1.0 | **geprüft**, [eigener Bericht](staedte-zuerich.md) |
 | **Wien** | 81 Kurzparkzonen-Flächen je Bezirk und 796 Geschäftsstraßen-Linien als GeoServer-WFS, 23 Bezirke | **nirgends** — stadtweit ein Tarif, aus der Parkometerabgabeverordnung ausgeliefert | je Fläche und je Streifen, 3 bzw. 23 Schreibweisen | CC **BY 4.0** (WFS nennt noch 3.0 AT) | **geprüft**, angeschlossen — [staedte-wien.md](staedte-wien.md) |

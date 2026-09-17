@@ -471,6 +471,35 @@ dem 6. September angeschlossen, Frankfurt am Main und München seit dem 7. —
 **vier** Städte, umschaltbar in den Einstellungen. Damit sind alle Städte
 angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 
+> **Krakau seit dem 17. September** — die erste Stadt in Polen und die
+> erste der **Klasse C**, Bericht in [staedte-krakau.md](staedte-krakau.md):
+> 23 Sektoren des Obszar Płatnego Parkowania aus dem ArcGIS Online der
+> Stadt (ZTP), nur Grenzen und Podstrefa-Buchstabe, jede Zone mit
+> `scheduleUnknown` — die App sagt „Zeiten unbekannt" und färbt grau. Drei
+> Punkte bleiben:
+>
+> - [ ] **Die Lizenz — du.** Das Item nennt keine Lizenz, nur den Vorbehalt
+>       „ma charakter poglądowy … nie mogą być podstawą do jakichkolwiek
+>       roszczeń". Anfrage an den Zarząd Transportu Publicznego w Krakowie
+>       (ul. Wielopole 1, 31-072 Kraków, sekretariat@ztp.krakow.pl), ob
+>       die Sektorenebenen nachgenutzt werden dürfen und unter welchem
+>       Vermerk. Bis dahin zeigt die App den Banner.
+> - [ ] **Zeiten und Tarif als Modell — ich.** Was der ZDMK nennt (Stand
+>       30. April 2026): Podstrefa A Montag bis Sonntag, B und C Montag bis
+>       Samstag, je 9–22 Uhr; erste Stunde 9/8/7 zł (A/B/C), zweite
+>       10/9/8, dritte 11/10/9, ab der vierten 9/8/7; in A sonntags frei an
+>       Handelssonntagen (niedziele handlowe) und für die Karta Krakowska.
+>       Dafür fehlen dem Modell drei Dinge: eine Währung `PLN` an `Fee`
+>       (heute nur EUR/CHF), eine Staffel statt eines Stundensatzes, und
+>       ein Kalender der Handelssonntage (ustawa z 10 stycznia 2018 r.).
+>       Erst dann kommen die Zeiten als Konstante aus der Uchwała, wie in
+>       Cottbus und Salzburg — vorher wäre „frei um 21 Uhr" eine falsche
+>       Auskunft in Złoty.
+> - [ ] **Sektoren 32 und 33 — von selbst.** Die Ebene 37 führt sie als
+>       geplant (`nC`), die Karte nicht. Kommen sie in `Granice_Stref_2026`,
+>       baut der tägliche Datenbau sie mit; die Zahl in `sources.ts`
+>       (`expectedFeatures: 23`) wächst dann und will nachgezogen werden.
+
 > **Innsbruck seit dem 16. September** — die erste Stadt außerhalb
 > Deutschlands, Bericht in [staedte-innsbruck.md](staedte-innsbruck.md).
 > 21 Parkzonen aus dem ArcGIS Online der Stadt, alles in einem Freitextfeld;

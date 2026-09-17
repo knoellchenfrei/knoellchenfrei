@@ -347,6 +347,20 @@ describe('cityAt', () => {
     expect(cityAt(7.4477, 46.948)?.key).toBe('bern')
   })
 
+  // Krakau ist die erste Stadt in Polen. Der Rahmen kommt aus der
+  // Stadtgrenze (ISDP), nicht aus den 23 Sektoren der Innenstadt: Plac
+  // Centralny in Nowa Huta liegt sechs Kilometer östlich der letzten Zone
+  // und gehört dazu. Wieliczka und Skawina liegen im Rahmen — die Box ist
+  // ein Rechteck um eine Stadt von 43 × 16 Kilometern —, Bochnia und
+  // Myślenice nicht.
+  it('löst den Rynek Główny nach Krakau auf und reicht bis Nowa Huta', () => {
+    expect(cityAt(19.9372, 50.0616)?.key).toBe('krakau')
+    expect(cityAt(20.0373, 50.0722)?.key).toBe('krakau') // Plac Centralny, Nowa Huta
+    expect(cityAt(20.43, 49.969)).toBeUndefined() // Bochnia
+    expect(cityAt(19.937, 49.834)).toBeUndefined() // Myślenice
+    expect(cityCountry(cityByKey('krakau'))).toBe('PL')
+  })
+
   it('nimmt einen Punkt knapp innerhalb jeder Stadt an und weist einen knapp außerhalb ab', () => {
     for (const city of CITIES) {
       const { minLon, minLat, maxLon, maxLat } = city.reportBounds

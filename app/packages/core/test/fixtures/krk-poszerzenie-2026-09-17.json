@@ -1,0 +1,34 @@
+[
+  {
+    "OBJECTID": 1,
+    "Podstrefa_": "C",
+    "Nr_sektora": 23,
+    "Uwagi": "Od 10 sierpnia 2026",
+    "Shape__Area": 425635.5546875,
+    "Shape__Length": 2578.76702251754
+  },
+  {
+    "OBJECTID": 2,
+    "Podstrefa_": "C",
+    "Nr_sektora": 24,
+    "Uwagi": "Od 10 sierpnia 2026",
+    "Shape__Area": 99676.72265625,
+    "Shape__Length": 2006.167218237212
+  },
+  {
+    "OBJECTID": 3,
+    "Podstrefa_": "B",
+    "Nr_sektora": 30,
+    "Uwagi": "Od 10 sierpnia 2026",
+    "Shape__Area": 433441.58203125,
+    "Shape__Length": 3897.029541193611
+  },
+  {
+    "OBJECTID": 4,
+    "Podstrefa_": "C",
+    "Nr_sektora": 31,
+    "Uwagi": "Od 10 sierpnia 2026",
+    "Shape__Area": 723439.31640625,
+    "Shape__Length": 6817.946179254191
+  }
+]

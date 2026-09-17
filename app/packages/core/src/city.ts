@@ -1446,6 +1446,68 @@ export const GENF: City = {
   },
 }
 
+/**
+ * Krakau — die erste Stadt in Polen und die erste der **Klasse C**: Die
+ * Quelle nennt Sektorgrenzen und den Buchstaben der Podstrefa, sonst
+ * nichts. Zeiten und Tarif stehen in der Uchwała LXXXIX/2177/17 der Rada
+ * Miasta Krakowa samt Änderungen und auf den Seiten des Zarząd Dróg Miasta
+ * Krakowa (Podstrefa A täglich, B und C Mo–Sa, je 9–22 Uhr; ansteigend
+ * 9/10/11 zł je Stunde in A) — nichts davon als Konstante, weil das
+ * Modell weder Złoty noch Handelssonntage kennt. Jede Zone trägt
+ * `scheduleUnknown`, die App sagt „Zeiten unbekannt".
+ *
+ * Der Rahmen kommt aus der Stadtgrenze (`Granice_Miasta_Krakowa`, ISDP,
+ * 19,7928–20,2179 / 49,9671–50,1255), nicht aus den Sektoren: Nowa Huta im
+ * Osten und Swoszowice im Süden haben keine Parkzone und gehören trotzdem
+ * dazu. Mit 0,43 × 0,16 Grad ist die Stadt so gross wie Berlin — Zoom 11,5.
+ *
+ * Feiertage: `PL-MA` — alles Bundesrecht (ustawa z 18 stycznia 1951 r. o
+ * dniach wolnych od pracy), keine Woiwodschaftsfeiertage; die Liste der
+ * gebührenfreien Tage des ZDMK ist genau diese (samt Wigilia seit 2025).
+ */
+export const KRAKAU: City = {
+  key: 'krakau',
+  name: 'Krakau',
+  land: 'PL-MA',
+  center: [19.9372, 50.0616],
+  zoom: 11.5,
+  reportBounds: { minLon: 19.79, minLat: 49.96, maxLon: 20.22, maxLat: 50.13 },
+  sessionBounds: { minLon: 19.5, minLat: 49.75, maxLon: 20.5, maxLat: 50.35 },
+  heatGrid: { id: 'krakau', originLon: 19.79, originLat: 49.96, latitude: 50.06 },
+  attribution: {
+    // Wörtlich aus `accessInformation` des Items; der Haftungsvorbehalt aus
+    // `licenseInfo` steht in `licenceOpen`.
+    source: 'Zarząd Transportu Publicznego w Krakowie (Gmina Miejska Kraków), ArcGIS Online der Stadt',
+    // Die Ebene, die der Datenbau wirklich als Flächen liest — die der
+    // amtlichen ZDMK-Karte.
+    datasetUrl:
+      'https://services-eu1.arcgis.com/svTzSt3AvH7sK6q9/arcgis/rest/services/Granice_Stref_2026/FeatureServer/1',
+    licence: 'nicht ausgewiesen',
+    // Die Seite, auf der die Lizenz stehen müsste: der Item-Eintrag des
+    // beschriebenen Datensatzes „Strefa Płatnego Parkowania w Krakowie".
+    licenceUrl: 'https://www.arcgis.com/home/item.html?id=d9e0ef7c33cd4f4a99c4e7d8024d3956',
+    attributionRequired: true,
+    licenceFamily: 'unklar',
+  },
+  licenceOpen:
+    'Der Sektoren-Datensatz des Zarząd Transportu Publicznego w Krakowie nennt keine Lizenz — ' +
+    'nur den Vorbehalt „Warstwa … ma charakter poglądowy. Informacje na niej zawarte nie mogą być ' +
+    'podstawą do jakichkolwiek roszczeń" (die Ebene ist orientierend und kein Anhang der Uchwała). ' +
+    'Ob die Stadt eine Nachnutzung freigibt, muss der ZTP (ul. Wielopole 1, 31-072 Kraków, ' +
+    'sekretariat@ztp.krakow.pl) bestätigen. Stand 17. September 2026.',
+  // Belegt auf der Seite des Zarząd Dróg Miasta Krakowa „Odholowany
+  // samochód – co dalej?": Erst die Straż Miejska (986) sagt, ob und warum
+  // abgeschleppt wurde; die Fahrzeuge stehen auf dem bewachten Parkplatz
+  // ul. Jerzego Turowicza 9, rund um die Uhr, Abholung nur nach Anruf.
+  towedVehicles: {
+    authority: 'Zarząd Dróg Miasta Krakowa — Parking strzeżony, ul. Jerzego Turowicza 9, Kraków',
+    url: 'https://zdmk.krakow.pl/zalatw-sprawe/odholowany-samochod-co-dalej/',
+    phone: '+48 12 616 7502',
+    checkedOn: '2026-09',
+    note: 'Zuerst die Straż Miejska unter 986 fragen, ob das Auto abgeschleppt wurde. Der Parkplatz ist rund um die Uhr besetzt (+48 601 213 722), Abholung nur nach Anruf; Freigabe der anordnenden Stelle mitbringen.',
+  },
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1471,6 +1533,7 @@ export const CITIES: readonly City[] = [
   NIJMEGEN,
   EINDHOVEN,
   GENF,
+  KRAKAU,
 ]
 
 /**

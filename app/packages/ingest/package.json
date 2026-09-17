@@ -25,6 +25,7 @@
     "build-data-npr": "tsx src/build-data-npr.ts",
     "build-data-genf": "tsx src/build-data-genf.ts",
     "build-data-bern": "tsx src/build-data-bern.ts",
+    "build-data-krakau": "tsx src/build-data-krakau.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",
