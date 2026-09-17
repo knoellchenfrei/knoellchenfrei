@@ -2142,6 +2142,27 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "C8",
     "C9",
   ],
+  "strasbourg": [
+    "orange 1",
+    "orange 11",
+    "orange 12",
+    "orange 4",
+    "orange 6",
+    "orange 7",
+    "orange 8",
+    "rouge 10",
+    "rouge 13",
+    "rouge 14",
+    "rouge 17",
+    "rouge 9",
+    "vert 16",
+    "vert 18",
+    "vert 19",
+    "vert 2",
+    "vert 20",
+    "vert 3",
+    "vert 5",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

@@ -2137,6 +2137,27 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "C8": "C8",
     "C9": "C9",
   },
+  "strasbourg": {
+    "orange 1": "orange 1",
+    "orange 11": "orange 11",
+    "orange 12": "orange 12",
+    "orange 4": "orange 4",
+    "orange 6": "orange 6",
+    "orange 7": "orange 7",
+    "orange 8": "orange 8",
+    "rouge 10": "rouge 10",
+    "rouge 13": "rouge 13",
+    "rouge 14": "rouge 14",
+    "rouge 17": "rouge 17",
+    "rouge 9": "rouge 9",
+    "vert 16": "vert 16",
+    "vert 18": "vert 18",
+    "vert 19": "vert 19",
+    "vert 2": "vert 2",
+    "vert 20": "vert 20",
+    "vert 3": "vert 3",
+    "vert 5": "vert 5",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2166,6 +2187,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "eindhoven": 13,
   "genf": 17,
   "krakau": 23,
+  "strasbourg": 19,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

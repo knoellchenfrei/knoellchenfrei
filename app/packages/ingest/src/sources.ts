@@ -1010,6 +1010,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   genf: [],
   // Ebenso Bern: drei Ebenen eines ArcGIS-MapServers, alle über `cityFiles`.
   bern: [],
+  // Straßburg: drei Opendatasoft-Exporte, alle über `cityFiles`.
+  strasbourg: [],
   // Krakau ebenso: drei ArcGIS-Ebenen, alle über `cityFiles`.
   krakau: [],
 }
@@ -1431,7 +1433,58 @@ const KRAKAU_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Ein Opendatasoft-Export als GeoJSON — der Weg für jedes Portal dieser
+ * Bauart (Paris, Toulouse, Nantes, Bordeaux nutzen dieselbe Software).
+ *
+ * `/exports/geojson` liefert die **ganze** Ebene in einer Antwort, ohne
+ * Seitengrenze; `/records` dagegen höchstens 100 je Seite und über `limit`
+ * höchstens 10.000. Am 17. September 2026 nachgemessen: 19 Features,
+ * 93.045 Bytes, `application/json; charset=utf-8`, `[lon, lat]` in Grad —
+ * Opendatasoft liefert GeoJSON immer in WGS84, ein `srsName` gibt es nicht.
+ * `build-data-strasbourg.ts` misst die Grade trotzdem nach.
+ */
+export function odsExportUrl(portal: string, dataset: string): string {
+  return `https://${portal}/api/explore/v2.1/catalog/datasets/${dataset}/exports/geojson`
+}
+
+/**
+ * Straßburg — Ville de Strasbourg über das Opendatasoft-Portal der Ville et
+ * Eurométropole (`data.strasbourg.eu`), Licence Ouverte (Etalab).
+ *
+ * Drei Ebenen, alle als Datei:
+ *
+ * - `stationnement-payant` — „Zones de stationnement payant", 19 Polygone
+ *   mit Farbe und Tarifstaffel; die Zeiten stehen nur in der Beschreibung
+ *   (siehe `core/strasbourg.ts`). Lizenz „Licence Ouverte (Etalab)", also
+ *   die Fassung 1.0.
+ * - `strasbourg-10-quartiers` — „Découpage de la ville de Strasbourg en 10
+ *   quartiers", Eurométropole, Stand 7. Dezember 2018, dieselbe Lizenz. Es
+ *   gibt auch Schnitte in 14, 15, 23 und 28 Quartiere; die zehn sind die
+ *   Gliederung, die die Stadt selbst in „Mon quartier" führt (Robertsau-
+ *   Wacken, Gare-Kléber, Bourse-Esplanade-Krutenau, …).
+ * - `stationnement_residant` — „Zones de stationnement résidant", 15
+ *   Polygone (Licence Ouverte v2.0), nur zur Gegenprobe: Jede Tarifzone
+ *   nennt in `numero_zone_resident` die Bewohnerzone, in der sie liegt, und
+ *   der Datenbau prüft, dass es die gibt.
+ *
+ * Bewusst NICHT abgerufen: `vo_st_stationmnt_vehi` („Le stationnement des
+ * véhicules", 26.851 Stellplatzreihen der ganzen Eurométropole mit
+ * `occupation` payant/gratuit/livraison, aber ohne Tarif und Zeit),
+ * `zfe_emprise` (die ZFE-m der Eurométropole — Crit'Air, nicht die deutsche
+ * Umweltzone, siehe `docs/staedte-strasbourg.md`) und `limites_de_communes`
+ * (nur für den Rahmen gemessen, nicht ausgeliefert).
+ */
+const STRASBOURG_ODS = 'data.strasbourg.eu'
+
+const STRASBOURG_FILES: readonly FileSource[] = [
+  { key: 'zones', url: odsExportUrl(STRASBOURG_ODS, 'stationnement-payant'), file: 'zones.json', expectedFeatures: 19 },
+  { key: 'districts', url: odsExportUrl(STRASBOURG_ODS, 'strasbourg-10-quartiers'), file: 'districts.json', expectedFeatures: 10 },
+  { key: 'residents', url: odsExportUrl(STRASBOURG_ODS, 'stationnement_residant'), file: 'residents.json', expectedFeatures: 15 },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
+  strasbourg: STRASBOURG_FILES,
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
   graz: GRAZ_FILES,
