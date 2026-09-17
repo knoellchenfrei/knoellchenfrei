@@ -1378,6 +1378,15 @@ Was noch offen ist:
 
 ## 9. Kleinkram — **ich**
 
+- [ ] **24 Zeilen in `packages/core` ohne Test — ich.** Gemessen am
+      17. September nach dem Anschluss der 32 Städte: Zeilen 99,3 % (vorher
+      99,9 %), Zweige 93,7 %, Funktionen 99,8 %; die Schwellen halten. Offen
+      sind Abwehrzweige in den Stadtparsern `rostock.ts` (4), `karlsruhe.ts`
+      (4), `npr.ts` (5), `cottbus.ts`, `duesseldorf.ts`, `freiburg.ts` (je 2),
+      `heatmap.ts`, `innsbruck.ts`, `muenchen.ts`, `schwerin.ts` (je 1) — je
+      ein Test mit der Eingabe, die den Zweig nimmt, und die Zahl steht
+      wieder. `pnpm --filter @knoellchenfrei/core test:coverage` nennt sie.
+
 - [ ] **Rückwärtstest der Langzeitmuster lesen, sobald zwei abgeschlossene
       Quartale vorliegen** (frühestens April 2027): `guete` auf der
       Statistikseite und in `/patterns?city=`. Ist `skillProfile` positiv,

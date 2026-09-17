@@ -33,7 +33,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 cd app
 pnpm -r typecheck                                   # alles, streng
 pnpm test                                           # 2394 Unit-Tests (core, api, web, ingest)
-pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,9 % Zeilen)
+pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,3 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
 cd apps/web && npx playwright test                  # 234 End-to-End-Tests, rund 9 Minuten

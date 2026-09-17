@@ -315,7 +315,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 | --- | --- |
 | Unit-Tests | 2394 — 1828 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 331 für die Web-App, 134 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 82 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 234 über Desktop und Handy, gegen den Produktions-Build, rund neun Minuten; 222 bestehen, zwölf überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, elf auf dem Gerät, für das sie nicht gedacht sind |
-| Coverage | 99,9 % Zeilen, 96,3 % Zweige, 100 % Funktionen (`packages/core`) |
+| Coverage | 99,3 % Zeilen, 93,7 % Zweige, 99,8 % Funktionen (`packages/core`, gemessen am 17. September nach 32 Städten; die 24 offenen Zeilen stehen in `docs/todo.md`, Abschnitt 9) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
 | Abhängigkeiten | `pnpm audit`: keine bekannten Lücken. Aktuell gehalten von **Dependabot** — wöchentlich, Minor und Patch gebündelt, Hauptversionen einzeln, mit Wartezeit gegen übernommene Paketpflegerschaften. Konfiguration und der pnpm-Fallstrick dahinter: [`.github/dependabot.yml`](.github/dependabot.yml). |
 
