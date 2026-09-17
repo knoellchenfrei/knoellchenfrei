@@ -15,6 +15,9 @@
 > [staedte-zuerich.md](staedte-zuerich.md).
 > Seit dem 17. September Wien, die erste Stadt außerhalb Deutschlands:
 > [staedte-wien.md](staedte-wien.md).
+> Seit dem 17. September die **Niederlande** als Land — Utrecht, Den Haag,
+> Rotterdam, Groningen, Nijmegen, Eindhoven aus einer Quelle, ein Bericht:
+> [staedte-niederlande.md](staedte-niederlande.md).
 > Dieses Dokument hieß einmal „Zweite
 > [staedte-karlsruhe.md](staedte-karlsruhe.md) — und seit dem 16. September
 > Schwerin, [staedte-schwerin.md](staedte-schwerin.md). Dieses Dokument hieß einmal „Zweite
@@ -213,6 +216,7 @@ Sortiert nach Aussicht auf Erfolg, nicht nach Einwohnerzahl.
 | **Stuttgart** | Geoportal mit ausgewiesenen Open-Data-Beständen | offen | offen | ausgewiesen | **Hinweis** |
 | **Leipzig, Dresden** | eigene Open-Data-Portale vorhanden | offen | offen | offen | **Hinweis** |
 | **Köln** | Portal vorhanden, Parkdatensatz nicht nachgewiesen | offen | offen | offen | **Hinweis** |
+| **Niederlande: Utrecht, Den Haag, Rotterdam, Groningen, Nijmegen, Eindhoven** | Nationaal Parkeer Register (RDW), acht Socrata-Tabellen, Gebiete als WKT | je Fenster als Staffel (Betrag je Schrittweite) | je Regelung und Tagestyp, als `900`/`2100` — Feiertage in der Quelle | CC0 | **geprüft**, [ein Bericht für alle sechs](staedte-niederlande.md) |
 | **Cottbus** | 5 Bewohnerparkzonen und 44 Automaten als ArcGIS FeatureServer | je Automat, als Zahl — **Stand 2014**, die Ordnung von 2025 wird ausgeliefert | je Automat, sechs Felder — ebenfalls Stand 2014 | DL-DE/**Namensnennung** 2.0 | **geprüft**, [eigener Bericht](staedte-cottbus.md) |
 | **Schwerin** | 15 Bewohnerparkzonen und 143 Parkscheinautomaten als WFS (nur GML, nur EPSG:25833) | je Automat, als „2.50 Euro je Std." | je Automat, fünf Schreibweisen | DL-DE/**Namensnennung** 2.0 | **geprüft** — [staedte-schwerin.md](staedte-schwerin.md) |
 | **Innsbruck** | 21 Parkzonen als ArcGIS-FeatureServer (geoHub der Stadt) | im Freitext `INFO`, je halbe Stunde, mit Dezimalpunkt | im selben Freitext, vier Schreibweisen | Nutzungsbedingung der Stadt, „vergleichbar mit CC BY 4.0" | **geprüft**, angeschlossen am 16. September — [staedte-innsbruck.md](staedte-innsbruck.md) |

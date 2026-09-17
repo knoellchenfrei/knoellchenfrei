@@ -1,0 +1,58 @@
+[
+ {
+  "areamanagerid": "344",
+  "areaid": "10100",
+  "startdatearearegulation": "20130522120359",
+  "regulationid": "REG03",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "BETAALDP"
+ },
+ {
+  "areamanagerid": "344",
+  "areaid": "V10100",
+  "startdatearearegulation": "20130131140027",
+  "regulationid": "VGEB03",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "VERGUNP"
+ },
+ {
+  "areamanagerid": "599",
+  "areaid": "S1",
+  "startdatearearegulation": "20170517142006",
+  "regulationid": "599_BP_R1",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "BEZOEKP"
+ },
+ {
+  "areamanagerid": "599",
+  "areaid": "599_BEVER",
+  "startdatearearegulation": "20140101000000",
+  "regulationid": "599_PR",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "PARKRIDE"
+ },
+ {
+  "areamanagerid": "772",
+  "areaid": "111ACHTERO",
+  "startdatearearegulation": "20190708124839",
+  "regulationid": "REG18",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "VERGUNP"
+ },
+ {
+  "areamanagerid": "518",
+  "areaid": "518_HELIC",
+  "startdatearearegulation": "20221230102401",
+  "regulationid": "G2",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "GARAGEP"
+ },
+ {
+  "areamanagerid": "344",
+  "areaid": "21400",
+  "startdatearearegulation": "20261101000000",
+  "regulationid": "REG08",
+  "enddatearearegulation": "29991231235959",
+  "usageid": "BETAALDP"
+ }
+]

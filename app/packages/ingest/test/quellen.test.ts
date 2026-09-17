@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { CITIES } from '@knoellchenfrei/core'
 
-import { arcgisQueryUrl, cityFiles, citySources, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { NPR_AREA_MANAGERS, NPR_TABLES, arcgisQueryUrl, cityFiles, citySources, nprFiles, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in
@@ -217,5 +217,35 @@ describe('die Wiener Quellen', () => {
       expect(quelle.expectedFeatures).toBeGreaterThan(0)
     }
     expect(quellen.map((q) => q.expectedFeatures)).toEqual([81, 796, 23])
+  })
+})
+
+describe('nprFiles', () => {
+  it('holt für jede niederländische Stadt alle acht Tabellen mit Gemeindecode, Limit und Ordnung', () => {
+    for (const [stadt, code] of Object.entries(NPR_AREA_MANAGERS)) {
+      const dateien = cityFiles(stadt)
+      expect(dateien.map((datei) => datei.key), stadt).toEqual(NPR_TABLES.map((table) => table.key))
+      for (const datei of dateien) {
+        const url = new URL(datei.url)
+        expect(url.hostname).toBe('opendata.rdw.nl')
+        expect(url.searchParams.get('$where')).toBe(`areamanagerid='${code}'`)
+        expect(url.searchParams.get('$limit')).toBe('50000')
+        expect(url.searchParams.get('$order')).toBe(':id')
+        expect(url.searchParams.has('areamanagerid')).toBe(false)
+        expect(datei.paginate?.pageSize).toBe(50_000)
+        expect(datei.expectedFeatures, datei.key).toBeGreaterThanOrEqual(0)
+        expect(datei.file).toBe(`${datei.key}.json`)
+      }
+      // Die Stadtteile kommen als WFS von PDOK, gefiltert auf die Gemeinde.
+      const wfs = citySources(stadt)
+      expect(wfs.map((quelle) => quelle.key)).toEqual(['districts'])
+      const url = new URL(wfsUrl(wfs[0] as (typeof wfs)[number]))
+      expect(url.searchParams.get('filter')).toContain(`<Literal>GM${code.padStart(4, '0')}</Literal>`)
+    }
+  })
+
+  it('weist einen Gemeindecode ab, der keiner ist, und eine Messlatte je Tabelle zu wenig', () => {
+    expect(() => nprFiles('GM0344', [1, 1, 1, 1, 1, 1, 1, 1])).toThrow()
+    expect(() => nprFiles('344', [1, 1, 1])).toThrow()
   })
 })

@@ -88,6 +88,15 @@ import {
   parseZuerichTariffZone,
 } from '../src/zuerich.js'
 import { WienParseError, parseWienMaxStay, parseWienSchedule, wienAreaKey, wienStripKey } from '../src/wien.js'
+import {
+  NprParseError,
+  nprDateKey,
+  parseNprFare,
+  parseNprMaxDuration,
+  parseNprTime,
+  parseNprTimeFrame,
+  parseNprWkt,
+} from '../src/npr.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -351,6 +360,45 @@ describe('Zeitparser unter Beschuss', () => {
   })
 })
 
+describe('NPR unter Beschuss', () => {
+  // Das NPR hat keinen Satz zu zerlegen, aber vier Felder, die Zahlen sein
+  // sollen und aus einer fremden Tabelle kommen. Jedes wird einzeln und im
+  // Verbund beschossen; Datumsprüfung und WKT dazu.
+  it('Zeiten und Fenster werfen nur NprParseError und liefern nur gültige Fenster', () => {
+    fuzz(20260917, 40, NprParseError, (input) => {
+      parseNprTime(input)
+      const frame = parseNprTimeFrame({ daytimeframe: 'MAANDAG', starttimetimeframe: input, endtimetimeframe: '2100' })
+      expect(frame.fromMinute).toBeLessThan(frame.toMinute)
+      parseNprTimeFrame({ daytimeframe: input, starttimetimeframe: '900', endtimetimeframe: input, maxdurationright: input })
+    })
+  })
+
+  it('Datum, Höchstdauer und WKT werfen nur NprParseError', () => {
+    fuzz(20260918, 60, NprParseError, (input) => {
+      const key = nprDateKey(input)
+      if (key !== null) expect(key).toMatch(/^\d{8}$/)
+      const minutes = parseNprMaxDuration(input)
+      if (minutes !== undefined) expect(minutes).toBeGreaterThan(0)
+      parseNprWkt(`POLYGON ((${input}))`)
+      parseNprWkt(input)
+    })
+  })
+
+  it('Tarifteile werfen nur NprParseError und beziffern nie eine Null', () => {
+    fuzz(20260919, 40, NprParseError, (input) => {
+      const fare = parseNprFare([
+        { startdurationfarepart: '0', enddurationfarepart: '999999', amountfarepart: input, stepsizefarepart: '1' },
+      ])
+      if (fare.kind !== 'free') expectValidFee(fare.fee, input)
+      const staffel = parseNprFare([
+        { startdurationfarepart: '0', enddurationfarepart: input, amountfarepart: '0.20', stepsizefarepart: input },
+        { startdurationfarepart: input, enddurationfarepart: '999999', amountfarepart: '0.56', stepsizefarepart: '15' },
+      ])
+      if (staffel.kind !== 'free') expectValidFee(staffel.fee, input)
+    })
+  })
+})
+
 describe('Gebührenparser unter Beschuss', () => {
   it('Berlin wirft nur FeeParseError und beziffert nie eine Null', () => {
     fuzz(20260911, 100, FeeParseError, (input) => {
@@ -545,6 +593,9 @@ describe('Zeitbudget', () => {
       parseZuerichMeterTariff,
       parseWienSchedule,
       parseWienMaxStay,
+      parseNprTime,
+      nprDateKey,
+      (input) => parseNprWkt(`POLYGON ((${input}))`),
     ]
     const started = performance.now()
     for (const input of inputs) {

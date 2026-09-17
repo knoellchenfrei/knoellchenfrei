@@ -1,0 +1,44 @@
+[
+ {
+  "areamanagerid": "344",
+  "areaid": "10100",
+  "areadesc": "Nieuw Welgelegen",
+  "startdatearea": "20111118",
+  "enddatearea": "29991231"
+ },
+ {
+  "areamanagerid": "518",
+  "areaid": "T01",
+  "areadesc": "Centrum - Rand",
+  "startdatearea": "20150831",
+  "enddatearea": "29991231"
+ },
+ {
+  "areamanagerid": "599",
+  "areaid": "10",
+  "areadesc": "Zone 10",
+  "startdatearea": "20140101",
+  "enddatearea": "29991231"
+ },
+ {
+  "areamanagerid": "14",
+  "areaid": "3001",
+  "areadesc": "Binnenstad Diepenring 1",
+  "startdatearea": "20150701",
+  "enddatearea": "29991231"
+ },
+ {
+  "areamanagerid": "268",
+  "areaid": "ZONE_CEN",
+  "areadesc": "Centrum",
+  "startdatearea": "20240925",
+  "enddatearea": "29991231"
+ },
+ {
+  "areamanagerid": "772",
+  "areaid": "A11",
+  "areadesc": "Centrum - uurtarief A",
+  "startdatearea": "20190527",
+  "enddatearea": "29991231"
+ }
+]

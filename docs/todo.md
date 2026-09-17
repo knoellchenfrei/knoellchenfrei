@@ -534,6 +534,15 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > überstimmen; Tarif aus der Parkometerabgabeverordnung, Lizenz CC BY 4.0.
 > Offen: die 3.0-AT-Angabe im WFS, ein Satz der Stadt zu Feiertagen, die
 > Abend-Kurzparkzone Stadthalle — im Bericht unter „Was offen bleibt".
+> **Angeschlossen am 17. September: die Niederlande als Land** — Utrecht,
+> Den Haag, Rotterdam, Groningen, Nijmegen und Eindhoven aus dem Nationaal
+> Parkeer Register der RDW (CC0), ein Parser, ein Datenbau, die Stadt als
+> Parameter ([staedte-niederlande.md](staedte-niederlande.md)). Neu dabei:
+> `FileSource.paginate` für Socrata, `Source.filter` für PDOK, und
+> `freeOnHolidays` im Web-Typ, weil die Quelle an Feiertagen kassiert.
+> Offen, gewichtet: die Vergunninggebiete (in Eindhoven fast die ganze
+> Stadt, ohne Besuchertarif — heute „außerhalb der Zonen"), Koningsdag in
+> fünf Gemeinden nicht in der Quelle, Ereignistage nur genannt.
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

@@ -603,6 +603,49 @@ Anrainerparkplätze), `PARKENAUTOMATOGD` (206 Verkaufsstellen der Wiener
 Linien, keine Automaten am Straßenrand). Keine Umweltzone, keine POI.
 Vollständiger Bericht in [staedte-wien.md](staedte-wien.md).
 
+## Verwendet — Niederlande (Utrecht, Den Haag, Rotterdam, Groningen, Nijmegen, Eindhoven)
+
+Abgerufen am 17. September 2026 von der **RDW**, „Open Data Parkeren" auf
+`opendata.rdw.nl` — das Nationaal Parkeer Register (NPR), eine Socrata-
+Instanz mit acht Tabellen, die über `areamanagerid` (= CBS-Gemeindecode)
+zusammenhängen. Die Stadt ist ein Parameter, der Datenbau
+(`build-data-npr.ts`) für alle sechs derselbe:
+
+| Tabelle | Kennung | Inhalt |
+| --- | --- | --- |
+| GEBIED | `adw6-9hsg` | Gebiete mit Beschreibung und Gültigkeit |
+| GEOMETRIE GEBIED | `nsk3-v9n7` | WKT `POLYGON`/`MULTIPOLYGON` in EPSG:4326, versioniert |
+| GEBIED REGELING | `qtex-qwd8` | Regelung je Gebiet, Nutzungszweck (`BETAALDP`, `VERGUNP`, …) |
+| REGELING | `yefi-qfiq` | Basis- (`B`) und Zusatzregelungen (`A`) |
+| TIJDVAK | `ixf8-gtwq` | Zeitfenster je Tagestyp als `900`/`2100`, Tarifcode, Höchstdauer |
+| TARIEFDEEL | `534e-5vdg` | Tarifstaffel: Betrag je Schrittweite von–bis Minute |
+| TARIEFBEREKENING | `nfzq-8g7y` | Klartext des Tarifs |
+| SPECIALE DAG | `hpi4-mynq` | Feiertage und Ereignistage je Gemeinde |
+
+**Lizenz: [Creative Commons Zero 1.0](https://creativecommons.org/publicdomain/zero/1.0/).**
+Metadatenfeld jeder Tabelle: `Licentie: Creative Commons 0 (CC0)`; die
+Socrata-Felder `license` und `attribution` sind leer. Stadtteile aus den
+**CBS Wijken en Buurten 2024** über PDOK (`service.pdok.nl/cbs/wijkenbuurten`),
+laut `ows:AccessConstraints` ebenfalls CC0.
+
+Drei Dinge, die man erst in den Daten sieht:
+
+- **Jede Zeile trägt Gültigkeit, in drei Datumsformaten.** `20150501`,
+  `20150501000000`, `2015-05-01T00:00:00.000`; offen ist `29991231`,
+  `2099-01-01` oder fehlend. Rotterdams TIJDVAK hat 5.425 Zeilen, 1.341 gelten.
+- **Der Feiertagskalender liegt in der Quelle** — und ist je Gemeinde anders
+  gepflegt: Rotterdam und Groningen führen 2026, Utrecht und Eindhoven enden
+  2022, Den Haag hat gar keine Zeile. Wo die Quelle keinen Sondertag kennt,
+  gilt der Wochentag, und die Zone trägt `freeOnHolidays: false`.
+- **Der Tarif ist eine Staffel.** `0.08900000` je Minute ist 5,34 €/h;
+  Eindhovens „0,30 starttarief, 4,50 per uur" sind drei Teile. Der Parser
+  rechnet die ersten drei Stunden und liefert `exact` nur, wenn sie gleich sind.
+
+Nicht ausgeliefert: Vergunninggebiete (`VERGUNP`, Fenster ohne Tarif),
+Bezoekersregelungen, Garagen, P+R, Amsterdam und Maastricht (Geometrie
+unvollständig). Vollständiger Bericht in
+[staedte-niederlande.md](staedte-niederlande.md).
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

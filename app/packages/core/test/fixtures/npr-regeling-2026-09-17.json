@@ -1,0 +1,42 @@
+[
+ {
+  "areamanagerid": "344",
+  "regulationid": "REG03",
+  "regulationdesc": "Tariefgroep 3 09.00-21.00",
+  "startdateregulation": "20111014",
+  "enddateregulation": "29991231",
+  "regulationtype": "B"
+ },
+ {
+  "areamanagerid": "344",
+  "regulationid": "AKG1",
+  "regulationdesc": "Avondkaart Garage 1",
+  "startdateregulation": "20170828",
+  "enddateregulation": "29991231",
+  "regulationtype": "A"
+ },
+ {
+  "areamanagerid": "599",
+  "regulationid": "599_REG27",
+  "regulationdesc": "ma-do 9-23, vr-za 9-1, zo 12-23 hoogtarief",
+  "startdateregulation": "20180119",
+  "enddateregulation": "29991231",
+  "regulationtype": "B"
+ },
+ {
+  "areamanagerid": "518",
+  "regulationid": "R03",
+  "regulationdesc": "ma/za 9/24, zo 13/24 2,75",
+  "startdateregulation": "20150916",
+  "enddateregulation": "29991231",
+  "regulationtype": "B"
+ },
+ {
+  "areamanagerid": "772",
+  "regulationid": "AUTO-NPR",
+  "regulationdesc": "Door NPR gegenereerde regeling",
+  "startdateregulation": "20130919",
+  "enddateregulation": "29991231",
+  "regulationtype": "B"
+ }
+]

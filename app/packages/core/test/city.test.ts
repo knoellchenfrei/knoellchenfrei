@@ -8,6 +8,12 @@ import {
   CITIES,
   COTTBUS,
   ZUERICH,
+  DENHAAG,
+  EINDHOVEN,
+  GRONINGEN,
+  NIJMEGEN,
+  ROTTERDAM,
+  UTRECHT,
   cityAt,
   cityByKey,
   FRANKFURT,
@@ -553,7 +559,10 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // das Feld, und die App zeigt den Abschnitt nicht — eine Nummer aus zweiter
   // Hand wäre schlechter als keine. Die Liste ist ausdrücklich, damit ein
   // vergessenes Feld bei einer neuen Stadt weiter auffällt.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich'])
+  // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
+  // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
+  // haben eine gelesene Seite mit Nummer.
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
@@ -748,5 +757,65 @@ describe('Wien', () => {
     expect(WIEN.heatGrid.id).toBe('wien')
     expect(WIEN.heatGrid.originLon).toBe(WIEN.reportBounds.minLon)
     expect(WIEN.heatGrid.originLat).toBe(WIEN.reportBounds.minLat)
+  })
+})
+
+/**
+ * Die Niederlande — sechs Städte aus dem Nationaal Parkeer Register. Die
+ * Rahmen kommen aus den Gemeindegrenzen (PDOK), und zwei davon grenzen fast
+ * aneinander: Rotterdams Nordkante (Hoek van Holland) liegt 1,1 km unter Den
+ * Haags Südkante. Der Paar-Test oben hält sie auseinander; hier steht, dass
+ * jede Stadt ihre eigenen Orte behält.
+ */
+describe('Niederlande', () => {
+  const NL = [UTRECHT, DENHAAG, ROTTERDAM, GRONINGEN, NIJMEGEN, EINDHOVEN]
+
+  it('nimmt je Stadt einen bekannten Platz an und für die Nachbarn nicht', () => {
+    const plaetze: [typeof UTRECHT, number, number][] = [
+      [UTRECHT, 5.1214, 52.0907], // Domplein
+      [DENHAAG, 4.3132, 52.0797], // Binnenhof
+      [ROTTERDAM, 4.4869, 51.92], // Markthal
+      [GRONINGEN, 6.5665, 53.2194], // Grote Markt
+      [NIJMEGEN, 5.8635, 51.8446], // Grote Markt
+      [EINDHOVEN, 5.4788, 51.436], // Stratumseind
+    ]
+    for (const [city, lon, lat] of plaetze) {
+      expect(withinCity(city, lon, lat), city.key).toBe(true)
+      expect(cityAt(lon, lat)?.key, city.key).toBe(city.key)
+      for (const other of NL) if (other !== city) expect(withinCity(other, lon, lat), `${other.key} / ${city.key}`).toBe(false)
+    }
+  })
+
+  it('gibt Hoek van Holland Rotterdam und Kijkduin Den Haag', () => {
+    expect(cityAt(4.1339, 51.9783)?.key).toBe('rotterdam') // Hoek van Holland, Bahnhof
+    expect(cityAt(4.2195, 52.0703)?.key).toBe('denhaag') // Kijkduin
+    expect(cityAt(4.2977, 52.1053)?.key).toBe('denhaag') // Scheveningen, Kurhaus
+  })
+
+  it('hängt jede Stadt an ihr Landeskürzel und damit an den NL-Kalender', () => {
+    expect(NL.map((city) => city.land)).toEqual(['NL-UT', 'NL-ZH', 'NL-ZH', 'NL-GR', 'NL-GE', 'NL-NB'])
+    for (const city of NL) {
+      expect(cityCountry(city)).toBe('NL')
+      // Die Feiertage liegen in der Quelle; kein fester Stadtfeiertag.
+      expect(city.holidays, city.key).toBeUndefined()
+    }
+  })
+
+  it('führt für alle sechs dieselbe Quelle unter CC0, je Stadt mit eigener Abfrage', () => {
+    for (const city of NL) {
+      expect(city.attribution.licenceFamily, city.key).toBe('cc0')
+      expect(city.attribution.attributionRequired, city.key).toBe(false)
+      expect(city.attribution.source).toContain('Nationaal Parkeer Register')
+      expect(city.attribution.datasetUrl).toMatch(/^https:\/\/opendata\.rdw\.nl\/resource\/adw6-9hsg\.json\?\$where=areamanagerid='\d+'$/)
+    }
+    expect(new Set(NL.map((city) => city.attribution.datasetUrl)).size).toBe(6)
+  })
+
+  it('nennt in Utrecht und Rotterdam die belegte Stelle, sonst keine', () => {
+    expect(UTRECHT.towedVehicles?.phone).toBe('+31 30 241 5060')
+    expect(UTRECHT.towedVehicles?.url).toContain('utrecht.nl')
+    expect(ROTTERDAM.towedVehicles?.phone).toBe('+31 15 251 13 51')
+    expect(ROTTERDAM.towedVehicles?.url).toContain('rotterdam.nl')
+    expect(DENHAAG.towedVehicles).toBeUndefined()
   })
 })

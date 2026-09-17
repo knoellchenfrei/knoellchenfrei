@@ -57,6 +57,12 @@ export interface Source {
    * Datenbau prüft dann mit `assertUtm`, dass wirklich Meter ankommen.
    */
   srsName?: string
+  /**
+   * Ein OGC-Filter (XML, unkodiert) — nur für Dienste, die ganze Länder
+   * führen. PDOKs CBS-Wijken liegen für alle 342 Gemeinden in einer Ebene;
+   * ohne Filter kämen 3.000 Wijken statt der zehn Utrechter.
+   */
+  filter?: string
 }
 
 const BERLIN_WFS = 'https://gdi.berlin.de/services/wfs'
@@ -945,6 +951,34 @@ const WIEN_SOURCES: readonly Source[] = [
     ...WIEN_DEFAULTS,
   },
 ]
+/**
+ * Niederlande — je Stadt die Stadtteile (Wijken) des CBS über PDOK, sonst
+ * nichts per WFS: Die Parkdaten kommen aus dem NPR, siehe `nprFiles` unten.
+ *
+ * Dienst: `service.pdok.nl/cbs/wijkenbuurten/2024/wfs/v1_0`, Typ
+ * `wijkenbuurten:wijken`, gefiltert über `gemeentecode` (`GM0344`). Gemessen
+ * am 17. September 2026: mit `urn:ogc:def:crs:EPSG::4326` antwortet der
+ * Dienst in `[lon, lat]` (`[5.018, 52.062]`), `application/json` liefert
+ * GeoJSON. Lizenz laut `ows:AccessConstraints` der Capabilities:
+ * `https://creativecommons.org/publicdomain/zero/1.0/deed.nl` — CC0. Den
+ * Haag und Rotterdam führen je ein Wijk „Groot water" (`water: JA`), das der
+ * Datenbau auslässt.
+ */
+const PDOK_WIJKEN = 'https://service.pdok.nl/cbs/wijkenbuurten/2024/wfs/v1_0'
+
+function pdokWijken(gemeentecode: string, expectedFeatures: number): Source {
+  return {
+    key: 'districts',
+    service: PDOK_WIJKEN,
+    typeName: 'wijkenbuurten:wijken',
+    expectedFeatures,
+    outputFormat: 'application/json',
+    axisOrder: 'lon,lat',
+    filter:
+      '<Filter><PropertyIsEqualTo><ValueReference>gemeentecode</ValueReference>' +
+      `<Literal>GM${gemeentecode}</Literal></PropertyIsEqualTo></Filter>`,
+  }
+}
 
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
@@ -966,6 +1000,12 @@ const BY_CITY: Record<string, readonly Source[]> = {
   innsbruck: [],
   zuerich: ZUERICH_SOURCES,
   wien: WIEN_SOURCES,
+  utrecht: [pdokWijken('0344', 10)],
+  denhaag: [pdokWijken('0518', 45)],
+  rotterdam: [pdokWijken('0599', 22)],
+  groningen: [pdokWijken('0014', 20)],
+  nijmegen: [pdokWijken('0268', 9)],
+  eindhoven: [pdokWijken('0772', 20)],
 }
 
 /**
@@ -1002,6 +1042,14 @@ export interface FileSource {
    * Messlatte, an der ein leerer oder halber Abruf auffällt.
    */
   expectedFeatures?: number
+  /**
+   * Socrata liefert ohne `$limit` 1.000 Zeilen und sagt es nicht; mit
+   * `$limit` höchstens so viele, wie hier stehen. `fetch.ts` hängt `$offset`
+   * an und holt weiter, bis eine Seite kürzer ist — und zählt die Zeilen
+   * gegen `expectedFeatures`, denn eine NPR-Antwort ist ein JSON-Array ohne
+   * `features`.
+   */
+  paginate?: { pageSize: number }
 }
 
 const KOELN_FILES: readonly FileSource[] = [
@@ -1167,6 +1215,74 @@ const ZUERICH_FILES: readonly FileSource[] = [
     expectedFeatures: 34,
   },
 ]
+/**
+ * Niederlande — das Nationaal Parkeer Register (NPR) der RDW, „Open Data
+ * Parkeren" auf `opendata.rdw.nl` (Socrata/SODA), CC0, täglich.
+ *
+ * Eine Quelle für alle niederländischen Städte: Acht Tabellen, alle über
+ * `areamanagerid` (= CBS-Gemeindecode ohne führende Nullen) verknüpft. Vier
+ * Fallen, alle gemessen am 16. und 17. September 2026:
+ *
+ *  1. Ein einfacher Filter (`?areamanagerid=363`) **zusammen** mit `$where`
+ *     lieferte Zeilen anderer Gemeinden — alles steht in `$where`.
+ *  2. Ohne `$limit` kommen 1.000 Zeilen, ohne Hinweis. Rotterdams TIJDVAK hat
+ *     5.425. Deshalb `$limit=50000` **und** `paginate`, weil 50.000 die
+ *     Obergrenze von SODA 2.0 ist.
+ *  3. `$order=:id` macht die Seiten stabil; ohne Sortierung darf Socrata
+ *     zwischen zwei Seiten umsortieren.
+ *  4. Gültigkeit wird **nicht** hier gefiltert, sondern im Datenbau: Der
+ *     Abzug trägt alle Fassungen samt der schon eingetragenen künftigen
+ *     (Utrecht: Gebiet 21400 mit REG08 ab dem 1. November), und der Datenbau
+ *     entscheidet am Tag des Laufs, was gilt. Ein Abzug, der schon gefiltert
+ *     wäre, ließe sich nicht mehr nachprüfen.
+ *
+ * `expectedFeatures` ist die Zeilenzahl **aller** Fassungen je Tabelle,
+ * gemessen am 17. September 2026; sie wächst mit jeder Änderung der
+ * Gemeinde und sinkt nie — deshalb taugt sie als Messlatte.
+ */
+const NPR_SODA = 'https://opendata.rdw.nl/resource'
+
+export interface NprTable {
+  key: string
+  /** Socrata-Kennung der Tabelle. */
+  id: string
+}
+
+export const NPR_TABLES: readonly NprTable[] = [
+  { key: 'npr-gebied', id: 'adw6-9hsg' },
+  { key: 'npr-geometrie', id: 'nsk3-v9n7' },
+  { key: 'npr-gebiedregeling', id: 'qtex-qwd8' },
+  { key: 'npr-regeling', id: 'yefi-qfiq' },
+  { key: 'npr-tijdvak', id: 'ixf8-gtwq' },
+  { key: 'npr-tariefdeel', id: '534e-5vdg' },
+  { key: 'npr-tariefberekening', id: 'nfzq-8g7y' },
+  { key: 'npr-specialedag', id: 'hpi4-mynq' },
+]
+
+/** Die acht Tabellen einer Gemeinde; `expected` in der Reihenfolge von `NPR_TABLES`. */
+export function nprFiles(areaManagerId: string, expected: readonly number[]): readonly FileSource[] {
+  if (!/^\d{1,4}$/.test(areaManagerId)) throw new Error(`Kein Gemeindecode: ${areaManagerId}`)
+  if (expected.length !== NPR_TABLES.length) {
+    throw new Error(`${expected.length} Messlatten für ${NPR_TABLES.length} Tabellen`)
+  }
+  return NPR_TABLES.map((table, index) => ({
+    key: table.key,
+    url: `${NPR_SODA}/${table.id}.json?$where=areamanagerid='${areaManagerId}'&$limit=50000&$order=:id`,
+    file: `${table.key}.json`,
+    expectedFeatures: expected[index] as number,
+    paginate: { pageSize: 50_000 },
+  }))
+}
+
+/** CBS-Gemeindecode je Stadt — der Schlüssel des NPR und der Wijken zugleich. */
+export const NPR_AREA_MANAGERS: Readonly<Record<string, string>> = {
+  utrecht: '344',
+  denhaag: '518',
+  rotterdam: '599',
+  groningen: '14',
+  nijmegen: '268',
+  eindhoven: '772',
+}
 
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
@@ -1174,6 +1290,12 @@ const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   graz: GRAZ_FILES,
   innsbruck: INNSBRUCK_FILES,
   zuerich: ZUERICH_FILES,
+  utrecht: nprFiles('344', [496, 362, 760, 56, 1112, 343, 38, 102]),
+  denhaag: nprFiles('518', [515, 239, 804, 198, 2866, 119, 44, 0]),
+  rotterdam: nprFiles('599', [360, 243, 688, 132, 5425, 196, 43, 411]),
+  groningen: nprFiles('14', [235, 74, 342, 82, 1076, 104, 39, 22]),
+  nijmegen: nprFiles('268', [89, 58, 168, 66, 1364, 108, 48, 74]),
+  eindhoven: nprFiles('772', [328, 328, 372, 101, 990, 261, 44, 44]),
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */
@@ -1213,6 +1335,7 @@ export function wfsUrl(source: Source): string {
     outputFormat: source.outputFormat,
     srsName: source.srsName ?? 'urn:ogc:def:crs:EPSG::4326',
   })
+  if (source.filter !== undefined) params.set('filter', source.filter)
   return `${source.service}?${params}`
 }
 

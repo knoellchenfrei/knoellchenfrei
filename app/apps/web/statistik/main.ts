@@ -54,6 +54,12 @@ const STADTNAMEN: Record<string, string> = {
   innsbruck: 'Innsbruck',
   zuerich: 'Zürich',
   wien: 'Wien',
+  utrecht: 'Utrecht',
+  denhaag: 'Den Haag',
+  rotterdam: 'Rotterdam',
+  groningen: 'Groningen',
+  nijmegen: 'Nijmegen',
+  eindhoven: 'Eindhoven',
 }
 
 async function musterLaden(city: string): Promise<MusterStand | null> {
