@@ -611,7 +611,7 @@ describe('Salzburg als Stadt', () => {
   it('findet den Residenzplatz und nicht Hallein oder Wien', () => {
     expect(cityAt(13.0466, 47.7982)).toBe(SALZBURG)
     expect(cityAt(13.1, 47.683)).toBeUndefined() // Hallein
-    expect(cityAt(16.3738, 48.2082)).toBeUndefined() // Wien
+    expect(cityAt(16.3738, 48.2082)?.key).toBe('wien') // Wien ist seit demselben Tag selbst da
     expect(cityAt(11.5755, 48.1372)?.key).toBe('muenchen')
   })
 

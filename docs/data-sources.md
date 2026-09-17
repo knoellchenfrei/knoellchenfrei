@@ -560,6 +560,49 @@ Punkte, Güterumschlag), `geo_behindertenparkplaetze` (Stand 2017),
 `geo_stadtkreise` (die Quartiere tragen den Kreis). Keine Umweltzone (die
 Schweiz kennt keine), keine POI. `meta.json` führt alles unter `absent`.
 
+## Verwendet — Wien
+
+Abgerufen am 17. September 2026 von der **Stadt Wien** (Open Government Data
+Wien) über den GeoServer-WFS `https://data.wien.gv.at/daten/geo`, WFS 2.0.0,
+Arbeitsbereich `ogdwien`, als `application/json` mit
+`srsName=urn:ogc:def:crs:EPSG::4326` — die erste Quelle außerhalb Deutschlands.
+
+| Ebene | Typname | Umfang |
+| --- | --- | --- |
+| Kurzparkzone (Fläche) — die flächendeckenden Kurzparkzonen je Bezirk | `ogdwien:KURZPARKZONEOGD` | 81 Flächen (49 Polygone, 32 MultiPolygone; im Datenbau 105 Stücke), 9,9 MB |
+| Kurzparkzone (Linie) — die Geschäftsstraßen mit eigener Regelung | `ogdwien:KURZPARKSTREIFENOGD` | 796 Linien, im Median 53 m; im Datenbau Bänder von 2 × 12 m |
+| Bezirksgrenzen | `ogdwien:BEZIRKSGRENZEOGD` | 23 Bezirke |
+
+**Lizenz: [Creative Commons Namensnennung 4.0](https://creativecommons.org/licenses/by/4.0/deed.de).**
+Die Nutzungsbedingungen der Stadt (`digitales.wien.gv.at/ogd-nutzungsbedingungen/`,
+wohin `data.wien.gv.at/nutzungsbedingungen` aus den `ows:AccessConstraints`
+des Dienstes weiterleitet) verlangen wörtlich: „Die Namensnennung der Stadt
+Wien als Rechteinhaberin hat in folgender Weise zu erfolgen: ‚Datenquelle:
+Stadt Wien – data.wien.gv.at'". Der Katalog `data.gv.at` führt den Datensatz
+„Kurzparkzonen Wien" (`6858b208-…`, modified 2025-11-20) mit derselben Lizenz;
+nur `ows:Fees` des WFS nennt noch CC BY 3.0 AT — die App hält sich an 4.0.
+
+Drei Dinge, die man erst im Feed sieht:
+
+- **Kein Betrag.** Kein Feld nennt einen Tarif; Wien hat einen für die ganze
+  Stadt, § 2 Parkometerabgabeverordnung (ABl. 2025/41): 1,70 Euro je
+  angefangene halbe Stunde, die ersten fünfzehn Minuten frei. Ausgeliefert
+  als 3,40 €/h mit dem Vermerk „nicht im Datensatz" in `rawFee`.
+- **Die Geschäftsstraße überstimmt die Fläche.** Die 796 Linien liegen in den
+  Bezirksflächen und tragen eigene Zeiten (meist bis 18 Uhr, 1,5 h, dafür
+  samstags). Der Datenbau macht Bänder daraus und stellt sie in
+  `zones.geojson` **vor** die Flächen, weil `zoneAt` den ersten Treffer nimmt.
+- **Ohne `srsName` antwortet der Dienst in EPSG:31256** (MGI / Gauß-Krüger
+  M34, Meter um einen Nullpunkt bei Wien); mit `srsName` im JSON `[lon, lat]`.
+  Und `SE_ANNO_CAD_DATA` trägt einen Oracle-Objektnamen (`[B@1d3aabc`), der
+  sich je Anfrage ändert — kein Inhalt.
+
+Nicht abgerufen: `PARKENGELTUNGOGD` und `PARKENBERECHTOGD` („haben keine
+Rechtsgültigkeit", Parkpickerl-Frage), `PARKENANRAINEROGD` (1.356
+Anrainerparkplätze), `PARKENAUTOMATOGD` (206 Verkaufsstellen der Wiener
+Linien, keine Automaten am Straßenrand). Keine Umweltzone, keine POI.
+Vollständiger Bericht in [staedte-wien.md](staedte-wien.md).
+
 ## Geprüft und nicht verfügbar
 
 Recherche vom 6. September 2026. Diese Negativbefunde sind festgehalten, damit

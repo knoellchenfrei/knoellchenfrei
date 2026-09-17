@@ -1,0 +1,554 @@
+{
+ "hinweis": "Auszug aus den 796 Geschäftsstraßen-Streifen (KURZPARKSTREIFENOGD): je Schreibweise von ZEITRAUM und DAUER der erste Streifen, dazu die sechs ohne GELTUNGSBEREICH, der eine MultiLineString und die zwei mit dem Platzhalter 1111-11-10Z. Sachdaten wörtlich, Geometrie als Typ und erster Stützpunkt. Die Zählung darunter gilt für alle 796.",
+ "abgerufenAm": "2026-09-17",
+ "quelle": "https://data.wien.gv.at/daten/geo?service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&srsName=urn:ogc:def:crs:EPSG::4326&typeNames=ogdwien:KURZPARKSTREIFENOGD",
+ "anzahlGesamt": 796,
+ "anzahlAuszug": 32,
+ "zeitraum": {
+  "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h": 667,
+  "Mo.-Fr. (w.) v. 9-18h, Sa. (w.) v. 9-12h": 34,
+  "Mo.-Fr. (w.) v. 9-19h, Sa. (w.) v. 9-12h": 22,
+  "Mo.-Fr. (w.) v. 9-18h": 16,
+  "Sa. (w.) v. 8-12h": 14,
+  "Mo.-Fr. (w.) v. 8-20h, Sa. (w.) v. 8-12h": 13,
+  "Mo.-Fr. (w.) v. 8-18h": 6,
+  "Mo.-Sa. (w.) v. 8-18h": 3,
+  "Sa. (w.) v. 8-13h": 3,
+  "Sa. (w.) v. 8-18h": 2,
+  "Mo.-Fr. (werkt.) v.9-22h": 2,
+  "Mo.-Fr. (w.) v. 8:30-18h, Sa. (w.) v. 8:30-12h": 2,
+  "Mo.-Fr. (w.) v. 9-18h, Sa. (w.) v. 8-12h": 2,
+  "Mo.-Fr. (w.) v. 7-19h": 1,
+  "Mo.-Fr. (w.) v. 8-17h": 1,
+  "Mo.-Fr. (w.) v. 13-18h, Sa. (w.) v. 10-12h": 1,
+  "Mo.-Fr. (w.) v. 9-15h, Sa. (w.) v. 9-12h": 1,
+  "Mo.-Fr. (w.) v. 10-15h, Sa. (w.) v. 8-12h": 1,
+  "Mo.-Fr. (werkt.) v. 8-18h": 1,
+  "Mo.-Fr. (werkt.) v. 8-18h, Sa. (werkt.) v. 8-12h": 1,
+  "Mo.-Fr. (w.) v. 8:30-15h, Sa. (w.) v. 8:30-12h": 1,
+  "Mo.-Fr. (w.) v. 10.30-15h, Sa. (w.) v. 8-12h": 1,
+  "Mo.-Fr. (w.) v. 6-18h, Sa. (w.) v. 6-12h": 1
+ },
+ "dauer": {
+  "1,5 h": 793,
+  "2 h": 3
+ },
+ "geometrie": {
+  "LineString": 795,
+  "MultiLineString": 1
+ },
+ "streifen": [
+  {
+   "id": "KURZPARKSTREIFENOGD.5766926",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.31101181,
+    48.19339695
+   ],
+   "BEZIRK": 14,
+   "STRNAM": "Linzer Straße",
+   "GELTUNGSBEREICH": "42 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8:30-15h, Sa. (w.) v. 8:30-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5766926,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2012-09-29Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5766938",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.38137067,
+    48.22018447
+   ],
+   "BEZIRK": 2,
+   "STRNAM": "Taborstraße",
+   "GELTUNGSBEREICH": "41 bis 43",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 10.30-15h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5766938,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2013-10-02Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767048",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.36732619,
+    48.22824343
+   ],
+   "BEZIRK": 20,
+   "STRNAM": "Wallensteinstraße",
+   "GELTUNGSBEREICH": "9 bis 15",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-20h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767048,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2013-05-14Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767058",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.36345788,
+    48.19870116
+   ],
+   "BEZIRK": 6,
+   "STRNAM": "Unbenannte Verkehrsfläche",
+   "GELTUNGSBEREICH": null,
+   "ZEITRAUM": "Mo.-Sa. (w.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767058,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2005-10-08Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767059",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.34282266,
+    48.21070482
+   ],
+   "BEZIRK": 8,
+   "STRNAM": "Josefstädter Straße",
+   "GELTUNGSBEREICH": "85 bis 89",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 9-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767059,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2001-04-24Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767149",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.35936735,
+    48.19678258
+   ],
+   "BEZIRK": 6,
+   "STRNAM": "Kettenbrücke",
+   "GELTUNGSBEREICH": null,
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767149,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2006-06-30Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767150",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.35922966,
+    48.19710838
+   ],
+   "BEZIRK": 6,
+   "STRNAM": "Kettenbrücke",
+   "GELTUNGSBEREICH": null,
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767150,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2006-06-30Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767151",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.34616679,
+    48.21549557
+   ],
+   "BEZIRK": 9,
+   "STRNAM": "Alser Straße",
+   "GELTUNGSBEREICH": "34 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 7-19h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767151,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2001-04-24Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767154",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.33788277,
+    48.1841207
+   ],
+   "BEZIRK": 12,
+   "STRNAM": "Arndtstraße",
+   "GELTUNGSBEREICH": "42 ",
+   "ZEITRAUM": "Sa. (w.) v. 8-13h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767154,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2013-04-10Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767182",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.358594,
+    48.14352277
+   ],
+   "BEZIRK": 23,
+   "STRNAM": "Deutschstraße",
+   "GELTUNGSBEREICH": "6 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-17h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767182,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2002-02-20Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767193",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.36593304,
+    48.1997522
+   ],
+   "BEZIRK": 6,
+   "STRNAM": "Getreidemarkt",
+   "GELTUNGSBEREICH": null,
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767193,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2004-07-26Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767201",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.33098345,
+    48.21903272
+   ],
+   "BEZIRK": 17,
+   "STRNAM": "Hormayrgasse",
+   "GELTUNGSBEREICH": "6 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 13-18h, Sa. (w.) v. 10-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767201,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2012-08-30Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767222",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.38312112,
+    48.20646001
+   ],
+   "BEZIRK": 3,
+   "STRNAM": "Landstraßer Hauptstraße",
+   "GELTUNGSBEREICH": "2 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767222,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "1111-11-10Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5767247",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.38365735,
+    48.20639804
+   ],
+   "BEZIRK": 3,
+   "STRNAM": "Landstraßer Hauptstraße",
+   "GELTUNGSBEREICH": "1 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5767247,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "1111-11-10Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771111",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.30266057,
+    48.13695023
+   ],
+   "BEZIRK": 23,
+   "STRNAM": "Perfektastraße",
+   "GELTUNGSBEREICH": "100 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 6-18h, Sa. (w.) v. 6-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771111,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2007-04-11Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771113",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.3405543,
+    48.226841
+   ],
+   "BEZIRK": 18,
+   "STRNAM": "Währinger Straße",
+   "GELTUNGSBEREICH": "121 bis 123",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771113,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2016-09-01Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771116",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.347976,
+    48.20658091
+   ],
+   "BEZIRK": 7,
+   "STRNAM": "Lerchenfelder Straße",
+   "GELTUNGSBEREICH": "53 bis 57",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 9-18h, Sa. (w.) v. 9-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771116,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2016-05-08Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771134",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.36438485,
+    48.19882726
+   ],
+   "BEZIRK": 4,
+   "STRNAM": "Rechte Wienzeile",
+   "GELTUNGSBEREICH": "ggü. 9 bis ggü. 13",
+   "ZEITRAUM": "Mo.-Sa. (w.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771134,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2016-08-30Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771174",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.37411191,
+    48.17489842
+   ],
+   "BEZIRK": 10,
+   "STRNAM": "Buchengasse",
+   "GELTUNGSBEREICH": "77 bis 79",
+   "ZEITRAUM": "Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771174,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2017-09-04Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771194",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.3513205,
+    48.21488548
+   ],
+   "BEZIRK": 8,
+   "STRNAM": "Alser Straße",
+   "GELTUNGSBEREICH": "17 bis 21",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 9-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771194,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2018-05-02Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771315",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.34241532,
+    48.14750624
+   ],
+   "BEZIRK": 23,
+   "STRNAM": "Richard-Strauss-Straße",
+   "GELTUNGSBEREICH": "6 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "2 h",
+   "SE_SDO_ROWID": 5771315,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2021-04-14Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771329",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.35948503,
+    48.1967414
+   ],
+   "BEZIRK": 4,
+   "STRNAM": "Rechte Wienzeile",
+   "GELTUNGSBEREICH": "ggü. 19 bis ggü. 39",
+   "ZEITRAUM": "Sa. (w.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771329,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2020-02-25Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771330",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.3531961,
+    48.18641491
+   ],
+   "BEZIRK": 5,
+   "STRNAM": "Reinprechtsdorfer Straße",
+   "GELTUNGSBEREICH": "29 bis 35-37",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 9-19h, Sa. (w.) v. 9-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771330,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2020-07-06Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771380",
+   "geometryType": "MultiLineString",
+   "firstPoint": [
+    16.40492952,
+    48.20119493
+   ],
+   "BEZIRK": 3,
+   "STRNAM": "Erdberger Lände",
+   "GELTUNGSBEREICH": "ggü. 34 bis ggü. 36",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771380,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2022-02-28Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771397",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.50096171,
+    48.22445301
+   ],
+   "BEZIRK": 22,
+   "STRNAM": "Hannah-Arendt-Platz",
+   "GELTUNGSBEREICH": null,
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771397,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2022-02-28Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771436",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.44966291,
+    48.22015514
+   ],
+   "BEZIRK": 22,
+   "STRNAM": "Kaisermühlenstraße",
+   "GELTUNGSBEREICH": null,
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8-18h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771436,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2023-06-22Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771443",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.52378981,
+    48.21468625
+   ],
+   "BEZIRK": 22,
+   "STRNAM": "Eßlinger Hauptstraße",
+   "GELTUNGSBEREICH": "89 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 8:30-18h, Sa. (w.) v. 8:30-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771443,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2022-08-17Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771476",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.42030999,
+    48.30344684
+   ],
+   "BEZIRK": 21,
+   "STRNAM": "Erbpostgasse",
+   "GELTUNGSBEREICH": "30 ",
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v.9-22h",
+   "DAUER": "2 h",
+   "SE_SDO_ROWID": 5771476,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2025-04-06Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771479",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.354932,
+    48.20681204
+   ],
+   "BEZIRK": 8,
+   "STRNAM": "Lerchenfelder Straße",
+   "GELTUNGSBEREICH": "2 ",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 9-15h, Sa. (w.) v. 9-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771479,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2007-09-01Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771480",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.32302934,
+    48.19871627
+   ],
+   "BEZIRK": 15,
+   "STRNAM": "Hütteldorfer Straße",
+   "GELTUNGSBEREICH": "77 bis 81",
+   "ZEITRAUM": "Mo.-Fr. (w.) v. 10-15h, Sa. (w.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771480,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2025-08-12Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771481",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.41387755,
+    48.17577795
+   ],
+   "BEZIRK": 11,
+   "STRNAM": "Enkplatz",
+   "GELTUNGSBEREICH": "1 bis 2",
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 8-18h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771481,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2024-12-11Z"
+  },
+  {
+   "id": "KURZPARKSTREIFENOGD.5771482",
+   "geometryType": "LineString",
+   "firstPoint": [
+    16.41300049,
+    48.17537413
+   ],
+   "BEZIRK": 11,
+   "STRNAM": "Enkplatz",
+   "GELTUNGSBEREICH": "2 bis 3",
+   "ZEITRAUM": "Mo.-Fr. (werkt.) v. 8-18h, Sa. (werkt.) v. 8-12h",
+   "DAUER": "1,5 h",
+   "SE_SDO_ROWID": 5771482,
+   "SE_ANNO_CAD_DATA": null,
+   "GUELTIG_VON": "2024-12-11Z"
+  }
+ ]
+}

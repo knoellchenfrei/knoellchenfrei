@@ -194,7 +194,32 @@ export function representativePoint(zone: LoadedZone): Position {
     }
   }
   if (best !== null) return best
-  // A sliver thinner than the grid: fall back to a vertex, which is at least on
-  // the zone's edge rather than in a neighbour.
+
+  // Schmaler als das Raster: Wien, 17. Bezirk, ein Straßenzug von 800 m
+  // Länge und 6 m Breite, schräg in einem Rahmen von 617 × 496 m — bei 50 m
+  // Schrittweite trifft keiner der 169 Rasterpunkte. Bis zum 17. September
+  // stand hier der erste Stützpunkt als Rückfall, „wenigstens auf der Kante"
+  // — und auf der Kante heißt für `zoneAt` nicht drin: „hier geparkt" landete
+  // neben der Fläche. Jetzt wird jede Kante an ihrer Mitte um einen Schritt
+  // nach innen versetzt, erst 0,1 m, dann 1 m, auf beiden Seiten — eine
+  // davon liegt in jeder Fläche, die breiter als ein Meter ist.
+  for (const rings of zone.polygons) {
+    const outer = rings[0] ?? []
+    for (let i = 0; i + 1 < outer.length; i += 1) {
+      const a = outer[i] as Position
+      const b = outer[i + 1] as Position
+      const mid: Position = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+      const length = Math.hypot(b[0] - a[0], b[1] - a[1])
+      if (length === 0) continue
+      const normal: Position = [-(b[1] - a[1]) / length, (b[0] - a[0]) / length]
+      for (const step of [1e-6, 1e-5]) {
+        for (const sign of [1, -1]) {
+          const candidate: Position = [mid[0] + normal[0] * step * sign, mid[1] + normal[1] * step * sign]
+          if (multiPolygonContains(zone.polygons, candidate)) return candidate
+        }
+      }
+    }
+  }
+  // Schmaler als ein Meter: ein Stützpunkt, wenigstens auf der Kante.
   return zone.polygons[0]?.[0]?.[0] ?? centre
 }

@@ -41,6 +41,7 @@ import type {
   ZuerichSpaceProperties,
   ZuerichZoneProperties,
 } from '../src/zuerich.js'
+import type { WienAreaProperties, WienDistrictProperties, WienStripProperties } from '../src/wien.js'
 
 const read = <T>(name: string): T =>
   JSON.parse(
@@ -691,6 +692,80 @@ describe('Schweriner Fixtures', () => {
         }
       }
     }
+  })
+})
+
+describe('Wiener Fixtures', () => {
+  const AREAS = read<{ flaechen: WienAreaProperties[] }>('wien-kurzparkzonen-2026-09-17.json').flaechen
+  const STRIPS = read<{ streifen: WienStripProperties[] }>('wien-geschaeftsstrassen-2026-09-17.json').streifen
+  const DISTRICTS = read<{ bezirke: WienDistrictProperties[] }>('wien-bezirke-2026-09-17.json').bezirke
+
+  /**
+   * Wiens GeoServer führt jedes Feld — ein leeres als `null`, nie
+   * weggelassen (anders als Rostock). `BEZIRK` ist eine **Zahl**, und
+   * `BEZIRK2` fast immer `null`: Der Parser vergleicht Zahlen, und ein Feed,
+   * der eines Tages `"17"` schriebe, soll hier auffallen und nicht als
+   * „kein Bezirk" durch `isBezirk` fallen. Die drei Felder `id`,
+   * `geometryType` und `firstPoint` stammen aus der Fixture selbst, nicht
+   * aus dem Feed.
+   */
+  it('führt die Flächen in genau diesen Typen — Bezirk als Zahl, Leeres als null', () => {
+    expectShape(AREAS as unknown as Record<string, unknown>[], {
+      id: ['string'],
+      geometryType: ['string'],
+      firstPoint: ['array'],
+      BEZIRK: ['number'],
+      BEZIRK2: ['null', 'number'],
+      WEBLINK1: ['null'],
+      ZEITRAUM: ['string'],
+      DAUER: ['string'],
+      WEBLINK2: ['null', 'string'],
+      GUELTIG_VON: ['string'],
+      SE_SDO_ROWID: ['number'],
+      SE_ANNO_CAD_DATA: ['null', 'string'],
+    })
+    expect(AREAS).toHaveLength(81)
+  })
+
+  it('führt die Streifen in genau diesen Typen — die Spanne kann null sein', () => {
+    expectShape(STRIPS as unknown as Record<string, unknown>[], {
+      id: ['string'],
+      geometryType: ['string'],
+      firstPoint: ['array'],
+      BEZIRK: ['number'],
+      STRNAM: ['string'],
+      GELTUNGSBEREICH: ['null', 'string'],
+      ZEITRAUM: ['string'],
+      DAUER: ['string'],
+      SE_SDO_ROWID: ['number'],
+      SE_ANNO_CAD_DATA: ['null'],
+      GUELTIG_VON: ['string'],
+    })
+  })
+
+  it('führt die Bezirke mit Nummer als Zahl und Namen als Text', () => {
+    expectShape(DISTRICTS as unknown as Record<string, unknown>[], {
+      id: ['string'],
+      geometryType: ['string'],
+      NAMEK: ['string'],
+      BEZNR: ['number'],
+      BEZ_RZ: ['string'],
+      NAMEK_NUM: ['string'],
+      NAMEK_RZ: ['string'],
+      NAMEG: ['string'],
+      LABEL: ['string'],
+      BEZ: ['string'],
+      DISTRICT_CODE: ['number'],
+      STATAUSTRIA_BEZ_CODE: ['number'],
+      STATAUSTRIA_GEM_CODE: ['number'],
+      FLAECHE: ['number'],
+      UMFANG: ['number'],
+      AKT_TIMESTAMP: ['string'],
+      SE_SDO_ROWID: ['number'],
+      // Der Oracle-Restwert `[B@…` steht auch an Bezirken, nicht nur an Flächen.
+      SE_ANNO_CAD_DATA: ['null', 'string'],
+    })
+    expect(DISTRICTS).toHaveLength(23)
   })
 })
 

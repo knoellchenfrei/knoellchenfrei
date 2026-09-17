@@ -204,3 +204,18 @@ describe('cityFiles für Innsbruck', () => {
     }
   })
 })
+
+describe('die Wiener Quellen', () => {
+  it('fragen alle drei Ebenen desselben GeoServers als JSON in lon,lat', () => {
+    const quellen = citySources('wien')
+    expect(quellen.map((q) => q.key)).toEqual(['zones', 'strips', 'districts'])
+    for (const quelle of quellen) {
+      expect(quelle.service).toBe('https://data.wien.gv.at/daten/geo')
+      expect(quelle.typeName).toMatch(/^ogdwien:[A-Z]+OGD$/)
+      expect(quelle.outputFormat).toBe('application/json')
+      expect(quelle.axisOrder).toBe('lon,lat')
+      expect(quelle.expectedFeatures).toBeGreaterThan(0)
+    }
+    expect(quellen.map((q) => q.expectedFeatures)).toEqual([81, 796, 23])
+  })
+})
