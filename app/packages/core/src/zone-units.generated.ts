@@ -2137,6 +2137,37 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "C8": "C8",
     "C9": "C9",
   },
+  "kassel": {
+    "BW1": "BW1",
+    "BW2": "BW2",
+    "BW3": "BW3",
+    "II": "II",
+    "III": "III",
+    "IV": "IV",
+    "IX": "IX",
+    "RO1": "RO1",
+    "RO2": "RO2",
+    "RO3": "RO3",
+    "RO4": "RO4",
+    "SÜ1": "SÜ1",
+    "SÜ2": "SÜ2",
+    "UN1": "UN1",
+    "UN2": "UN2",
+    "V": "V",
+    "VI": "VI",
+    "VIII": "VIII",
+    "VW2": "VW2",
+    "VW3": "VW3",
+    "VW4": "VW4",
+    "VW5": "VW5",
+    "VW6": "VW6",
+    "VW7": "VW7",
+    "WH1": "WH1",
+    "WH2": "WH2",
+    "WH3": "WH3",
+    "WT1": "WT1",
+    "Zentrum": "Zentrum",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -2166,6 +2197,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "eindhoven": 13,
   "genf": 17,
   "krakau": 23,
+  "kassel": 29,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

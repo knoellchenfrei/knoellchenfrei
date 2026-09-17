@@ -610,6 +610,13 @@ angeschlossen, für die die Recherche einen tragfähigen Datensatz belegt hat.
 > Offen, gewichtet: die Vergunninggebiete (in Eindhoven fast die ganze
 > Stadt, ohne Besuchertarif — heute „außerhalb der Zonen"), Koningsdag in
 > fünf Gemeinden nicht in der Quelle, Ereignistage nur genannt.
+> **Angeschlossen am 17. September: Kassel**, die erste Stadt der Klasse C
+> ([staedte-kassel.md](staedte-kassel.md)): 29 Bewohnerparkbezirke nur als
+> Grenzen, `scheduleUnknown` an jeder Zone, Abruf per `identify`, weil die
+> Ebene über `query` keine Geometrie herausgibt. Offen: die Lizenz (Anfrage
+> an vermgeo@kassel.de, ob die DL-DE/BY 2.0 der übrigen Ebenen auch hier
+> gilt) und Zeiten und Tarif, die nirgends maschinenlesbar stehen — im
+> Bericht unter „Was offen bleibt".
 >
 > Der Stand davor, zum Verständnis: Köln und Karlsruhe waren seit dem
 > 8. September vorbereitet, aber nicht eingetragen — Zweig

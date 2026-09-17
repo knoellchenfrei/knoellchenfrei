@@ -106,6 +106,7 @@ import {
   parseBernZoneName,
 } from '../src/bern.js'
 import { KrakauParseError, parseKrakauPodstrefa, parseKrakauSince } from '../src/krakau.js'
+import { KasselParseError, parseKasselZoneName } from '../src/kassel.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -318,6 +319,17 @@ describe('Zeitparser unter Beschuss', () => {
       )
       parseCottbusDays(input)
       parseCottbusTime(input)
+    })
+  })
+
+  // Kassel hat keinen Zeitparser — der Feed nennt keine Zeiten. Der eine
+  // Parser, den es gibt, liest den Zonennamen; er gehört trotzdem unter
+  // Beschuss, denn er sieht als erster den fremden Wert.
+  it('Kassel wirft nur KasselParseError und liefert nur die drei Namensformen', () => {
+    fuzz(20260917, 60, KasselParseError, (input) => {
+      const name = parseKasselZoneName(input)
+      expect(['quartier', 'nummer', 'zentrum']).toContain(name.kind)
+      expect(name.key).toBe(input.replace(/\s+/gu, ' ').trim())
     })
   })
 
@@ -689,6 +701,7 @@ describe('Zeitbudget', () => {
       parseBernInfo,
       parseKrakauPodstrefa,
       parseKrakauSince,
+      parseKasselZoneName,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { CITIES } from '@knoellchenfrei/core'
+import { CITIES, KASSEL } from '@knoellchenfrei/core'
 
-import { NPR_AREA_MANAGERS, NPR_TABLES, arcgisQueryUrl, cityFiles, citySources, nprFiles, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
+import { NPR_AREA_MANAGERS, NPR_TABLES, arcgisIdentifyUrl, arcgisQueryUrl, cityFiles, citySources, nprFiles, toGeoJsonAxes, wfsUrl } from '../src/sources.js'
 
 /**
  * Zwei Regeln aus CLAUDE.md mit je einem Vorfall, bis zum 10. September in
@@ -339,5 +339,46 @@ describe('cityFiles für Krakau', () => {
 
   it('kennt Krakau auch in citySources — mit leerer WFS-Liste, ohne zu werfen', () => {
     expect(citySources('krakau')).toEqual([])
+  })
+})
+
+describe('cityFiles für Kassel', () => {
+  // `query` gibt bei dieser Ebene keine Geometrie heraus; der Abruf ist ein
+  // `identify` über den Gemeindeumriss. Läuft das Rechteck vom Rahmen in
+  // `core/city.ts` weg, fehlen Bezirke am Rand — deshalb beide gleich.
+  it('fragt die Bezirke per identify über den Gemeindeumriss in Grad', () => {
+    const dateien = cityFiles('kassel')
+    expect(dateien.map((d) => d.key)).toEqual(['bezirke', 'districts'])
+    const bezirke = new URL(dateien[0]?.url ?? '')
+    expect(bezirke.pathname.endsWith('/Verkehr_Mobilitaet/MapServer/identify')).toBe(true)
+    const { minLon, minLat, maxLon, maxLat } = KASSEL.reportBounds
+    expect(bezirke.searchParams.get('geometry')).toBe(`${minLon},${minLat},${maxLon},${maxLat}`)
+    expect(bezirke.searchParams.get('geometryType')).toBe('esriGeometryEnvelope')
+    expect(bezirke.searchParams.get('sr')).toBe('4326')
+    expect(bezirke.searchParams.get('layers')).toBe('all:27')
+    expect(bezirke.searchParams.get('tolerance')).toBe('0')
+    expect(bezirke.searchParams.get('returnGeometry')).toBe('true')
+    expect(bezirke.searchParams.get('f')).toBe('json')
+    // Kein GeoJSON, also keine Messlatte hier — die steht im Datenbau.
+    expect(dateien[0]?.expectedFeatures).toBeUndefined()
+    expect(citySources('kassel')).toEqual([])
+  })
+
+  it('fragt die Ortsbezirke wie jede andere ArcGIS-Ebene, mit Messlatte', () => {
+    const districts = cityFiles('kassel')[1]
+    const url = new URL(districts?.url ?? '')
+    expect(url.pathname.endsWith('/Politik_Verwaltung/MapServer/0/query')).toBe(true)
+    expect(url.searchParams.get('f')).toBe('geojson')
+    expect(url.searchParams.get('outSR')).toBe('4326')
+    expect(districts?.expectedFeatures).toBe(24)
+  })
+
+  it('baut ein identify, das Eingabe- und Ausgabebezug gleich setzt', () => {
+    const url = new URL(arcgisIdentifyUrl('https://example.test/MapServer', 3, { minLon: 1, minLat: 2, maxLon: 3, maxLat: 4 }))
+    expect(url.pathname).toBe('/MapServer/identify')
+    expect(url.searchParams.get('geometry')).toBe('1,2,3,4')
+    expect(url.searchParams.get('mapExtent')).toBe('1,2,3,4')
+    expect(url.searchParams.get('layers')).toBe('all:3')
+    expect(url.searchParams.get('sr')).toBe('4326')
   })
 })

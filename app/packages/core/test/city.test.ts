@@ -20,6 +20,7 @@ import {
   GENF,
   GRAZ,
   HAMBURG,
+  KASSEL,
   MUENCHEN,
   suggestCity,
   withinCity,
@@ -325,8 +326,11 @@ describe('cityAt', () => {
     // gleiche Prüfung wie vorher mit München, das inzwischen dazugehört: Ein
     // Punkt in Bayern ist noch kein Punkt in München.
     expect(cityAt(11.0775, 49.4539)).toBeUndefined()
-    // Kassel, ebenfalls Hessen: Das Bundesland macht noch keine Stadt.
-    expect(cityAt(9.4797, 51.3127)).toBeUndefined()
+    // Kassel stand hier bis zum 17. September als Gegenbeispiel („das
+    // Bundesland macht noch keine Stadt") — seitdem ist es die zweite Stadt
+    // in Hessen. Göttingen, 40 km nördlich, bleibt draußen.
+    expect(cityAt(9.4797, 51.3127)?.key).toBe('kassel')
+    expect(cityAt(9.9356, 51.5328)).toBeUndefined()
     // Und dasselbe für Bayern: Augsburg ist nicht München.
     expect(cityAt(10.8978, 48.3705)).toBeUndefined()
     // Und für Tirol: Hall liegt zehn Kilometer östlich von Innsbruck und
@@ -601,7 +605,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {
@@ -856,5 +860,60 @@ describe('Niederlande', () => {
     expect(ROTTERDAM.towedVehicles?.phone).toBe('+31 15 251 13 51')
     expect(ROTTERDAM.towedVehicles?.url).toContain('rotterdam.nl')
     expect(DENHAAG.towedVehicles).toBeUndefined()
+  })
+})
+
+/**
+ * Kassel — die zweite Stadt in Hessen und die erste der Klasse C: nur
+ * Grenzen, keine Zeiten, kein Betrag. Der Rahmen kommt aus dem
+ * Gemeindeumriss, nicht aus den 29 Bezirken: Harleshausen, Waldau und
+ * Niederzwehren liegen außerhalb jedes Bezirks und gehören dazu.
+ */
+describe('Kassel', () => {
+  const KOENIGSPLATZ: [number, number] = [9.4963, 51.3166]
+  const BAHNHOF_WILHELMSHOEHE: [number, number] = [9.4472, 51.3128]
+  const HARLESHAUSEN: [number, number] = [9.4109, 51.3345]
+  const WALDAU: [number, number] = [9.5286, 51.2853]
+
+  it('nimmt Königsplatz, Bahnhof Wilhelmshöhe, Harleshausen und Waldau an', () => {
+    for (const point of [KOENIGSPLATZ, BAHNHOF_WILHELMSHOEHE, HARLESHAUSEN, WALDAU]) {
+      expect(withinCity(KASSEL, ...point)).toBe(true)
+      expect(cityAt(...point)).toBe(KASSEL)
+    }
+  })
+
+  // Baunatal (9,4069 / 51,2564) und Kaufungen (9,6176 / 51,2816) sind
+  // Nachbargemeinden; ihre Mitte liegt außerhalb der Box, und eine Meldung
+  // von dort ist keine Kasseler. Vellmar dagegen liegt in einer Bucht der
+  // Stadtgrenze und damit **innerhalb** des Rahmens — ein Rechteck kann das
+  // nicht ausdrücken, und das gilt für jede Stadt hier. Frankfurt liegt
+  // 150 km südlich.
+  it('verschluckt Baunatal, Kaufungen und Frankfurt nicht', () => {
+    expect(withinCity(KASSEL, 9.4069, 51.2564)).toBe(false)
+    expect(withinCity(KASSEL, 9.6176, 51.2816)).toBe(false)
+    expect(withinCity(KASSEL, 8.6821, 50.1109)).toBe(false)
+    expect(cityAt(8.6821, 50.1109)).toBe(FRANKFURT)
+  })
+
+  it('führt die Lizenz als unklar, mit Nennung, Banner und der Stelle, die sie klären kann', () => {
+    expect(KASSEL.attribution.licenceFamily).toBe('unklar')
+    expect(KASSEL.attribution.attributionRequired).toBe(true)
+    expect(KASSEL.attribution.licence).toBe('nicht ausgewiesen')
+    expect(KASSEL.attribution.datasetUrl).toMatch(/^https:\/\/geoportal\.kassel\.de\//)
+    expect(KASSEL.attribution.source).toContain('Stadt Kassel, Vermessung und Geoinformation')
+    expect(KASSEL.licenceOpen).toContain('vermgeo@kassel.de')
+    expect(KASSEL.licenceOpen).toMatch(/Stand \d+\. \w+ 20\d\d\./)
+  })
+
+  it('hängt am hessischen Kalender, liegt in Deutschland und braucht keinen Stadtfeiertag', () => {
+    expect(KASSEL.land).toBe('HE')
+    expect(cityCountry(KASSEL)).toBe('DE')
+    expect(KASSEL.holidays).toBeUndefined()
+  })
+
+  it('hat ein eigenes Raster mit Ursprung an der Südwestecke des Rahmens', () => {
+    expect(KASSEL.heatGrid.id).toBe('kassel')
+    expect(KASSEL.heatGrid.originLon).toBe(KASSEL.reportBounds.minLon)
+    expect(KASSEL.heatGrid.originLat).toBe(KASSEL.reportBounds.minLat)
   })
 })
