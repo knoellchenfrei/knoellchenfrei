@@ -27,6 +27,7 @@ import type {
   FrankfurtAutomatProperties,
   FrankfurtZoneProperties,
 } from '../src/frankfurt.js'
+import type { EssenZoneProperties } from '../src/essen.js'
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
@@ -691,6 +692,41 @@ describe('Schweriner Fixtures', () => {
         }
       }
     }
+  })
+})
+
+describe('Essener Fixture', () => {
+  const AREAS = read<{ features: { properties: EssenZoneProperties }[] }>(
+    'essen-bewohnerparkbereiche-2026-09-17.json'
+  ).features.map((feature) => feature.properties)
+
+  /**
+   * Drei Felder, und keines davon sagt etwas über Parken: Das ist die
+   * Klasse C. Ein viertes Feld wäre hier die wichtigste Nachricht, die
+   * dieser Test je bringen könnte — es hiesse, die Stadt hat Zeiten oder
+   * einen Betrag nachgeliefert, und `build-data-essen.ts` müsste sie lesen.
+   */
+  it('führt die Flächen in genau diesen drei Feldern und Typen', () => {
+    expectShape(AREAS as unknown as Record<string, unknown>[], {
+      FID: ['number'],
+      Id: ['number'],
+      NameGebiet: ['string'],
+    })
+    expect(AREAS).toHaveLength(9)
+  })
+
+  it('nennt kein Feld für Zeiten, Betrag oder Höchstparkdauer', () => {
+    const fields = new Set(AREAS.flatMap((area) => Object.keys(area)))
+    for (const field of fields) {
+      expect(field).not.toMatch(/zeit|gebuehr|gebühr|tarif|dauer|preis|euro/i)
+    }
+  })
+
+  // `FID` ist die Zeilennummer (0 bis 8), `Id` überall 0 — beides taugt nicht
+  // als Schlüssel; der Datenbau nimmt den Namen.
+  it('zählt FID von 0 bis 8 durch und führt Id überall als 0', () => {
+    expect(AREAS.map((area) => area.FID).sort((a, b) => (a ?? 0) - (b ?? 0))).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8])
+    expect(AREAS.every((area) => area.Id === 0)).toBe(true)
   })
 })
 

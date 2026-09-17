@@ -463,6 +463,15 @@ export const KOELN: City = {
  * `city.test.ts` bleibt grün; wer eine der beiden nach außen erweitert, macht
  * `cityAt` zum Zufall.
  *
+ * **Und im Norden Essen, seit dem 17. September.** Die Nordkante stand bis
+ * dahin bei 51,37 — zwei Kilometer Luft über der Stadtgrenze (51,3525). Essens
+ * Stadtgrenze reicht bei Kettwig bis 51,3476 herunter, die beiden Umrisse
+ * überlappen sich also um 545 m in der Breite, und zwei achsenparallele Rahmen
+ * können nicht beide ganz fassen. Die Kante liegt jetzt bei **51,349**, und das
+ * kostet Düsseldorf 390 m Rheinufer und Angerwiesen nördlich von Bockum und
+ * Angermund — keine Parkzone, keine Straße mit Automaten. Die Rechnung steht
+ * bei `ESSEN`.
+ *
  * Der Mittelpunkt ist die Mitte des Rahmens der 44 Gebiete, nicht die
  * Altstadt: Bei Zoom 12 (Frankfurts Wert, rund 0,40° × 0,21°) liegen damit
  * alle 44 im Bild, und ihre Nord-Süd-Ausdehnung von 0,130° passt gerade so
@@ -475,7 +484,7 @@ export const DUESSELDORF: City = {
   land: 'NW',
   center: [6.8009, 51.238],
   zoom: 12,
-  reportBounds: { minLon: 6.66, minLat: 51.11, maxLon: 6.96, maxLat: 51.37 },
+  reportBounds: { minLon: 6.66, minLat: 51.11, maxLon: 6.96, maxLat: 51.349 },
   sessionBounds: { minLon: 6.4, minLat: 50.9, maxLon: 7.25, maxLat: 51.6 },
   heatGrid: { id: 'duesseldorf', originLon: 6.66, originLat: 51.11, latitude: 51.24 },
   attribution: {
@@ -1083,6 +1092,70 @@ export const ZUERICH: City = {
   // Oberfläche den Abschnitt nicht — kein Rückfall auf Berlin.
 }
 
+/**
+ * Essen — die erste Stadt der **Klasse C**: Die Quelle veröffentlicht neun
+ * Bewohnerparkbereiche als Flächen und sonst nichts — keine Zeiten, keinen
+ * Tarif, keine Höchstparkdauer. Jede Zone trägt deshalb `scheduleUnknown`,
+ * und die App sagt „Zeiten unbekannt" statt „frei".
+ *
+ * Der Rahmen ist gemessen, nicht geschätzt, und stammt aus der
+ * **Stadtgrenze** (`Stadtgrenze_WGS84.geojson`, 6.552 Stützpunkte, abgerufen
+ * am 17. September 2026): 6,8944–7,1376 / 51,3476–51,5342. Die neun Flächen
+ * liegen nur zwischen 6,997 und 7,025 Länge um die Innenstadt — wer den Rahmen
+ * daraus nähme, wiese jede Meldung aus Steele, Borbeck oder Werden ab.
+ *
+ * **Die Südkante ist die eine Stelle, an der der Rahmen enger ist als die
+ * Stadt, und der Grund ist Düsseldorf.** Düsseldorfs Stadtgrenze reicht bei
+ * Wittlaer bis 51,3525 Nord, Essens bei Kettwig vor der Brücke bis 51,3476
+ * Süd — die beiden Umrisse überlappen sich in der Breite um 545 m, obwohl die
+ * Stellen 15 km auseinanderliegen (Wittlaer bei 6,75 Ost, Kettwig bei 6,96).
+ * Zwei achsenparallele Rahmen können das nicht beide vollständig fassen, und
+ * `cityAt` verlangt, dass sie sich nicht schneiden. Die Trennlinie liegt bei
+ * **51,349/51,351**: Düsseldorf verliert 390 m Rheinufer und Angerwiesen
+ * nördlich von Bockum und Angermund, Essen 380 m Ruhrhang südlich von Kettwig
+ * vor der Brücke (Ortsmitte laut Photon 51,3601) — in beiden Streifen liegt
+ * keine Parkzone. Drei Nachkommastellen, weil zwei nicht reichen: 51,35 auf
+ * beiden Seiten wäre ein gemeinsamer Punkt, und den verbietet der Test; und
+ * der Test „knapp innerhalb / knapp außerhalb" verlangt mehr als 0,001° Luft
+ * zwischen zwei Rahmen, sonst liegt der Prüfpunkt 110 m über Düsseldorfs
+ * Nordostecke schon in Essen.
+ *
+ * Der Mittelpunkt ist die Mitte des Rahmens der neun Flächen (Innenstadt,
+ * südlich des Hauptbahnhofs). Zoom **13** wie in Schwerin: Die neun Flächen
+ * liegen in einem Rechteck von 2 × 3 km; bei 12 wären sie ein Fleck.
+ */
+export const ESSEN: City = {
+  key: 'essen',
+  name: 'Essen',
+  land: 'NW',
+  center: [7.011, 51.4504],
+  zoom: 13,
+  reportBounds: { minLon: 6.89, minLat: 51.351, maxLon: 7.14, maxLat: 51.54 },
+  sessionBounds: { minLon: 6.6, minLat: 51.15, maxLon: 7.45, maxLat: 51.75 },
+  heatGrid: { id: 'essen', originLon: 6.89, originLat: 51.351, latitude: 51.45 },
+  attribution: {
+    // Wörtlich aus der Beschreibung des Datensatzes im DKAN-Katalog
+    // („Quelle: FB 66 - Amt für Straßen und Verkehr / FB 62 - Amt für
+    // Geoinformation, Vermessung und Kataster"), abgerufen am 17. September
+    // 2026. Bei DL-DE/Namensnennung ist der Vermerk Lizenzbedingung.
+    source:
+      'Stadt Essen — FB 66 Amt für Straßen und Verkehr / FB 62 Amt für Geoinformation, ' +
+      'Vermessung und Kataster, opendata.essen.de',
+    // Die Datei, die der Datenbau wirklich abruft — nicht die Portalseite
+    // (`https://opendata.essen.de/dataset/bewohnerparkbereiche-essen`).
+    datasetUrl: 'https://opendata.essen.de/sites/default/files/Bewohnerparkbereiche.geojson',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
+    attributionRequired: true,
+    licenceFamily: 'dl-de-by',
+  },
+  // Bewusst ohne `towedVehicles`: Auf essen.de fand sich am 17. September
+  // unter „Verkehrsüberwachung" keine Seite, die eine Auskunftsstelle für
+  // abgeschleppte Fahrzeuge mit Namen und Nummer nennt — nur die Leitstelle
+  // für defekte Parkscheinautomaten. Fehlt das Feld, zeigt die Oberfläche
+  // den Abschnitt nicht; kein Rückfall auf Berlin.
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -1099,6 +1172,7 @@ export const CITIES: readonly City[] = [
   SALZBURG,
   INNSBRUCK,
   ZUERICH,
+  ESSEN,
 ]
 
 /**

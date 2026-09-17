@@ -87,6 +87,7 @@ import {
   parseZuerichSchedule,
   parseZuerichTariffZone,
 } from '../src/zuerich.js'
+import { EssenParseError, parseEssenAreaName } from '../src/essen.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -238,6 +239,19 @@ describe('Zeitparser unter Beschuss', () => {
       const { code, name } = parseRostockAreaName(input)
       expect(code, input).toMatch(/^[A-Z]\d{1,2}$/)
       expect(name.length, input).toBeGreaterThan(0)
+    })
+  })
+
+  // Essens einziger Parser: Der Name ist der Zonenschlüssel. Ein Schlüssel
+  // mit Leerraum am Rand oder mit einer Ziffer, die nicht im Namen steht,
+  // wäre eine Zone, die auf keinem Ausweis steht.
+  it('Essens Gebietsname wirft nur EssenParseError und liefert nur geglättete Namen', () => {
+    fuzz(20260924, 120, EssenParseError, (input) => {
+      const { name, numeral, label } = parseEssenAreaName(input)
+      expect(name.length, input).toBeGreaterThan(0)
+      expect(name, input).not.toMatch(/^\s|\s$|\s\s|[-.]$/)
+      expect(label, input).toBe(numeral === null ? name : `${name} (${numeral})`)
+      if (numeral !== null) expect(numeral, input).toMatch(/^(I{1,3}|IV|V|VI{0,3}|IX|X|XI|XII)$/)
     })
   })
 
@@ -505,6 +519,7 @@ describe('Zeitbudget', () => {
       parseInnsbruckMaxStay,
       parseZuerichSchedule,
       parseZuerichMeterTariff,
+      parseEssenAreaName,
     ]
     const started = performance.now()
     for (const input of inputs) {
