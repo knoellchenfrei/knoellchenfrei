@@ -30,6 +30,7 @@ import type {
 import type { InnsbruckZoneProperties } from '../src/innsbruck.js'
 import { GenfParseError, parseGenfTypeStationnement, type GenfLineProperties, type GenfZoneProperties } from '../src/genf.js'
 import { isBernZoneUnattributed, type BernZoneProperties } from '../src/bern.js'
+import type { StGallenAreaProperties, StGallenQuarterProperties } from '../src/stgallen.js'
 import type { KrakauGranicaProperties, KrakauSektorProperties } from '../src/krakau.js'
 import type { MuenchenZoneProperties } from '../src/muenchen.js'
 import type { FreiburgAutomatProperties, FreiburgZoneProperties } from '../src/freiburg.js'
@@ -351,6 +352,38 @@ describe('Berner Fixture', () => {
       expect(row.PLZ_beschrieb, String(row.Objectid)).toBeTruthy()
       expect(row.PLZ_zusatz_beschrieb, String(row.Objectid)).toBeTruthy()
     }
+  })
+})
+
+describe('St. Galler Fixtures', () => {
+  const AREAS = read<{ flaechen: (StGallenAreaProperties & { zeile: number })[] }>('sg-parkflaechen-2026-09-17.json').flaechen
+  const QUARTERS = read<{ quartiere: StGallenQuarterProperties[] }>('sg-wohnviertel-2026-09-17.json').quartiere
+
+  // Vier Felder aus dem Opendatasoft-Export, dazu `zeile` aus der Fixture.
+  // `geo_point_2d` ist ein **Objekt** `{lon, lat}`, kein Array — wer es wie
+  // eine GeoJSON-Position läse, bekäme `undefined` statt Grad. `anzahl_pp`
+  // ist in drei Zeilen `null`; `null` und `0` heissen beide „nicht angegeben".
+  it('führen an den Parkfeldern genau diese Felder in genau diesen Typen', () => {
+    expectShape(AREAS as unknown as Record<string, unknown>[], {
+      zeile: ['number'],
+      geo_point_2d: ['object'],
+      markierungsart: ['string'],
+      zutrittsart: ['string'],
+      anzahl_pp: ['number', 'null'],
+    })
+  })
+
+  // `nummer` ist eine **Zahl mit Nachkommastelle** (`307.0` im Export) und
+  // `statistisc` der auf zehn Zeichen abgeschnittene Feldname des Quartiers.
+  it('führen an den Quartieren genau diese Felder, alle gefüllt', () => {
+    expectShape(QUARTERS as unknown as Record<string, unknown>[], {
+      geo_point_2d: ['object'],
+      nummer: ['number'],
+      kreis: ['string'],
+      quartiergr: ['string'],
+      statistisc: ['string'],
+    })
+    for (const q of QUARTERS) expect(Number.isInteger(q.nummer), String(q.nummer)).toBe(true)
   })
 })
 

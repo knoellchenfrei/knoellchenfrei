@@ -105,6 +105,13 @@ import {
   parseBernInfo,
   parseBernZoneName,
 } from '../src/bern.js'
+import {
+  StGallenParseError,
+  parseStGallenAccess,
+  parseStGallenMarking,
+  parseStGallenSpaces,
+  stGallenQuarter,
+} from '../src/stgallen.js'
 import { KrakauParseError, parseKrakauPodstrefa, parseKrakauSince } from '../src/krakau.js'
 import { KasselParseError, parseKasselZoneName } from '../src/kassel.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
@@ -658,6 +665,36 @@ describe('Berner Feldparser unter Beschuss', () => {
   })
 })
 
+/**
+ * St. Gallen hat weder Zeit- noch Gebührenparser — der Feed nennt beides
+ * nicht. Beschossen werden die Feldparser, aus denen Zonenschlüssel, POI und
+ * Quartiername entstehen: Eine Markierungsart aus Unfug, die als Zone
+ * durchginge, wäre eine dreizehnte Ausprägung in `zone-keys.generated.ts`.
+ */
+describe('St. Galler Feldparser unter Beschuss', () => {
+  const MARKINGS = new Set([
+    'ebz', 'parkuhr', 'kunden', 'invaliden', 'gueterumschlag', 'garage',
+    'weissFrei', 'unbekannt', 'ohneMarkierung', 'taxi', 'hotel', 'car',
+  ])
+  it('wirft nur StGallenParseError und liefert nur die zwölf Arten, öffentlich und Platzzahlen', () => {
+    fuzz(20260922, 120, StGallenParseError, (input) => {
+      expect(MARKINGS.has(parseStGallenMarking(input)), input).toBe(true)
+    })
+    fuzz(20260923, 120, StGallenParseError, (input) => {
+      expect(parseStGallenAccess(input), input).toBe('public')
+    })
+    fuzz(20260924, 120, StGallenParseError, (input) => {
+      const spaces = parseStGallenSpaces(Number(input))
+      if (spaces !== null) expect(Number.isInteger(spaces) && spaces >= 1, input).toBe(true)
+    })
+    fuzz(20260925, 120, StGallenParseError, (input) => {
+      const quarter = stGallenQuarter({ statistisc: input, quartiergr: input, kreis: input })
+      expect(quarter.name.length, input).toBeGreaterThan(0)
+      expect(quarter.bezirk, input).toContain(', Kreis ')
+    })
+  })
+})
+
 describe('Zeitbudget', () => {
   /**
    * Die Begrenzung der Eingabelänge ist das, was das Zurückverfolgen unmöglich
@@ -702,6 +739,8 @@ describe('Zeitbudget', () => {
       parseKrakauPodstrefa,
       parseKrakauSince,
       parseKasselZoneName,
+      parseStGallenMarking,
+      parseStGallenAccess,
     ]
     // Je Parser gemessen, nicht in Summe: Mit 25 Parsern (Stand 17. September)
     // lag die Summe unter Last bei 1,1 s, ohne dass ein einzelner langsam

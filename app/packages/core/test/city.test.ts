@@ -349,6 +349,11 @@ describe('cityAt', () => {
     expect(cityAt(7.628, 46.758)).toBeUndefined() // Thun
     expect(cityAt(7.1612, 46.8065)).toBeUndefined() // Fribourg
     expect(cityAt(7.4477, 46.948)?.key).toBe('bern')
+    // Und St. Gallen: Gossau und Herisau grenzen an und liegen draussen; der
+    // Marktplatz ist St. Gallen.
+    expect(cityAt(9.2477, 47.4152)).toBeUndefined() // Gossau
+    expect(cityAt(9.279, 47.386)).toBeUndefined() // Herisau
+    expect(cityAt(9.3761, 47.4247)?.key).toBe('stgallen')
   })
 
   // Krakau ist die erste Stadt in Polen. Der Rahmen kommt aus der
@@ -605,7 +610,7 @@ describe('die Auskunftsstelle für umgesetzte Fahrzeuge', () => {
   // Den Haag, Groningen und Nijmegen antworten aus dieser Umgebung mit 403
   // (Bot-Schutz), Eindhovens Seite fand sich nicht — Utrecht und Rotterdam
   // haben eine gelesene Seite mit Nummer.
-  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel'])
+  const OHNE_BELEG = new Set(['koeln', 'karlsruhe', 'freiburg', 'cottbus', 'innsbruck', 'zuerich', 'denhaag', 'groningen', 'nijmegen', 'eindhoven', 'bern', 'kassel', 'stgallen'])
 
   it('gehört zu jeder Stadt und nennt nirgends eine fremde', () => {
     for (const city of CITIES) {

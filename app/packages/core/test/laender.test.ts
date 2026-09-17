@@ -184,6 +184,61 @@ describe('der Berner Kalender', () => {
   })
 })
 
+describe('der St. Galler Kalender', () => {
+  // Art. 2 Abs. 1 lit. b des Gesetzes über Ruhetag und Ladenöffnung (RLG,
+  // sGS 552.1): acht kantonale Tage, dazu der Bundesfeiertag aus
+  // `NATIONWIDE.CH`. Ostersonntag, Pfingstsonntag und der Bettag stehen in
+  // Art. 3 als hohe Feiertage und sind Sonntage — sie fehlen in der Tabelle.
+  it('zählt neun Tage, die auf einen Werktag fallen können', () => {
+    const sg = holidaysFor('CH-SG', 2026)
+    for (const tag of [
+      '2026-01-01', // Neujahr
+      '2026-04-03', // Karfreitag
+      '2026-04-06', // Ostermontag
+      '2026-05-14', // Auffahrt
+      '2026-05-25', // Pfingstmontag
+      '2026-08-01', // Bundesfeiertag, Art. 110 Abs. 3 BV
+      '2026-11-01', // Allerheiligen
+      '2026-12-25', // Weihnachtstag
+      '2026-12-26', // Stefanstag, im Gesetz so geschrieben
+    ]) {
+      expect(sg.has(tag), tag).toBe(true)
+    }
+    expect(sg.size).toBe(9)
+  })
+
+  // Drei Kantone, drei Listen: Bern hat den 2. Januar, Zürich den 1. Mai,
+  // St. Gallen Allerheiligen — und keiner die Tage der beiden anderen. Wer
+  // einen Schweizer Kalender für alle nähme, läge in jeder Stadt einmal falsch.
+  it('unterscheidet sich von Bern und Zürich in je genau zwei Tagen', () => {
+    const sg = holidaysFor('CH-SG', 2026)
+    const bern = holidaysFor('CH-BE', 2026)
+    const zuerich = holidaysFor('CH-ZH', 2026)
+    expect([...sg].filter((tag) => !bern.has(tag))).toEqual(['2026-11-01'])
+    expect([...bern].filter((tag) => !sg.has(tag))).toEqual(['2026-01-02'])
+    expect([...sg].filter((tag) => !zuerich.has(tag))).toEqual(['2026-11-01'])
+    expect([...zuerich].filter((tag) => !sg.has(tag))).toEqual(['2026-05-01'])
+  })
+
+  it('kennt weder Berchtoldstag noch 1. Mai noch Fronleichnam noch die Tage der Nachbarn', () => {
+    const sg = holidaysFor('CH-SG', 2026)
+    expect(sg.has('2026-01-02')).toBe(false) // Berchtoldstag
+    expect(sg.has('2026-05-01')).toBe(false) // 1. Mai
+    expect(sg.has('2026-06-04')).toBe(false) // Fronleichnam
+    expect(sg.has('2026-08-15')).toBe(false) // Mariä Himmelfahrt
+    expect(sg.has('2026-10-03')).toBe(false) // Tag der Deutschen Einheit
+    expect(sg.has('2026-10-26')).toBe(false) // Österreichs Nationalfeiertag
+    expect(sg.has('2026-09-20')).toBe(false) // Bettag, ein Sonntag
+  })
+
+  it('liegt in der Schweiz und hat Allerheiligen auch in einem anderen Jahr', () => {
+    expect(countryOf('CH-SG')).toBe('CH')
+    expect(holidaysFor('CH-SG', 2024).has('2024-11-01')).toBe(true)
+    expect(holidaysFor('CH-SG', 2024).has('2024-03-29')).toBe(true) // Karfreitag bei Ostern am 31. März
+    expect(isHoliday('CH-SG', berlinWallClock(Date.UTC(2027, 10, 1, 10)))).toBe(true)
+  })
+})
+
 describe('die Währung am Tarif', () => {
   it('ist Euro, wo keine steht, und Franken, wo der Parser sie hinschreibt', () => {
     expect(currencyOf({ kind: 'exact', centsPerHour: 200 })).toBe('EUR')
