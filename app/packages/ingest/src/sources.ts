@@ -42,6 +42,21 @@ export interface Source {
   expectedFeatures: number
   outputFormat: string
   axisOrder: AxisOrder
+  /**
+   * Wie die Antwort kodiert ist. Fehlt das Feld, ist es GeoJSON — der
+   * Normalfall seit Berlin. `'gml'` heißt: Der Dienst kann kein JSON, die
+   * Antwort landet als `<key>.gml` im Abzug und wird im Datenbau mit
+   * `gml.ts` gelesen. Schwerin ist der erste Fall.
+   */
+  encoding?: 'gml'
+  /**
+   * Welches Koordinatensystem angefragt wird. Fehlt das Feld, ist es
+   * `urn:ogc:def:crs:EPSG::4326` — Grad, für alle Städte, die umrechnen.
+   * Ein anderer Wert steht nur da, wo der Dienst Grad **verweigert**
+   * (Schwerin: jedes andere `srsName` endet in `Invalid SRS`), und der
+   * Datenbau prüft dann mit `assertUtm`, dass wirklich Meter ankommen.
+   */
+  srsName?: string
 }
 
 const BERLIN_WFS = 'https://gdi.berlin.de/services/wfs'
@@ -660,6 +675,89 @@ const ROSTOCK_SOURCES: readonly Source[] = [
  */
 const COTTBUS_SOURCES: readonly Source[] = []
 
+/**
+ * Schwerin — Landeshauptstadt Schwerin, DL-DE/BY-2.0, gehostet vom Landkreis
+ * Ludwigslust-Parchim.
+ *
+ * Zahlen und Typnamen sind am 16. September 2026 gegen die Dienste selbst
+ * geprüft (`numberMatched` in der Antwort), nicht aus Metadaten übernommen.
+ * Zwei Dinge, die keine andere Stadt hat:
+ *
+ * 1. **Kein JSON.** Die `GetCapabilities` nennen vier Ausgabeformate, alle
+ *    GML; jedes JSON-Format endet in `is not a permitted output format`.
+ *    Deshalb `encoding: 'gml'` und `gml.ts` im Datenbau.
+ * 2. **Nur EPSG:25833.** `srsName=urn:ogc:def:crs:EPSG::4326`, `EPSG:4326`,
+ *    `EPSG:4258`, `CRS:84` und `EPSG:3857` enden alle in `Invalid SRS`; die
+ *    Capabilities des Parken-Dienstes nennen kein `OtherCRS`. Angefragt wird
+ *    deshalb ausdrücklich 25833, die Achsen kommen als [Ost, Nord], und
+ *    `build-data-schwerin.ts` rechnet mit `utm.ts` in Zone 33 um — und
+ *    prüft vorher mit `assertUtm`, dass wirklich Meter ankommen.
+ *
+ * Der Raumgliederungs-Dienst daneben (`raumgliederung-sn`) **könnte** Grad
+ * liefern (EPSG:4326 steht dort als `OtherCRS`, mit [Breite, Länge]); er
+ * wird trotzdem in 25833 abgerufen, damit alle vier Ebenen denselben Weg
+ * gehen und der Datenbau eine Prüfung hat statt zwei. Seine Grad-Antwort
+ * dient in `test/utm.test.ts` als Referenz für die Umrechnung.
+ *
+ * Bewusst NICHT abgerufen: `masterportal:Parken` (40 Parkplätze und
+ * Parkhäuser mit Stellplatzzahl — die App hat keine POI-Art dafür),
+ * `masterportal:Wohnmobilstellplaetze` (11), `masterportal:P_and_R`
+ * (`numberMatched="0"`) und `masterportal:Parkplaetze_SN` (antwortet mit
+ * `ms_error->code not found`, HTTP 400). Die Bezirks- und Baublockgrenzen
+ * des Raumgliederungs-Dienstes sind gröber bzw. feiner als die 27
+ * Stadtteile und beantworten keine Frage, die die App stellt.
+ */
+const SCHWERIN_PARKEN = 'https://geoportal.kreis-lup.de/ows/masterportal/parken-sn'
+
+const SCHWERIN_DEFAULTS = {
+  // MapServer, GML 3.2 — das erste der vier Formate aus den Capabilities.
+  outputFormat: 'application/gml+xml; version=3.2',
+  // In EPSG:25833 schreibt MapServer Ost vor Nord; nachgemessen am
+  // 16. September 2026 (`262237.215592 5949291.058336`).
+  axisOrder: 'lon,lat',
+  encoding: 'gml',
+  srsName: 'urn:ogc:def:crs:EPSG::25833',
+} as const
+
+const SCHWERIN_SOURCES: readonly Source[] = [
+  // 15 Polygone **ohne ein einziges Attribut** — nicht einmal eine Kennung.
+  // Welche Zone welche ist, sagt nur die Kartendarstellung des Dienstes;
+  // `SCHWERIN_ZONE_ANCHORS` in `core` hält das Ergebnis dieser Messung.
+  {
+    key: 'zones',
+    service: SCHWERIN_PARKEN,
+    typeName: 'masterportal:Parkzonen',
+    expectedFeatures: 15,
+    ...SCHWERIN_DEFAULTS,
+  },
+  // Die eigentliche Sachauskunft: Zeiten, Betrag, Höchstparkdauer je Automat.
+  {
+    key: 'automats',
+    service: SCHWERIN_PARKEN,
+    typeName: 'masterportal:Parkscheinautomaten',
+    expectedFeatures: 143,
+    ...SCHWERIN_DEFAULTS,
+  },
+  {
+    key: 'accessible',
+    service: SCHWERIN_PARKEN,
+    typeName: 'masterportal:Behindertenparkplatz',
+    expectedFeatures: 64,
+    ...SCHWERIN_DEFAULTS,
+  },
+  // Dieselbe Rolle wie Berlins Ortsteile: Ohne Hintergrundkarte schweben die
+  // Zonen sonst im Nichts. Zweiter Dienst desselben Servers, gefunden über
+  // den GDI-DE-Katalog („Raumgliederung der Landeshauptstadt Schwerin"),
+  // gleiche Lizenz, gleicher Quellenvermerk.
+  {
+    key: 'districts',
+    service: 'https://geoportal.kreis-lup.de/ows/masterportal/raumgliederung-sn',
+    typeName: 'ms:Stadtteilgrenzen_Schwerin',
+    expectedFeatures: 27,
+    ...SCHWERIN_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -671,6 +769,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   freiburg: FREIBURG_SOURCES,
   rostock: ROSTOCK_SOURCES,
   cottbus: COTTBUS_SOURCES,
+  schwerin: SCHWERIN_SOURCES,
 }
 
 /**
@@ -767,7 +866,7 @@ export function wfsUrl(source: Source): string {
     request: 'GetFeature',
     typeNames: source.typeName,
     outputFormat: source.outputFormat,
-    srsName: 'urn:ogc:def:crs:EPSG::4326',
+    srsName: source.srsName ?? 'urn:ogc:def:crs:EPSG::4326',
   })
   return `${source.service}?${params}`
 }

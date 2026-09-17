@@ -1,0 +1,321 @@
+{
+ "abgerufenAm": "2026-09-16",
+ "quelle": "https://geoportal.kreis-lup.de/ows/masterportal/parken-sn, masterportal:Parkscheinautomaten, GML 3.2, EPSG:25833",
+ "numberMatched": 143,
+ "srsName": "urn:ogc:def:crs:EPSG::25833",
+ "bewirtschaftungszeiten": [
+  {
+   "text": "Mo - Sa 8-20 h",
+   "anzahl": 125
+  },
+  {
+   "text": "Mo - Fr 8-18 h",
+   "anzahl": 7
+  },
+  {
+   "text": "Mo - So 8-21 h",
+   "anzahl": 5
+  },
+  {
+   "text": "Mo - So 0-24 h",
+   "anzahl": 4
+  },
+  {
+   "text": "Mo - So 8-18 h",
+   "anzahl": 2
+  }
+ ],
+ "gebuehren": [
+  {
+   "text": "2.50 Euro je Std.",
+   "anzahl": 134
+  },
+  {
+   "text": "1.50 Euro je Std.",
+   "anzahl": 7
+  },
+  {
+   "text": "",
+   "anzahl": 2
+  }
+ ],
+ "hoechstparkdauern": [
+  {
+   "text": "ohne",
+   "anzahl": 104
+  },
+  {
+   "text": "2 h",
+   "anzahl": 25
+  },
+  {
+   "text": "4 h",
+   "anzahl": 13
+  },
+  {
+   "text": "",
+   "anzahl": 1
+  }
+ ],
+ "tagesticket": [
+  {
+   "text": "ja",
+   "anzahl": 101
+  },
+  {
+   "text": "nein",
+   "anzahl": 42
+  }
+ ],
+ "kurzparkticket": [
+  {
+   "text": "nein",
+   "anzahl": 127
+  },
+  {
+   "text": "ja",
+   "anzahl": 16
+  }
+ ],
+ "bemerkungen": [
+  {
+   "text": "",
+   "anzahl": 140
+  },
+  {
+   "text": "Lage kontrollieren",
+   "anzahl": 1
+  },
+  {
+   "text": "Sonderregelung:  Privatparkplatz Landesregierung, ab Fr 17.00 Uhr bis So öffentlich\r\n",
+   "anzahl": 1
+  },
+  {
+   "text": "nur Tagesticket für 4 Euro",
+   "anzahl": 1
+  }
+ ],
+ "auszug": [
+  {
+   "id": "Parkscheinautomaten.148",
+   "properties": {
+    "Bezeichnung": "PA 41",
+    "Bemerkung": "",
+    "Standort": "Am Strand",
+    "Bewirtschaftungszeit": "Mo - So 8-21 h",
+    "Hoechstparkdauer": "ohne",
+    "Gebuehr": "1.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    265351.118989,
+    5945118.589195
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.159",
+   "properties": {
+    "Bezeichnung": "PA 74",
+    "Bemerkung": "",
+    "Standort": "Platz der Freiheit II",
+    "Bewirtschaftungszeit": "Mo - Fr 8-18 h",
+    "Hoechstparkdauer": "2 h",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    262175.079205,
+    5948748.661646
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.160",
+   "properties": {
+    "Bezeichnung": "PA 138",
+    "Bemerkung": "",
+    "Standort": "Amtstraße 21",
+    "Bewirtschaftungszeit": "Mo - Sa 8-20 h",
+    "Hoechstparkdauer": "ohne",
+    "Gebuehr": "1.50 Euro je Std.",
+    "Tagesticket": "ja",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    263568.244884,
+    5948503.33979
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.72",
+   "properties": {
+    "Bezeichnung": "PA 16",
+    "Bemerkung": "",
+    "Standort": "Friedrichstraße 7",
+    "Bewirtschaftungszeit": "Mo - Sa 8-20 h",
+    "Hoechstparkdauer": "2 h",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    262946.036927,
+    5948372.185361
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.92",
+   "properties": {
+    "Bezeichnung": "PA 25",
+    "Bemerkung": "",
+    "Standort": "Großer Moor 54",
+    "Bewirtschaftungszeit": "Mo - Sa 8-20 h",
+    "Hoechstparkdauer": "ohne",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "ja",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    263302.228543,
+    5948081.53105
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.58",
+   "properties": {
+    "Bezeichnung": "PA 8",
+    "Bemerkung": "",
+    "Standort": "Am Alten Palais",
+    "Bewirtschaftungszeit": "Mo - So 8-21 h",
+    "Hoechstparkdauer": "4 h",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    263055.218151,
+    5947940.306557
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.116",
+   "properties": {
+    "Bezeichnung": "PA 13",
+    "Bemerkung": "",
+    "Standort": "Demmlerplatz I",
+    "Bewirtschaftungszeit": "Mo - Fr 8-18 h",
+    "Hoechstparkdauer": "ohne",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "ja",
+    "Kurzparkticket": "ja"
+   },
+   "positionUtm": [
+    261983.535324,
+    5948523.498948
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.108",
+   "properties": {
+    "Bezeichnung": "PA 55",
+    "Bemerkung": "",
+    "Standort": "Theaterstraße 2",
+    "Bewirtschaftungszeit": "Mo - So 8-18 h",
+    "Hoechstparkdauer": "4 h",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    263062.334862,
+    5947978.44269
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.132",
+   "properties": {
+    "Bezeichnung": "PA 91",
+    "Bemerkung": "",
+    "Standort": "Wittenburger Straße 73",
+    "Bewirtschaftungszeit": "Mo - Sa 8-20 h",
+    "Hoechstparkdauer": "4 h",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    262037.74957,
+    5948271.979159
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.147",
+   "properties": {
+    "Bezeichnung": "PA 70",
+    "Bemerkung": "Lage kontrollieren",
+    "Standort": "Zum Bahnhof 25",
+    "Bewirtschaftungszeit": "Mo - Sa 8-20 h",
+    "Hoechstparkdauer": "ohne",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "ja",
+    "Kurzparkticket": "ja"
+   },
+   "positionUtm": [
+    262355.356432,
+    5948782.936228
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.104",
+   "properties": {
+    "Bezeichnung": "PA 65",
+    "Bemerkung": "",
+    "Standort": "Grunthalplatz-Bahnhof",
+    "Bewirtschaftungszeit": "Mo - So 0-24 h",
+    "Hoechstparkdauer": "2 h",
+    "Gebuehr": "2.50 Euro je Std.",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "ja"
+   },
+   "positionUtm": [
+    262559.446754,
+    5948809.003941
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.149",
+   "properties": {
+    "Bezeichnung": "PA 12",
+    "Bemerkung": "Sonderregelung:  Privatparkplatz Landesregierung, ab Fr 17.00 Uhr bis So öffentlich\r\n",
+    "Standort": "Am Marstall",
+    "Bewirtschaftungszeit": "Mo - So 0-24 h",
+    "Hoechstparkdauer": "",
+    "Gebuehr": "",
+    "Tagesticket": "nein",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    263395.215121,
+    5948079.147693
+   ]
+  },
+  {
+   "id": "Parkscheinautomaten.158",
+   "properties": {
+    "Bezeichnung": "PA 138",
+    "Bemerkung": "nur Tagesticket für 4 Euro",
+    "Standort": "Zoo",
+    "Bewirtschaftungszeit": "Mo - So 0-24 h",
+    "Hoechstparkdauer": "ohne",
+    "Gebuehr": "",
+    "Tagesticket": "ja",
+    "Kurzparkticket": "nein"
+   },
+   "positionUtm": [
+    264723.158149,
+    5945326.381446
+   ]
+  }
+ ]
+}

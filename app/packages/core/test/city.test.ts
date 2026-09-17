@@ -96,6 +96,21 @@ describe('withinCity', () => {
     expect(withinCity(MUENCHEN, 11.545, 48.235)).toBe(true) // Feldmoching
   })
 
+  // Schwerin: der Marktplatz am Dom liegt in Schwerin und in keiner der
+  // sieben anderen — und die Box kommt aus dem Gemeindeumriss, nicht aus den
+  // 15 Zonen, die alle in 2,5 km um die Altstadt liegen.
+  it('nimmt den Schweriner Marktplatz an und reicht bis Lankow und Mueß', () => {
+    const schwerin = cityByKey('schwerin')
+    expect(withinCity(schwerin, 11.4156, 53.6291)).toBe(true)
+    expect(withinCity(schwerin, 11.365, 53.655)).toBe(true) // Lankow
+    expect(withinCity(schwerin, 11.47, 53.58)).toBe(true) // Mueß
+    expect(withinCity(HAMBURG, 11.4156, 53.6291)).toBe(false)
+    expect(withinCity(BERLIN, 11.4156, 53.6291)).toBe(false)
+    expect(cityAt(11.4156, 53.6291)?.key).toBe('schwerin')
+    // Wismar liegt nördlich davon und gehört zu keiner Stadt.
+    expect(cityAt(11.465, 53.89)).toBeUndefined()
+  })
+
   /**
    * Keine zwei Boxen dürfen sich überlappen.
    *

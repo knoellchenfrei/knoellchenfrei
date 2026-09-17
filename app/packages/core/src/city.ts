@@ -742,6 +742,67 @@ export const ROSTOCK: City = {
   },
 }
 
+
+/**
+ * Schwerin — die achte Stadt, die erste in Mecklenburg-Vorpommern und die
+ * kleinste: 0,10 Mio Einwohner, 15 Bewohnerparkzonen auf 2,5 × 2,4 km.
+ *
+ * Die Box ist gemessen, nicht geschätzt, und sie stammt aus dem
+ * **Gemeindeumriss**: `ms:Stadtgrenzen_Schwerin` aus dem Raumgliederungs-
+ * Dienst des Landkreises (2.259 Stützpunkte, in EPSG:4326 abgerufen am
+ * 16. September 2026) misst 11,2960–11,5055 / 53,5443–53,6873; nach außen
+ * gerundet steht das unten. Die Parkzonen selbst liegen nur zwischen
+ * 11,39 und 11,43 Länge — wer die Box daraus nähme, wiese eine Meldung aus
+ * Lankow oder Mueß als „außerhalb" ab, obwohl sie mitten in Schwerin liegt.
+ *
+ * Der Mittelpunkt ist der Marktplatz am Dom. Der Zoom ist **13** und damit
+ * enger als überall sonst: 0,22° Länge ist die halbe Frankfurter Breite, und
+ * alle 15 Zonen liegen in einem Rechteck von 2,5 km um die Altstadt; bei 12
+ * wären sie ein Fleck am Schweriner See.
+ *
+ * Nachbarn: Hamburg endet bei 10,35° Ost, Schwerin beginnt bei 11,29° — fast
+ * ein Grad Abstand, der Test in `city.test.ts` prüft es trotzdem.
+ */
+export const SCHWERIN: City = {
+  key: 'schwerin',
+  name: 'Schwerin',
+  land: 'MV',
+  center: [11.4156, 53.6291],
+  zoom: 13,
+  reportBounds: { minLon: 11.29, minLat: 53.54, maxLon: 11.51, maxLat: 53.69 },
+  sessionBounds: { minLon: 11.0, minLat: 53.35, maxLon: 11.8, maxLat: 53.9 },
+  heatGrid: { id: 'schwerin', originLon: 11.29, originLat: 53.54, latitude: 53.63 },
+  attribution: {
+    // Wörtlich aus `ows:AccessConstraints` beider Dienste (Parken und
+    // Raumgliederung): „Datenlizenz Deutschland - Namensnennung - 2.0.
+    // Quellenvermerk: Landeshauptstadt Schwerin". Bei DL-DE/Namensnennung
+    // ist der Vermerk Lizenzbedingung; er steht deshalb so und nicht als
+    // der Landkreis, der die Dienste betreibt (`ows:ProviderName`:
+    // „Vermessungs- und Geoinformationsbehoerde des Landkreises
+    // Ludwigslust-Parchim und der Landeshauptstadt Schwerin").
+    source: 'Landeshauptstadt Schwerin',
+    datasetUrl: 'https://geoportal.kreis-lup.de/ows/masterportal/parken-sn',
+    licence: 'Datenlizenz Deutschland Namensnennung 2.0',
+    licenceUrl: 'https://www.govdata.de/dl-de/by-2-0',
+    attributionRequired: true,
+    licenceFamily: 'dl-de-by',
+  },
+  // Belegt auf der Seite des Kommunalen Ordnungsdienstes, wörtlich:
+  // „Auskünfte darüber, ob Ihr Fahrzeug vom Kommunalen Ordnungsdienst des
+  // Fachdienstes Gewerbe und Ordnungsdienst abgeschleppt wurde und wo es
+  // abzuholen ist, erhalten Sie unter der Telefonnummer: +49 385 545-1830".
+  // Abgerufen am 16. September 2026.
+  towedVehicles: {
+    authority: 'Kommunaler Ordnungsdienst der Landeshauptstadt Schwerin',
+    url: 'https://www.schwerin.de/mein-schwerin/leben/ordnung-sicherheit-verkehr/ordnung-sicherheit/kommunaler-ordnungsdienst/',
+    phone: '0385 545-1830',
+    checkedOn: '2026-09',
+    note:
+      'Nach Abschluss einer Abschleppmaßnahme weiß auch die Leitstelle der ' +
+      'Polizei Bescheid (+49 3820 8888 2224, so auf der Seite der Stadt).',
+  },
+}
+
 export const CITIES: readonly City[] = [
   BERLIN,
   HAMBURG,
@@ -753,8 +814,8 @@ export const CITIES: readonly City[] = [
   FREIBURG,
   ROSTOCK,
   COTTBUS,
+  SCHWERIN,
 ]
-
 
 /**
  * Eine Stadt zu ihrem Schlüssel.

@@ -65,7 +65,6 @@ export function countryOf(land: Land): Country {
   if (land.startsWith('PL-')) return 'PL'
   return 'DE'
 }
-
 /**
  * Easter Sunday for a Gregorian year, as a UTC calendar date.
  * Anonymous Gregorian algorithm (Meeus/Jones/Butcher).
@@ -328,6 +327,24 @@ const NATIONWIDE: Record<Country, RegionalHolidays> = {
  *   Evangelischen Kirche Berlin-Brandenburg-schlesische Oberlausitz,
  *   <https://www.kirchenrecht-ekbo.de/document/16>, abgerufen am
  *   16. September 2026. Gilt für Cottbus.
+ *   den **Internationalen Frauentag** (8. März, seit 2023) und den
+ *   **Reformationstag** (31. Oktober). Damit ist es das einzige Land, das
+ *   Berlins Frauentag *und* Hamburgs Reformationstag hat — und der Grund,
+ *   warum die beiden Kommentare oben je „nur BE und MV" sagen. Kein
+ *   Fronleichnam, kein Allerheiligen, kein Buß- und Bettag, keine
+ *   gemeindeweise Regelung. Fundstelle: § 2 Abs. 1 des Gesetzes über Sonn-
+ *   und Feiertage (Feiertagsgesetz M-V, FTG M-V); der Frauentag kam durch
+ *   das Erste Gesetz zur Änderung des Feiertagsgesetzes vom 5. Dezember 2022
+ *   (GVOBl. M-V S. 484) mit Wirkung ab 2023 hinzu. **Der Wortlaut ist aus
+ *   dieser Arbeitsumgebung nicht abrufbar**: `landesrecht-mv.de` (juris)
+ *   liefert an einen Abruf nur die leere Hülle einer React-Anwendung und
+ *   setzt die Verbindung bei jedem zweiten Versuch zurück; die Seiten des
+ *   Innenministeriums antworten mit 404. Die Aufzählung oben ist damit aus
+ *   dem Gedächtnis belegt und nicht wörtlich zitiert — der eine offene Punkt
+ *   in `docs/staedte-schwerin.md`, „Feiertage", und nachzuholen mit einem
+ *   Browser in einer Minute. Bis dahin ist der Zustand laut: Ein Test in
+ *   `holidays.test.ts` hält elf Tage fest, und wer den Wortlaut liest, prüft
+ *   gegen diese Zahl.
  */
 const REGIONAL: Record<Land, RegionalHolidays> = {
   BE: { fixed: ['03-08'], fromEaster: [] }, // Internationaler Frauentag

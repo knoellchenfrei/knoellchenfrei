@@ -16,6 +16,7 @@
     "build-data-freiburg": "tsx src/build-data-freiburg.ts",
     "build-data-rostock": "tsx src/build-data-rostock.ts",
     "build-data-cottbus": "tsx src/build-data-cottbus.ts",
+    "build-data-schwerin": "tsx src/build-data-schwerin.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

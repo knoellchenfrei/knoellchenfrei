@@ -59,6 +59,12 @@ import {
   parseCottbusTariffZone,
   parseCottbusTime,
 } from '../src/cottbus.js'
+import {
+  SchwerinParseError,
+  parseSchwerinFee,
+  parseSchwerinMaxStay,
+  parseSchwerinSchedule,
+} from '../src/schwerin.js'
 import { BERLIN, HAMBURG } from '../src/city.js'
 import { parseTelegramUpdate } from '../src/telegram.js'
 import { MAX_FEEDBACK_LENGTH, isFeedbackKind, tidyFeedback } from '../src/feedback.js'
@@ -213,6 +219,12 @@ describe('Zeitparser unter Beschuss', () => {
     })
   })
 
+  it('Schwerin wirft nur SchwerinParseError und liefert nur gültige Fenster', () => {
+    fuzz(20260916, 120, SchwerinParseError, (input) => {
+      expectValidWindows(parseSchwerinSchedule(input), input)
+    })
+  })
+
   it('München wirft nur MuenchenParseError und liefert nur gültige Fenster', () => {
     fuzz(20260910, 200, MuenchenParseError, (input) => {
       const rule = parseMuenchenRule(input)
@@ -299,6 +311,13 @@ describe('Gebührenparser unter Beschuss', () => {
       }
     }
   })
+  // Schwerin schreibt den Dezimalpunkt; `0.00 Euro je Std.` ist trotzdem
+  // eine Null und muss abbrechen wie `0,00 Euro` in Berlin.
+  it('Schwerin wirft nur SchwerinParseError und beziffert nie eine Null', () => {
+    fuzz(20260917, 120, SchwerinParseError, (input) => {
+      expectValidFee(parseSchwerinFee(input), input)
+    })
+  })
 })
 
 describe('Höchstparkdauer unter Beschuss', () => {
@@ -329,6 +348,12 @@ describe('Höchstparkdauer unter Beschuss', () => {
       expect(Number.isInteger(minutes)).toBe(true)
       expect(minutes).toBeGreaterThan(0)
     })
+    fuzz(20260918, 120, SchwerinParseError, (input) => {
+      const minutes = parseSchwerinMaxStay(input)
+      if (minutes === undefined) return
+      expect(Number.isInteger(minutes)).toBe(true)
+      expect(minutes).toBeGreaterThan(0)
+    })
   })
 })
 
@@ -355,6 +380,8 @@ describe('Zeitbudget', () => {
       (input) => parseRostockFee(Number(input)),
       parseCottbusDays,
       parseCottbusFee,
+      parseSchwerinSchedule,
+      parseSchwerinFee,
     ]
     const started = performance.now()
     for (const input of inputs) {
