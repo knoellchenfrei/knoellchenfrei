@@ -856,6 +856,8 @@ const BY_CITY: Record<string, readonly Source[]> = {
   // steht trotzdem hier, damit `citySources` die Stadt kennt — sonst wirft
   // `fetch-data` „Keine Quellen", obwohl es zwei Dateien gibt.
   innsbruck: [],
+  // Krakau ebenso: drei ArcGIS-Ebenen, alle über `cityFiles`.
+  krakau: [],
 }
 
 /**
@@ -999,11 +1001,65 @@ const INNSBRUCK_FILES: readonly FileSource[] = [
   },
 ]
 
+/**
+ * Krakau — Gmina Miejska Kraków, Zarząd Transportu Publicznego (ZTP), über
+ * das ArcGIS Online der Stadt. **Keine Lizenz ausgewiesen**, siehe
+ * `KRAKAU.licenceOpen` in `core/city.ts`.
+ *
+ * Vier Ebenen, alle als Datei, alle mit `f=geojson&outSR=4326` — ohne
+ * `outSR` antwortet der Dienst in PUWG 1992 (`wkid 2180`, Meter um
+ * 565.000 / 243.000), am 17. September 2026 nachgemessen. Die Ebene mit
+ * `ś` im Dienstnamen (`Sektory_SPP_wyświetlenie`) braucht die Adresse
+ * prozentkodiert; `curl` braucht dazu `-g`, sonst frisst es die Klammern
+ * nicht, sondern die Kodierung. Warum vier Ebenen für eine Aussage, steht
+ * in `build-data-krakau.ts`: Die amtliche ZDMK-Karte zeichnet
+ * `Granice_Stref_2026`, der beschriebene Datensatz ist die Ebene 37 mit
+ * Stand Dezember 2024, und die Erweiterung vom 10. August 2026 hat eine
+ * eigene Ebene mit Datum.
+ */
+const KRAKAU_ARCGIS = 'https://services-eu1.arcgis.com/svTzSt3AvH7sK6q9/arcgis/rest/services'
+
+const KRAKAU_FILES: readonly FileSource[] = [
+  // Die Ebene der amtlichen Karte („Mapa ZDMK v2"): 23 Sektoren, Stand
+  // 6. August 2026 — die Flächen.
+  {
+    key: 'zones',
+    url: arcgisQueryUrl(`${KRAKAU_ARCGIS}/Granice_Stref_2026/FeatureServer/1`),
+    file: 'zones.json',
+    expectedFeatures: 23,
+  },
+  // Die Erweiterung vom 10. August 2026: vier Polygone mit Datum in `Uwagi`.
+  {
+    key: 'extension',
+    url: arcgisQueryUrl(`${KRAKAU_ARCGIS}/Poszerzenie_OPP_od_10_08_2026/FeatureServer/0`),
+    file: 'extension.json',
+    expectedFeatures: 4,
+  },
+  // Der beschriebene Datensatz „Strefa Płatnego Parkowania w Krakowie"
+  // (Item d9e0ef7c33cd4f4a99c4e7d8024d3956, Tag „Dane Otwarte"): 26
+  // Polygone, 20 geltende und sechs geplante mit Präfix `n`. Nur zur
+  // Gegenprobe im Log; Stand der Daten 9. Dezember 2024.
+  {
+    key: 'sectors',
+    url: arcgisQueryUrl(`${KRAKAU_ARCGIS}/Sektory_SPP_wy%C5%9Bwietlenie/FeatureServer/37`),
+    file: 'sectors.json',
+    expectedFeatures: 26,
+  },
+  // Die 18 Dzielnice aus dem ISDP der Stadt (Ebene `F07_DZIELN_2014_polyg`).
+  {
+    key: 'districts',
+    url: arcgisQueryUrl(`${KRAKAU_ARCGIS}/Dzielnice_Krakowa/FeatureServer/10`),
+    file: 'districts.json',
+    expectedFeatures: 18,
+  },
+]
+
 const FILES_BY_CITY: Record<string, readonly FileSource[]> = {
   koeln: KOELN_FILES,
   cottbus: COTTBUS_FILES,
   graz: GRAZ_FILES,
   innsbruck: INNSBRUCK_FILES,
+  krakau: KRAKAU_FILES,
 }
 
 /** Die Dateien einer Stadt; leer für Städte, die alles aus WFS bekommen. */

@@ -20,6 +20,7 @@
     "build-data-graz": "tsx src/build-data-graz.ts",
     "build-data-salzburg": "tsx src/build-data-salzburg.ts",
     "build-data-innsbruck": "tsx src/build-data-innsbruck.ts",
+    "build-data-krakau": "tsx src/build-data-krakau.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

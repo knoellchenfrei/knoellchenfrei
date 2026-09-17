@@ -869,6 +869,31 @@ export const ZONE_UNITS: Readonly<Record<string, Readonly<Record<string, string>
     "151": "151",
     "152": "152",
   },
+  "krakau": {
+    "A1": "A1",
+    "A13": "A13",
+    "A2": "A2",
+    "A20": "A20",
+    "A3": "A3",
+    "A4": "A4",
+    "A6": "A6",
+    "B10": "B10",
+    "B11": "B11",
+    "B12": "B12",
+    "B30": "B30",
+    "B5": "B5",
+    "C15": "C15",
+    "C16": "C16",
+    "C19": "C19",
+    "C21": "C21",
+    "C22": "C22",
+    "C23": "C23",
+    "C24": "C24",
+    "C31": "C31",
+    "C7": "C7",
+    "C8": "C8",
+    "C9": "C9",
+  },
 }
 
 /** Zahl der Einheiten je Stadt, auch der stillen — der Nenner der Basisrate. */
@@ -887,6 +912,7 @@ export const UNIT_COUNTS: Readonly<Record<string, number>> = {
   "graz": 23,
   "salzburg": 38,
   "innsbruck": 20,
+  "krakau": 23,
 }
 
 /** Die Einheit einer Zone, oder null, wenn die Stadt oder der Schlüssel unbekannt ist. */

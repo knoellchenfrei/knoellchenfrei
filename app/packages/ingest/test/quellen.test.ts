@@ -147,6 +147,32 @@ describe('arcgisQueryUrl', () => {
   })
 })
 
+describe('cityFiles für Krakau', () => {
+  // Vier Ebenen, alle ArcGIS, alle in Grad — und die eine mit `ś` im
+  // Dienstnamen prozentkodiert, damit `new URL` sie so lässt, wie der
+  // Dienst sie erwartet.
+  it('fragt jede der vier Ebenen als GeoJSON in Grad und mit Erwartungswert', () => {
+    const dateien = cityFiles('krakau')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'extension', 'sectors', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.host).toBe('services-eu1.arcgis.com')
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(url.pathname.endsWith('/query'), datei.key).toBe(true)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+    }
+    expect(dateien.find((d) => d.key === 'sectors')?.url).toContain('Sektory_SPP_wy%C5%9Bwietlenie/FeatureServer/37/')
+    expect(dateien.find((d) => d.key === 'zones')?.expectedFeatures).toBe(23)
+  })
+
+  it('kennt Krakau auch in citySources — mit leerer WFS-Liste, ohne zu werfen', () => {
+    expect(citySources('krakau')).toEqual([])
+  })
+})
+
 describe('cityFiles für Innsbruck', () => {
   it('fragt jede ArcGIS-Ebene Innsbrucks als GeoJSON in Grad und mit Erwartungswert', () => {
     const dateien = cityFiles('innsbruck')
