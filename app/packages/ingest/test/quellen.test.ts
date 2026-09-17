@@ -162,3 +162,24 @@ describe('cityFiles für Innsbruck', () => {
     }
   })
 })
+
+describe('cityFiles für Genf', () => {
+  it('fragt jede SITG-Ebene als GeoJSON in Grad, und nur die Linien seitenweise', () => {
+    const dateien = cityFiles('genf')
+    expect(dateien.map((d) => d.key)).toEqual(['zones', 'lines', 'accessible', 'districts'])
+    for (const datei of dateien) {
+      const url = new URL(datei.url)
+      expect(url.hostname, datei.key).toBe('vector.sitg.ge.ch')
+      expect(url.searchParams.get('f'), datei.key).toBe('geojson')
+      expect(url.searchParams.get('outSR'), datei.key).toBe('4326')
+      expect(url.searchParams.get('where'), datei.key).toBe('1=1')
+      expect(url.pathname.endsWith('/query'), datei.key).toBe(true)
+      expect(datei.expectedFeatures, datei.key).toBeGreaterThan(0)
+      expect(datei.file).toMatch(/\.json$/)
+      // `paged` nur da, wo die Ebene größer als maxRecordCount (4.000) ist:
+      // Eine Seite mehr wäre harmlos, eine Seite weniger eine kleinere Stadt.
+      expect(datei.paged, datei.key).toBe((datei.expectedFeatures ?? 0) > 4000 ? true : undefined)
+    }
+    expect(citySources('genf')).toEqual([])
+  })
+})

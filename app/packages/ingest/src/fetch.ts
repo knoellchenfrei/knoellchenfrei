@@ -129,9 +129,7 @@ const dateien = cityFiles(CITY_KEY)
 for (const datei of dateien) {
   process.stdout.write(`${datei.key} (Datei) … `)
   try {
-    const response = await fetch(datei.url, { signal: AbortSignal.timeout(180_000) })
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-    const body = await response.text()
+    const body = datei.paged === true ? await ladeSeitenweise(datei.url) : await ladeRumpf(datei.url)
     if (body.length < 1000 || body.trimStart().startsWith('<')) {
       throw new Error(`nur ${body.length} Bytes oder HTML statt einer Datei`)
     }
@@ -181,6 +179,50 @@ for (const datei of dateien) {
     failed += 1
     console.log(`FAILED: ${(error as Error).message}`)
   }
+}
+
+async function ladeRumpf(url: string): Promise<string> {
+  const response = await fetch(url, { signal: AbortSignal.timeout(180_000) })
+  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  return response.text()
+}
+
+/**
+ * Eine ArcGIS-Ebene, die größer ist als ihr `maxRecordCount`, seitenweise.
+ *
+ * Genfs Parkierungslinien sind 13.236 bei einem Deckel von 4.000: Die erste
+ * Antwort ist vollständig gültiges GeoJSON mit 4.000 Merkmalen und einem
+ * `exceededTransferLimit: true` daneben — einmal oben, einmal unter
+ * `properties`, je nach Serverversion. Wer das Feld nicht liest, baut aus
+ * dem ersten Drittel und meldet Erfolg. Hier wird so lange mit
+ * `resultOffset` nachgeholt, bis das Feld fehlt; das Ergebnis ist **eine**
+ * FeatureCollection ohne die Marke, und die 95-%-Schranke unten gilt für die
+ * Summe. Fünfzig Seiten sind 200.000 Merkmale — mehr hat keine Ebene dieses
+ * Projekts, und eine Schleife ohne Ende wäre bei einem Dienst, der die Marke
+ * immer setzt, ein Abruf, der nie zurückkommt.
+ */
+async function ladeSeitenweise(url: string): Promise<string> {
+  const features: unknown[] = []
+  const seitenGroesse = 4000
+  let offset = 0
+  for (let seite = 0; seite < 50; seite += 1) {
+    const body = await ladeRumpf(`${url}&resultOffset=${offset}&resultRecordCount=${seitenGroesse}`)
+    const parsed = JSON.parse(body) as {
+      error?: { code?: number; message?: string }
+      features?: unknown[]
+      exceededTransferLimit?: boolean
+      properties?: { exceededTransferLimit?: boolean }
+    }
+    if (parsed.error !== undefined) {
+      throw new Error(`ArcGIS meldet Fehler ${parsed.error.code ?? '?'}: ${parsed.error.message ?? ''}`)
+    }
+    const page = parsed.features ?? []
+    features.push(...page)
+    offset += page.length
+    const mehr = parsed.exceededTransferLimit === true || parsed.properties?.exceededTransferLimit === true
+    if (!mehr || page.length === 0) return JSON.stringify({ type: 'FeatureCollection', features })
+  }
+  throw new Error(`mehr als 50 Seiten zu je ${seitenGroesse} — der Dienst setzt exceededTransferLimit ohne Ende`)
 }
 
 /**

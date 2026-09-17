@@ -874,6 +874,25 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "151",
     "152",
   ],
+  "genf": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */
