@@ -980,6 +980,61 @@ function pdokWijken(gemeentecode: string, expectedFeatures: number): Source {
   }
 }
 
+/**
+ * Gera — Stadtverwaltung Gera, Zentrales GIS, über den GeoServer-WFS 2.0.0
+ * des Geoportals (`geoportal.gera.de/geoserver/gera/wfs`). Lizenz nicht
+ * ausgewiesen, siehe `GERA` in `core/city.ts`.
+ *
+ * Gemessen am 17. September 2026: `outputFormat=application/json` liefert
+ * GeoJSON, `srsName=urn:ogc:def:crs:EPSG::4326` wirkt und antwortet in
+ * `[lon, lat]` (erster Stützpunkt `[12.0917, 50.8787]`); **ohne** `srsName`
+ * kommt dieselbe Ebene stillschweigend in EPSG:25833
+ * (`[295415.59, 5640369.99]`, `DefaultCRS` der Ebene) — der Frankfurt-Fall,
+ * `assertDegrees` in `build-data-gera.ts` misst nach. `resultType=hits`
+ * nennt `numberMatched="148"`, und das ist die Messlatte.
+ *
+ * Drei Ebenen aus einem Dienst: die Anwohnerparkzonen (10 Flächen und 138
+ * Linien in **einer** Ebene, `feature` 62637 bzw. 62638), die 27 Ortsteile
+ * (`geom_portal_ortsteile`, Feld `ortsteil`) und 12 Behindertenparkplätze.
+ * Gemessen, nicht ausgeliefert: `geom_stadtgrenze_und_flaeche` (zwei
+ * Polygone, nur für den Rahmen in `core/city.ts`). Nicht genommen:
+ * `geom_portal_parken` und `geom_portal_parken_alles` (14 bzw. 26 Punkte —
+ * Parkhäuser, Busparkplätze, dieselben Behindertenparkplätze noch einmal)
+ * und `geom_statistik_gemeindeteile` (72 Gemeindeteile — feiner als die
+ * Ortsteile, aber nicht die Gliederung, in der die Stadt spricht).
+ * Keine Umweltzone: Gera hat keine.
+ */
+const GERA_WFS = 'https://geoportal.gera.de/geoserver/gera/wfs'
+
+const GERA_DEFAULTS = {
+  outputFormat: 'application/json',
+  axisOrder: 'lon,lat',
+} as const
+
+const GERA_SOURCES: readonly Source[] = [
+  {
+    key: 'zones',
+    service: GERA_WFS,
+    typeName: 'gera:geom_portal_anwohnerparken',
+    expectedFeatures: 148,
+    ...GERA_DEFAULTS,
+  },
+  {
+    key: 'districts',
+    service: GERA_WFS,
+    typeName: 'gera:geom_portal_ortsteile',
+    expectedFeatures: 27,
+    ...GERA_DEFAULTS,
+  },
+  {
+    key: 'accessible',
+    service: GERA_WFS,
+    typeName: 'gera:geom_portal_behindertenparkplaetze',
+    expectedFeatures: 12,
+    ...GERA_DEFAULTS,
+  },
+]
+
 const BY_CITY: Record<string, readonly Source[]> = {
   berlin: BERLIN_SOURCES,
   hamburg: HAMBURG_SOURCES,
@@ -1017,6 +1072,7 @@ const BY_CITY: Record<string, readonly Source[]> = {
   kassel: [],
   // Kein WFS: Essen kommt vollständig über `cityFiles` (drei DKAN-Dateien).
   essen: [],
+  gera: GERA_SOURCES,
 }
 
 /**

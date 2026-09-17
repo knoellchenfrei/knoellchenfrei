@@ -2184,6 +2184,18 @@ export const ZONE_KEYS: Readonly<Record<string, readonly string[]>> = {
     "Ostviertel 2",
     "Sternviertel (I)",
   ],
+  "gera": [
+    "A",
+    "B",
+    "C",
+    "C/G",
+    "D",
+    "E",
+    "G",
+    "H",
+    "K",
+    "L",
+  ],
 }
 
 /** Alle Kennungen aller Städte, für eine Prüfung ohne Stadtbezug. */

@@ -28,6 +28,7 @@
     "build-data-krakau": "tsx src/build-data-krakau.ts",
     "build-data-kassel": "tsx src/build-data-kassel.ts",
     "build-data-essen": "tsx src/build-data-essen.ts",
+    "build-data-gera": "tsx src/build-data-gera.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-artifact": "tsx src/build-artifact.ts",

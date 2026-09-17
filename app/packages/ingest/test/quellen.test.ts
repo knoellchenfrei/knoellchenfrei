@@ -196,7 +196,7 @@ describe('cityFiles', () => {
 
   // Jede Stadt holt mindestens eine Ebene — über WFS oder als Datei.
   it('lässt keine Stadt ohne eine einzige Quelle', () => {
-    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'zuerich', 'essen']) {
+    for (const stadt of ['berlin', 'hamburg', 'frankfurt', 'muenchen', 'koeln', 'duesseldorf', 'karlsruhe', 'cottbus', 'zuerich', 'essen', 'gera']) {
       expect(citySources(stadt).length + cityFiles(stadt).length, stadt).toBeGreaterThan(0)
     }
   })
