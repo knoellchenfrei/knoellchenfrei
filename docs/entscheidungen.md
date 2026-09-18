@@ -717,7 +717,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 2400 Unit-Tests und 99,3 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 2409 Unit-Tests und 99,3 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 

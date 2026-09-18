@@ -23,6 +23,7 @@ vi.mock('../src/city.js', () => ({
   CITY: BERLIN,
   selectableCities: () => [BERLIN, WIEN],
   switchCity: vi.fn(),
+  recentCities: () => [],
 }))
 
 // Das Einstellungsblatt liest `__BETA__`, das Vite zur Bauzeit setzt; im

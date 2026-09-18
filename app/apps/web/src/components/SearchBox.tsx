@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { CITY } from '../city.js'
+import type { City } from '@knoellchenfrei/core'
+import { cityCountry, COUNTRY_NAMES } from '@knoellchenfrei/core'
+
+import { CITY, selectableCities } from '../city.js'
 import { IconOrt, IconSuche } from '../icons.js'
 import { MIN_QUERY, searchStreets, type StreetHit } from '../street-search.js'
 import type { LoadedZone } from '../zones.js'
@@ -10,6 +13,8 @@ interface Props {
   zones: readonly LoadedZone[]
   onPick: (zone: LoadedZone) => void
   onPickStreet: (hit: StreetHit) => void
+  /** Eine andere Stadt wurde getippt — der Aufrufer wechselt (und lädt neu). */
+  onPickCity: (city: City) => void
   /** Meldet, ob gerade eine Trefferliste offen ist — für den Verlaufseintrag (Android „Zurück"). */
   onOpenChange?: (open: boolean) => void
 }
@@ -23,9 +28,23 @@ const DEBOUNCE_MS = 300
  * eine Antwort kommt — und fehlen still, wenn keine kommt. Der Grund für die
  * Zweiteilung steht in `street-search.ts`.
  */
-export function SearchBox({ zones, onPick, onPickStreet, onOpenChange }: Props) {
+export function SearchBox({ zones, onPick, onPickStreet, onPickCity, onOpenChange }: Props) {
   const [query, setQuery] = useState('')
   const [streets, setStreets] = useState<StreetHit[]>([])
+
+  /**
+   * Andere Städte, am Namensanfang — seit dem 18. September, weil der
+   * schnellste Weg in eine andere Stadt der getippte Name ist, nicht eine
+   * Karte (UX-Review, `docs/ideen.md`). Ab drei Zeichen, damit „wi" nicht
+   * Wien über Wilmersdorf stellt; die geladene Stadt ist kein Treffer.
+   */
+  const cities = useMemo(() => {
+    const needle = query.trim().toLowerCase()
+    if (needle.length < 3) return []
+    return selectableCities().filter(
+      (city) => city.key !== CITY.key && city.name.toLowerCase().startsWith(needle)
+    )
+  }, [query])
 
   const matches = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -63,7 +82,7 @@ export function SearchBox({ zones, onPick, onPickStreet, onOpenChange }: Props) 
     }
   }, [query])
 
-  const total = matches.length + streets.length
+  const total = cities.length + matches.length + streets.length
   const open = total > 0
   useEffect(() => {
     onOpenChange?.(open)
@@ -88,9 +107,11 @@ export function SearchBox({ zones, onPick, onPickStreet, onOpenChange }: Props) 
         // aus, damit Chromes Autofill-Leiste nicht über die Treffer fällt.
         onKeyDown={(event) => {
           if (event.key !== 'Enter') return
+          const city = cities[0]
           const zone = matches[0]
           const street = streets[0]
-          if (zone !== undefined) onPick(zone)
+          if (city !== undefined) onPickCity(city)
+          else if (zone !== undefined) onPick(zone)
           else if (street !== undefined) onPickStreet(street)
           else return
           reset()
@@ -115,6 +136,24 @@ export function SearchBox({ zones, onPick, onPickStreet, onOpenChange }: Props) 
       )}
       {total > 0 && (
         <ul className="search__results">
+          {cities.map((city) => (
+            <li key={`stadt:${city.key}`}>
+              <button
+                type="button"
+                onClick={() => {
+                  onPickCity(city)
+                  reset()
+                }}
+              >
+                <strong>{city.name}</strong>
+                <span>
+                  {cityCountry(city) === cityCountry(CITY)
+                    ? 'Stadt wechseln'
+                    : `Stadt wechseln · ${COUNTRY_NAMES[cityCountry(city)]}`}
+                </span>
+              </button>
+            </li>
+          ))}
           {/* Schlüssel ist die Flächenkennung, nicht `properties.zone` — siehe
               ReportSheet: In Hamburg tragen 44 von 145 Flächen den Schlüssel
               `-`, und doppelte React-Schlüssel lassen React beim Umsortieren

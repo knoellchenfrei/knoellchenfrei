@@ -24,7 +24,7 @@ import {
   type Sighting,
 } from '@knoellchenfrei/core'
 
-import { CITY, switchCity } from './city.js'
+import { CITY, cityChosen, rememberCity, switchCity } from './city.js'
 import { rememberSuggestionDismissed, suggestionAt } from './city-suggestion.js'
 import { attributionFor, baseStyle } from './map-style.js'
 import { costLabel, statusLabel, tidyPoiDetail } from './format.js'
@@ -54,6 +54,7 @@ import {
 import type { StreetHit } from './street-search.js'
 import { UpdateBar } from './components/UpdateBar.js'
 import { CitySuggestion } from './components/CitySuggestion.js'
+import { FirstStartSheet } from './components/FirstStartSheet.js'
 import { HeatPanel } from './components/HeatPanel.js'
 import { InstallBanner, useInstallState } from './components/InstallHint.js'
 import { BetaBadge } from './components/BetaBadge.js'
@@ -299,6 +300,8 @@ export function App() {
   // Der Wert entsteht in `locate()` aus einer Position, die die App ohnehin
   // schon hat.
   const [citySuggestion, setCitySuggestion] = useState<City | null>(null)
+  // Die Frage beim ersten Start — einmal, vor dem Standort-Vordialog; siehe FirstStartSheet.
+  const [chooseCity, setChooseCity] = useState(() => !cityChosen())
   const [quietDismissed, setQuietDismissed] = useState(false)
   // Null solange oder falls es keinen Weg gibt, die Rückmeldung abzuliefern —
   // dann erscheint der Knopf gar nicht erst.
@@ -1984,6 +1987,11 @@ export function App() {
             zones={zones}
             onPick={focusZone}
             onPickStreet={focusStreet}
+            onPickCity={(city) => {
+              // Vor dem Neuladen, sofort hinaus — wie `city.switch` in `switchCity`.
+              trackNow('city.search', city.key)
+              switchCity(city)
+            }}
             onOpenChange={setSearchOpen}
           />
           {/* Die Beta-Marke gehört zum Kopf der App, nicht auf die Kante der
@@ -2149,7 +2157,7 @@ export function App() {
         dahinter — angetippt werden konnte er nicht, weggehen ging auch nicht.
         Er kommt, sobald der Dialog zu ist.
       */}
-      {askLocation && !reporting && !settingsOpen && !feedbackOpen && !reportsOpen && (
+      {askLocation && !chooseCity && !reporting && !settingsOpen && !feedbackOpen && !reportsOpen && (
         <LocationPrompt
           onAllow={() => {
             rememberLocationAsked()
@@ -2173,7 +2181,17 @@ export function App() {
         Melde-Sheet als Panel in der Mitte, und ein anklickbarer Hinweis neben
         einem `aria-modal`-Dialog gehört nicht dorthin.
       */}
-      {citySuggestion !== null && !reporting && !settingsOpen && !feedbackOpen && !reportsOpen && (
+      {chooseCity && (
+        <FirstStartSheet
+          onPick={switchCity}
+          onKeep={() => {
+            rememberCity(CITY)
+            setChooseCity(false)
+          }}
+        />
+      )}
+
+      {citySuggestion !== null && !chooseCity && !reporting && !settingsOpen && !feedbackOpen && !reportsOpen && (
         <CitySuggestion
           city={citySuggestion}
           current={CITY}

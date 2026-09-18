@@ -184,7 +184,13 @@ body {
 .sidebar {
   position: absolute;
   /* Nebeneinander, nicht untereinander: Die Kopfzeile bleibt links. */
-  top: 16px; right: 16px; bottom: 16px;
+  /* Unten bleibt der Streifen für die zwei Kreise frei (16 + 48 + 12 + 56
+     + 12 Abstand): Sie stehen seit dem 18. September in der Ecke des
+     Bildschirms, nicht mehr „links vom Blatt" — eingeklappt hingen sie
+     sonst 412 Pixel vom Rand mitten auf der Karte, ohne Bezug (Betreiber,
+     Desktop-Foto). Ein langes Blatt scrollt in seinem Körper und endet
+     über den Kreisen; so springt beim Auf- und Zuklappen nichts. */
+  top: 16px; right: 16px; bottom: calc(144px + env(safe-area-inset-bottom, 0px));
   width: min(380px, calc(100% - 32px));
   display: flex; flex-direction: column; gap: 12px;
   /* Der Griff steht, der Körper scrollt. Vorher scrollte die ganze Spalte,
@@ -440,8 +446,13 @@ body {
      den anderen läuft. */
   /* Plus Safe-Area: Auf einem aufgeklappten Fold oder Tablet mit Gestenleiste
      klebte der Kreis sonst in der Leiste (Android-Audit A-011). */
-  .locate { right: calc(36px + min(380px, calc(100% - 32px))); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
-  .fab { right: calc(32px + min(380px, calc(100% - 32px))); bottom: calc(16px + 48px + 12px + env(safe-area-inset-bottom, 0px)); }
+  /* In der Ecke, nicht links vom Blatt — Begründung an `.sidebar`. Ein Ziel
+     16 Pixel vor der Kante ist mit der Maus fast ein Kantenziel; 412 Pixel
+     im Freien war ein Präzisionsziel, dessen Umgebung je Zustand wechselte. */
+  .locate { right: 20px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .fab { right: 16px; bottom: calc(16px + 48px + 12px + env(safe-area-inset-bottom, 0px)); }
+  /* Der freie Streifen unter dem Blatt macht das Verstecken überflüssig. */
+  .sidebar--full ~ .locate, .sidebar--full ~ .fab { display: grid; }
   .corner { left: 16px; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); }
 }
 
@@ -1225,6 +1236,10 @@ body {
   appearance: none; -webkit-appearance: none; cursor: pointer;
 }
 .select:focus-visible { outline: 2px solid var(--focus, #60a5fa); outline-offset: 2px; }
+
+/* „Zuletzt genutzt": die Zeitangabe als zweite Zeile, leise. */
+.rows--recent { margin-bottom: 4px; }
+.rows__sub { display: block; font-size: 13px; font-weight: 400; color: var(--muted); }
 
 .sheet__label--field { margin-top: 18px; display: block; text-transform: none; letter-spacing: 0; font-size: 15px; }
 .sheet__textarea {

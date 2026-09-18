@@ -87,6 +87,13 @@ export const EVENTS = {
   'city.switch': { hour: 'ort', values: 'city' },
   /** Der Vorschlag „du bist in München" — angenommen oder abgelehnt. */
   'city.suggest': { hour: 'zeit', values: ['accept', 'decline'] },
+  /**
+   * Ein Stadtwechsel über das Suchfeld — die Zielstadt ist ein Ort, also
+   * ohne Stunde. Zählt neben `city.switch`, damit sich sagen lässt, welchen
+   * Weg die Leute nehmen: Einstellungen, Vorschlag oder getippter Name.
+   * Die Frage dahinter steht in `docs/ideen.md` (Gesamtkarte).
+   */
+  'city.search': { hour: 'ort', values: 'city' },
   /** Der Standort wurde freigegeben. Nur das, nicht die Ablehnung. */
   locate: { hour: 'zeit', values: ['use'] },
   /** Eine Rückmeldung wurde wirklich abgeschickt. */

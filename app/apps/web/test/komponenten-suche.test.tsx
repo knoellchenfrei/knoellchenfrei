@@ -63,9 +63,10 @@ const zones = loadZones({
 function zeichne() {
   const onPick = vi.fn()
   const onPickStreet = vi.fn()
-  render(<SearchBox zones={zones} onPick={onPick} onPickStreet={onPickStreet} />)
+  const onPickCity = vi.fn()
+  render(<SearchBox zones={zones} onPick={onPick} onPickStreet={onPickStreet} onPickCity={onPickCity} />)
   const feld = screen.getByRole('searchbox', { name: /Zone, Bezirk oder Straße/ })
-  return { onPick, onPickStreet, feld }
+  return { onPick, onPickStreet, onPickCity, feld }
 }
 
 const treffer = () => screen.queryAllByRole('button').map((b) => b.textContent)
@@ -98,6 +99,27 @@ describe('SearchBox', () => {
     expect(document.activeElement).not.toBe(feld)
     expect(feld.getAttribute('enterkeyhint')).toBe('search')
     expect(feld.getAttribute('autocomplete')).toBe('off')
+  })
+
+  // Der schnellste Weg in eine andere Stadt ist ihr Name — nicht eine Karte
+  // (UX-Review vom 18. September, `docs/ideen.md`). Ab drei Zeichen, am
+  // Namensanfang, mit dem Land, wenn es ein anderes ist; Enter nimmt die
+  // Stadt vor jeder Zone.
+  it('findet andere Städte am Namensanfang, nennt das Land und wechselt mit Enter', () => {
+    const { onPickCity, onPick, feld } = zeichne()
+    fireEvent.change(feld, { target: { value: 'wi' } })
+    expect(treffer()).toEqual([])
+    fireEvent.change(feld, { target: { value: 'wie' } })
+    expect(treffer()).toEqual(['WienStadt wechseln · Österreich'])
+    fireEvent.change(feld, { target: { value: 'ham' } })
+    expect(treffer()).toEqual(['HamburgStadt wechseln'])
+    fireEvent.change(feld, { target: { value: 'ber' } })
+    // Die geladene Stadt (Berlin) ist kein Treffer, Bern schon.
+    expect(treffer()).toEqual(['BernStadt wechseln · Schweiz'])
+    fireEvent.keyDown(feld, { key: 'Enter' })
+    expect(onPickCity).toHaveBeenCalledWith(expect.objectContaining({ key: 'bern' }))
+    expect(onPick).not.toHaveBeenCalled()
+    expect((feld as HTMLInputElement).value).toBe('')
   })
 
   it('tut mit Enter ohne Treffer nichts', () => {

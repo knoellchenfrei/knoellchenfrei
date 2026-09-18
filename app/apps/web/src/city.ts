@@ -26,8 +26,10 @@ import { BERLIN, CITIES, cityByKey, type City } from '@knoellchenfrei/core'
 
 import { availableCities } from './data-source.js'
 import { trackNow } from './track.js'
+import { merken, nutzungenLesen, type Nutzung } from './zuletzt.js'
 
 const STORAGE_KEY = 'knoellchenfrei:city'
+const RECENT_KEY = 'knoellchenfrei:recent-cities'
 
 function fromStorage(): City | null {
   try {
@@ -52,6 +54,45 @@ function fromBuild(): City | null {
 export const CITY: City = fromStorage() ?? fromBuild() ?? BERLIN
 
 /**
+ * Hat jemand die Stadt schon einmal gewählt — oder kann er es gar nicht?
+ *
+ * Bis zum 18. September bekam ein neues Gerät still Berlin und musste den
+ * Standortvorschlag abwarten, um davon wegzukommen. Jetzt fragt die App beim
+ * ersten Start. `true` heisst: nicht fragen — weil eine Wahl im Speicher
+ * liegt, weil das Bündel eine Stadt vorgibt (`VITE_CITY`, ein Deployment je
+ * Stadt), oder weil der Speicher nicht schreibbar ist: Dann hielte die
+ * Antwort keine Sitzung, und die Frage käme bei jedem Start wieder.
+ */
+export function cityChosen(): boolean {
+  if (fromBuild() !== null) return true
+  try {
+    localStorage.setItem(`${STORAGE_KEY}:probe`, '1')
+    localStorage.removeItem(`${STORAGE_KEY}:probe`)
+    return localStorage.getItem(STORAGE_KEY) !== null
+  } catch {
+    return true
+  }
+}
+
+/** Die zuletzt gewechselten Städte aus dem Speicher — leer, wenn es keinen gibt oder nichts drinsteht. */
+export function recentCities(): Nutzung[] {
+  try {
+    return nutzungenLesen(JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]'))
+  } catch {
+    return []
+  }
+}
+
+/** Die Stadt merken, ohne neu zu laden — für „diese Stadt behalten" beim ersten Start. */
+export function rememberCity(city: City): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, city.key)
+  } catch {
+    // Ohne Speicher bleibt es bei der Voreinstellung — und bei der Frage beim nächsten Start.
+  }
+}
+
+/**
  * Stadt wechseln — und die Seite neu laden.
  *
  * Der Neuladen-Teil ist Absicht, keine Faulheit. Am Stadtwechsel hängen der
@@ -73,6 +114,10 @@ export function switchCity(city: City): void {
   trackNow('city.switch', city.key)
   try {
     localStorage.setItem(STORAGE_KEY, city.key)
+    // Beide Seiten des Wechsels merken: die Stadt, aus der man kommt, ist
+    // die, zu der man zurückwill — der Pendlerfall aus `zuletzt.ts`.
+    const jetzt = Date.now()
+    localStorage.setItem(RECENT_KEY, JSON.stringify(merken(merken(recentCities(), CITY.key, jetzt - 1), city.key, jetzt)))
   } catch {
     // Ohne Speicher bleibt der Wechsel eine Sitzung lang bestehen, nicht länger.
   }

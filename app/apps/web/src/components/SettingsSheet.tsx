@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { COUNTRY_NAMES, HISTORY_DAYS, cityCountry, type Country } from '@knoellchenfrei/core'
+import { HISTORY_DAYS } from '@knoellchenfrei/core'
 
 import { CITY, selectableCities, switchCity } from '../city.js'
 import { IconWarnung, IconZurueck } from '../icons.js'
 import { setStatistikAus, statistikAus } from '../track.js'
+import { CityPicker } from './CityPicker.js'
 import { InstallRow, useInstallState } from './InstallHint.js'
 
 interface Props {
@@ -236,10 +237,6 @@ export function SettingsSheet({
   // Die Länder, die diese Auslieferung zeigen kann, in fester Reihenfolge —
   // und das Land der aktuellen Stadt vorgewählt, damit die Liste beim Öffnen
   // die eigene Stadt enthält.
-  const laender = (Object.keys(COUNTRY_NAMES) as Country[]).filter((land) =>
-    selectableCities().some((city) => cityCountry(city) === land)
-  )
-  const [country, setCountry] = useState<Country>(cityCountry(CITY))
   const closeRef = useRef<HTMLButtonElement>(null)
   const stand = datenstand(geprueftAm, Date.now())
 
@@ -304,42 +301,7 @@ export function SettingsSheet({
               quer durch drei Staaten hätte das in einem Tipp verschluckt.
               Nur sichtbar, wenn es überhaupt zwei Länder gibt.
             */}
-            {laender.length > 1 && (
-              // Ein natives Auswahlfeld, keine Segmentleiste: Mit sechs
-              // Ländern lief die Leiste auf dem Handy nach rechts aus dem
-              // Bild, und „Niederland…" war angeschnitten (Betreiber,
-              // 18. September). Ein select zeigt alle Länder im Systemdialog.
-              <select
-                className="select"
-                aria-label="Land"
-                value={country}
-                onChange={(event) => setCountry(event.target.value as Country)}
-              >
-                {laender.map((land) => (
-                  <option key={land} value={land}>
-                    {COUNTRY_NAMES[land]}
-                  </option>
-                ))}
-              </select>
-            )}
-            <ul className="rows">
-              {selectableCities().filter((city) => cityCountry(city) === country).map((city) => (
-                <li key={city.key}>
-                  <button
-                    type="button"
-                    className="rows__item"
-                    aria-current={city.key === CITY.key ? 'true' : undefined}
-                    disabled={city.key === CITY.key}
-                    onClick={() => switchCity(city)}
-                  >
-                    <span>{city.name}</span>
-                    <span className="rows__chevron" aria-hidden="true">
-                      {city.key === CITY.key ? '✓' : '→'}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <CityPicker onPick={switchCity} />
             <p className="sheet__hint">
               Die App zeigt jeweils eine Stadt. Beim Wechsel lädt sie neu; ein gemerkter
               Parkplatz in der anderen Stadt bleibt dort erhalten.

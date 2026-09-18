@@ -11,6 +11,11 @@ import { expect, test, type Page } from '@playwright/test'
  */
 test.beforeEach(async ({ context }) => {
   await context.route('**/tile.openstreetmap.org/**', (route) => route.abort())
+  // Seit dem 18. September fragt die App beim ersten Start nach der Stadt;
+  // hier ist jedes Gerät ein wiederkehrendes, Berlin liegt im Speicher.
+  await context.addInitScript(() => {
+    if (localStorage.getItem('knoellchenfrei:city') === null) localStorage.setItem('knoellchenfrei:city', 'berlin')
+  })
 })
 
 /**

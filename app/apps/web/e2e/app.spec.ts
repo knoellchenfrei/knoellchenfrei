@@ -30,6 +30,13 @@ test.beforeEach(async ({ context }) => {
  * sie durch, auf jedem weiteren fielen sie: ein Wettlauf, kein Zufall.
  */
 async function ready(page: Page, options?: { keepPrompt?: boolean }): Promise<void> {
+  // Seit dem 18. September fragt die App beim ersten Start nach der Stadt.
+  // Jeder Test, der nicht diese Frage prüft, ist ein wiederkehrendes Gerät:
+  // Berlin liegt schon im Speicher. Ein Test, der die Stadt selbst setzt,
+  // hat es vorher getan; sein Wert bleibt, weil hier nur gesetzt wird, was fehlt.
+  await page.addInitScript(() => {
+    if (localStorage.getItem('knoellchenfrei:city') === null) localStorage.setItem('knoellchenfrei:city', 'berlin')
+  })
   await page.goto('/')
   await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
   await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
@@ -484,6 +491,36 @@ test.describe('der Meldeknopf auf der Karte', () => {
     expect(Math.abs(fab.x + fab.width / 2 - (locate.x + locate.width / 2))).toBeLessThan(2)
     await expect(page.locator('.fab')).toHaveCSS('border-radius', '50%')
     await expect(page.locator('.fab')).toHaveCSS('background-color', 'rgb(220, 38, 38)')
+  })
+
+  // Seit dem 18. September stehen die Kreise auf dem Desktop in der Ecke des
+  // Bildschirms, nicht „links vom Blatt": Eingeklappt hingen sie sonst 412
+  // Pixel vom Rand mitten auf der Karte, ohne Bezug (Betreiber, Desktop-Foto).
+  // Das Blatt endet über ihnen, und beim Auf- und Zuklappen bewegt sich nichts.
+  test('stehen die Kreise auf dem Desktop in der Ecke und bleiben dort, ob das Blatt auf oder zu ist', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'Auf dem Handy gibt es kein Blatt rechts.')
+    await ready(page)
+    await page.locator('.search__input').fill('12')
+    await page.locator('.search__results button').first().click()
+    await expect(page.locator('#zone-panel-title')).toBeVisible()
+    const breite = page.viewportSize()!.width
+    const vorher = (await page.locator('.fab').boundingBox())!
+    const blatt = (await page.locator('.sidebar').boundingBox())!
+    expect(breite - (vorher.x + vorher.width)).toBeLessThanOrEqual(17)
+    expect(blatt.y + blatt.height).toBeLessThanOrEqual(vorher.y)
+    const trifft = async (): Promise<boolean> =>
+      page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('.fab') !== null, [
+        vorher.x + vorher.width / 2,
+        vorher.y + vorher.height / 2,
+      ] as const)
+    expect(await trifft()).toBe(true)
+
+    await page.locator('.panel-toggle').click()
+    await page.waitForTimeout(300)
+    const nachher = (await page.locator('.fab').boundingBox())!
+    expect(Math.abs(nachher.x - vorher.x)).toBeLessThan(1)
+    expect(Math.abs(nachher.y - vorher.y)).toBeLessThan(1)
+    expect(await trifft()).toBe(true)
   })
 })
 
@@ -1064,7 +1101,7 @@ test.describe('die weiteren Städte', () => {
   test('bietet jede Stadt an und markiert die aktuelle', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
-    await expect(sheet.getByRole('button', { name: 'Berlin' })).toBeDisabled()
+    await expect(sheet.getByRole('button', { name: 'Berlin', exact: true })).toBeDisabled()
     await expect(sheet.getByRole('button', { name: 'Hamburg' })).toBeEnabled()
     await expect(sheet.getByRole('button', { name: 'Frankfurt am Main' })).toBeEnabled()
     await expect(sheet.getByRole('button', { name: 'München' })).toBeEnabled()
@@ -1313,7 +1350,7 @@ test.describe('die weiteren Städte', () => {
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
 
     sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Berlin' }).click()
+    await sheet.getByRole('button', { name: 'Berlin', exact: true }).click()
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
     await openPanel(page)
@@ -1524,7 +1561,8 @@ test.describe('Städte der zweiten Runde', () => {
   async function wechsleZu(page: Page, land: string, stadt: string): Promise<void> {
     const sheet = await openSettings(page)
     await sheet.getByRole('combobox', { name: 'Land' }).selectOption({ label: land })
-    await sheet.getByRole('button', { name: stadt }).click()
+    // exact: Seit "Zuletzt genutzt" kann eine Stadt zweimal im Blatt stehen, oben mit Zeitangabe.
+    await sheet.getByRole('button', { name: stadt, exact: true }).click()
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
   }
@@ -1563,5 +1601,60 @@ test.describe('Städte der zweiten Runde', () => {
     await openPanel(page)
     const zonePanel = page.getByRole('region', { name: /^Parkzone / })
     await expect(zonePanel.locator('.facts')).toContainText('€')
+  })
+})
+
+/**
+ * Seit dem 18. September: Die Stadt wird beim ersten Start gefragt und
+ * bleibt gemerkt; und ein Stadtname im Suchfeld wechselt die Stadt. Beides
+ * auf Wunsch des Betreibers, nach dem UX-Review zur Gesamtkarte (`ideen.md`).
+ */
+test.describe('Erststart und Stadtsuche', () => {
+  test('fragt beim ersten Start nach der Stadt, merkt die Wahl und fragt danach nicht mehr', async ({ page }) => {
+    await page.goto('/')
+    const frage = page.getByRole('dialog', { name: 'Stadt wählen' })
+    await expect(frage).toBeVisible({ timeout: 30_000 })
+    // Der Standort-Vordialog wartet, bis die Stadt gewählt ist.
+    await expect(page.locator('.prompt')).toHaveCount(0)
+    await frage.getByRole('combobox', { name: 'Land' }).selectOption({ label: 'Österreich' })
+    await frage.getByRole('button', { name: 'Wien' }).click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    expect(await page.evaluate(() => localStorage.getItem('knoellchenfrei:city'))).toBe('wien')
+    await expect(page.getByRole('dialog', { name: 'Stadt wählen' })).toHaveCount(0)
+
+    await page.reload()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByRole('dialog', { name: 'Stadt wählen' })).toHaveCount(0)
+  })
+
+  test('„Berlin behalten" merkt Berlin, und erst dann kommt der Standort-Vordialog', async ({ page }) => {
+    await page.goto('/')
+    const frage = page.getByRole('dialog', { name: 'Stadt wählen' })
+    await expect(frage).toBeVisible({ timeout: 30_000 })
+    await frage.getByRole('button', { name: 'Berlin behalten' }).click()
+    await expect(frage).toHaveCount(0)
+    expect(await page.evaluate(() => localStorage.getItem('knoellchenfrei:city'))).toBe('berlin')
+    await expect(page.locator('.prompt')).toBeVisible()
+  })
+
+  test('wechselt über einen Stadtnamen im Suchfeld die Stadt', async ({ page }) => {
+    await ready(page)
+    await page.locator('.search__input').fill('wie')
+    const treffer = page.locator('.search__results button').first()
+    await expect(treffer).toContainText('Wien')
+    await expect(treffer).toContainText('Österreich')
+    await treffer.click()
+    await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
+    expect(await page.evaluate(() => localStorage.getItem('knoellchenfrei:city'))).toBe('wien')
+
+    // „Zuletzt genutzt": die Stadt, aus der man kam, steht oben in der
+    // Stadtwahl — mit grober Zeitangabe, ohne die aktuelle Stadt.
+    const sheet = await openSettings(page)
+    await expect(sheet).toContainText('Zuletzt genutzt')
+    const zuletzt = sheet.locator('.rows--recent')
+    await expect(zuletzt.getByRole('button', { name: /Berlin/ })).toContainText('gerade eben')
+    await expect(zuletzt.getByRole('button', { name: /Wien/ })).toHaveCount(0)
   })
 })

@@ -177,8 +177,11 @@ Meldungen-Karte), Karte, Blatt rechts als Spalte. Zahnrad und Ebenen stehen
 in der Leiste rechts neben der Suche; die Kreise unten links vom Blatt;
 Quellen unten links.
 
-**Desktop.** Kopf links (400 px), Blatt rechts als Spalte (380 px), Kreise
-unten links vom Blatt, Meldungen-Karte unten links, Quellen daneben.
+**Desktop.** Kopf links (400 px), Blatt rechts als Spalte (380 px), die
+unten 144 px über dem Rand endet; die Kreise stehen darunter in der Ecke
+(16 px vom Rand) und bleiben dort, ob das Blatt auf oder zu ist — seit dem
+18. September, vorher „links vom Blatt", wo sie eingeklappt ohne Bezug auf
+der Karte hingen. Meldungen-Karte unten links, Quellen daneben.
 
 ## 9. Bewegung
 

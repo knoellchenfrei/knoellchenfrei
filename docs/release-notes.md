@@ -9,11 +9,29 @@ offen ist, in [todo.md](todo.md).
 ## Länder — 17. September 2026
 
 **Die App zeigt jetzt Städte in sechs Ländern.** In den Einstellungen steht
-vor der Städteliste eine Landeswahl; die Liste zeigt nur die Städte des
-gewählten Landes, und wer ein Land wechselt, tut das absichtlich. Wer sich in
-einer anderen Stadt befindet, bekommt wie bisher einen Vorschlag — über eine
-Landesgrenze nennt er das Land dazu („Dein Standort liegt in Wien
-(Österreich)").
+vor der Städteliste ein Auswahlfeld für das Land; die Liste zeigt nur die
+Städte des gewählten Landes, und wer ein Land wechselt, tut das absichtlich.
+Wer sich in einer anderen Stadt befindet, bekommt wie bisher einen Vorschlag
+— über eine Landesgrenze nennt er das Land dazu („Dein Standort liegt in
+Wien (Österreich)").
+
+**Beim ersten Start fragt die App nach der Stadt** statt still Berlin zu
+zeigen. Die Wahl bleibt im Browser gemerkt; „Berlin behalten" geht auch.
+
+**Stadtnamen im Suchfeld.** Wer „Wien" tippt, bekommt als ersten Treffer den
+Wechsel nach Wien — das ist der schnellste Weg in eine andere Stadt.
+
+**„Zuletzt genutzt".** Wer zwischen Städten wechselt, findet die letzten
+drei oben in der Stadtwahl, mit grober Zeitangabe.
+
+**Desktop: Melden und Standort in der Ecke.** Die zwei Kreise stehen unten
+rechts am Bildschirmrand und bleiben dort, ob das Detail-Blatt auf oder zu
+ist. Vorher hingen sie eingeklappt mitten auf der Karte.
+
+**Standort in zwei Stufen.** Kommt der genaue GPS-Fix nicht in zehn
+Sekunden, nimmt die App eine grobe Position und rückt den Punkt danach
+nach. Vorher hieß es „Standort konnte nicht ermittelt werden", obwohl GPS
+an war.
 
 **Neue Städte.** Deutschland: Freiburg im Breisgau, Rostock, Schwerin,
 Cottbus, Kassel, Essen, Saarbrücken, Gera, Hildesheim. Österreich: Wien, Graz, Salzburg,

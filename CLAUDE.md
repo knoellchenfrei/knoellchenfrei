@@ -32,11 +32,11 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 2400 Unit-Tests (core, api, web, ingest)
+pnpm test                                           # 2409 Unit-Tests (core, api, web, ingest)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,3 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
-cd apps/web && npx playwright test                  # 234 End-to-End-Tests, rund 9 Minuten
+cd apps/web && npx playwright test                  # 242 End-to-End-Tests, rund 9 Minuten
 ```
 
 Und sechs Prüfungen, die kein Compiler ist — **vom Wurzelverzeichnis aus**, nicht
@@ -89,7 +89,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (1828), `apps/api` (101, Worker gegen SQLite und Zählwerk),
-`apps/web` (337, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (346, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, Straßensuche, Langzeitmuster, sieben Komponentendateien mit jsdom, Service
 Worker im gestellten `self`) und `packages/ingest` (134: Wächter des Artifact-Baus, Datenstand,
@@ -107,7 +107,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=2400 E2E_COUNT=234 npx tsx src/build-badges.ts
+TEST_COUNT=2409 E2E_COUNT=242 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
