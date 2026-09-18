@@ -179,3 +179,18 @@ genau das soll er ja auch.
   Straßennamen aus Punkt 1 fast genauso gut können.
 - **Werbung, Spenden-Knopf, Sponsoren.** Steht schon als Entscheidung dagegen.
 - **Eine zweite Kartenbibliothek.** MapLibre kann alles hier Genannte.
+
+## Gesamtkarte zur Stadtwahl — zurückgestellt, bis eine Messung sie verlangt
+
+Frage des Betreibers am 18. September: eine Karte aller Länder, auf der ein
+Tipp auf Bundesland oder Stadt dorthin zoomt und die Stadt setzt. Einschätzung
+(UX-Review, gleicher Tag): **nein, solange der Wechsel selten ist.** Wer
+wechselt, kennt den Namen; der Reisefall ist über den Standortvorschlag
+gedeckt; eine Basiskarte für sechs Länder gibt es nicht (ein Kachelarchiv je
+Stadt), und Köln, Düsseldorf und Essen lägen bei Deutschland-Zoom in einem
+Tippziel. Billiger, in dieser Reihenfolge: Städtenamen im Suchfeld als erster
+Treffer, Stadtwahl beim Erststart statt stiller Berlin-Vorgabe, „zuletzt
+genutzt" oben in der Liste. Vorher messen: `city.switch` je Gerät und Tag,
+Annahmequote von `city.suggest`, und wie oft ein Stadtname ins Suchfeld
+getippt wird. Liegt der Wechsel unter einem Prozent der Sitzungen, ist die
+Frage beantwortet.

@@ -5,7 +5,7 @@
  * Genauigkeit und zehn Sekunden Frist. Auf einem Android-Gerät mit gerade
  * eingeschaltetem GPS braucht der erste Fix drinnen oft länger; der Aufruf
  * lief in `TIMEOUT`, und die App sagte „Standort konnte nicht ermittelt
- * werden" — obwohl GPS an war (Betreiber, Brave auf Android). Eine grobe
+ * werden" — obwohl GPS an war (ein Android-Tester, Brave). Eine grobe
  * Position aus Funkzelle und WLAN kommt in Sekunden und reicht, um die Zone
  * zu treffen: Zonen sind hunderte Meter groß. Deshalb: erst genau, bei
  * Zeitüberschreitung oder „nicht verfügbar" grob mit längerer Frist, und

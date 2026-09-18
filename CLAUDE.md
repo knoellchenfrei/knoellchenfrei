@@ -943,7 +943,7 @@ wiederholt.
   „Wo bin ich?" fragte einmal, genau, mit zehn Sekunden — und auf einem
   Android-Gerät mit gerade eingeschaltetem GPS kam der erste Fix drinnen
   später. Die App sagte „Standort konnte nicht ermittelt werden", obwohl
-  GPS an war (Betreiber, 18. September, Brave). Eine grobe Position aus
+  GPS an war (ein Android-Tester, 18. September, Brave). Eine grobe Position aus
   Funkzelle und WLAN kommt in Sekunden und trifft die Zone; `standort.ts`
   fragt seitdem erst genau, dann grob mit längerer Frist, nennt je Ursache
   eine andere Abhilfe und bricht nur bei verweigerter Berechtigung sofort ab.
