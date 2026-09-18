@@ -597,3 +597,55 @@ zwei verschiedene Messverfahren vergleicht.
 1,85 Mrd. Cache-Lesen. Sie überzeichnen weiterhin — der Faktor 1,6 aus der
 ersten Sitzung gilt hier genauso, weil dieselbe Mehrfachzählung beim Streamen
 dahintersteckt. Als Grössenordnung taugen sie, als Abrechnung nicht.
+
+## Die vierte Sitzung: 9. bis 18. September 2026
+
+**Stand 18. September, 07:20 Uhr** — die Sitzung läuft noch; die Zahlen sind
+eine Momentaufnahme, diesmal aus **zwei** Quellen: dem Verlauf als JSONL
+(`877bd484…`, 10.910 Zeilen, 69,1 MB) und der Buchhaltung (`get_session` →
+`external_metadata.usage`), die aus dieser Sitzung heraus abrufbar war.
+
+Die Sitzung hat die zweite Städterunde geliefert: von 7 auf **32 Städte in
+sechs Ländern**, dazu Landeswahl, Währung, Feiertage je Staat, Klasse C
+(„Zeiten unbekannt"), Lizenzhinweis, Release Notes.
+
+| | |
+| --- | ---: |
+| Laufzeit | 9. September 07:04 bis 18. September 05:16 UTC, **8 Tage 22 Stunden** |
+| Assistenten-Nachrichten | 3.040 (3.030 `claude-fable-5-1`, 10 synthetisch) |
+| Echte Nachrichten des Nutzers | 95 |
+| Werkzeugaufrufe | 1.919 (21 verschiedene, davon 1.634 `Bash`) |
+| Agenten | **38** — je Stadt einer, in eigenen Worktrees |
+| Commits auf `main` | 182, davon 24 `feat(staedte)` |
+| Geänderte Zeilen | +82.806 / −1.864 in 500 Dateien (`git diff --shortstat` vom ersten Commit der Sitzung bis `main`) |
+| Unit-Tests | 750 → **2.394** |
+| End-to-End-Tests | 154 → **234** |
+| Coverage (`core`, Zeilen) | 99,9 % → 99,3 % — 24 Zeilen in neuen Parsern ohne Test, siehe `todo.md`, Abschnitt 9 |
+
+### Tokens: Verlauf gegen Buchhaltung
+
+| Art | Verlauf (JSONL) | Buchhaltung (`usage`) |
+| --- | ---: | ---: |
+| Eingabe | 87.512 | 3.160.960 |
+| Ausgabe | 4.053.988 | **5.512.234** |
+| Cache-Lesen | 1.256.829.741 | **1.063.544.907** |
+| Cache-Schreiben | 25.523.123 | 26.062.258 |
+| Kosten | — | **944,99 USD** |
+
+Zwei Dinge, die die Tabelle erst lesbar machen:
+
+**Der Verlauf zählt das Cache-Lesen wieder zu hoch**, diesmal um den Faktor
+1,18 statt 1,6 wie in der ersten Sitzung — dieselbe Mehrfachzählung beim
+Streamen, nur anders verteilt. Wer eine Zahl braucht, nimmt die Buchhaltung.
+
+**Die Buchhaltung zählt mehr Ausgabe als der Verlauf**, 5,5 gegen 4,1 Mio.
+Das ist kein Widerspruch: Die 38 Agenten schreiben in eigene Verläufe, ihre
+Tokens stehen nicht in dieser JSONL, aber auf dieser Rechnung. Rund ein
+Viertel der Ausgabe dieser Sitzung ist damit Agentenarbeit — die Städte.
+
+Was die Sitzung teuer gemacht hat, ist nicht die Zahl der Städte, sondern das
+Kontextfenster: 1,06 Mrd. gelesene Cache-Tokens bei 3.040 Antworten sind im
+Schnitt 350.000 Tokens Kontext je Antwort. Der Verlauf wurde zweimal
+zusammengefasst; jede Antwort dazwischen trägt den ganzen Stand. Fünf Agenten
+sind am Sitzungslimit des Kontos gestorben (429) und mussten nach der
+Rücksetzung fortgesetzt werden — die einzige Unterbrechung der Nacht.

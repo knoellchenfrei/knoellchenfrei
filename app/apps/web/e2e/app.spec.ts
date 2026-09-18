@@ -1471,13 +1471,18 @@ test.describe('Länder', () => {
   test('zeigt die Städte eines Landes erst nach der Landeswahl', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
-    const laender = sheet.getByRole('group', { name: 'Land' })
+    const laender = sheet.getByRole('combobox', { name: 'Land' })
     await expect(laender).toBeVisible()
-    await expect(laender.getByRole('button', { name: 'Deutschland' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(laender).toHaveValue('DE')
+    // Alle Länder stehen im Feld, keines läuft aus dem Bild — das Feld ist
+    // so breit wie das Blatt, nicht so breit wie die Summe der Namen.
+    const blatt = await sheet.boundingBox()
+    const feld = await laender.boundingBox()
+    expect(feld!.x + feld!.width).toBeLessThanOrEqual(blatt!.x + blatt!.width)
     await expect(sheet.getByRole('button', { name: 'Graz' })).toHaveCount(0)
     await expect(sheet.getByRole('button', { name: 'Hamburg' })).toBeVisible()
 
-    await laender.getByRole('button', { name: 'Österreich' }).click()
+    await laender.selectOption({ label: 'Österreich' })
     await expect(sheet.getByRole('button', { name: 'Graz' })).toBeVisible()
     await expect(sheet.getByRole('button', { name: 'Hamburg' })).toHaveCount(0)
   })
@@ -1485,7 +1490,7 @@ test.describe('Länder', () => {
   test('nennt in Graz die offene Lizenzfrage über der Karte und in den Einstellungen', async ({ page }) => {
     await ready(page)
     let sheet = await openSettings(page)
-    await sheet.getByRole('group', { name: 'Land' }).getByRole('button', { name: 'Österreich' }).click()
+    await sheet.getByRole('combobox', { name: 'Land' }).selectOption({ label: 'Österreich' })
     await sheet.getByRole('button', { name: 'Graz' }).click()
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
@@ -1501,7 +1506,7 @@ test.describe('Länder', () => {
 
     sheet = await openSettings(page)
     await expect(sheet).toContainText('Lizenz ungeklärt')
-    await expect(sheet.getByRole('group', { name: 'Land' }).getByRole('button', { name: 'Österreich' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(sheet.getByRole('combobox', { name: 'Land' })).toHaveValue('AT')
   })
 
   test('zeigt in Berlin keinen Lizenzbanner', async ({ page }) => {
@@ -1518,7 +1523,7 @@ test.describe('Länder', () => {
 test.describe('Städte der zweiten Runde', () => {
   async function wechsleZu(page: Page, land: string, stadt: string): Promise<void> {
     const sheet = await openSettings(page)
-    await sheet.getByRole('group', { name: 'Land' }).getByRole('button', { name: land }).click()
+    await sheet.getByRole('combobox', { name: 'Land' }).selectOption({ label: land })
     await sheet.getByRole('button', { name: stadt }).click()
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })

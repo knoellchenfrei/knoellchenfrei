@@ -64,13 +64,13 @@ describe('die Stadtwahl in den Einstellungen', () => {
         geprueftAm={null}
       />,
     )
-    const gruppe = screen.getByRole('group', { name: 'Land' })
-    expect(gruppe).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Deutschland' }).getAttribute('aria-pressed')).toBe('true')
+    const land = screen.getByRole('combobox', { name: 'Land' }) as HTMLSelectElement
+    expect(land.value).toBe('DE')
+    expect(screen.getByRole('option', { name: 'Deutschland' })).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Wien' })).toBeNull()
     expect(screen.getByRole('button', { name: /Berlin/ })).toBeTruthy()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Österreich' }))
+    fireEvent.change(land, { target: { value: 'AT' } })
     expect(screen.getByRole('button', { name: /Wien/ })).toBeTruthy()
     expect(screen.queryByRole('button', { name: /^Berlin/ })).toBeNull()
   })

@@ -305,19 +305,22 @@ export function SettingsSheet({
               Nur sichtbar, wenn es überhaupt zwei Länder gibt.
             */}
             {laender.length > 1 && (
-              <div className="segmented" role="group" aria-label="Land">
+              // Ein natives Auswahlfeld, keine Segmentleiste: Mit sechs
+              // Ländern lief die Leiste auf dem Handy nach rechts aus dem
+              // Bild, und „Niederland…" war angeschnitten (Betreiber,
+              // 18. September). Ein select zeigt alle Länder im Systemdialog.
+              <select
+                className="select"
+                aria-label="Land"
+                value={country}
+                onChange={(event) => setCountry(event.target.value as Country)}
+              >
                 {laender.map((land) => (
-                  <button
-                    key={land}
-                    type="button"
-                    className={`segmented__item${land === country ? ' segmented__item--on' : ''}`}
-                    aria-pressed={land === country}
-                    onClick={() => setCountry(land)}
-                  >
+                  <option key={land} value={land}>
                     {COUNTRY_NAMES[land]}
-                  </button>
+                  </option>
                 ))}
-              </div>
+              </select>
             )}
             <ul className="rows">
               {selectableCities().filter((city) => cityCountry(city) === country).map((city) => (
