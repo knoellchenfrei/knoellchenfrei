@@ -337,15 +337,19 @@ function zeichnen(stand: Stand): HTMLElement {
   }
 
   const nicht = el('section', 'block')
-  nicht.append(el('h2', undefined, 'Was hier nicht steht'))
+  // Die Überschrift hieß „Was hier nicht steht", und darunter stand „Keine
+  // IP-Adresse" — eine doppelte Verneinung, über die der Betreiber am
+  // 18. September gestolpert ist. Jetzt nennt die Überschrift die Handlung
+  // und die Zeilen die Dinge.
+  nicht.append(el('h2', undefined, 'Was nicht gespeichert wird'))
   const liste = el('ul', 'nicht')
   for (const satz of [
-    'Keine Koordinaten. Die feinste Ortsangabe ist die Zone — und die ohne Uhrzeit.',
-    'Keine Minute. Nur die Stunde, und nur ohne Ort.',
-    'Keine Kennung, keine Sitzung, keine Reihenfolge.',
-    'Keine IP-Adresse. Der Server sieht sie beim Empfang, speichert sie nicht — auch nicht gehasht.',
-    'Kein Referrer, kein Browserkennzeichen, keine Bildschirmgröße, kein Freitext.',
-    'Nichts auf dem Gerät. Die Zählungen liegen bis zum Senden im Arbeitsspeicher.',
+    'Koordinaten — die feinste Ortsangabe ist die Zone, und die ohne Uhrzeit.',
+    'Die Minute — nur die Stunde, und nur ohne Ort.',
+    'Kennung, Sitzung, Reihenfolge.',
+    'Die IP-Adresse — der Server sieht sie beim Empfang und speichert sie nicht, auch nicht gehasht.',
+    'Referrer, Browserkennzeichen, Bildschirmgröße, Freitext.',
+    'Etwas auf dem Gerät — die Zählungen liegen bis zum Senden im Arbeitsspeicher.',
   ]) {
     liste.append(el('li', undefined, satz))
   }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // Konstruktor stehen, also bleibt der Rest der Datei unberührt.
 import * as maplibregl from 'maplibre-gl'
 import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl'
+import { holeStandort, standortFehlerText } from './standort.js'
 import {
   activeSightings,
   berlinDateKey,
@@ -1399,7 +1400,8 @@ export function App() {
     }
     setLocating(true)
     setError(null)
-    navigator.geolocation.getCurrentPosition(
+    // Zwei Stufen, genau und dann grob — warum, steht in `standort.ts`.
+    holeStandort(navigator.geolocation).then(
       ({ coords }) => {
         const point: [number, number] = [coords.longitude, coords.latitude]
         setPosition(point)
@@ -1447,17 +1449,10 @@ export function App() {
         }
         mapRef.current?.easeTo({ center: point, zoom: Math.max(15, mapRef.current.getZoom()) })
       },
-      (cause) => {
+      (cause: { code: number }) => {
         setLocating(false)
-        // In an embedded frame the browser refuses without ever asking, so
-        // "denied" here usually means "not offered". Say what to do instead.
-        setError(
-          cause.code === cause.PERMISSION_DENIED
-            ? 'Standort ist hier nicht verfügbar — in eingebetteten Ansichten fragt der Browser gar nicht erst. Tippe stattdessen auf die Karte.'
-            : 'Standort konnte nicht ermittelt werden. Tippe stattdessen auf die Karte.'
-        )
+        setError(standortFehlerText(cause))
       },
-      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 30_000 }
     )
   }, [zones, startTracking])
 

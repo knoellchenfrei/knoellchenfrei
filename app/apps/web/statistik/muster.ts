@@ -1,6 +1,6 @@
 /**
  * Die Langzeitmuster je Stadt — die Seite, auf der man sieht, ob das Modell
- * etwas taugt, bevor es jemand glaubt: seit wann geerntet wird, wie viele
+ * etwas taugt, bevor es jemand glaubt: seit wann gesammelt wird, wie viele
  * Fenster, wie viel davon schon eine Stufe trägt, und der Rückwärtstest
  * (Brier-Skill gegen die Stadtrate; erst über null weiss das Modell über
  * eine Zone mehr als über die Stadt).
@@ -14,7 +14,9 @@ export interface MusterStand {
 }
 
 export function musterZeile(name: string, stand: MusterStand | null): string {
-  if (stand === null || stand.since === null) return `${name}: noch keine Ernte.`
+  // „Ernte" stand hier bis zum 18. September — Jargon aus dem Datenbau, den
+  // der Betreiber auf der Seite nicht verstand. Die Seite sagt, was fehlt.
+  if (stand === null || stand.since === null) return `${name}: noch keine Meldungen, also noch kein Muster.`
   const einheiten = Object.values(stand.units)
   const mitStufe = einheiten.filter((u) => u.levels.some((l) => l > 0)).length
   const seit = new Date(`${stand.since}T12:00:00`).toLocaleDateString('de-DE')

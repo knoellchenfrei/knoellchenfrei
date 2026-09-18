@@ -15,9 +15,10 @@ const stand = (patch: Record<string, unknown> = {}) => ({
 })
 
 describe('musterZeile', () => {
-  it('sagt ohne Stand oder ohne Ernte, dass noch nichts da ist', () => {
-    expect(musterZeile('Köln', null)).toBe('Köln: noch keine Ernte.')
-    expect(musterZeile('Köln', stand({ since: null }))).toBe('Köln: noch keine Ernte.')
+  it('sagt ohne Stand oder ohne Meldungen, dass noch kein Muster da ist — ohne Jargon', () => {
+    expect(musterZeile('Köln', null)).toBe('Köln: noch keine Meldungen, also noch kein Muster.')
+    expect(musterZeile('Köln', stand({ since: null }))).toBe('Köln: noch keine Meldungen, also noch kein Muster.')
+    expect(musterZeile('Köln', null)).not.toMatch(/Ernte/)
   })
 
   it('nennt Beginn, Fenster, Einheiten mit Stufe und Wochen — und wartet mit dem Rückwärtstest', () => {

@@ -32,7 +32,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 2394 Unit-Tests (core, api, web, ingest)
+pnpm test                                           # 2400 Unit-Tests (core, api, web, ingest)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,3 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -89,7 +89,7 @@ Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
 **alle vier** Tests: `core` (1828), `apps/api` (101, Worker gegen SQLite und Zählwerk),
-`apps/web` (331, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+`apps/web` (337, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, Straßensuche, Langzeitmuster, sieben Komponentendateien mit jsdom, Service
 Worker im gestellten `self`) und `packages/ingest` (134: Wächter des Artifact-Baus, Datenstand,
@@ -107,7 +107,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=2394 E2E_COUNT=234 npx tsx src/build-badges.ts
+TEST_COUNT=2400 E2E_COUNT=234 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data
@@ -939,6 +939,18 @@ wiederholt.
   im Übergang mass. Jetzt wählt er erst eine Zone (Inhalt 897 Pixel, halb
   487, ganz 767) und misst nach dem Rasten. Ein Test, der nur manchmal grün
   ist, hat keine Wackelursache, sondern eine falsche Messung.
+- **Ein Standortaufruf mit einer Frist misst die Frist, nicht das GPS.**
+  „Wo bin ich?" fragte einmal, genau, mit zehn Sekunden — und auf einem
+  Android-Gerät mit gerade eingeschaltetem GPS kam der erste Fix drinnen
+  später. Die App sagte „Standort konnte nicht ermittelt werden", obwohl
+  GPS an war (Betreiber, 18. September, Brave). Eine grobe Position aus
+  Funkzelle und WLAN kommt in Sekunden und trifft die Zone; `standort.ts`
+  fragt seitdem erst genau, dann grob mit längerer Frist, nennt je Ursache
+  eine andere Abhilfe und bricht nur bei verweigerter Berechtigung sofort ab.
+  Dazu zwei Wörter von derselben Seite: „noch keine Ernte" war Jargon aus
+  dem Datenbau, „Was hier nicht steht: keine IP-Adresse" eine doppelte
+  Verneinung — beides gefunden vom Betreiber, nicht von einem Test. Was auf
+  dem Schirm steht, liest jemand, der den Code nicht kennt.
 
 ## Balance: Tokens und Rechenminuten
 
@@ -987,7 +999,7 @@ Tests oder Abdeckung zu sparen, und ohne viele Änderungen ohne CI zu stapeln.
 - **Für jeden gefundenen Fehler ein Test.** Wie viele es sind, stand hier
   einmal als 30 und in `README.md` als 58 — zwei Zahlen für dieselbe Sache,
   keine davon aus einer Regel abgeleitet. Nachzählbar ist der Abschnitt
-  darüber: **82 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
+  darüber: **83 Regeln, jede aus einem Vorfall**. Die Testzahl bleibt
   ungenannt, bis es eine Marke im Quelltext gibt, an der man sie zählen kann.
 - **TypeScript streng**, inklusive `noUncheckedIndexedAccess` und
   `exactOptionalPropertyTypes`. Kein `any`, keine nicht begründeten Casts.
