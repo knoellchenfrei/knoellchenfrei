@@ -1562,10 +1562,10 @@ test.describe('Städte der zweiten Runde', () => {
     const sheet = await openSettings(page)
     await sheet.getByRole('combobox', { name: 'Land' }).selectOption({ label: land })
     // exact: Seit "Zuletzt genutzt" kann eine Stadt zweimal im Blatt stehen, oben mit Zeitangabe.
-    // Der Wechsel laedt die Seite neu, und zwar erst nach dem Zaehl-Ping: Wer
+    // Der Wechsel lädt die Seite neu, und zwar erst nach dem Zähl-Ping: Wer
     // hier nur auf .panel-toggle wartet, sieht noch die ALTE Seite und misst
     // deren Zustand (so fiel der Suchtest am 30. September). Also auf das
-    // Laden der neuen Seite warten, das der Klick ausloest.
+    // Laden der neuen Seite warten, das der Klick auslöst.
     await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: stadt, exact: true }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
