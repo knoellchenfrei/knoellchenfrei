@@ -154,6 +154,11 @@ jobs:
       - name: Daten auffrischen
         if: steps.gate.outputs.ready == 'true'
         working-directory: app
+        env:
+          # Der Länderschalter, siehe core/city.ts (parseCountries): leer ist
+          # Deutschland, "alle" ist alles. Als Variable, damit das Umschalten
+          # kein Commit ist.
+          VITE_COUNTRIES: ${{ vars.VITE_COUNTRIES }}
         run: |
           gescheitert=""
           # Die Liste kommt aus core/city.ts, nicht aus dieser Datei: Mit der
@@ -201,6 +206,8 @@ jobs:
           # Ohne den Wert bleibt es bei den Rasterkacheln von OpenStreetMap,
           # und der Vektor-Teil liegt nicht einmal im Bündel.
           VITE_TILES_URL: ${{ vars.VITE_TILES_URL }}
+          # Der Länderschalter, derselbe Wert wie beim Datenabruf oben.
+          VITE_COUNTRIES: ${{ vars.VITE_COUNTRIES }}
         run: pnpm --filter @knoellchenfrei/web build
 
       # `--cwd` ist hier keine Kosmetik: `wrangler pages deploy` sucht das

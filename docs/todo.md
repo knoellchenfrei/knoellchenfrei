@@ -462,6 +462,12 @@ die Schriften von `protomaps.github.io`. Details in
 
 ## 5. Weitere Städte — 32 in sechs Ländern laufen — **ich**
 
+> **Seit dem 30. September ausgeliefert: nur Deutschland.** Der
+> Länderschalter `VITE_COUNTRIES` steht leer (Begründung in
+> [entscheidungen.md](entscheidungen.md#länderschalter-nur-deutschland-ausliefern-der-rest-bleibt-gebaut)).
+> Wieder einschalten: Repository-Variable `VITE_COUNTRIES` auf `alle` oder
+> eine Liste wie `DE,AT` setzen und den Deploy anstossen — kein Commit nötig.
+
 Analyse der Datenlage in [staedte.md](staedte.md), Recherche zu sechzehn
 weiteren Städten in
 [staedte-recherche-2026-09.md](staedte-recherche-2026-09.md), zweite Runde mit

@@ -57,7 +57,7 @@ const NOTICES: Record<LoginNotice, string> = {
 export const OG_IMAGE = '/og.png'
 export const OG_TITLE = 'knoellchenfrei — kostet Parken hier gerade?'
 export const OG_DESCRIPTION =
-  'Parkzonen in Deutschland, Österreich, der Schweiz und den Nachbarländern: ' +
+  'Parkzonen in deutschen Städten: ' +
   'Gebührenpflicht, Preis, Höchstparkdauer — und ob das Ordnungsamt unterwegs ist. ' +
   'Aus amtlichen Daten, offener Quelltext.'
 
@@ -202,8 +202,7 @@ export function loginPage(notice: LoginNotice, origin = 'https://knoellchenfrei.
     `  <div class="mark" aria-hidden="true">P</div>
   <p class="eyebrow">Geschlossener Testbetrieb</p>
   <h1>knoellchenfrei</h1>
-  <p class="lede">Parkzonen in Städten in Deutschland, Österreich, der Schweiz, den
-  Niederlanden, Frankreich und Polen: Gilt hier gerade Gebührenpflicht, was kostet
+  <p class="lede">Parkzonen in deutschen Städten: Gilt hier gerade Gebührenpflicht, was kostet
   es, wie lange darf ich stehen — und ist das Ordnungsamt unterwegs?
   Öffentlich ist die App noch nicht — bis der Trägerverein steht, kommt nur
   hinein, wer das Passwort hat.</p>

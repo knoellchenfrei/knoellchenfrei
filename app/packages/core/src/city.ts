@@ -189,6 +189,39 @@ export const COUNTRY_NAMES: Record<Country, string> = {
   PL: 'Polen',
 }
 
+export const ALL_COUNTRIES = Object.keys(COUNTRY_NAMES) as readonly Country[]
+
+/**
+ * Der Länderschalter: Welche Staaten eine Auslieferung zeigt.
+ *
+ * Seit dem 30. September zeigt die Auslieferung nur Deutschland — die
+ * Städte der anderen fünf Staaten bleiben angeschlossen, gebaut und
+ * getestet, aber nicht wählbar (Betreiber: „erstmal wieder raus, per Flag").
+ * Der Wert kommt als `VITE_COUNTRIES` in den Web-Build und in die
+ * Workflows: leer heisst Deutschland, `alle` heisst alle, sonst eine Liste
+ * wie `DE,AT,CH`. Ein Kürzel, das es nicht gibt, **wirft** — ein Tippfehler
+ * wie `AU` hätte sonst still ein Land weniger gezeigt, und niemand hätte es
+ * gesehen (die Regel „eine unbekannte Stadt fällt nicht zurück, sie wirft"
+ * gilt für ein unbekanntes Land genauso).
+ */
+export function parseCountries(raw: string | undefined | null): readonly Country[] {
+  const wert = (raw ?? '').trim()
+  if (wert === '') return ['DE']
+  if (wert.toLowerCase() === 'alle' || wert === '*') return ALL_COUNTRIES
+  return wert.split(',').map((teil) => {
+    const code = teil.trim().toUpperCase()
+    if (!(code in COUNTRY_NAMES)) {
+      throw new Error(`Unbekanntes Land im Laenderschalter: "${teil.trim()}" (erlaubt: ${ALL_COUNTRIES.join(', ')}, "alle")`)
+    }
+    return code as Country
+  })
+}
+
+/** Die Städte, die der Schalter zulässt — in der Reihenfolge von `CITIES`. */
+export function citiesInCountries(cities: readonly City[], countries: readonly Country[]): City[] {
+  return cities.filter((city) => countries.includes(cityCountry(city)))
+}
+
 /**
  * Die Stelle, die weiß, wohin ein umgesetztes Fahrzeug gebracht wurde.
  *

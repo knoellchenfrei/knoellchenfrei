@@ -717,7 +717,7 @@ null.
 
 **ESLint und Prettier nicht**, und zwar aus einem Grund, der sich ändern kann:
 Der TypeScript-Teil steht auf `strict` samt `noUncheckedIndexedAccess` und
-`exactOptionalPropertyTypes`, hat 2409 Unit-Tests und 99,3 % Zeilenabdeckung —
+`exactOptionalPropertyTypes`, hat 2417 Unit-Tests und 99,3 % Zeilenabdeckung —
 die Klasse Fehler, die ein Linter fängt, fängt hier schon etwas anderes. Und
 formatiert ist der Bestand ohnehin einheitlich, weil er von einer Hand stammt.
 
@@ -1126,3 +1126,30 @@ dahin verboten, weil `windows: []` immer „frei" ergab. Und Städte ohne
 ausgewiesene Lizenz tragen `licenceFamily: 'unklar'` samt `licenceOpen`, den
 Satz, den die App als Banner über der Karte zeigt. Der Betreiber wollte
 solche Städte lieber mit sichtbarer Frage als gar nicht.
+
+## Länderschalter: nur Deutschland ausliefern, der Rest bleibt gebaut
+
+**Entscheidung (Betreiber, 30. September 2026):** Die Auslieferung zeigt nur
+deutsche Städte. Die 19 Städte in Österreich, der Schweiz, den Niederlanden,
+Frankreich und Polen bleiben angeschlossen, gebaut, getestet und mit Kacheln
+versorgt, sind aber nicht wählbar — weder in den Einstellungen noch im
+Suchfeld noch als Standortvorschlag.
+
+**Wie:** ein Wert, `VITE_COUNTRIES`, gelesen von `parseCountries` in
+`core/city.ts`. Leer heisst Deutschland, `alle` heisst alles, sonst eine Liste
+(`DE,AT`). Er wirkt im Web-Build (`selectableCities`, gemerkte Stadt, Frage
+beim Start) und im Deploy (`city-keys`, also welche Abzüge aufgefrischt
+werden). Gesetzt wird er als Repository-Variable, damit das Umschalten kein
+Commit ist. Ein unbekanntes Kürzel bricht den Build ab.
+
+**Warum ein Schalter und kein Rückbau:** Die Arbeit an sechs Ländern ist
+getan und getestet; sie herauszureissen hiesse, sie beim Wiedereinschalten
+neu zu prüfen. Warum jetzt nur Deutschland: Die Lizenzfragen in Graz, Krakau
+und Kassel sind offen, Recht und Impressum für Österreich und die Schweiz
+(`todo.md`, Abschnitt 1a) ungeklärt, und die Tester sitzen in Deutschland.
+
+**Was bewusst gleich bleibt:** Unit-Tests und E2E-Suite laufen mit `alle`,
+damit das ganze Programm gemessen wird; der Stand des Schalters selbst hat
+einen eigenen Test (`laenderschalter.test.tsx`). Die eingecheckten Abzüge
+der abgeschalteten Städte altern, bis der Schalter wieder auf ist —
+`datenstand-pruefen.mjs` zeigt das.

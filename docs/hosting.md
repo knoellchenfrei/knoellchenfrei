@@ -623,7 +623,15 @@ nur, wenn der Worker hinter einer eigenen Domain liegt; dann gewinnt es.
 ```
 VITE_API_BASE   Secret, optional — nur bei eigener Worker-Domain
 VITE_TILES_URL  Variable, kein Secret — die Adresse des Kachelarchivs
+VITE_COUNTRIES  Variable, optional — der Länderschalter: leer = Deutschland,
+                "alle" = alle sechs Staaten, sonst eine Liste wie "DE,AT"
 ```
+
+`VITE_COUNTRIES` wirkt zweimal im Deploy: beim Datenabruf (nur die Städte der
+eingeschalteten Länder werden aufgefrischt) und im Web-Build (nur sie sind
+wählbar). Seit dem 30. September steht sie leer; die Begründung steht in
+[entscheidungen.md](entscheidungen.md#länderschalter-nur-deutschland-ausliefern-der-rest-bleibt-gebaut).
+Ein Kürzel, das es nicht gibt, bricht den Build ab.
 
 `VITE_TILES_URL` ist bewusst eine **Variable** und kein Secret: Die Adresse
 steht ohnehin in jedem Netzwerk-Request der App. Als Secret wäre sie im

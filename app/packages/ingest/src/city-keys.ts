@@ -9,6 +9,10 @@
  * in `core/city.ts` — wie die Rahmen in `city-bbox.ts` (Audit-Punkt M-034).
  */
 
-import { CITIES } from '@knoellchenfrei/core'
+import { CITIES, citiesInCountries, parseCountries } from '@knoellchenfrei/core'
 
-for (const city of CITIES) console.log(city.key)
+// Derselbe Schalter wie im Web-Build (`VITE_COUNTRIES`): Der Deploy frischt
+// nur auf, was die Auslieferung zeigt — seit dem 30. September Deutschland.
+// Die Abzüge der anderen Städte bleiben eingecheckt und werden nicht älter
+// als ihr letzter Lauf; wer sie wieder einschaltet, setzt die Variable.
+for (const city of citiesInCountries(CITIES, parseCountries(process.env['VITE_COUNTRIES']))) console.log(city.key)

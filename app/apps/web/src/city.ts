@@ -22,20 +22,33 @@
  * nicht stillschweigend Berlin ausliefern.
  */
 
-import { BERLIN, CITIES, cityByKey, type City } from '@knoellchenfrei/core'
+import { BERLIN, CITIES, citiesInCountries, cityByKey, cityCountry, parseCountries, type City } from '@knoellchenfrei/core'
 
 import { availableCities } from './data-source.js'
 import { trackNow } from './track.js'
 import { merken, nutzungenLesen, type Nutzung } from './zuletzt.js'
 
 const STORAGE_KEY = 'knoellchenfrei:city'
+
+/**
+ * Der Länderschalter dieser Auslieferung, zur Bauzeit gesetzt — Begründung
+ * und Schreibweisen in `core/city.ts` (`parseCountries`). Ein falscher Wert
+ * bricht den Modulstart ab, also den Build: besser als eine App, die still
+ * ein Land weniger zeigt.
+ */
+export const COUNTRIES = parseCountries(import.meta.env.VITE_COUNTRIES as string | undefined)
 const RECENT_KEY = 'knoellchenfrei:recent-cities'
 
 function fromStorage(): City | null {
   try {
     const key = localStorage.getItem(STORAGE_KEY)
     if (key === null) return null
-    return cityByKey(key)
+    const city = cityByKey(key)
+    // Eine gemerkte Stadt aus einem Land, das der Schalter nicht mehr zeigt
+    // (jemand hatte Wien gewählt, bevor die anderen Länder am 30. September
+    // herausgenommen wurden): zurück zur Vorgabe und zur Frage beim Start,
+    // statt eine Stadt zu laden, die in keiner Liste mehr steht.
+    return COUNTRIES.includes(cityCountry(city)) ? city : null
   } catch {
     // Zwei Fälle in einem: Speicher gesperrt (privates Fenster) oder ein
     // Schlüssel, den `cityByKey` nicht kennt. Beide enden hier gleich —
@@ -68,7 +81,10 @@ export function cityChosen(): boolean {
   try {
     localStorage.setItem(`${STORAGE_KEY}:probe`, '1')
     localStorage.removeItem(`${STORAGE_KEY}:probe`)
-    return localStorage.getItem(STORAGE_KEY) !== null
+    // Nicht „steht ein Schlüssel da", sondern „steht eine Stadt da, die es
+    // in dieser Auslieferung gibt" — sonst bliebe die Frage nach einem
+    // Länderwechsel aus, und die App zeigte still Berlin.
+    return fromStorage() !== null
   } catch {
     return true
   }
@@ -139,5 +155,6 @@ export function switchCity(city: City): void {
  */
 export function selectableCities(): readonly City[] {
   const embedded = availableCities()
-  return embedded === null ? CITIES : CITIES.filter((city) => embedded.includes(city.key))
+  const erlaubt = citiesInCountries(CITIES, COUNTRIES)
+  return embedded === null ? erlaubt : erlaubt.filter((city) => embedded.includes(city.key))
 }

@@ -38,7 +38,9 @@ export default defineConfig({
     { name: 'phone', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: 'pnpm build && pnpm preview --port 4173 --strictPort',
+    // Gebaut mit allen Ländern: Die Suite misst das ganze Programm; die
+    // Auslieferung zeigt seit dem 30. September nur Deutschland (`VITE_COUNTRIES`).
+    command: 'VITE_COUNTRIES=alle pnpm build && pnpm preview --port 4173 --strictPort',
     url: 'http://localhost:4173',
     reuseExistingServer: process.env.CI === undefined,
     timeout: 180_000,

@@ -17,5 +17,9 @@ export default defineConfig({
     // wäre langsamer und liesse Speicher-, Format- und Zählwerk-Tests in einer
     // Umgebung laufen, die sie nicht brauchen und die anders lügt als Node.
     environment: 'node',
+    // Die Tests messen das ganze Programm — alle sechs Länder —, nicht den
+    // Stand des Schalters. Was der Schalter tut, prüft `laenderschalter.test.ts`
+    // mit eigenem Wert.
+    env: { VITE_COUNTRIES: 'alle' },
   },
 })

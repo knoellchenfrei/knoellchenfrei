@@ -10,7 +10,12 @@ kostet und wie lange man stehen darf — aus den amtlichen WFS der Städte.
 Angeschlossen sind 32 Städte in sechs Ländern — Deutschland, Österreich,
 Schweiz, Niederlande, Frankreich und Polen; die vollständige Liste mit Klasse,
 Lizenz und je einem Bericht `docs/staedte-<stadt>.md` steht in `docs/staedte.md`.
-Das Land wählt der Nutzer in den Einstellungen bewusst, dann die Stadt.
+**Ausgeliefert wird seit dem 30. September nur Deutschland:** Der Länderschalter
+`VITE_COUNTRIES` (`core/city.ts`, `parseCountries`) steht leer, die anderen
+fünf Staaten bleiben gebaut und getestet, aber nicht wählbar. `alle` oder eine
+Liste wie `DE,AT` in der Repository-Variablen schaltet sie wieder ein; die
+Unit-Tests und die E2E-Suite laufen immer mit `alle`. Das Land wählt der Nutzer
+in den Einstellungen bewusst, dann die Stadt.
 Ausgeliefert wird sie hinter einem Passwort-Riegel — der Stand ist geschlossener
 Testbetrieb, siehe `apps/web/functions/_middleware.ts` und `docs/hosting.md`.
 Dazu gemeldete Ordnungsamt-Sichtungen und eine Heatmap der Kontrolldichte.
@@ -32,7 +37,7 @@ Workspace. Die `.gitignore` sperrt beide Dateien aus genau diesem Grund.
 ```bash
 cd app
 pnpm -r typecheck                                   # alles, streng
-pnpm test                                           # 2409 Unit-Tests (core, api, web, ingest)
+pnpm test                                           # 2417 Unit-Tests (core, api, web, ingest)
 pnpm --filter @knoellchenfrei/core test:coverage       # Coverage-Bericht (99,3 % Zeilen)
 pnpm --filter @knoellchenfrei/web build                # Web-Build
 pnpm artifact                                       # Einzeldatei fürs Artifact
@@ -88,8 +93,8 @@ ausgelieferten Adresse zu sehen — beide mit einem Status, der Erfolg meldet.
 Das Skript sieht deshalb auf Status **und** Content-Type.
 
 `pnpm test` in `app/` läuft über alle Pakete — seit dem 8. September haben
-**alle vier** Tests: `core` (1828), `apps/api` (101, Worker gegen SQLite und Zählwerk),
-`apps/web` (346, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
+**alle vier** Tests: `core` (1832), `apps/api` (101, Worker gegen SQLite und Zählwerk),
+`apps/web` (350, Beta-Riegel, Zähler, Besuchszähler, Flächenkennung, Namen,
 Formatierung, Speicher, Datenquelle, Flächenpunkt, Aktualisieren,
 Stadtwahl, Straßensuche, Langzeitmuster, sieben Komponentendateien mit jsdom, Service
 Worker im gestellten `self`) und `packages/ingest` (134: Wächter des Artifact-Baus, Datenstand,
@@ -107,7 +112,7 @@ node scripts/kacheln-lokal.mjs /tmp/kacheln 4190    # Kachelarchiv lokal, für d
 node scripts/make-screenshots.mjs                   # Bilder für die Installations-Karte
 node scripts/make-docs-images.mjs                   # Bilder für README und Doku
 cd ../../packages/ingest
-TEST_COUNT=2409 E2E_COUNT=242 npx tsx src/build-badges.ts
+TEST_COUNT=2417 E2E_COUNT=242 npx tsx src/build-badges.ts
 npx tsx src/build-notices.ts                        # Lizenztexte der Abhängigkeiten
 # Passt der eingecheckte Abzug noch zum Code? Neu bauen und vergleichen:
 #   CITY=berlin OUT_DIR=/tmp/neubau pnpm --filter @knoellchenfrei/ingest build-data

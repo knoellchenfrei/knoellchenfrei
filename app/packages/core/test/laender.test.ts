@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { berlinWallClock } from '../src/berlin-time.js'
 import { countryOf, holidaysFor, isHoliday, jeuneGenevois } from '../src/holidays.js'
+import { ALL_COUNTRIES, CITIES, citiesInCountries, parseCountries } from '../src/city.js'
 import { chargeableAt, currencyOf, estimateCost, isChargeable, type ParkingZone } from '../src/tariff.js'
 
 /**
@@ -404,5 +405,38 @@ describe('der Genfer Kalender', () => {
     expect(genf.has('2026-10-03')).toBe(false)
     expect(genf.has('2026-11-01')).toBe(false)
     expect(countryOf('CH-GE')).toBe('CH')
+  })
+})
+
+/**
+ * Der Länderschalter (30. September): leer ist Deutschland, „alle" ist
+ * alles, eine Liste ist eine Liste — und ein Tippfehler wirft, statt still
+ * ein Land zu verschlucken.
+ */
+describe('parseCountries', () => {
+  it('zeigt ohne Wert nur Deutschland', () => {
+    expect(parseCountries(undefined)).toEqual(['DE'])
+    expect(parseCountries('')).toEqual(['DE'])
+    expect(parseCountries('  ')).toEqual(['DE'])
+  })
+
+  it('kennt „alle" und eine Liste, unabhängig von Schreibweise und Leerzeichen', () => {
+    expect(parseCountries('alle')).toEqual(ALL_COUNTRIES)
+    expect(parseCountries('*')).toEqual(ALL_COUNTRIES)
+    expect(parseCountries(' de, at ,CH')).toEqual(['DE', 'AT', 'CH'])
+  })
+
+  it('wirft bei einem Kürzel, das es nicht gibt', () => {
+    expect(() => parseCountries('DE,AU')).toThrow(/Unbekanntes Land.*AU/)
+  })
+
+  it('filtert die Städte nach Staat und behält die Reihenfolge', () => {
+    const nurDe = citiesInCountries(CITIES, ['DE'])
+    expect(nurDe.length).toBeGreaterThanOrEqual(13)
+    expect(nurDe.every((c) => c.land.length === 2)).toBe(true)
+    expect(nurDe.map((c) => c.key)).toEqual(CITIES.filter((c) => c.land.length === 2).map((c) => c.key))
+    expect(citiesInCountries(CITIES, ['AT']).map((c) => c.key)).toEqual(['graz', 'salzburg', 'innsbruck', 'wien'].sort((a, b) =>
+      CITIES.findIndex((c) => c.key === a) - CITIES.findIndex((c) => c.key === b)))
+    expect(citiesInCountries(CITIES, ALL_COUNTRIES)).toHaveLength(CITIES.length)
   })
 })

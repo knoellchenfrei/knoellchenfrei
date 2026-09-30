@@ -6,6 +6,13 @@ gilt für die ausgelieferte Adresse ab dem genannten Tag. Was dahinter
 entschieden wurde, steht in [entscheidungen.md](entscheidungen.md), was noch
 offen ist, in [todo.md](todo.md).
 
+## Nur Deutschland — 30. September 2026
+
+**Die Städte in Österreich, der Schweiz, den Niederlanden, Frankreich und
+Polen sind vorerst ausgeblendet.** Sie bleiben angeschlossen und kommen
+wieder, sobald Lizenz- und Rechtsfragen dort geklärt sind. Wer eine davon
+gewählt hatte, wird beim nächsten Start neu nach der Stadt gefragt.
+
 ## Länder — 17. September 2026
 
 **Die App zeigt jetzt Städte in sechs Ländern.** In den Einstellungen steht

@@ -11,10 +11,11 @@
 Wo stehe ich, kostet Parken hier gerade etwas, wie viel, wie lange darf ich
 stehen — und wo wurde zuletzt das Ordnungsamt gesehen.
 
-Eine PWA auf den amtlichen Geodaten der Städte. **32 Städte in sechs Ländern** —
-Deutschland, Österreich, Schweiz, Niederlande, Frankreich und Polen, die Liste
-steht in [docs/staedte.md](docs/staedte.md) —, umschaltbar in den Einstellungen,
-erst das Land, dann die Stadt. Eine Stadt zur Zeit; die Daten der anderen werden
+Eine PWA auf den amtlichen Geodaten der Städte. **32 Städte in sechs Ländern**
+sind angeschlossen — Deutschland, Österreich, Schweiz, Niederlande, Frankreich
+und Polen, die Liste steht in [docs/staedte.md](docs/staedte.md) —, ausgeliefert
+wird derzeit nur Deutschland (Länderschalter `VITE_COUNTRIES`, siehe
+`CLAUDE.md`). Umschaltbar in den Einstellungen, erst das Land, dann die Stadt. Eine Stadt zur Zeit; die Daten der anderen werden
 erst beim Wechsel geladen. Läuft im Browser, auf dem Homescreen
 installierbar, ohne Server.
 
@@ -274,7 +275,7 @@ seitdem.
 ```bash
 cd app
 pnpm install
-pnpm test                              # 2409 Unit-Tests
+pnpm test                              # 2417 Unit-Tests
 pnpm test:coverage                     # Schwellwerte: 85 % Zeilen, 80 % Zweige
 pnpm typecheck
 pnpm --filter @knoellchenfrei/web dev
@@ -313,7 +314,7 @@ aussieht und keine ist. Das `fetch-data`-Skript setzt die Variable selbst.
 
 | | |
 | --- | --- |
-| Unit-Tests | 2409 — 1828 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 346 für die Web-App, 134 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 83 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
+| Unit-Tests | 2417 — 1832 in `core`, 101 für den Worker (gegen echtes SQLite) und das Zählwerk, 350 für die Web-App, 134 für Artifact-Bau, Datenstand, Abzeichen und Einheiten. Ein grosser Teil davon sind Regressionstests für konkrete gefundene Fehler; die 83 Regeln in `CLAUDE.md` sind die nachzählbare Seite davon |
 | End-to-End | 242 über Desktop und Handy, gegen den Produktions-Build, rund neun Minuten; 229 bestehen, dreizehn überspringen sich selbst — einer, wenn der Tag nichts zu erklären hat, zwölf auf dem Gerät, für das sie nicht gedacht sind |
 | Coverage | 99,3 % Zeilen, 93,7 % Zweige, 99,8 % Funktionen (`packages/core`, gemessen am 17. September nach 32 Städten; die 24 offenen Zeilen stehen in `docs/todo.md`, Abschnitt 9) |
 | Typprüfung | `strict` inkl. `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |

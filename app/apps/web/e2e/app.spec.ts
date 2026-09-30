@@ -1112,7 +1112,7 @@ test.describe('die weiteren Städte', () => {
   test('schaltet auf Hamburg um und lädt Hamburger Zonen', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: 'Hamburg' }).click()])
 
     // Der Wechsel lädt neu; danach ist die App wieder von vorn hochzufahren.
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
@@ -1140,7 +1140,7 @@ test.describe('die weiteren Städte', () => {
   test('nennt in Hamburg die Hamburger Auskunftsstelle, nicht die Berliner', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: 'Hamburg' }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
@@ -1158,7 +1158,7 @@ test.describe('die weiteren Städte', () => {
   test('zeigt in Hamburg keine Ebene, hinter der nichts liegt', async ({ page }) => {
     await ready(page)
     const sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: 'Hamburg' }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.provenance')).toBeAttached({ timeout: 45_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
@@ -1173,7 +1173,7 @@ test.describe('die weiteren Städte', () => {
   test('nennt die Hamburger Lizenz als Bedingung, nicht als Fußnote', async ({ page }) => {
     await ready(page)
     let sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: 'Hamburg' }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
 
@@ -1345,12 +1345,12 @@ test.describe('die weiteren Städte', () => {
   test('schaltet zurück nach Berlin', async ({ page }) => {
     await ready(page)
     let sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Hamburg' }).click()
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: 'Hamburg' }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
 
     sheet = await openSettings(page)
-    await sheet.getByRole('button', { name: 'Berlin', exact: true }).click()
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: 'Berlin', exact: true }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
     await openPanel(page)
@@ -1562,7 +1562,11 @@ test.describe('Städte der zweiten Runde', () => {
     const sheet = await openSettings(page)
     await sheet.getByRole('combobox', { name: 'Land' }).selectOption({ label: land })
     // exact: Seit "Zuletzt genutzt" kann eine Stadt zweimal im Blatt stehen, oben mit Zeitangabe.
-    await sheet.getByRole('button', { name: stadt, exact: true }).click()
+    // Der Wechsel laedt die Seite neu, und zwar erst nach dem Zaehl-Ping: Wer
+    // hier nur auf .panel-toggle wartet, sieht noch die ALTE Seite und misst
+    // deren Zustand (so fiel der Suchtest am 30. September). Also auf das
+    // Laden der neuen Seite warten, das der Klick ausloest.
+    await Promise.all([page.waitForEvent('load'), sheet.getByRole('button', { name: stadt, exact: true }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
   }
@@ -1617,7 +1621,7 @@ test.describe('Erststart und Stadtsuche', () => {
     // Der Standort-Vordialog wartet, bis die Stadt gewählt ist.
     await expect(page.locator('.prompt')).toHaveCount(0)
     await frage.getByRole('combobox', { name: 'Land' }).selectOption({ label: 'Österreich' })
-    await frage.getByRole('button', { name: 'Wien' }).click()
+    await Promise.all([page.waitForEvent('load'), frage.getByRole('button', { name: 'Wien' }).click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
     expect(await page.evaluate(() => localStorage.getItem('knoellchenfrei:city'))).toBe('wien')
@@ -1644,7 +1648,8 @@ test.describe('Erststart und Stadtsuche', () => {
     const treffer = page.locator('.search__results button').first()
     await expect(treffer).toContainText('Wien')
     await expect(treffer).toContainText('Österreich')
-    await treffer.click()
+    // Auf die neu geladene Seite warten — siehe wechsleZu.
+    await Promise.all([page.waitForEvent('load'), treffer.click()])
     await expect(page.locator('.panel-toggle')).toBeVisible({ timeout: 30_000 })
     await expect(page.locator('.loading')).toHaveCount(0, { timeout: 30_000 })
     expect(await page.evaluate(() => localStorage.getItem('knoellchenfrei:city'))).toBe('wien')
